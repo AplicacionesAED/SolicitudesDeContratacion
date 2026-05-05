@@ -159,7 +159,7 @@ export default function TercerosPage() {
         </div>
         <div className="flex items-center gap-2">
           <Button
-            variant="outline"
+            variant="secondary"
             onClick={handleSync}
             disabled={syncing}
           >
