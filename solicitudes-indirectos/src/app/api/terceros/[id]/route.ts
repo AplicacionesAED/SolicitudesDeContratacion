@@ -88,7 +88,9 @@ export async function PATCH(
 
     // Prevent direct NIT duplication
     if (body.nit && body.nit !== existing.nit) {
-      const dup = await prisma.tercero.findUnique({ where: { nit: body.nit } });
+      const dup = await prisma.tercero.findFirst({
+        where: { nit: body.nit },
+      });
       if (dup) {
         return Response.json({ error: "Ya existe un tercero con ese NIT" }, { status: 409 });
       }
