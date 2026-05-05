@@ -41,8 +41,8 @@ function cell(text: string, isHeader = false, shading?: string): TableCell {
     shading: shading
       ? { fill: shading, type: ShadingType.CLEAR, color: "auto" }
       : isHeader
-      ? { fill: "1E3A8A", type: ShadingType.CLEAR, color: "auto" }
-      : undefined,
+        ? { fill: "1E3A8A", type: ShadingType.CLEAR, color: "auto" }
+        : undefined,
     children: [
       new Paragraph({
         children: [
@@ -268,17 +268,11 @@ export async function POST(
             heading("5. CONTRATISTA"),
             t
               ? twoColTable([
-                  ["Razón Social", t.razonSocial],
-                  ["NIT", t.nit],
-                  ["Representante Legal", t.representanteLegal],
-                  ["Cédula Representante", t.cedulaRepresentante],
-                  ["Correo de Firma", t.correoFirma],
-                  ["Dirección Representante", t.direccionRepresentante],
-                  ["Teléfono Representante", t.telefonoRepresentante],
-                  ...(t.nombreContacto ? [["Nombre Contacto", t.nombreContacto] as [string, string]] : []),
-                  ...(t.telefonoContacto ? [["Teléfono Contacto", t.telefonoContacto] as [string, string]] : []),
-                  ...(t.correoContacto ? [["Correo Contacto", t.correoContacto] as [string, string]] : []),
-                ])
+                ["Razón Social", t.razonSocial],
+                ["NIT", t.nit],
+                ["Tipo de Contrato", t.tipoContrato],
+                ["Confidencialidad", t.confidencialidad ? "Sí" : "No"],
+              ])
               : new Paragraph({ children: [plain("Sin tercero asignado.")] }),
 
             spacer(),
