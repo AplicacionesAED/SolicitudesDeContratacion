@@ -36,4 +36,4 @@ ENV PORT=3000
 ENV HOSTNAME="0.0.0.0"
 
 # 🔥 Ejecutar migración + seed antes de iniciar
-CMD sh -c "npx prisma generate && npx prisma db push && npx prisma db seed && node server.js"
+CMD sh -c "echo DATABASE_URL=$DATABASE_URL && npx prisma generate && npx prisma db push && npx prisma db seed && node server.js"
