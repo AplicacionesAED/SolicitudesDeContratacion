@@ -16,8 +16,8 @@ export async function GET(request: Request) {
       aprobadoParam === "true"
         ? { aprobadoDebidaDiligencia: true }
         : aprobadoParam === "false"
-        ? { aprobadoDebidaDiligencia: false }
-        : {};
+          ? { aprobadoDebidaDiligencia: false }
+          : {};
 
     const terceros = await prisma.tercero.findMany({
       where,
@@ -27,7 +27,10 @@ export async function GET(request: Request) {
     return Response.json(terceros);
   } catch (error) {
     console.error("GET /api/terceros error:", error);
-    return Response.json({ error: "Error interno del servidor" }, { status: 500 });
+    return Response.json(
+      { error: "Error interno del servidor" },
+      { status: 500 }
+    );
   }
 }
 
@@ -39,57 +42,60 @@ export async function POST(request: Request) {
     }
 
     const body = await request.json();
-    const {
-      razonSocial,
-      nit,
-      representanteLegal,
-      cedulaRepresentante,
-      correoFirma,
-      direccionRepresentante,
-      telefonoRepresentante,
-      nombreContacto,
-      telefonoContacto,
-      correoContacto,
-      tipoContrato,
-    } = body;
 
-    if (
-      !razonSocial ||
-      !nit ||
-      !representanteLegal ||
-      !cedulaRepresentante ||
-      !correoFirma ||
-      !direccionRepresentante ||
-      !telefonoRepresentante ||
-      !tipoContrato
-    ) {
-      return Response.json({ error: "Faltan campos obligatorios" }, { status: 400 });
+    const razonSocial: string = body.razonSocial?.trim();
+    const nit: string = body.nit?.trim();
+    const tipoContrato: string = body.tipoContrato;
+    const confidencialidad: boolean = body.confidencialidad ?? false;
+
+    // Validación básica
+    if (!razonSocial || !nit || !tipoContrato) {
+      return Response.json(
+        { error: "Faltan campos obligatorios" },
+        { status: 400 }
+      );
     }
 
-    const existing = await prisma.tercero.findUnique({ where: { nit } });
-    if (existing) {
-      return Response.json({ error: "Ya existe un tercero con ese NIT" }, { status: 409 });
+    // 🔴 Validar duplicado por NIT
+    const existingByNit = await prisma.tercero.findFirst({
+      where: { nit },
+    });
+
+    if (existingByNit) {
+      return Response.json(
+        { error: "Ya existe un tercero con ese NIT" },
+        { status: 409 }
+      );
     }
 
+    // 🔴 Validar duplicado por razón social (unique)
+    const existingByRazon = await prisma.tercero.findUnique({
+      where: { razonSocial },
+    });
+
+    if (existingByRazon) {
+      return Response.json(
+        { error: "Ya existe un tercero con esa razón social" },
+        { status: 409 }
+      );
+    }
+
+    // ✅ Crear tercero
     const tercero = await prisma.tercero.create({
       data: {
         razonSocial,
         nit,
-        representanteLegal,
-        cedulaRepresentante,
-        correoFirma,
-        direccionRepresentante,
-        telefonoRepresentante,
-        nombreContacto,
-        telefonoContacto,
-        correoContacto,
         tipoContrato,
+        confidencialidad,
       },
     });
 
     return Response.json(tercero, { status: 201 });
   } catch (error) {
     console.error("POST /api/terceros error:", error);
-    return Response.json({ error: "Error interno del servidor" }, { status: 500 });
+    return Response.json(
+      { error: "Error interno del servidor" },
+      { status: 500 }
+    );
   }
 }
