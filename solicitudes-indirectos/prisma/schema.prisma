@@ -5,7 +5,7 @@ generator client {
 
 datasource db {
   provider = "postgresql"
-  url = "postgresql://postgres:1234@localhost:5432/solicitudes_indirectos?schema=public"
+  url = "postgres://postgres:6JqtTAuAhsIXnEcyViKL2eA0yJUYRO2Nlh0HOMZx7viAeRYwgjOZjLjFufRStjO8@j8p4mt58lovau1zdinc1ueh4:5432/postgres"
 }
 
 // ─── Auth (NextAuth v4) ───────────────────────────────────────────────────────
