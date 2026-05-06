@@ -184,7 +184,11 @@ exports.Prisma.FrenteUsuarioScalarFieldEnum = {
 exports.Prisma.AprobadorFrenteScalarFieldEnum = {
   id: 'id',
   frenteId: 'frenteId',
-  aprobadorId: 'aprobadorId'
+  aprobadorId: 'aprobadorId',
+  contratosTramiteId: 'contratosTramiteId',
+  contratosMinutaId: 'contratosMinutaId',
+  controlesId: 'controlesId',
+  directorControlesId: 'directorControlesId'
 };
 
 exports.Prisma.TerceroScalarFieldEnum = {
@@ -240,6 +244,10 @@ exports.Prisma.SolicitudScalarFieldEnum = {
   archivosAnexos: 'archivosAnexos',
   aprobadorId: 'aprobadorId',
   fechaAprobacionDirector: 'fechaAprobacionDirector',
+  responsableContratosTramiteId: 'responsableContratosTramiteId',
+  responsableContratosMinutaId: 'responsableContratosMinutaId',
+  coordinadorControlesId: 'coordinadorControlesId',
+  directorControlesId: 'directorControlesId',
   notaContratacion: 'notaContratacion',
   necesitaRevision: 'necesitaRevision',
   numeroContratoAdpro: 'numeroContratoAdpro',

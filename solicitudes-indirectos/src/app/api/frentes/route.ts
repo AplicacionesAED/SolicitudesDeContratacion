@@ -81,7 +81,7 @@ export async function PATCH(request: Request) {
       return Response.json({ error: "No autorizado" }, { status: 403 });
     }
 
-    const { id, nombre, proyectoId, aprobadorId } = await request.json();
+    const { id, nombre, proyectoId, aprobadorId, contratosTramiteId, contratosMinutaId, controlesId, directorControlesId } = await request.json();
     if (!id) {
       return Response.json({ error: "El ID del frente es requerido" }, { status: 400 });
     }
@@ -91,16 +91,28 @@ export async function PATCH(request: Request) {
       ...(proyectoId ? { proyectoId: Number(proyectoId) } : {}),
     };
 
-    if (aprobadorId !== undefined) {
-      if (aprobadorId) {
+    if (aprobadorId !== undefined || contratosTramiteId !== undefined || contratosMinutaId !== undefined || controlesId !== undefined || directorControlesId !== undefined) {
+      if (aprobadorId || contratosTramiteId || contratosMinutaId || controlesId || directorControlesId) {
         data.aprobadorConfig = {
           upsert: {
-            create: { aprobadorId },
-            update: { aprobadorId }
+            create: { 
+              aprobadorId: aprobadorId || "",
+              contratosTramiteId: contratosTramiteId || null,
+              contratosMinutaId: contratosMinutaId || null,
+              controlesId: controlesId || null,
+              directorControlesId: directorControlesId || null,
+            },
+            update: { 
+              aprobadorId: aprobadorId || "",
+              contratosTramiteId: contratosTramiteId || null,
+              contratosMinutaId: contratosMinutaId || null,
+              controlesId: controlesId || null,
+              directorControlesId: directorControlesId || null,
+            }
           }
         };
       } else {
-        // Si viene aprobadorId vacío/null, lo eliminamos
+        // Si vienen todos vacíos, lo eliminamos
         data.aprobadorConfig = {
           delete: true
         };

@@ -104,6 +104,11 @@ export default function UsuariosPage() {
   const [saving, setSaving] = useState(false);
   const [formError, setFormError] = useState<string | null>(null);
 
+  // Bulk Selection
+  const [selectedIds, setSelectedIds] = useState<string[]>([]);
+  const [bulkModalOpen, setBulkModalOpen] = useState(false);
+  const [bulkFrentesIds, setBulkFrentesIds] = useState<number[]>([]);
+
   const fetchData = useCallback(async () => {
     setLoading(true);
     setError(null);
@@ -130,6 +135,47 @@ export default function UsuariosPage() {
   useEffect(() => {
     fetchData();
   }, [fetchData]);
+
+  const toggleSelectAll = () => {
+    if (selectedIds.length === users.length) {
+      setSelectedIds([]);
+    } else {
+      setSelectedIds(users.map(u => u.id));
+    }
+  };
+
+  const toggleSelectUser = (id: string) => {
+    setSelectedIds(prev => 
+      prev.includes(id) ? prev.filter(i => i !== id) : [...prev, id]
+    );
+  };
+
+  async function handleBulkAssignFrentes() {
+    if (selectedIds.length === 0 || bulkFrentesIds.length === 0) return;
+    setSaving(true);
+    try {
+      const res = await fetch("/api/users/bulk", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          userIds: selectedIds,
+          frentesIds: bulkFrentesIds,
+          action: "ASSIGN_FRENTES"
+        }),
+      });
+      if (!res.ok) {
+        const data = await res.json();
+        throw new Error(data.error ?? "Error en asignación masiva");
+      }
+      setBulkModalOpen(false);
+      setSelectedIds([]);
+      fetchData();
+    } catch (err) {
+      alert(err instanceof Error ? err.message : "Error desconocido");
+    } finally {
+      setSaving(false);
+    }
+  }
 
   function openNew() {
     setEditingUser(null);
@@ -332,13 +378,23 @@ export default function UsuariosPage() {
             Gestión de usuarios del sistema
           </p>
         </div>
-        <button
-          onClick={openNew}
-          className="inline-flex items-center gap-2 rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 transition-colors"
-        >
-          <Plus size={16} />
-          Nuevo Usuario
-        </button>
+        <div className="flex items-center gap-3">
+          {selectedIds.length > 0 && (
+            <button
+              onClick={() => { setBulkFrentesIds([]); setBulkModalOpen(true); }}
+              className="inline-flex items-center gap-2 rounded-lg bg-indigo-600 px-4 py-2 text-sm font-bold text-white hover:bg-indigo-700 transition-all shadow-lg shadow-indigo-200"
+            >
+              Asignar Frentes ({selectedIds.length})
+            </button>
+          )}
+          <button
+            onClick={openNew}
+            className="inline-flex items-center gap-2 rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 transition-colors shadow-md shadow-blue-100"
+          >
+            <Plus size={16} />
+            Nuevo Usuario
+          </button>
+        </div>
       </div>
 
       {/* Table */}
@@ -365,7 +421,15 @@ export default function UsuariosPage() {
           <div className="overflow-x-auto">
             <table className="min-w-full divide-y divide-gray-100">
               <thead>
-                <tr className="bg-gray-50">
+                <tr className="bg-gray-50 border-b border-gray-100">
+                  <th className="px-4 py-3 text-left w-10">
+                    <input
+                      type="checkbox"
+                      checked={selectedIds.length > 0 && selectedIds.length === users.length}
+                      onChange={toggleSelectAll}
+                      className="rounded border-gray-300 text-blue-600 focus:ring-blue-500 cursor-pointer"
+                    />
+                  </th>
                   {["Nombre", "Cargo", "Email", "Teléfono", "Perfiles", "Estado", "Frentes", "Acciones"].map(
                     (h) => (
                       <th
@@ -380,7 +444,18 @@ export default function UsuariosPage() {
               </thead>
               <tbody className="divide-y divide-gray-100">
                 {users.map((user) => (
-                  <tr key={user.id} className="hover:bg-gray-50 transition-colors">
+                  <tr 
+                    key={user.id} 
+                    className={`hover:bg-gray-50 transition-colors ${selectedIds.includes(user.id) ? 'bg-blue-50/40' : ''}`}
+                  >
+                    <td className="px-4 py-3">
+                      <input
+                        type="checkbox"
+                        checked={selectedIds.includes(user.id)}
+                        onChange={() => toggleSelectUser(user.id)}
+                        className="rounded border-gray-300 text-blue-600 focus:ring-blue-500 cursor-pointer"
+                      />
+                    </td>
                     <td className="px-4 py-3 text-sm font-medium text-gray-900 whitespace-nowrap">
                       {user.nombre}
                     </td>
@@ -732,6 +807,114 @@ export default function UsuariosPage() {
                   </button>
                 </div>
               </form>
+            </div>
+          </div>
+        </>
+      )}
+      {/* Bulk Assign Modal */}
+      {bulkModalOpen && (
+        <>
+          <div className="fixed inset-0 z-[60] bg-black/40 backdrop-blur-sm" onClick={() => setBulkModalOpen(false)} />
+          <div className="fixed inset-0 z-[70] flex items-center justify-center p-4">
+            <div className="bg-white rounded-xl shadow-2xl w-full max-w-md overflow-hidden">
+              <div className="px-6 py-4 border-b border-gray-100 flex items-center justify-between">
+                <h2 className="text-base font-bold text-gray-900">Asignación Masiva de Frentes</h2>
+                <button onClick={() => setBulkModalOpen(false)} className="text-gray-400 hover:text-gray-600"><X size={18} /></button>
+              </div>
+              <div className="p-6 space-y-4">
+                <p className="text-xs text-gray-500">
+                  Selecciona los frentes que deseas asignar a los <strong>{selectedIds.length}</strong> usuarios seleccionados.
+                </p>
+                <div className="max-h-60 overflow-y-auto border border-gray-100 rounded-lg p-2 space-y-1">
+                  {frentes.map((f) => (
+                    <label key={f.id} className="flex items-center gap-2 p-2 hover:bg-gray-50 rounded cursor-pointer transition-colors">
+                      <input
+                        type="checkbox"
+                        checked={bulkFrentesIds.includes(f.id)}
+                        onChange={(e) => {
+                          if (e.target.checked) setBulkFrentesIds(prev => [...prev, f.id]);
+                          else setBulkFrentesIds(prev => prev.filter(id => id !== f.id));
+                        }}
+                        className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                      />
+                      <div className="min-w-0">
+                        <p className="text-xs font-bold text-gray-800 truncate">{f.nombre}</p>
+                        <p className="text-[10px] text-gray-400 truncate">{f.proyecto.nombre}</p>
+                      </div>
+                    </label>
+                  ))}
+                </div>
+              </div>
+              <div className="px-6 py-4 bg-gray-50 flex gap-3">
+                <button
+                  onClick={() => setBulkModalOpen(false)}
+                  className="flex-1 py-2 rounded-lg border border-gray-200 text-xs font-bold text-gray-600 bg-white hover:bg-gray-50 transition-all"
+                >
+                  Cancelar
+                </button>
+                <button
+                  onClick={handleBulkAssignFrentes}
+                  disabled={saving || bulkFrentesIds.length === 0}
+                  className="flex-1 py-2 rounded-lg bg-indigo-600 text-xs font-bold text-white hover:bg-indigo-700 disabled:opacity-50 shadow-md shadow-indigo-100 transition-all"
+                >
+                  {saving ? "Guardando..." : "Asignar Frentes"}
+                </button>
+              </div>
+            </div>
+          </div>
+        </>
+      )}
+      {/* Bulk Assign Modal */}
+      {bulkModalOpen && (
+        <>
+          <div className="fixed inset-0 z-[60] bg-black/40 backdrop-blur-sm" onClick={() => setBulkModalOpen(false)} />
+          <div className="fixed inset-0 z-[70] flex items-center justify-center p-4">
+            <div className="bg-white rounded-xl shadow-2xl w-full max-w-md overflow-hidden">
+              <div className="px-6 py-4 border-b border-gray-100 flex items-center justify-between">
+                <h2 className="text-base font-bold text-gray-900">Asignación Masiva de Frentes</h2>
+                <button onClick={() => setBulkModalOpen(false)} className="text-gray-400 hover:text-gray-600 transition-colors"><X size={18} /></button>
+              </div>
+              <div className="p-6 space-y-4">
+                <p className="text-xs text-gray-500 leading-relaxed">
+                  Has seleccionado <strong>{selectedIds.length}</strong> usuarios. 
+                  Selecciona los frentes que deseas asignarles de forma masiva:
+                </p>
+                <div className="max-h-60 overflow-y-auto border border-gray-200 rounded-lg p-1 space-y-1 custom-scrollbar">
+                  {frentes.map((f) => (
+                    <label key={f.id} className="flex items-center gap-3 p-2 hover:bg-gray-50 rounded-md cursor-pointer transition-colors group">
+                      <input
+                        type="checkbox"
+                        checked={bulkFrentesIds.includes(f.id)}
+                        onChange={(e) => {
+                          if (e.target.checked) setBulkFrentesIds(prev => [...prev, f.id]);
+                          else setBulkFrentesIds(prev => prev.filter(id => id !== f.id));
+                        }}
+                        className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                      />
+                      <div className="min-w-0">
+                        <p className="text-[11px] font-bold text-gray-800 truncate group-hover:text-blue-600 transition-colors">{f.nombre}</p>
+                        <p className="text-[10px] text-gray-400 truncate uppercase tracking-tighter">{f.proyecto.nombre}</p>
+                      </div>
+                    </label>
+                  ))}
+                </div>
+              </div>
+              <div className="px-6 py-4 bg-gray-50 flex gap-3">
+                <button
+                  onClick={() => setBulkModalOpen(false)}
+                  className="flex-1 py-2.5 rounded-lg border border-gray-200 text-xs font-bold text-gray-600 bg-white hover:bg-gray-50 transition-all"
+                >
+                  Cancelar
+                </button>
+                <button
+                  onClick={handleBulkAssignFrentes}
+                  disabled={saving || bulkFrentesIds.length === 0}
+                  className="flex-1 py-2.5 rounded-lg bg-indigo-600 text-xs font-bold text-white hover:bg-indigo-700 disabled:opacity-50 shadow-md shadow-indigo-200 transition-all flex items-center justify-center gap-2"
+                >
+                  {saving && <Spinner />}
+                  Asignar a {selectedIds.length} usuarios
+                </button>
+              </div>
             </div>
           </div>
         </>

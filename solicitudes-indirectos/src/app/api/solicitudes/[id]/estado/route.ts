@@ -63,7 +63,7 @@ const TRANSICIONES: Record<AccionEstado, TransicionConfig> = {
   },
   APROBAR_FINAL: {
     estadosOrigen: ["APROBACION_FINAL"],
-    permisosPermitidos: ["aprobacion_final_controles"],
+    permisosPermitidos: ["aprobacion_final"],
   },
   REENVIAR: {
     estadosOrigen: ["DEVUELTA", "EN_REVISION"],
@@ -191,10 +191,10 @@ export async function POST(
     }
 
     if (accion === "APROBAR_DIRECTOR") {
-      // Must be the assigned aprobador
-      if (solicitud.aprobadorId && solicitud.aprobadorId !== userId) {
+      // Must be the assigned aprobador (Director de Proyecto)
+      if (solicitud.aprobadorId && solicitud.aprobadorId !== userId && !userRoles.includes("ADMIN")) {
         return Response.json(
-          { error: "Solo el director aprobador asignado puede aprobar esta solicitud" },
+          { error: "Solo el director de proyecto asignado puede aprobar esta solicitud" },
           { status: 403 }
         );
       }
@@ -219,7 +219,25 @@ export async function POST(
       }
     }
 
+    if (accion === "TRAMITAR_OK" || (accion === "DEVOLVER" && solicitud.estado === "EN_TRAMITE_CONTRATOS") || (accion === "REVISAR" && solicitud.estado === "EN_TRAMITE_CONTRATOS")) {
+      // Must be the assigned Contratos user for Tramite
+      if (solicitud.responsableContratosTramiteId && solicitud.responsableContratosTramiteId !== userId && !userRoles.includes("ADMIN")) {
+        return Response.json(
+          { error: "Solo el responsable de contratos asignado para el trámite puede realizar esta acción" },
+          { status: 403 }
+        );
+      }
+    }
+
     if (accion === "AVANZAR_CONTRATOS") {
+      // Must be the assigned Contratos user for Minuta
+      if (solicitud.responsableContratosMinutaId && solicitud.responsableContratosMinutaId !== userId && !userRoles.includes("ADMIN")) {
+        return Response.json(
+          { error: "Solo el responsable de contratos asignado para la creación de minuta puede realizar esta acción" },
+          { status: 403 }
+        );
+      }
+      
       const anexos: unknown[] = (() => { try { return JSON.parse(solicitud.archivosAnexos || "[]"); } catch { return []; } })();
       if (anexos.length === 0) {
         return Response.json(
@@ -230,10 +248,28 @@ export async function POST(
     }
 
     if (accion === "REGISTRAR_ADPRO") {
+      // Must be the assigned Coordinador de Controles
+      if (solicitud.coordinadorControlesId && solicitud.coordinadorControlesId !== userId && !userRoles.includes("ADMIN")) {
+        return Response.json(
+          { error: "Solo el coordinador de controles asignado puede registrar en ADPRO" },
+          { status: 403 }
+        );
+      }
+
       if (!numeroContratoAdpro || numeroContratoAdpro.trim() === "") {
         return Response.json(
           { error: "Se requiere el número de contrato Adpro" },
           { status: 400 }
+        );
+      }
+    }
+
+    if (accion === "APROBAR_FINAL") {
+      // Must be the assigned Director de Controles
+      if (solicitud.directorControlesId && solicitud.directorControlesId !== userId && !userRoles.includes("ADMIN")) {
+        return Response.json(
+          { error: "Solo el director de controles asignado puede dar la aprobación final" },
+          { status: 403 }
         );
       }
     }
@@ -295,23 +331,12 @@ export async function POST(
       }
 
       if (accion === "APROBAR_DIRECTOR") {
-        // Notify solicitante + all CONTRATOS users
-        const allActiveUsers = await prisma.user.findMany({
-          where: { activo: true },
-          select: { id: true, roles: true },
-        });
-        const contratosUsers = allActiveUsers.filter((u) => {
-          try { return (JSON.parse(u.roles || "[]") as string[]).includes("CONTRATOS"); } catch { return false; }
-        });
-        await Promise.all(
-          contratosUsers.map((u: { id: string }) =>
-            notificarAprobadaDirector(
-              numId,
-              solicitud.consecutivo,
-              solicitud.solicitanteId,
-              u.id
-            )
-          )
+        // Notify solicitante + assigned CONTRATOS user for Tramite
+        await notificarAprobadaDirector(
+          numId,
+          solicitud.consecutivo,
+          solicitud.solicitanteId,
+          updated.responsableContratosTramiteId ?? ""
         );
       }
 
@@ -334,33 +359,15 @@ export async function POST(
       }
 
       if (accion === "AVANZAR_CONTRATOS" || accion === "PASAR_CONTROLES") {
-        const allActiveUsers2 = await prisma.user.findMany({
-          where: { activo: true },
-          select: { id: true, roles: true },
-        });
-        const controlesUsers = allActiveUsers2.filter((u) => {
-          try { return (JSON.parse(u.roles || "[]") as string[]).includes("CONTROLES"); } catch { return false; }
-        });
-        await Promise.all(
-          controlesUsers.map((u: { id: string }) =>
-            notificarControles(numId, solicitud.consecutivo, u.id)
-          )
-        );
+        if (updated.coordinadorControlesId) {
+          await notificarControles(numId, solicitud.consecutivo, updated.coordinadorControlesId);
+        }
       }
 
       if (accion === "REGISTRAR_ADPRO") {
-        const allActiveUsers3 = await prisma.user.findMany({
-          where: { activo: true },
-          select: { id: true, roles: true },
-        });
-        const directorControlesUsers = allActiveUsers3.filter((u) => {
-          try { return (JSON.parse(u.roles || "[]") as string[]).includes("DIRECTOR_CONTROLES"); } catch { return false; }
-        });
-        await Promise.all(
-          directorControlesUsers.map((u: { id: string }) =>
-            notificarAdproRegistrado(numId, solicitud.consecutivo, u.id)
-          )
-        );
+        if (updated.directorControlesId) {
+          await notificarAdproRegistrado(numId, solicitud.consecutivo, updated.directorControlesId);
+        }
       }
 
       if (accion === "APROBAR_FINAL") {

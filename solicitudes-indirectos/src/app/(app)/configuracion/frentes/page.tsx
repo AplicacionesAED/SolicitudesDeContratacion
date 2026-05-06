@@ -2,28 +2,36 @@
 
 import { useState, useEffect, useCallback } from "react";
 import { useSession } from "next-auth/react";
-import { MapPin, Users, Settings, Plus, X, Pencil, Trash2 } from "lucide-react";
+import { MapPin, Users, Settings, Plus, X, Pencil, Trash2, LayoutDashboard } from "lucide-react";
 import { Spinner } from "@/components/ui/spinner";
+import Link from "next/link";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
-
-interface FrenteUsuario {
-  userId: string;
-  frenteId: number;
-  user?: { id: string; nombre: string; rol: string; cargo: string | null };
-}
 
 interface User {
   id: string;
   nombre: string;
   roles: string[];
+  cargo?: string | null;
+}
+
+interface FrenteUsuario {
+  userId: string;
+  frenteId: number;
+  user?: User;
 }
 
 interface Frente {
   id: number;
   nombre: string;
   proyecto: { id: number; nombre: string; activo: boolean };
-  aprobadorConfig?: { aprobadorId: string } | null;
+  aprobadorConfig?: {
+    aprobadorId: string;
+    contratosTramiteId?: string | null;
+    contratosMinutaId?: string | null;
+    controlesId?: string | null;
+    directorControlesId?: string | null;
+  } | null;
   usuarios?: FrenteUsuario[];
 }
 
@@ -333,40 +341,26 @@ export default function FrentesPage() {
               ) : (
                 <div className="divide-y divide-gray-100">
                   {project.frentes.map((frente) => (
-                    <div key={frente.id} className="px-5 py-4">
-                      <div className="flex items-start justify-between gap-4">
-                        <div className="flex-1">
-                          <h3 className="text-sm font-semibold text-gray-800 mb-2">{frente.nombre}</h3>
-                          {frente.usuarios && frente.usuarios.length > 0 ? (
-                            <div>
-                              <div className="flex items-center gap-1.5 mb-1.5">
-                                <Users size={13} className="text-gray-400" />
-                                <span className="text-xs font-medium text-gray-500 uppercase tracking-wide">Usuarios asignados</span>
-                              </div>
-                              <div className="flex flex-wrap gap-2">
-                                {frente.usuarios.map((fu) => (
-                                  <span key={fu.userId} className="inline-flex items-center rounded-full bg-gray-100 px-2.5 py-0.5 text-xs text-gray-700">
-                                    {fu.user?.nombre ?? fu.userId}
-                                    {fu.user?.cargo && <span className="ml-1 text-gray-400">— {fu.user.cargo}</span>}
-                                  </span>
-                                ))}
-                              </div>
-                            </div>
-                          ) : (
-                            <p className="text-xs text-gray-400 italic">Sin usuarios asignados</p>
-                          )}
-                        </div>
+                    <div key={frente.id} className="px-5 py-3 hover:bg-gray-50/50 transition-colors">
+                      <div className="flex items-center justify-between gap-4">
+                        <Link
+                          href={`/configuracion/frentes/${frente.id}`}
+                          className="flex-1 text-left group"
+                        >
+                          <h3 className="text-sm font-semibold text-gray-800 group-hover:text-blue-600 transition-colors">
+                            {frente.nombre}
+                          </h3>
+                        </Link>
 
-                        {/* Right side: aprobador badge + actions */}
-                        <div className="shrink-0 flex items-center gap-4">
-                          {frente.aprobadorConfig?.aprobadorId && (
-                            <div className="text-right">
-                              <p className="text-[10px] text-gray-400 font-medium uppercase tracking-wider mb-0.5">Aprobador</p>
-                              <span className="inline-flex items-center rounded-full bg-blue-50 px-2 py-0.5 text-xs font-medium text-blue-700">
-                                {usuarios.find(u => u.id === frente.aprobadorConfig?.aprobadorId)?.nombre ?? "Configurado"}
-                              </span>
-                            </div>
-                          )}
+                        <div className="shrink-0 flex items-center gap-1">
+                          {/* Details button */}
+                          <Link
+                            href={`/configuracion/frentes/${frente.id}`}
+                            title="Ver detalles y configurar aprobadores"
+                            className="inline-flex items-center justify-center h-8 w-8 rounded-md text-blue-600 hover:bg-blue-50 transition-colors"
+                          >
+                            <LayoutDashboard size={16} />
+                          </Link>
 
                           {/* Edit button */}
                           <button

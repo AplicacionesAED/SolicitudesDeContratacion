@@ -40,21 +40,32 @@ export async function GET(request: Request) {
     // frenteId filter is applied in-memory below after fetching (frentesIds is stored as JSON string in SQLite)
 
     // SOLICITANTE and DIRECTOR_PROYECTO only see their own frentes' solicitudes
+    // or solicitudes where they are the solicitante or a responsible party.
+    let userFrenteIds: number[] = [];
     if (!userRoles.some((r) => ROLES_VER_TODAS.includes(r))) {
       const userFrente = await prisma.frenteUsuario.findMany({
         where: { userId },
         select: { frenteId: true },
       });
-      const userFrenteIds = userFrente.map((f: { frenteId: number }) => f.frenteId);
+      userFrenteIds = userFrente.map((f: { frenteId: number }) => f.frenteId);
 
+      // Optimization: if they have no frentes and are not privileged, they only see their own
       if (userFrenteIds.length === 0) {
-        // No frentes assigned — only see own solicitudes
         where.solicitanteId = userId;
       } else {
-        // See all solicitudes in their frentes OR their own
-        // frentesIds is a JSON string in SQLite — in-memory filter applied after fetch
+        // Broad query: items they created OR items where they are responsible.
+        // We will filter by frentes in-memory because frentesIds is a JSON string.
         where.OR = [
           { solicitanteId: userId },
+          { aprobadorId: userId },
+          { responsableContratosTramiteId: userId },
+          { responsableContratosMinutaId: userId },
+          { coordinadorControlesId: userId },
+          { directorControlesId: userId },
+          // We can't easily do "frentesIds contains any of userFrenteIds" in Prisma with a string JSON field
+          // so we'll fetch a bit more and filter in memory.
+          // To avoid fetching the whole DB, we could try to filter by proyectoId if we knew which projects
+          // their frentes belong to, but that's more complex.
         ];
       }
     }
@@ -69,12 +80,39 @@ export async function GET(request: Request) {
       orderBy: { creadoEn: "desc" },
     });
 
-    // In-memory frenteId filter (frentesIds is stored as JSON string in SQLite)
+    // Final granular filtering in-memory
+    if (!userRoles.some((r) => ROLES_VER_TODAS.includes(r))) {
+      solicitudes = solicitudes.filter((s) => {
+        // 1. If I created it or am responsible, I see it (already in DB query, but for safety)
+        if (
+          s.solicitanteId === userId || 
+          s.aprobadorId === userId || 
+          s.responsableContratosTramiteId === userId ||
+          s.responsableContratosMinutaId === userId ||
+          s.coordinadorControlesId === userId ||
+          s.directorControlesId === userId
+        ) return true;
+
+        // 2. If it belongs to one of my frentes, I see it
+        try {
+          const sFrenteIds: number[] = JSON.parse(s.frentesIds || "[]");
+          return sFrenteIds.some(id => userFrenteIds.includes(id));
+        } catch {
+          return false;
+        }
+      });
+    }
+
+    // Explicit frenteId filter from query params
     if (frenteId) {
       const fId = parseInt(frenteId, 10);
       solicitudes = solicitudes.filter((s) => {
-        const ids: number[] = JSON.parse(s.frentesIds || "[]");
-        return ids.includes(fId);
+        try {
+          const ids: number[] = JSON.parse(s.frentesIds || "[]");
+          return ids.includes(fId);
+        } catch {
+          return false;
+        }
       });
     }
 
@@ -127,26 +165,33 @@ export async function POST(request: Request) {
       );
     }
 
-    // Find aprobador: if the solicitante is themselves a DIRECTOR_PROYECTO they self-approve;
-    // otherwise find the DIRECTOR_PROYECTO assigned to the first frente.
-    let aprobadorId: string | null = null;
-    if (userRoles.includes("DIRECTOR_PROYECTO")) {
-      aprobadorId = session.user.id;
-    } else {
-      const firstFrenteId = frentesIds[0];
-      const frenteUsers = await prisma.frenteUsuario.findMany({
-        where: { frenteId: Number(firstFrenteId) },
-        include: { user: { select: { id: true, roles: true, activo: true } } },
-      });
-      const aprobadorUser = frenteUsers.find((fu) => {
-        try {
-          const r: string[] = JSON.parse(fu.user.roles || "[]");
-          return r.includes("DIRECTOR_PROYECTO") && fu.user.activo;
-        } catch {
-          return false;
-        }
-      });
-      aprobadorId = aprobadorUser?.user.id ?? null;
+    // Find configuration for the first frente
+    const firstFrenteId = frentesIds[0];
+    const config = await prisma.aprobadorFrente.findUnique({
+      where: { frenteId: Number(firstFrenteId) }
+    });
+
+    let aprobadorId: string | null = config?.aprobadorId ?? null;
+    
+    // Fallback for first approval: if not configured and the solicitante is themselves a DIRECTOR_PROYECTO, they self-approve;
+    if (!aprobadorId) {
+      if (userRoles.includes("DIRECTOR_PROYECTO")) {
+        aprobadorId = session.user.id;
+      } else {
+        const frenteUsers = await prisma.frenteUsuario.findMany({
+          where: { frenteId: Number(firstFrenteId) },
+          include: { user: { select: { id: true, roles: true, activo: true } } },
+        });
+        const aprobadorUser = frenteUsers.find((fu) => {
+          try {
+            const r: string[] = JSON.parse(fu.user.roles || "[]");
+            return r.includes("DIRECTOR_PROYECTO") && fu.user.activo;
+          } catch {
+            return false;
+          }
+        });
+        aprobadorId = aprobadorUser?.user.id ?? null;
+      }
     }
 
     const anio = new Date().getFullYear();
@@ -171,6 +216,10 @@ export async function POST(request: Request) {
           frentesIds: JSON.stringify(frentesIds || []),
           solicitanteId: session.user.id,
           aprobadorId: aprobadorId ?? null,
+          responsableContratosTramiteId: config?.contratosTramiteId ?? null,
+          responsableContratosMinutaId: config?.contratosMinutaId ?? null,
+          coordinadorControlesId: config?.controlesId ?? null,
+          directorControlesId: config?.directorControlesId ?? null,
           estado: "BORRADOR",
           terceroId: terceroId ?? null,
           descripcionActividad: descripcionActividad ?? null,

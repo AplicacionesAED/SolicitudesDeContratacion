@@ -101,10 +101,14 @@ model FrenteUsuario {
 }
 
 model AprobadorFrente {
-  id          Int    @id @default(autoincrement())
-  frenteId    Int    @unique
-  aprobadorId String
-  frente      Frente @relation(fields: [frenteId], references: [id])
+  id                  Int    @id @default(autoincrement())
+  frenteId            Int    @unique
+  aprobadorId         String // Director Proyecto
+  contratosTramiteId  String?
+  contratosMinutaId   String?
+  controlesId         String? // Coordinador Controles
+  directorControlesId String?
+  frente              Frente @relation(fields: [frenteId], references: [id])
 }
 
 // ─── Terceros / Debida Diligencia ────────────────────────────────────────────
@@ -180,6 +184,11 @@ model Solicitud {
   aprobadorId             String?
   aprobador               User?     @relation("Aprobador", fields: [aprobadorId], references: [id])
   fechaAprobacionDirector DateTime?
+
+  responsableContratosTramiteId String?
+  responsableContratosMinutaId  String?
+  coordinadorControlesId        String?
+  directorControlesId           String?
 
   notaContratacion    String?
   necesitaRevision    Boolean  @default(false)

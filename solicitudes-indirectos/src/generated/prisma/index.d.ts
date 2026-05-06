@@ -9523,18 +9523,30 @@ export namespace Prisma {
     id: number | null
     frenteId: number | null
     aprobadorId: string | null
+    contratosTramiteId: string | null
+    contratosMinutaId: string | null
+    controlesId: string | null
+    directorControlesId: string | null
   }
 
   export type AprobadorFrenteMaxAggregateOutputType = {
     id: number | null
     frenteId: number | null
     aprobadorId: string | null
+    contratosTramiteId: string | null
+    contratosMinutaId: string | null
+    controlesId: string | null
+    directorControlesId: string | null
   }
 
   export type AprobadorFrenteCountAggregateOutputType = {
     id: number
     frenteId: number
     aprobadorId: number
+    contratosTramiteId: number
+    contratosMinutaId: number
+    controlesId: number
+    directorControlesId: number
     _all: number
   }
 
@@ -9553,18 +9565,30 @@ export namespace Prisma {
     id?: true
     frenteId?: true
     aprobadorId?: true
+    contratosTramiteId?: true
+    contratosMinutaId?: true
+    controlesId?: true
+    directorControlesId?: true
   }
 
   export type AprobadorFrenteMaxAggregateInputType = {
     id?: true
     frenteId?: true
     aprobadorId?: true
+    contratosTramiteId?: true
+    contratosMinutaId?: true
+    controlesId?: true
+    directorControlesId?: true
   }
 
   export type AprobadorFrenteCountAggregateInputType = {
     id?: true
     frenteId?: true
     aprobadorId?: true
+    contratosTramiteId?: true
+    contratosMinutaId?: true
+    controlesId?: true
+    directorControlesId?: true
     _all?: true
   }
 
@@ -9658,6 +9682,10 @@ export namespace Prisma {
     id: number
     frenteId: number
     aprobadorId: string
+    contratosTramiteId: string | null
+    contratosMinutaId: string | null
+    controlesId: string | null
+    directorControlesId: string | null
     _count: AprobadorFrenteCountAggregateOutputType | null
     _avg: AprobadorFrenteAvgAggregateOutputType | null
     _sum: AprobadorFrenteSumAggregateOutputType | null
@@ -9683,6 +9711,10 @@ export namespace Prisma {
     id?: boolean
     frenteId?: boolean
     aprobadorId?: boolean
+    contratosTramiteId?: boolean
+    contratosMinutaId?: boolean
+    controlesId?: boolean
+    directorControlesId?: boolean
     frente?: boolean | FrenteDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["aprobadorFrente"]>
 
@@ -9690,6 +9722,10 @@ export namespace Prisma {
     id?: boolean
     frenteId?: boolean
     aprobadorId?: boolean
+    contratosTramiteId?: boolean
+    contratosMinutaId?: boolean
+    controlesId?: boolean
+    directorControlesId?: boolean
   }
 
 
@@ -9707,6 +9743,10 @@ export namespace Prisma {
       id: number
       frenteId: number
       aprobadorId: string
+      contratosTramiteId: string | null
+      contratosMinutaId: string | null
+      controlesId: string | null
+      directorControlesId: string | null
     }, ExtArgs["result"]["aprobadorFrente"]>
     composites: {}
   }
@@ -10131,6 +10171,10 @@ export namespace Prisma {
     readonly id: FieldRef<"AprobadorFrente", 'Int'>
     readonly frenteId: FieldRef<"AprobadorFrente", 'Int'>
     readonly aprobadorId: FieldRef<"AprobadorFrente", 'String'>
+    readonly contratosTramiteId: FieldRef<"AprobadorFrente", 'String'>
+    readonly contratosMinutaId: FieldRef<"AprobadorFrente", 'String'>
+    readonly controlesId: FieldRef<"AprobadorFrente", 'String'>
+    readonly directorControlesId: FieldRef<"AprobadorFrente", 'String'>
   }
     
 
@@ -11610,6 +11654,10 @@ export namespace Prisma {
     archivosAnexos: string | null
     aprobadorId: string | null
     fechaAprobacionDirector: Date | null
+    responsableContratosTramiteId: string | null
+    responsableContratosMinutaId: string | null
+    coordinadorControlesId: string | null
+    directorControlesId: string | null
     notaContratacion: string | null
     necesitaRevision: boolean | null
     numeroContratoAdpro: string | null
@@ -11656,6 +11704,10 @@ export namespace Prisma {
     archivosAnexos: string | null
     aprobadorId: string | null
     fechaAprobacionDirector: Date | null
+    responsableContratosTramiteId: string | null
+    responsableContratosMinutaId: string | null
+    coordinadorControlesId: string | null
+    directorControlesId: string | null
     notaContratacion: string | null
     necesitaRevision: boolean | null
     numeroContratoAdpro: string | null
@@ -11702,6 +11754,10 @@ export namespace Prisma {
     archivosAnexos: number
     aprobadorId: number
     fechaAprobacionDirector: number
+    responsableContratosTramiteId: number
+    responsableContratosMinutaId: number
+    coordinadorControlesId: number
+    directorControlesId: number
     notaContratacion: number
     necesitaRevision: number
     numeroContratoAdpro: number
@@ -11764,6 +11820,10 @@ export namespace Prisma {
     archivosAnexos?: true
     aprobadorId?: true
     fechaAprobacionDirector?: true
+    responsableContratosTramiteId?: true
+    responsableContratosMinutaId?: true
+    coordinadorControlesId?: true
+    directorControlesId?: true
     notaContratacion?: true
     necesitaRevision?: true
     numeroContratoAdpro?: true
@@ -11810,6 +11870,10 @@ export namespace Prisma {
     archivosAnexos?: true
     aprobadorId?: true
     fechaAprobacionDirector?: true
+    responsableContratosTramiteId?: true
+    responsableContratosMinutaId?: true
+    coordinadorControlesId?: true
+    directorControlesId?: true
     notaContratacion?: true
     necesitaRevision?: true
     numeroContratoAdpro?: true
@@ -11856,6 +11920,10 @@ export namespace Prisma {
     archivosAnexos?: true
     aprobadorId?: true
     fechaAprobacionDirector?: true
+    responsableContratosTramiteId?: true
+    responsableContratosMinutaId?: true
+    coordinadorControlesId?: true
+    directorControlesId?: true
     notaContratacion?: true
     necesitaRevision?: true
     numeroContratoAdpro?: true
@@ -11989,6 +12057,10 @@ export namespace Prisma {
     archivosAnexos: string
     aprobadorId: string | null
     fechaAprobacionDirector: Date | null
+    responsableContratosTramiteId: string | null
+    responsableContratosMinutaId: string | null
+    coordinadorControlesId: string | null
+    directorControlesId: string | null
     notaContratacion: string | null
     necesitaRevision: boolean
     numeroContratoAdpro: string | null
@@ -12054,6 +12126,10 @@ export namespace Prisma {
     archivosAnexos?: boolean
     aprobadorId?: boolean
     fechaAprobacionDirector?: boolean
+    responsableContratosTramiteId?: boolean
+    responsableContratosMinutaId?: boolean
+    coordinadorControlesId?: boolean
+    directorControlesId?: boolean
     notaContratacion?: boolean
     necesitaRevision?: boolean
     numeroContratoAdpro?: boolean
@@ -12106,6 +12182,10 @@ export namespace Prisma {
     archivosAnexos?: boolean
     aprobadorId?: boolean
     fechaAprobacionDirector?: boolean
+    responsableContratosTramiteId?: boolean
+    responsableContratosMinutaId?: boolean
+    coordinadorControlesId?: boolean
+    directorControlesId?: boolean
     notaContratacion?: boolean
     necesitaRevision?: boolean
     numeroContratoAdpro?: boolean
@@ -12172,6 +12252,10 @@ export namespace Prisma {
       archivosAnexos: string
       aprobadorId: string | null
       fechaAprobacionDirector: Date | null
+      responsableContratosTramiteId: string | null
+      responsableContratosMinutaId: string | null
+      coordinadorControlesId: string | null
+      directorControlesId: string | null
       notaContratacion: string | null
       necesitaRevision: boolean
       numeroContratoAdpro: string | null
@@ -12644,6 +12728,10 @@ export namespace Prisma {
     readonly archivosAnexos: FieldRef<"Solicitud", 'String'>
     readonly aprobadorId: FieldRef<"Solicitud", 'String'>
     readonly fechaAprobacionDirector: FieldRef<"Solicitud", 'DateTime'>
+    readonly responsableContratosTramiteId: FieldRef<"Solicitud", 'String'>
+    readonly responsableContratosMinutaId: FieldRef<"Solicitud", 'String'>
+    readonly coordinadorControlesId: FieldRef<"Solicitud", 'String'>
+    readonly directorControlesId: FieldRef<"Solicitud", 'String'>
     readonly notaContratacion: FieldRef<"Solicitud", 'String'>
     readonly necesitaRevision: FieldRef<"Solicitud", 'Boolean'>
     readonly numeroContratoAdpro: FieldRef<"Solicitud", 'String'>
@@ -19186,7 +19274,11 @@ export namespace Prisma {
   export const AprobadorFrenteScalarFieldEnum: {
     id: 'id',
     frenteId: 'frenteId',
-    aprobadorId: 'aprobadorId'
+    aprobadorId: 'aprobadorId',
+    contratosTramiteId: 'contratosTramiteId',
+    contratosMinutaId: 'contratosMinutaId',
+    controlesId: 'controlesId',
+    directorControlesId: 'directorControlesId'
   };
 
   export type AprobadorFrenteScalarFieldEnum = (typeof AprobadorFrenteScalarFieldEnum)[keyof typeof AprobadorFrenteScalarFieldEnum]
@@ -19248,6 +19340,10 @@ export namespace Prisma {
     archivosAnexos: 'archivosAnexos',
     aprobadorId: 'aprobadorId',
     fechaAprobacionDirector: 'fechaAprobacionDirector',
+    responsableContratosTramiteId: 'responsableContratosTramiteId',
+    responsableContratosMinutaId: 'responsableContratosMinutaId',
+    coordinadorControlesId: 'coordinadorControlesId',
+    directorControlesId: 'directorControlesId',
     notaContratacion: 'notaContratacion',
     necesitaRevision: 'necesitaRevision',
     numeroContratoAdpro: 'numeroContratoAdpro',
@@ -19896,6 +19992,10 @@ export namespace Prisma {
     id?: IntFilter<"AprobadorFrente"> | number
     frenteId?: IntFilter<"AprobadorFrente"> | number
     aprobadorId?: StringFilter<"AprobadorFrente"> | string
+    contratosTramiteId?: StringNullableFilter<"AprobadorFrente"> | string | null
+    contratosMinutaId?: StringNullableFilter<"AprobadorFrente"> | string | null
+    controlesId?: StringNullableFilter<"AprobadorFrente"> | string | null
+    directorControlesId?: StringNullableFilter<"AprobadorFrente"> | string | null
     frente?: XOR<FrenteRelationFilter, FrenteWhereInput>
   }
 
@@ -19903,6 +20003,10 @@ export namespace Prisma {
     id?: SortOrder
     frenteId?: SortOrder
     aprobadorId?: SortOrder
+    contratosTramiteId?: SortOrderInput | SortOrder
+    contratosMinutaId?: SortOrderInput | SortOrder
+    controlesId?: SortOrderInput | SortOrder
+    directorControlesId?: SortOrderInput | SortOrder
     frente?: FrenteOrderByWithRelationInput
   }
 
@@ -19913,6 +20017,10 @@ export namespace Prisma {
     OR?: AprobadorFrenteWhereInput[]
     NOT?: AprobadorFrenteWhereInput | AprobadorFrenteWhereInput[]
     aprobadorId?: StringFilter<"AprobadorFrente"> | string
+    contratosTramiteId?: StringNullableFilter<"AprobadorFrente"> | string | null
+    contratosMinutaId?: StringNullableFilter<"AprobadorFrente"> | string | null
+    controlesId?: StringNullableFilter<"AprobadorFrente"> | string | null
+    directorControlesId?: StringNullableFilter<"AprobadorFrente"> | string | null
     frente?: XOR<FrenteRelationFilter, FrenteWhereInput>
   }, "id" | "frenteId">
 
@@ -19920,6 +20028,10 @@ export namespace Prisma {
     id?: SortOrder
     frenteId?: SortOrder
     aprobadorId?: SortOrder
+    contratosTramiteId?: SortOrderInput | SortOrder
+    contratosMinutaId?: SortOrderInput | SortOrder
+    controlesId?: SortOrderInput | SortOrder
+    directorControlesId?: SortOrderInput | SortOrder
     _count?: AprobadorFrenteCountOrderByAggregateInput
     _avg?: AprobadorFrenteAvgOrderByAggregateInput
     _max?: AprobadorFrenteMaxOrderByAggregateInput
@@ -19934,6 +20046,10 @@ export namespace Prisma {
     id?: IntWithAggregatesFilter<"AprobadorFrente"> | number
     frenteId?: IntWithAggregatesFilter<"AprobadorFrente"> | number
     aprobadorId?: StringWithAggregatesFilter<"AprobadorFrente"> | string
+    contratosTramiteId?: StringNullableWithAggregatesFilter<"AprobadorFrente"> | string | null
+    contratosMinutaId?: StringNullableWithAggregatesFilter<"AprobadorFrente"> | string | null
+    controlesId?: StringNullableWithAggregatesFilter<"AprobadorFrente"> | string | null
+    directorControlesId?: StringNullableWithAggregatesFilter<"AprobadorFrente"> | string | null
   }
 
   export type TerceroWhereInput = {
@@ -20069,6 +20185,10 @@ export namespace Prisma {
     archivosAnexos?: StringFilter<"Solicitud"> | string
     aprobadorId?: StringNullableFilter<"Solicitud"> | string | null
     fechaAprobacionDirector?: DateTimeNullableFilter<"Solicitud"> | Date | string | null
+    responsableContratosTramiteId?: StringNullableFilter<"Solicitud"> | string | null
+    responsableContratosMinutaId?: StringNullableFilter<"Solicitud"> | string | null
+    coordinadorControlesId?: StringNullableFilter<"Solicitud"> | string | null
+    directorControlesId?: StringNullableFilter<"Solicitud"> | string | null
     notaContratacion?: StringNullableFilter<"Solicitud"> | string | null
     necesitaRevision?: BoolFilter<"Solicitud"> | boolean
     numeroContratoAdpro?: StringNullableFilter<"Solicitud"> | string | null
@@ -20120,6 +20240,10 @@ export namespace Prisma {
     archivosAnexos?: SortOrder
     aprobadorId?: SortOrderInput | SortOrder
     fechaAprobacionDirector?: SortOrderInput | SortOrder
+    responsableContratosTramiteId?: SortOrderInput | SortOrder
+    responsableContratosMinutaId?: SortOrderInput | SortOrder
+    coordinadorControlesId?: SortOrderInput | SortOrder
+    directorControlesId?: SortOrderInput | SortOrder
     notaContratacion?: SortOrderInput | SortOrder
     necesitaRevision?: SortOrder
     numeroContratoAdpro?: SortOrderInput | SortOrder
@@ -20174,6 +20298,10 @@ export namespace Prisma {
     archivosAnexos?: StringFilter<"Solicitud"> | string
     aprobadorId?: StringNullableFilter<"Solicitud"> | string | null
     fechaAprobacionDirector?: DateTimeNullableFilter<"Solicitud"> | Date | string | null
+    responsableContratosTramiteId?: StringNullableFilter<"Solicitud"> | string | null
+    responsableContratosMinutaId?: StringNullableFilter<"Solicitud"> | string | null
+    coordinadorControlesId?: StringNullableFilter<"Solicitud"> | string | null
+    directorControlesId?: StringNullableFilter<"Solicitud"> | string | null
     notaContratacion?: StringNullableFilter<"Solicitud"> | string | null
     necesitaRevision?: BoolFilter<"Solicitud"> | boolean
     numeroContratoAdpro?: StringNullableFilter<"Solicitud"> | string | null
@@ -20225,6 +20353,10 @@ export namespace Prisma {
     archivosAnexos?: SortOrder
     aprobadorId?: SortOrderInput | SortOrder
     fechaAprobacionDirector?: SortOrderInput | SortOrder
+    responsableContratosTramiteId?: SortOrderInput | SortOrder
+    responsableContratosMinutaId?: SortOrderInput | SortOrder
+    coordinadorControlesId?: SortOrderInput | SortOrder
+    directorControlesId?: SortOrderInput | SortOrder
     notaContratacion?: SortOrderInput | SortOrder
     necesitaRevision?: SortOrder
     numeroContratoAdpro?: SortOrderInput | SortOrder
@@ -20279,6 +20411,10 @@ export namespace Prisma {
     archivosAnexos?: StringWithAggregatesFilter<"Solicitud"> | string
     aprobadorId?: StringNullableWithAggregatesFilter<"Solicitud"> | string | null
     fechaAprobacionDirector?: DateTimeNullableWithAggregatesFilter<"Solicitud"> | Date | string | null
+    responsableContratosTramiteId?: StringNullableWithAggregatesFilter<"Solicitud"> | string | null
+    responsableContratosMinutaId?: StringNullableWithAggregatesFilter<"Solicitud"> | string | null
+    coordinadorControlesId?: StringNullableWithAggregatesFilter<"Solicitud"> | string | null
+    directorControlesId?: StringNullableWithAggregatesFilter<"Solicitud"> | string | null
     notaContratacion?: StringNullableWithAggregatesFilter<"Solicitud"> | string | null
     necesitaRevision?: BoolWithAggregatesFilter<"Solicitud"> | boolean
     numeroContratoAdpro?: StringNullableWithAggregatesFilter<"Solicitud"> | string | null
@@ -21132,6 +21268,10 @@ export namespace Prisma {
 
   export type AprobadorFrenteCreateInput = {
     aprobadorId: string
+    contratosTramiteId?: string | null
+    contratosMinutaId?: string | null
+    controlesId?: string | null
+    directorControlesId?: string | null
     frente: FrenteCreateNestedOneWithoutAprobadorConfigInput
   }
 
@@ -21139,10 +21279,18 @@ export namespace Prisma {
     id?: number
     frenteId: number
     aprobadorId: string
+    contratosTramiteId?: string | null
+    contratosMinutaId?: string | null
+    controlesId?: string | null
+    directorControlesId?: string | null
   }
 
   export type AprobadorFrenteUpdateInput = {
     aprobadorId?: StringFieldUpdateOperationsInput | string
+    contratosTramiteId?: NullableStringFieldUpdateOperationsInput | string | null
+    contratosMinutaId?: NullableStringFieldUpdateOperationsInput | string | null
+    controlesId?: NullableStringFieldUpdateOperationsInput | string | null
+    directorControlesId?: NullableStringFieldUpdateOperationsInput | string | null
     frente?: FrenteUpdateOneRequiredWithoutAprobadorConfigNestedInput
   }
 
@@ -21150,22 +21298,38 @@ export namespace Prisma {
     id?: IntFieldUpdateOperationsInput | number
     frenteId?: IntFieldUpdateOperationsInput | number
     aprobadorId?: StringFieldUpdateOperationsInput | string
+    contratosTramiteId?: NullableStringFieldUpdateOperationsInput | string | null
+    contratosMinutaId?: NullableStringFieldUpdateOperationsInput | string | null
+    controlesId?: NullableStringFieldUpdateOperationsInput | string | null
+    directorControlesId?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type AprobadorFrenteCreateManyInput = {
     id?: number
     frenteId: number
     aprobadorId: string
+    contratosTramiteId?: string | null
+    contratosMinutaId?: string | null
+    controlesId?: string | null
+    directorControlesId?: string | null
   }
 
   export type AprobadorFrenteUpdateManyMutationInput = {
     aprobadorId?: StringFieldUpdateOperationsInput | string
+    contratosTramiteId?: NullableStringFieldUpdateOperationsInput | string | null
+    contratosMinutaId?: NullableStringFieldUpdateOperationsInput | string | null
+    controlesId?: NullableStringFieldUpdateOperationsInput | string | null
+    directorControlesId?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type AprobadorFrenteUncheckedUpdateManyInput = {
     id?: IntFieldUpdateOperationsInput | number
     frenteId?: IntFieldUpdateOperationsInput | number
     aprobadorId?: StringFieldUpdateOperationsInput | string
+    contratosTramiteId?: NullableStringFieldUpdateOperationsInput | string | null
+    contratosMinutaId?: NullableStringFieldUpdateOperationsInput | string | null
+    controlesId?: NullableStringFieldUpdateOperationsInput | string | null
+    directorControlesId?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type TerceroCreateInput = {
@@ -21308,6 +21472,10 @@ export namespace Prisma {
     archivoBEP?: string | null
     archivosAnexos?: string
     fechaAprobacionDirector?: Date | string | null
+    responsableContratosTramiteId?: string | null
+    responsableContratosMinutaId?: string | null
+    coordinadorControlesId?: string | null
+    directorControlesId?: string | null
     notaContratacion?: string | null
     necesitaRevision?: boolean
     numeroContratoAdpro?: string | null
@@ -21359,6 +21527,10 @@ export namespace Prisma {
     archivosAnexos?: string
     aprobadorId?: string | null
     fechaAprobacionDirector?: Date | string | null
+    responsableContratosTramiteId?: string | null
+    responsableContratosMinutaId?: string | null
+    coordinadorControlesId?: string | null
+    directorControlesId?: string | null
     notaContratacion?: string | null
     necesitaRevision?: boolean
     numeroContratoAdpro?: string | null
@@ -21403,6 +21575,10 @@ export namespace Prisma {
     archivoBEP?: NullableStringFieldUpdateOperationsInput | string | null
     archivosAnexos?: StringFieldUpdateOperationsInput | string
     fechaAprobacionDirector?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    responsableContratosTramiteId?: NullableStringFieldUpdateOperationsInput | string | null
+    responsableContratosMinutaId?: NullableStringFieldUpdateOperationsInput | string | null
+    coordinadorControlesId?: NullableStringFieldUpdateOperationsInput | string | null
+    directorControlesId?: NullableStringFieldUpdateOperationsInput | string | null
     notaContratacion?: NullableStringFieldUpdateOperationsInput | string | null
     necesitaRevision?: BoolFieldUpdateOperationsInput | boolean
     numeroContratoAdpro?: NullableStringFieldUpdateOperationsInput | string | null
@@ -21454,6 +21630,10 @@ export namespace Prisma {
     archivosAnexos?: StringFieldUpdateOperationsInput | string
     aprobadorId?: NullableStringFieldUpdateOperationsInput | string | null
     fechaAprobacionDirector?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    responsableContratosTramiteId?: NullableStringFieldUpdateOperationsInput | string | null
+    responsableContratosMinutaId?: NullableStringFieldUpdateOperationsInput | string | null
+    coordinadorControlesId?: NullableStringFieldUpdateOperationsInput | string | null
+    directorControlesId?: NullableStringFieldUpdateOperationsInput | string | null
     notaContratacion?: NullableStringFieldUpdateOperationsInput | string | null
     necesitaRevision?: BoolFieldUpdateOperationsInput | boolean
     numeroContratoAdpro?: NullableStringFieldUpdateOperationsInput | string | null
@@ -21502,6 +21682,10 @@ export namespace Prisma {
     archivosAnexos?: string
     aprobadorId?: string | null
     fechaAprobacionDirector?: Date | string | null
+    responsableContratosTramiteId?: string | null
+    responsableContratosMinutaId?: string | null
+    coordinadorControlesId?: string | null
+    directorControlesId?: string | null
     notaContratacion?: string | null
     necesitaRevision?: boolean
     numeroContratoAdpro?: string | null
@@ -21544,6 +21728,10 @@ export namespace Prisma {
     archivoBEP?: NullableStringFieldUpdateOperationsInput | string | null
     archivosAnexos?: StringFieldUpdateOperationsInput | string
     fechaAprobacionDirector?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    responsableContratosTramiteId?: NullableStringFieldUpdateOperationsInput | string | null
+    responsableContratosMinutaId?: NullableStringFieldUpdateOperationsInput | string | null
+    coordinadorControlesId?: NullableStringFieldUpdateOperationsInput | string | null
+    directorControlesId?: NullableStringFieldUpdateOperationsInput | string | null
     notaContratacion?: NullableStringFieldUpdateOperationsInput | string | null
     necesitaRevision?: BoolFieldUpdateOperationsInput | boolean
     numeroContratoAdpro?: NullableStringFieldUpdateOperationsInput | string | null
@@ -21590,6 +21778,10 @@ export namespace Prisma {
     archivosAnexos?: StringFieldUpdateOperationsInput | string
     aprobadorId?: NullableStringFieldUpdateOperationsInput | string | null
     fechaAprobacionDirector?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    responsableContratosTramiteId?: NullableStringFieldUpdateOperationsInput | string | null
+    responsableContratosMinutaId?: NullableStringFieldUpdateOperationsInput | string | null
+    coordinadorControlesId?: NullableStringFieldUpdateOperationsInput | string | null
+    directorControlesId?: NullableStringFieldUpdateOperationsInput | string | null
     notaContratacion?: NullableStringFieldUpdateOperationsInput | string | null
     necesitaRevision?: BoolFieldUpdateOperationsInput | boolean
     numeroContratoAdpro?: NullableStringFieldUpdateOperationsInput | string | null
@@ -22476,6 +22668,10 @@ export namespace Prisma {
     id?: SortOrder
     frenteId?: SortOrder
     aprobadorId?: SortOrder
+    contratosTramiteId?: SortOrder
+    contratosMinutaId?: SortOrder
+    controlesId?: SortOrder
+    directorControlesId?: SortOrder
   }
 
   export type AprobadorFrenteAvgOrderByAggregateInput = {
@@ -22487,12 +22683,20 @@ export namespace Prisma {
     id?: SortOrder
     frenteId?: SortOrder
     aprobadorId?: SortOrder
+    contratosTramiteId?: SortOrder
+    contratosMinutaId?: SortOrder
+    controlesId?: SortOrder
+    directorControlesId?: SortOrder
   }
 
   export type AprobadorFrenteMinOrderByAggregateInput = {
     id?: SortOrder
     frenteId?: SortOrder
     aprobadorId?: SortOrder
+    contratosTramiteId?: SortOrder
+    contratosMinutaId?: SortOrder
+    controlesId?: SortOrder
+    directorControlesId?: SortOrder
   }
 
   export type AprobadorFrenteSumOrderByAggregateInput = {
@@ -22622,6 +22826,10 @@ export namespace Prisma {
     archivosAnexos?: SortOrder
     aprobadorId?: SortOrder
     fechaAprobacionDirector?: SortOrder
+    responsableContratosTramiteId?: SortOrder
+    responsableContratosMinutaId?: SortOrder
+    coordinadorControlesId?: SortOrder
+    directorControlesId?: SortOrder
     notaContratacion?: SortOrder
     necesitaRevision?: SortOrder
     numeroContratoAdpro?: SortOrder
@@ -22675,6 +22883,10 @@ export namespace Prisma {
     archivosAnexos?: SortOrder
     aprobadorId?: SortOrder
     fechaAprobacionDirector?: SortOrder
+    responsableContratosTramiteId?: SortOrder
+    responsableContratosMinutaId?: SortOrder
+    coordinadorControlesId?: SortOrder
+    directorControlesId?: SortOrder
     notaContratacion?: SortOrder
     necesitaRevision?: SortOrder
     numeroContratoAdpro?: SortOrder
@@ -22721,6 +22933,10 @@ export namespace Prisma {
     archivosAnexos?: SortOrder
     aprobadorId?: SortOrder
     fechaAprobacionDirector?: SortOrder
+    responsableContratosTramiteId?: SortOrder
+    responsableContratosMinutaId?: SortOrder
+    coordinadorControlesId?: SortOrder
+    directorControlesId?: SortOrder
     notaContratacion?: SortOrder
     necesitaRevision?: SortOrder
     numeroContratoAdpro?: SortOrder
@@ -24497,6 +24713,10 @@ export namespace Prisma {
     archivoBEP?: string | null
     archivosAnexos?: string
     fechaAprobacionDirector?: Date | string | null
+    responsableContratosTramiteId?: string | null
+    responsableContratosMinutaId?: string | null
+    coordinadorControlesId?: string | null
+    directorControlesId?: string | null
     notaContratacion?: string | null
     necesitaRevision?: boolean
     numeroContratoAdpro?: string | null
@@ -24546,6 +24766,10 @@ export namespace Prisma {
     archivosAnexos?: string
     aprobadorId?: string | null
     fechaAprobacionDirector?: Date | string | null
+    responsableContratosTramiteId?: string | null
+    responsableContratosMinutaId?: string | null
+    coordinadorControlesId?: string | null
+    directorControlesId?: string | null
     notaContratacion?: string | null
     necesitaRevision?: boolean
     numeroContratoAdpro?: string | null
@@ -24600,6 +24824,10 @@ export namespace Prisma {
     archivoBEP?: string | null
     archivosAnexos?: string
     fechaAprobacionDirector?: Date | string | null
+    responsableContratosTramiteId?: string | null
+    responsableContratosMinutaId?: string | null
+    coordinadorControlesId?: string | null
+    directorControlesId?: string | null
     notaContratacion?: string | null
     necesitaRevision?: boolean
     numeroContratoAdpro?: string | null
@@ -24649,6 +24877,10 @@ export namespace Prisma {
     archivoBEP?: string | null
     archivosAnexos?: string
     fechaAprobacionDirector?: Date | string | null
+    responsableContratosTramiteId?: string | null
+    responsableContratosMinutaId?: string | null
+    coordinadorControlesId?: string | null
+    directorControlesId?: string | null
     notaContratacion?: string | null
     necesitaRevision?: boolean
     numeroContratoAdpro?: string | null
@@ -24856,6 +25088,10 @@ export namespace Prisma {
     archivosAnexos?: StringFilter<"Solicitud"> | string
     aprobadorId?: StringNullableFilter<"Solicitud"> | string | null
     fechaAprobacionDirector?: DateTimeNullableFilter<"Solicitud"> | Date | string | null
+    responsableContratosTramiteId?: StringNullableFilter<"Solicitud"> | string | null
+    responsableContratosMinutaId?: StringNullableFilter<"Solicitud"> | string | null
+    coordinadorControlesId?: StringNullableFilter<"Solicitud"> | string | null
+    directorControlesId?: StringNullableFilter<"Solicitud"> | string | null
     notaContratacion?: StringNullableFilter<"Solicitud"> | string | null
     necesitaRevision?: BoolFilter<"Solicitud"> | boolean
     numeroContratoAdpro?: StringNullableFilter<"Solicitud"> | string | null
@@ -25045,11 +25281,19 @@ export namespace Prisma {
 
   export type AprobadorFrenteCreateWithoutFrenteInput = {
     aprobadorId: string
+    contratosTramiteId?: string | null
+    contratosMinutaId?: string | null
+    controlesId?: string | null
+    directorControlesId?: string | null
   }
 
   export type AprobadorFrenteUncheckedCreateWithoutFrenteInput = {
     id?: number
     aprobadorId: string
+    contratosTramiteId?: string | null
+    contratosMinutaId?: string | null
+    controlesId?: string | null
+    directorControlesId?: string | null
   }
 
   export type AprobadorFrenteCreateOrConnectWithoutFrenteInput = {
@@ -25108,11 +25352,19 @@ export namespace Prisma {
 
   export type AprobadorFrenteUpdateWithoutFrenteInput = {
     aprobadorId?: StringFieldUpdateOperationsInput | string
+    contratosTramiteId?: NullableStringFieldUpdateOperationsInput | string | null
+    contratosMinutaId?: NullableStringFieldUpdateOperationsInput | string | null
+    controlesId?: NullableStringFieldUpdateOperationsInput | string | null
+    directorControlesId?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type AprobadorFrenteUncheckedUpdateWithoutFrenteInput = {
     id?: IntFieldUpdateOperationsInput | number
     aprobadorId?: StringFieldUpdateOperationsInput | string
+    contratosTramiteId?: NullableStringFieldUpdateOperationsInput | string | null
+    contratosMinutaId?: NullableStringFieldUpdateOperationsInput | string | null
+    controlesId?: NullableStringFieldUpdateOperationsInput | string | null
+    directorControlesId?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type UserCreateWithoutFrentesAsignadosInput = {
@@ -25341,6 +25593,10 @@ export namespace Prisma {
     archivoBEP?: string | null
     archivosAnexos?: string
     fechaAprobacionDirector?: Date | string | null
+    responsableContratosTramiteId?: string | null
+    responsableContratosMinutaId?: string | null
+    coordinadorControlesId?: string | null
+    directorControlesId?: string | null
     notaContratacion?: string | null
     necesitaRevision?: boolean
     numeroContratoAdpro?: string | null
@@ -25390,6 +25646,10 @@ export namespace Prisma {
     archivosAnexos?: string
     aprobadorId?: string | null
     fechaAprobacionDirector?: Date | string | null
+    responsableContratosTramiteId?: string | null
+    responsableContratosMinutaId?: string | null
+    coordinadorControlesId?: string | null
+    directorControlesId?: string | null
     notaContratacion?: string | null
     necesitaRevision?: boolean
     numeroContratoAdpro?: string | null
@@ -25845,6 +26105,10 @@ export namespace Prisma {
     archivoBEP?: string | null
     archivosAnexos?: string
     fechaAprobacionDirector?: Date | string | null
+    responsableContratosTramiteId?: string | null
+    responsableContratosMinutaId?: string | null
+    coordinadorControlesId?: string | null
+    directorControlesId?: string | null
     notaContratacion?: string | null
     necesitaRevision?: boolean
     numeroContratoAdpro?: string | null
@@ -25895,6 +26159,10 @@ export namespace Prisma {
     archivosAnexos?: string
     aprobadorId?: string | null
     fechaAprobacionDirector?: Date | string | null
+    responsableContratosTramiteId?: string | null
+    responsableContratosMinutaId?: string | null
+    coordinadorControlesId?: string | null
+    directorControlesId?: string | null
     notaContratacion?: string | null
     necesitaRevision?: boolean
     numeroContratoAdpro?: string | null
@@ -26005,6 +26273,10 @@ export namespace Prisma {
     archivoBEP?: NullableStringFieldUpdateOperationsInput | string | null
     archivosAnexos?: StringFieldUpdateOperationsInput | string
     fechaAprobacionDirector?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    responsableContratosTramiteId?: NullableStringFieldUpdateOperationsInput | string | null
+    responsableContratosMinutaId?: NullableStringFieldUpdateOperationsInput | string | null
+    coordinadorControlesId?: NullableStringFieldUpdateOperationsInput | string | null
+    directorControlesId?: NullableStringFieldUpdateOperationsInput | string | null
     notaContratacion?: NullableStringFieldUpdateOperationsInput | string | null
     necesitaRevision?: BoolFieldUpdateOperationsInput | boolean
     numeroContratoAdpro?: NullableStringFieldUpdateOperationsInput | string | null
@@ -26055,6 +26327,10 @@ export namespace Prisma {
     archivosAnexos?: StringFieldUpdateOperationsInput | string
     aprobadorId?: NullableStringFieldUpdateOperationsInput | string | null
     fechaAprobacionDirector?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    responsableContratosTramiteId?: NullableStringFieldUpdateOperationsInput | string | null
+    responsableContratosMinutaId?: NullableStringFieldUpdateOperationsInput | string | null
+    coordinadorControlesId?: NullableStringFieldUpdateOperationsInput | string | null
+    directorControlesId?: NullableStringFieldUpdateOperationsInput | string | null
     notaContratacion?: NullableStringFieldUpdateOperationsInput | string | null
     necesitaRevision?: BoolFieldUpdateOperationsInput | boolean
     numeroContratoAdpro?: NullableStringFieldUpdateOperationsInput | string | null
@@ -26155,6 +26431,10 @@ export namespace Prisma {
     archivoBEP?: string | null
     archivosAnexos?: string
     fechaAprobacionDirector?: Date | string | null
+    responsableContratosTramiteId?: string | null
+    responsableContratosMinutaId?: string | null
+    coordinadorControlesId?: string | null
+    directorControlesId?: string | null
     notaContratacion?: string | null
     necesitaRevision?: boolean
     numeroContratoAdpro?: string | null
@@ -26205,6 +26485,10 @@ export namespace Prisma {
     archivosAnexos?: string
     aprobadorId?: string | null
     fechaAprobacionDirector?: Date | string | null
+    responsableContratosTramiteId?: string | null
+    responsableContratosMinutaId?: string | null
+    coordinadorControlesId?: string | null
+    directorControlesId?: string | null
     notaContratacion?: string | null
     necesitaRevision?: boolean
     numeroContratoAdpro?: string | null
@@ -26318,6 +26602,10 @@ export namespace Prisma {
     archivoBEP?: NullableStringFieldUpdateOperationsInput | string | null
     archivosAnexos?: StringFieldUpdateOperationsInput | string
     fechaAprobacionDirector?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    responsableContratosTramiteId?: NullableStringFieldUpdateOperationsInput | string | null
+    responsableContratosMinutaId?: NullableStringFieldUpdateOperationsInput | string | null
+    coordinadorControlesId?: NullableStringFieldUpdateOperationsInput | string | null
+    directorControlesId?: NullableStringFieldUpdateOperationsInput | string | null
     notaContratacion?: NullableStringFieldUpdateOperationsInput | string | null
     necesitaRevision?: BoolFieldUpdateOperationsInput | boolean
     numeroContratoAdpro?: NullableStringFieldUpdateOperationsInput | string | null
@@ -26368,6 +26656,10 @@ export namespace Prisma {
     archivosAnexos?: StringFieldUpdateOperationsInput | string
     aprobadorId?: NullableStringFieldUpdateOperationsInput | string | null
     fechaAprobacionDirector?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    responsableContratosTramiteId?: NullableStringFieldUpdateOperationsInput | string | null
+    responsableContratosMinutaId?: NullableStringFieldUpdateOperationsInput | string | null
+    coordinadorControlesId?: NullableStringFieldUpdateOperationsInput | string | null
+    directorControlesId?: NullableStringFieldUpdateOperationsInput | string | null
     notaContratacion?: NullableStringFieldUpdateOperationsInput | string | null
     necesitaRevision?: BoolFieldUpdateOperationsInput | boolean
     numeroContratoAdpro?: NullableStringFieldUpdateOperationsInput | string | null
@@ -26800,6 +27092,10 @@ export namespace Prisma {
     archivosAnexos?: string
     aprobadorId?: string | null
     fechaAprobacionDirector?: Date | string | null
+    responsableContratosTramiteId?: string | null
+    responsableContratosMinutaId?: string | null
+    coordinadorControlesId?: string | null
+    directorControlesId?: string | null
     notaContratacion?: string | null
     necesitaRevision?: boolean
     numeroContratoAdpro?: string | null
@@ -26845,6 +27141,10 @@ export namespace Prisma {
     archivoBEP?: string | null
     archivosAnexos?: string
     fechaAprobacionDirector?: Date | string | null
+    responsableContratosTramiteId?: string | null
+    responsableContratosMinutaId?: string | null
+    coordinadorControlesId?: string | null
+    directorControlesId?: string | null
     notaContratacion?: string | null
     necesitaRevision?: boolean
     numeroContratoAdpro?: string | null
@@ -26968,6 +27268,10 @@ export namespace Prisma {
     archivoBEP?: NullableStringFieldUpdateOperationsInput | string | null
     archivosAnexos?: StringFieldUpdateOperationsInput | string
     fechaAprobacionDirector?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    responsableContratosTramiteId?: NullableStringFieldUpdateOperationsInput | string | null
+    responsableContratosMinutaId?: NullableStringFieldUpdateOperationsInput | string | null
+    coordinadorControlesId?: NullableStringFieldUpdateOperationsInput | string | null
+    directorControlesId?: NullableStringFieldUpdateOperationsInput | string | null
     notaContratacion?: NullableStringFieldUpdateOperationsInput | string | null
     necesitaRevision?: BoolFieldUpdateOperationsInput | boolean
     numeroContratoAdpro?: NullableStringFieldUpdateOperationsInput | string | null
@@ -27017,6 +27321,10 @@ export namespace Prisma {
     archivosAnexos?: StringFieldUpdateOperationsInput | string
     aprobadorId?: NullableStringFieldUpdateOperationsInput | string | null
     fechaAprobacionDirector?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    responsableContratosTramiteId?: NullableStringFieldUpdateOperationsInput | string | null
+    responsableContratosMinutaId?: NullableStringFieldUpdateOperationsInput | string | null
+    coordinadorControlesId?: NullableStringFieldUpdateOperationsInput | string | null
+    directorControlesId?: NullableStringFieldUpdateOperationsInput | string | null
     notaContratacion?: NullableStringFieldUpdateOperationsInput | string | null
     necesitaRevision?: BoolFieldUpdateOperationsInput | boolean
     numeroContratoAdpro?: NullableStringFieldUpdateOperationsInput | string | null
@@ -27064,6 +27372,10 @@ export namespace Prisma {
     archivosAnexos?: StringFieldUpdateOperationsInput | string
     aprobadorId?: NullableStringFieldUpdateOperationsInput | string | null
     fechaAprobacionDirector?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    responsableContratosTramiteId?: NullableStringFieldUpdateOperationsInput | string | null
+    responsableContratosMinutaId?: NullableStringFieldUpdateOperationsInput | string | null
+    coordinadorControlesId?: NullableStringFieldUpdateOperationsInput | string | null
+    directorControlesId?: NullableStringFieldUpdateOperationsInput | string | null
     notaContratacion?: NullableStringFieldUpdateOperationsInput | string | null
     necesitaRevision?: BoolFieldUpdateOperationsInput | boolean
     numeroContratoAdpro?: NullableStringFieldUpdateOperationsInput | string | null
@@ -27106,6 +27418,10 @@ export namespace Prisma {
     archivoBEP?: NullableStringFieldUpdateOperationsInput | string | null
     archivosAnexos?: StringFieldUpdateOperationsInput | string
     fechaAprobacionDirector?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    responsableContratosTramiteId?: NullableStringFieldUpdateOperationsInput | string | null
+    responsableContratosMinutaId?: NullableStringFieldUpdateOperationsInput | string | null
+    coordinadorControlesId?: NullableStringFieldUpdateOperationsInput | string | null
+    directorControlesId?: NullableStringFieldUpdateOperationsInput | string | null
     notaContratacion?: NullableStringFieldUpdateOperationsInput | string | null
     necesitaRevision?: BoolFieldUpdateOperationsInput | boolean
     numeroContratoAdpro?: NullableStringFieldUpdateOperationsInput | string | null
@@ -27155,6 +27471,10 @@ export namespace Prisma {
     archivoBEP?: NullableStringFieldUpdateOperationsInput | string | null
     archivosAnexos?: StringFieldUpdateOperationsInput | string
     fechaAprobacionDirector?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    responsableContratosTramiteId?: NullableStringFieldUpdateOperationsInput | string | null
+    responsableContratosMinutaId?: NullableStringFieldUpdateOperationsInput | string | null
+    coordinadorControlesId?: NullableStringFieldUpdateOperationsInput | string | null
+    directorControlesId?: NullableStringFieldUpdateOperationsInput | string | null
     notaContratacion?: NullableStringFieldUpdateOperationsInput | string | null
     necesitaRevision?: BoolFieldUpdateOperationsInput | boolean
     numeroContratoAdpro?: NullableStringFieldUpdateOperationsInput | string | null
@@ -27202,6 +27522,10 @@ export namespace Prisma {
     archivoBEP?: NullableStringFieldUpdateOperationsInput | string | null
     archivosAnexos?: StringFieldUpdateOperationsInput | string
     fechaAprobacionDirector?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    responsableContratosTramiteId?: NullableStringFieldUpdateOperationsInput | string | null
+    responsableContratosMinutaId?: NullableStringFieldUpdateOperationsInput | string | null
+    coordinadorControlesId?: NullableStringFieldUpdateOperationsInput | string | null
+    directorControlesId?: NullableStringFieldUpdateOperationsInput | string | null
     notaContratacion?: NullableStringFieldUpdateOperationsInput | string | null
     necesitaRevision?: BoolFieldUpdateOperationsInput | boolean
     numeroContratoAdpro?: NullableStringFieldUpdateOperationsInput | string | null
@@ -27347,6 +27671,10 @@ export namespace Prisma {
     archivosAnexos?: string
     aprobadorId?: string | null
     fechaAprobacionDirector?: Date | string | null
+    responsableContratosTramiteId?: string | null
+    responsableContratosMinutaId?: string | null
+    coordinadorControlesId?: string | null
+    directorControlesId?: string | null
     notaContratacion?: string | null
     necesitaRevision?: boolean
     numeroContratoAdpro?: string | null
@@ -27389,6 +27717,10 @@ export namespace Prisma {
     archivoBEP?: NullableStringFieldUpdateOperationsInput | string | null
     archivosAnexos?: StringFieldUpdateOperationsInput | string
     fechaAprobacionDirector?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    responsableContratosTramiteId?: NullableStringFieldUpdateOperationsInput | string | null
+    responsableContratosMinutaId?: NullableStringFieldUpdateOperationsInput | string | null
+    coordinadorControlesId?: NullableStringFieldUpdateOperationsInput | string | null
+    directorControlesId?: NullableStringFieldUpdateOperationsInput | string | null
     notaContratacion?: NullableStringFieldUpdateOperationsInput | string | null
     necesitaRevision?: BoolFieldUpdateOperationsInput | boolean
     numeroContratoAdpro?: NullableStringFieldUpdateOperationsInput | string | null
@@ -27438,6 +27770,10 @@ export namespace Prisma {
     archivosAnexos?: StringFieldUpdateOperationsInput | string
     aprobadorId?: NullableStringFieldUpdateOperationsInput | string | null
     fechaAprobacionDirector?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    responsableContratosTramiteId?: NullableStringFieldUpdateOperationsInput | string | null
+    responsableContratosMinutaId?: NullableStringFieldUpdateOperationsInput | string | null
+    coordinadorControlesId?: NullableStringFieldUpdateOperationsInput | string | null
+    directorControlesId?: NullableStringFieldUpdateOperationsInput | string | null
     notaContratacion?: NullableStringFieldUpdateOperationsInput | string | null
     necesitaRevision?: BoolFieldUpdateOperationsInput | boolean
     numeroContratoAdpro?: NullableStringFieldUpdateOperationsInput | string | null
@@ -27485,6 +27821,10 @@ export namespace Prisma {
     archivosAnexos?: StringFieldUpdateOperationsInput | string
     aprobadorId?: NullableStringFieldUpdateOperationsInput | string | null
     fechaAprobacionDirector?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    responsableContratosTramiteId?: NullableStringFieldUpdateOperationsInput | string | null
+    responsableContratosMinutaId?: NullableStringFieldUpdateOperationsInput | string | null
+    coordinadorControlesId?: NullableStringFieldUpdateOperationsInput | string | null
+    directorControlesId?: NullableStringFieldUpdateOperationsInput | string | null
     notaContratacion?: NullableStringFieldUpdateOperationsInput | string | null
     necesitaRevision?: BoolFieldUpdateOperationsInput | boolean
     numeroContratoAdpro?: NullableStringFieldUpdateOperationsInput | string | null
