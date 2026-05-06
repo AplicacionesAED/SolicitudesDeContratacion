@@ -25,26 +25,35 @@ export const authOptions: NextAuthOptions = {
       where: { email: credentials.email },
     });
 
-    if (!user) return null;
+    if (!user) {
+      console.log("Usuario no encontrado:", credentials.email);
+      return null;
+    }
 
-    // Validar contraseña
+    console.log("Usuario encontrado:", user.email, "Hash:", user.password);
+
     const isValid = await bcrypt.compare(credentials.password, user.password!);
+    console.log("Resultado bcrypt.compare:", isValid);
+
     if (!isValid) {
       console.log("Contraseña inválida para", credentials.email);
       return null;
     }
-    console.log("User encontrado:", user);
-    console.log("Password en DB:", user.password);
 
+    if (!user.activo) {
+      console.log("Usuario inactivo:", credentials.email);
+      return null;
+    }
 
     return {
       id: user.id,
       email: user.email,
       name: user.nombre,
       rol: user.rol,
+      roles: JSON.parse(user.roles || '["SOLICITANTE"]'),
     };
-    
   },
+
 
     }),
   ],
