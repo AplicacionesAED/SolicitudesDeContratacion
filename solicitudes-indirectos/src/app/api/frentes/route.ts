@@ -61,3 +61,54 @@ export async function POST(request: Request) {
     return Response.json({ error: "Error interno del servidor" }, { status: 500 });
   }
 }
+
+export async function PATCH(request: Request) {
+  try {
+    const session = await getServerSession(authOptions);
+    const sessionRoles: string[] = session?.user?.roles ?? (session?.user?.rol ? [session.user.rol] : []);
+    if (!session?.user || !sessionRoles.includes("ADMIN")) {
+      return Response.json({ error: "No autorizado" }, { status: 403 });
+    }
+
+    const { id, nombre, proyectoId } = await request.json();
+    if (!id) {
+      return Response.json({ error: "El ID del frente es requerido" }, { status: 400 });
+    }
+
+    const frente = await prisma.frente.update({
+      where: { id: Number(id) },
+      data: {
+        ...(nombre ? { nombre: nombre.trim() } : {}),
+        ...(proyectoId ? { proyectoId: Number(proyectoId) } : {}),
+      },
+      include: { proyecto: { select: { id: true, nombre: true, activo: true } } },
+    });
+
+    return Response.json(frente);
+  } catch (error) {
+    console.error("PATCH /api/frentes error:", error);
+    return Response.json({ error: "Error interno del servidor" }, { status: 500 });
+  }
+}
+
+export async function DELETE(request: Request) {
+  try {
+    const session = await getServerSession(authOptions);
+    const sessionRoles: string[] = session?.user?.roles ?? (session?.user?.rol ? [session.user.rol] : []);
+    if (!session?.user || !sessionRoles.includes("ADMIN")) {
+      return Response.json({ error: "No autorizado" }, { status: 403 });
+    }
+
+    const { id } = await request.json();
+    if (!id) {
+      return Response.json({ error: "El ID del frente es requerido" }, { status: 400 });
+    }
+
+    await prisma.frente.delete({ where: { id: Number(id) } });
+
+    return Response.json({ message: "Frente eliminado correctamente" });
+  } catch (error) {
+    console.error("DELETE /api/frentes error:", error);
+    return Response.json({ error: "Error interno del servidor" }, { status: 500 });
+  }
+}

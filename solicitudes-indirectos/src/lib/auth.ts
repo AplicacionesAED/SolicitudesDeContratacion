@@ -51,6 +51,7 @@ export const authOptions: NextAuthOptions = {
       name: user.nombre,
       rol: user.rol,
       roles: JSON.parse(user.roles || '["SOLICITANTE"]'),
+      funcionalidadesAdicionales: JSON.parse(user.funcionalidadesAdicionales || '[]'),
     };
   },
 
@@ -66,12 +67,13 @@ export const authOptions: NextAuthOptions = {
         token.rol = ((user as any).roles ?? ["SOLICITANTE"])[0];
         token.cargo = (user as any).cargo;
         token.telefono = (user as any).telefono;
+        token.funcionalidadesAdicionales = (user as any).funcionalidadesAdicionales ?? [];
       } else if (token.id) {
         // Subsequent requests — always refresh roles from DB so changes take effect immediately
         try {
           const dbUser = await prisma.user.findUnique({
             where: { id: token.id as string },
-            select: { roles: true, rol: true, cargo: true, telefono: true, activo: true },
+            select: { roles: true, rol: true, cargo: true, telefono: true, activo: true, funcionalidadesAdicionales: true },
           });
           if (dbUser && dbUser.activo) {
             let parsedRoles: string[];
@@ -81,6 +83,11 @@ export const authOptions: NextAuthOptions = {
             token.rol = parsedRoles[0] ?? "SOLICITANTE";
             token.cargo = dbUser.cargo ?? undefined;
             token.telefono = dbUser.telefono ?? undefined;
+            try {
+              token.funcionalidadesAdicionales = JSON.parse(dbUser.funcionalidadesAdicionales || "[]");
+            } catch {
+              token.funcionalidadesAdicionales = [];
+            }
           }
         } catch {
           // DB unavailable — keep existing token values
@@ -95,6 +102,7 @@ export const authOptions: NextAuthOptions = {
         session.user.rol = (token.roles as string[])[0] ?? "";
         session.user.cargo = token.cargo as string;
         session.user.telefono = token.telefono as string;
+        session.user.funcionalidadesAdicionales = (token.funcionalidadesAdicionales as string[]) ?? [];
       }
       return session;
     },

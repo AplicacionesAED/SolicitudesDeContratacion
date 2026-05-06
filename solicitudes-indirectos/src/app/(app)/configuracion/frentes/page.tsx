@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback } from "react";
 import { useSession } from "next-auth/react";
-import { MapPin, Users, Settings, Plus, X } from "lucide-react";
+import { MapPin, Users, Settings, Plus, X, Pencil, Trash2 } from "lucide-react";
 import { Spinner } from "@/components/ui/spinner";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
@@ -39,13 +39,27 @@ export default function FrentesPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  // Modals
+  // Modals — crear proyecto
   const [proyectoModal, setProyectoModal] = useState(false);
-  const [frenteModal, setFrenteModal] = useState(false);
   const [proyectoNombre, setProyectoNombre] = useState("");
+
+  // Modals — crear frente
+  const [frenteModal, setFrenteModal] = useState(false);
   const [frenteNombre, setFrenteNombre] = useState("");
   const [frenteProyectoId, setFrenteProyectoId] = useState<number | "">("");
+
+  // Modal — editar frente
+  const [editModal, setEditModal] = useState(false);
+  const [editFrente, setEditFrente] = useState<Frente | null>(null);
+  const [editNombre, setEditNombre] = useState("");
+  const [editProyectoId, setEditProyectoId] = useState<number | "">("");
+
+  // Modal — confirmar eliminación
+  const [deleteModal, setDeleteModal] = useState(false);
+  const [deleteFrente, setDeleteFrente] = useState<Frente | null>(null);
+
   const [saving, setSaving] = useState(false);
+  const [deleting, setDeleting] = useState(false);
   const [formError, setFormError] = useState<string | null>(null);
 
   const fetchData = useCallback(async () => {
@@ -70,6 +84,7 @@ export default function FrentesPage() {
 
   useEffect(() => { fetchData(); }, [fetchData]);
 
+  // ── Crear proyecto ──────────────────────────────────────────────────────────
   async function crearProyecto(e: React.FormEvent) {
     e.preventDefault();
     setFormError(null);
@@ -92,6 +107,7 @@ export default function FrentesPage() {
     }
   }
 
+  // ── Crear frente ────────────────────────────────────────────────────────────
   async function crearFrente(e: React.FormEvent) {
     e.preventDefault();
     setFormError(null);
@@ -115,6 +131,71 @@ export default function FrentesPage() {
     }
   }
 
+  // ── Editar frente ───────────────────────────────────────────────────────────
+  function openEditModal(frente: Frente) {
+    setEditFrente(frente);
+    setEditNombre(frente.nombre);
+    setEditProyectoId(frente.proyecto.id);
+    setFormError(null);
+    setEditModal(true);
+  }
+
+  async function editarFrente(e: React.FormEvent) {
+    e.preventDefault();
+    if (!editFrente) return;
+    setFormError(null);
+    setSaving(true);
+    try {
+      const res = await fetch("/api/frentes", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          id: editFrente.id,
+          nombre: editNombre,
+          proyectoId: editProyectoId,
+        }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error ?? "Error al editar frente");
+      setEditModal(false);
+      setEditFrente(null);
+      fetchData();
+    } catch (e) {
+      setFormError(e instanceof Error ? e.message : "Error desconocido");
+    } finally {
+      setSaving(false);
+    }
+  }
+
+  // ── Eliminar frente ─────────────────────────────────────────────────────────
+  function openDeleteModal(frente: Frente) {
+    setDeleteFrente(frente);
+    setDeleteModal(true);
+  }
+
+  async function eliminarFrente() {
+    if (!deleteFrente) return;
+    setDeleting(true);
+    try {
+      const res = await fetch("/api/frentes", {
+        method: "DELETE",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id: deleteFrente.id }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error ?? "Error al eliminar frente");
+      setDeleteModal(false);
+      setDeleteFrente(null);
+      fetchData();
+    } catch (e) {
+      // show error inside delete modal via alert (simple approach)
+      alert(e instanceof Error ? e.message : "Error desconocido");
+    } finally {
+      setDeleting(false);
+    }
+  }
+
+  // ── Guards ──────────────────────────────────────────────────────────────────
   if (userRole && userRole !== "ADMIN") {
     return (
       <div className="flex items-center justify-center min-h-[40vh]">
@@ -126,7 +207,7 @@ export default function FrentesPage() {
     );
   }
 
-  // Group frentes by project
+  // ── Group frentes by project ────────────────────────────────────────────────
   const byProject: Record<string, { proyectoId: number; proyectoNombre: string; activo: boolean; frentes: Frente[] }> = {};
   for (const f of frentes) {
     const key = String(f.proyecto.id);
@@ -135,7 +216,6 @@ export default function FrentesPage() {
     }
     byProject[key].frentes.push(f);
   }
-  // Also include projects that have no frentes yet
   for (const p of proyectos) {
     if (!byProject[String(p.id)]) {
       byProject[String(p.id)] = { proyectoId: p.id, proyectoNombre: p.nombre, activo: p.activo, frentes: [] };
@@ -143,8 +223,10 @@ export default function FrentesPage() {
   }
   const projects = Object.values(byProject).sort((a, b) => a.proyectoNombre.localeCompare(b.proyectoNombre));
 
+  // ── Render ──────────────────────────────────────────────────────────────────
   return (
     <div className="max-w-5xl mx-auto space-y-5">
+      {/* Header */}
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
           <h1 className="text-2xl font-bold text-gray-900">Proyectos y Frentes</h1>
@@ -168,6 +250,7 @@ export default function FrentesPage() {
         </div>
       </div>
 
+      {/* Content */}
       {loading ? (
         <div className="flex items-center justify-center py-16"><Spinner /></div>
       ) : error ? (
@@ -242,12 +325,34 @@ export default function FrentesPage() {
                             <p className="text-xs text-gray-400 italic">Sin usuarios asignados</p>
                           )}
                         </div>
-                        {frente.aprobadorConfig?.aprobadorId && (
-                          <div className="shrink-0 text-right">
-                            <p className="text-xs text-gray-400 mb-0.5">Aprobador</p>
-                            <span className="inline-flex items-center rounded-full bg-blue-50 px-2.5 py-0.5 text-xs font-medium text-blue-700">Configurado</span>
-                          </div>
-                        )}
+
+                        {/* Right side: aprobador badge + actions */}
+                        <div className="shrink-0 flex items-center gap-2">
+                          {frente.aprobadorConfig?.aprobadorId && (
+                            <div className="text-right">
+                              <p className="text-xs text-gray-400 mb-0.5">Aprobador</p>
+                              <span className="inline-flex items-center rounded-full bg-blue-50 px-2.5 py-0.5 text-xs font-medium text-blue-700">Configurado</span>
+                            </div>
+                          )}
+
+                          {/* Edit button */}
+                          <button
+                            onClick={() => openEditModal(frente)}
+                            title="Editar frente"
+                            className="inline-flex items-center justify-center h-8 w-8 rounded-md text-gray-400 hover:text-blue-600 hover:bg-blue-50 transition-colors"
+                          >
+                            <Pencil size={14} />
+                          </button>
+
+                          {/* Delete button */}
+                          <button
+                            onClick={() => openDeleteModal(frente)}
+                            title="Eliminar frente"
+                            className="inline-flex items-center justify-center h-8 w-8 rounded-md text-gray-400 hover:text-red-600 hover:bg-red-50 transition-colors"
+                          >
+                            <Trash2 size={14} />
+                          </button>
+                        </div>
                       </div>
                     </div>
                   ))}
@@ -258,7 +363,7 @@ export default function FrentesPage() {
         </div>
       )}
 
-      {/* Modal: Nuevo Proyecto */}
+      {/* ── Modal: Nuevo Proyecto ─────────────────────────────────────────────── */}
       {proyectoModal && (
         <>
           <div className="fixed inset-0 z-40 bg-black/40" onClick={() => setProyectoModal(false)} />
@@ -294,7 +399,7 @@ export default function FrentesPage() {
         </>
       )}
 
-      {/* Modal: Nuevo Frente */}
+      {/* ── Modal: Nuevo Frente ───────────────────────────────────────────────── */}
       {frenteModal && (
         <>
           <div className="fixed inset-0 z-40 bg-black/40" onClick={() => setFrenteModal(false)} />
@@ -338,6 +443,103 @@ export default function FrentesPage() {
                   </button>
                 </div>
               </form>
+            </div>
+          </div>
+        </>
+      )}
+
+      {/* ── Modal: Editar Frente ──────────────────────────────────────────────── */}
+      {editModal && editFrente && (
+        <>
+          <div className="fixed inset-0 z-40 bg-black/40" onClick={() => setEditModal(false)} />
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+            <div className="bg-white rounded-xl shadow-xl w-full max-w-sm">
+              <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100">
+                <h2 className="text-base font-semibold text-gray-900">Editar Frente</h2>
+                <button onClick={() => setEditModal(false)} className="p-1.5 rounded-md text-gray-400 hover:text-gray-600 hover:bg-gray-100"><X size={16} /></button>
+              </div>
+              <form onSubmit={editarFrente} className="px-6 py-4 space-y-4">
+                {formError && <div className="rounded-lg bg-red-50 border border-red-200 px-4 py-3 text-sm text-red-700">{formError}</div>}
+                <div>
+                  <label className="block text-xs font-medium text-gray-700 mb-1">Proyecto <span className="text-red-500">*</span></label>
+                  <select
+                    required
+                    value={editProyectoId}
+                    onChange={(e) => setEditProyectoId(Number(e.target.value))}
+                    className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  >
+                    <option value="">Seleccionar proyecto...</option>
+                    {proyectos.map((p) => (
+                      <option key={p.id} value={p.id}>{p.nombre}</option>
+                    ))}
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-xs font-medium text-gray-700 mb-1">Nombre del Frente <span className="text-red-500">*</span></label>
+                  <input
+                    required
+                    value={editNombre}
+                    onChange={(e) => setEditNombre(e.target.value)}
+                    className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    placeholder="Ej. NORTE 1"
+                    autoFocus
+                  />
+                </div>
+                <div className="flex justify-end gap-3">
+                  <button type="button" onClick={() => setEditModal(false)} className="rounded-lg border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50">Cancelar</button>
+                  <button type="submit" disabled={saving} className="inline-flex items-center gap-2 rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 disabled:opacity-50">
+                    {saving && <Spinner size="sm" />}
+                    Guardar cambios
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </>
+      )}
+
+      {/* ── Modal: Confirmar Eliminación ──────────────────────────────────────── */}
+      {deleteModal && deleteFrente && (
+        <>
+          <div className="fixed inset-0 z-40 bg-black/40" onClick={() => !deleting && setDeleteModal(false)} />
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+            <div className="bg-white rounded-xl shadow-xl w-full max-w-sm">
+              <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100">
+                <h2 className="text-base font-semibold text-gray-900">Eliminar Frente</h2>
+                <button
+                  onClick={() => setDeleteModal(false)}
+                  disabled={deleting}
+                  className="p-1.5 rounded-md text-gray-400 hover:text-gray-600 hover:bg-gray-100 disabled:opacity-50"
+                >
+                  <X size={16} />
+                </button>
+              </div>
+              <div className="px-6 py-5 space-y-4">
+                <p className="text-sm text-gray-600">
+                  ¿Estás seguro de que deseas eliminar el frente{" "}
+                  <span className="font-semibold text-gray-900">"{deleteFrente.nombre}"</span>?
+                  Esta acción no se puede deshacer.
+                </p>
+                <div className="flex justify-end gap-3">
+                  <button
+                    type="button"
+                    onClick={() => setDeleteModal(false)}
+                    disabled={deleting}
+                    className="rounded-lg border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50"
+                  >
+                    Cancelar
+                  </button>
+                  <button
+                    type="button"
+                    onClick={eliminarFrente}
+                    disabled={deleting}
+                    className="inline-flex items-center gap-2 rounded-lg bg-red-600 px-4 py-2 text-sm font-medium text-white hover:bg-red-700 disabled:opacity-50"
+                  >
+                    {deleting && <Spinner size="sm" />}
+                    Eliminar
+                  </button>
+                </div>
+              </div>
             </div>
           </div>
         </>

@@ -159,6 +159,7 @@ exports.Prisma.UserScalarFieldEnum = {
   roles: 'roles',
   activo: 'activo',
   image: 'image',
+  funcionalidadesAdicionales: 'funcionalidadesAdicionales',
   creadoEn: 'creadoEn',
   actualizadoEn: 'actualizadoEn'
 };

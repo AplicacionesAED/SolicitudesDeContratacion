@@ -17,6 +17,7 @@ import {
   Send,
   CheckSquare,
   Square,
+  X,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -50,6 +51,7 @@ interface Tercero {
   correoContacto?: string | null;
   tipoContrato: string;
   aprobadoDebidaDiligencia: boolean;
+  confidencialidad: boolean;
 }
 
 // ─── Zod Schema ───────────────────────────────────────────────────────────────
@@ -64,7 +66,6 @@ const schema = z.object({
   valorFinal: z.number({ error: "Ingresa un valor válido" }).positive("El valor debe ser mayor a 0"),
   asunto: z.string().min(1, "El asunto es obligatorio"),
   // Sección 5 sub-form
-  creacionTercero: z.boolean(),
   contratanteNombre: z.string().min(1, "El nombre del contratante es obligatorio"),
   contratanteNit: z.string().min(1, "El NIT del contratante es obligatorio"),
   alcance: z.string().optional(),
@@ -277,7 +278,6 @@ export default function NuevaContratoPage() {
       formaPago: "",
       valorFinal: undefined,
       asunto: "",
-      creacionTercero: false,
       contratanteNombre: "AED CONSTRUCTORES S.A.S",
       contratanteNit: "901237628-1",
       alcance: "",
@@ -362,11 +362,22 @@ export default function NuevaContratoPage() {
   }, [watchFrentesIds, selectedTercero, watchDescripcion, frentes, setValue]);
 
   // ── Filtered terceros ─────────────────────────────────────────────────────────
-  const filteredTerceros = terceros.filter((t) => {
+    const filteredTerceros = terceros.filter((t) => {
+    // Solo mostrar si cumple ambas condiciones
+    if (!t.aprobadoDebidaDiligencia || !t.confidencialidad) {
+      return false;
+    }
+
+    // Si no hay búsqueda, ya pasó el filtro de condiciones
     if (!terceroSearch) return true;
+
     const q = terceroSearch.toLowerCase();
-    return t.razonSocial.toLowerCase().includes(q) || t.nit.toLowerCase().includes(q);
+    return (
+      t.razonSocial.toLowerCase().includes(q) ||
+      t.nit.toLowerCase().includes(q)
+    );
   });
+
 
   // ── Validate files ────────────────────────────────────────────────────────────
   function validateFiles(): boolean {
@@ -397,7 +408,6 @@ export default function NuevaContratoPage() {
       valorFinal: data.valorFinal,
       tipoContrato: data.tipoContrato,
       asunto: data.asunto,
-      creacionTercero: data.creacionTercero,
       contratanteNombre: data.contratanteNombre,
       contratanteNit: data.contratanteNit,
       alcance: data.alcance,
@@ -623,6 +633,7 @@ export default function NuevaContratoPage() {
         </div>
 
         {/* 1.2 Tercero */}
+        {/* 1.2 Tercero */}
         <div>
           <label className="text-sm font-medium text-gray-700 block mb-1.5">
             Nombre del Tercero (Contratista) <span className="text-red-500">*</span>
@@ -631,62 +642,113 @@ export default function NuevaContratoPage() {
             <div className="flex items-center gap-2 text-sm text-gray-400">
               <Spinner size="sm" /> Cargando contratistas…
             </div>
-          ) : terceros.length === 0 ? (
-            <div className="flex items-center gap-2 text-sm text-amber-700 bg-amber-50 border border-amber-200 rounded-lg px-3 py-2">
-              <AlertCircle size={14} />
-              El contratista no ha completado la debida diligencia.{" "}
-              <a href="/terceros" className="underline font-medium">
-                Ir al módulo de Terceros.
-              </a>
-            </div>
           ) : (
-            <div className="space-y-2">
-              <input
-                type="search"
-                value={terceroSearch}
-                onChange={(e) => setTerceroSearch(e.target.value)}
-                placeholder="Buscar por razón social o NIT…"
-                className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-              />
-              <Controller
-                name="terceroId"
-                control={control}
-                render={({ field }) => (
-                  <div className="max-h-48 overflow-y-auto space-y-1 border border-gray-200 rounded-lg p-1">
-                    {filteredTerceros.length === 0 && (
-                      <p className="text-sm text-gray-400 text-center py-3">Sin resultados</p>
-                    )}
-                    {filteredTerceros.map((t) => (
-                      <label
-                        key={t.id}
-                        className={`flex items-center gap-2.5 rounded-md px-3 py-2 cursor-pointer transition-colors ${
-                          field.value === t.id
-                            ? "bg-blue-50 border border-blue-300"
-                            : "hover:bg-gray-50 border border-transparent"
-                        }`}
-                      >
+            <Controller
+              name="terceroId"
+              control={control}
+              render={({ field }) => {
+                const [open, setOpen] = useState(false);
+                const selected = terceros.find((t) => t.id === field.value) ?? null;
+
+                const filtered = terceros.filter((t) => {
+                  if (!t.aprobadoDebidaDiligencia || !t.confidencialidad) return false;
+                  if (!terceroSearch) return true;
+                  const q = terceroSearch.toLowerCase();
+                  return (
+                    t.razonSocial.toLowerCase().includes(q) ||
+                    t.nit.toLowerCase().includes(q)
+                  );
+                });
+
+                function handleSelect(t: Tercero) {
+                  field.onChange(t.id);
+                  setTerceroSearch("");
+                  setOpen(false);
+                }
+
+                function handleClear() {
+                  field.onChange(undefined);
+                  setTerceroSearch("");
+                  setOpen(true);
+                }
+
+                return (
+                  <div className="relative">
+                    {/* Input / trigger */}
+                    <div
+                      className={`flex items-center gap-2 rounded-md border px-3 py-2 bg-white cursor-text ${
+                        errors.terceroId ? "border-red-400" : "border-gray-300"
+                      } ${open ? "ring-2 ring-blue-500 border-blue-500" : "hover:border-gray-400"}`}
+                      onClick={() => !selected && setOpen(true)}
+                    >
+                      {selected ? (
+                        <>
+                          <span className="flex-1 text-sm text-gray-900 font-medium truncate">
+                            {selected.razonSocial}
+                            <span className="text-gray-400 font-normal ml-1.5">— NIT {selected.nit}</span>
+                          </span>
+                          <button
+                            type="button"
+                            onClick={handleClear}
+                            className="shrink-0 text-gray-400 hover:text-gray-600"
+                          >
+                            <X size={14} />
+                          </button>
+                        </>
+                      ) : (
                         <input
-                          type="radio"
-                          name="terceroId"
-                          checked={field.value === t.id}
-                          onChange={() => field.onChange(t.id)}
-                          className="h-4 w-4 border-gray-300 text-blue-600 focus:ring-blue-500"
+                          autoFocus={open}
+                          type="text"
+                          value={terceroSearch}
+                          onChange={(e) => {
+                            setTerceroSearch(e.target.value);
+                            setOpen(true);
+                          }}
+                          onFocus={() => setOpen(true)}
+                          placeholder="Buscar por razón social o NIT…"
+                          className="flex-1 text-sm text-gray-900 placeholder:text-gray-400 outline-none bg-transparent"
                         />
-                        <span className="text-sm text-gray-800">
-                          <span className="font-medium">{t.razonSocial}</span>
-                          <span className="text-gray-500 ml-1.5">— NIT {t.nit}</span>
-                        </span>
-                      </label>
-                    ))}
+                      )}
+                    </div>
+
+                    {/* Dropdown */}
+                    {open && !selected && (
+                      <div className="absolute z-20 mt-1 w-full bg-white border border-gray-200 rounded-lg shadow-lg max-h-52 overflow-y-auto">
+                        {filtered.length === 0 ? (
+                          <div className="flex items-center gap-2 px-3 py-3 text-xs text-amber-700 bg-amber-50">
+                            <AlertCircle size={13} className="shrink-0" />
+                            <span>
+                              No encontrado.{" "}
+                              <a href="/terceros" className="underline font-medium">
+                                Ir al módulo de Terceros.
+                              </a>
+                            </span>
+                          </div>
+                        ) : (
+                          filtered.map((t) => (
+                            <button
+                              key={t.id}
+                              type="button"
+                              onClick={() => handleSelect(t)}
+                              className="flex w-full items-center gap-2 px-3 py-2.5 text-sm text-left hover:bg-blue-50 transition-colors"
+                            >
+                              <span className="font-medium text-gray-900">{t.razonSocial}</span>
+                              <span className="text-gray-400 text-xs ml-1">— NIT {t.nit}</span>
+                            </button>
+                          ))
+                        )}
+                      </div>
+                    )}
                   </div>
-                )}
-              />
-            </div>
+                );
+              }}
+            />
           )}
           {errors.terceroId && (
             <p className="text-xs text-red-500 mt-1">{errors.terceroId.message}</p>
           )}
         </div>
+
 
         {/* 1.3 Tipo de Contrato */}
         <div>
@@ -796,6 +858,8 @@ export default function NuevaContratoPage() {
         )}
       </Section>
 
+      
+
       {/* ── SECCIÓN 3: Valor Final ─────────────────────────────────────────── */}
       <Section title="Sección 3 — Valor Final">
         <div className="space-y-3">
@@ -895,42 +959,6 @@ export default function NuevaContratoPage() {
               </p>
             </div>
           </div>
-
-          {/* Creación de tercero */}
-          <Controller
-            name="creacionTercero"
-            control={control}
-            render={({ field }) => (
-              <div>
-                <p className="text-sm font-medium text-gray-700 mb-2">
-                  ¿Requiere creación de tercero?
-                </p>
-                <div className="flex gap-4">
-                  {[
-                    { val: true, label: "Sí" },
-                    { val: false, label: "No" },
-                  ].map((opt) => (
-                    <label
-                      key={String(opt.val)}
-                      className={`flex items-center gap-2 rounded-lg border px-4 py-2 cursor-pointer text-sm transition-colors ${
-                        field.value === opt.val
-                          ? "border-blue-400 bg-blue-50 text-blue-800"
-                          : "border-gray-200 hover:border-gray-300 text-gray-700"
-                      }`}
-                    >
-                      <input
-                        type="radio"
-                        checked={field.value === opt.val}
-                        onChange={() => field.onChange(opt.val)}
-                        className="h-4 w-4 border-gray-300 text-blue-600"
-                      />
-                      {opt.label}
-                    </label>
-                  ))}
-                </div>
-              </div>
-            )}
-          />
 
           {/* Contratante */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -1050,7 +1078,7 @@ export default function NuevaContratoPage() {
       </Section>
 
       {/* ── SECCIÓN 6: Cronograma ─────────────────────────────────────────── */}
-      <Section title="Sección 6 — Cronograma" collapsible defaultOpen={false}>
+      <Section title="Sección 6 — Cronograma" collapsible defaultOpen={true}>
         <CronogramaBuilder value={cronograma} onChange={setCronograma} />
       </Section>
 

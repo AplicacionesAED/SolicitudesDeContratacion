@@ -5345,6 +5345,7 @@ export namespace Prisma {
     roles: string | null
     activo: boolean | null
     image: string | null
+    funcionalidadesAdicionales: string | null
     creadoEn: Date | null
     actualizadoEn: Date | null
   }
@@ -5361,6 +5362,7 @@ export namespace Prisma {
     roles: string | null
     activo: boolean | null
     image: string | null
+    funcionalidadesAdicionales: string | null
     creadoEn: Date | null
     actualizadoEn: Date | null
   }
@@ -5377,6 +5379,7 @@ export namespace Prisma {
     roles: number
     activo: number
     image: number
+    funcionalidadesAdicionales: number
     creadoEn: number
     actualizadoEn: number
     _all: number
@@ -5395,6 +5398,7 @@ export namespace Prisma {
     roles?: true
     activo?: true
     image?: true
+    funcionalidadesAdicionales?: true
     creadoEn?: true
     actualizadoEn?: true
   }
@@ -5411,6 +5415,7 @@ export namespace Prisma {
     roles?: true
     activo?: true
     image?: true
+    funcionalidadesAdicionales?: true
     creadoEn?: true
     actualizadoEn?: true
   }
@@ -5427,6 +5432,7 @@ export namespace Prisma {
     roles?: true
     activo?: true
     image?: true
+    funcionalidadesAdicionales?: true
     creadoEn?: true
     actualizadoEn?: true
     _all?: true
@@ -5516,6 +5522,7 @@ export namespace Prisma {
     roles: string
     activo: boolean
     image: string | null
+    funcionalidadesAdicionales: string
     creadoEn: Date
     actualizadoEn: Date
     _count: UserCountAggregateOutputType | null
@@ -5549,6 +5556,7 @@ export namespace Prisma {
     roles?: boolean
     activo?: boolean
     image?: boolean
+    funcionalidadesAdicionales?: boolean
     creadoEn?: boolean
     actualizadoEn?: boolean
     accounts?: boolean | User$accountsArgs<ExtArgs>
@@ -5573,6 +5581,7 @@ export namespace Prisma {
     roles?: boolean
     activo?: boolean
     image?: boolean
+    funcionalidadesAdicionales?: boolean
     creadoEn?: boolean
     actualizadoEn?: boolean
   }
@@ -5613,6 +5622,7 @@ export namespace Prisma {
       roles: string
       activo: boolean
       image: string | null
+      funcionalidadesAdicionales: string
       creadoEn: Date
       actualizadoEn: Date
     }, ExtArgs["result"]["user"]>
@@ -6059,6 +6069,7 @@ export namespace Prisma {
     readonly roles: FieldRef<"User", 'String'>
     readonly activo: FieldRef<"User", 'Boolean'>
     readonly image: FieldRef<"User", 'String'>
+    readonly funcionalidadesAdicionales: FieldRef<"User", 'String'>
     readonly creadoEn: FieldRef<"User", 'DateTime'>
     readonly actualizadoEn: FieldRef<"User", 'DateTime'>
   }
@@ -19138,6 +19149,7 @@ export namespace Prisma {
     roles: 'roles',
     activo: 'activo',
     image: 'image',
+    funcionalidadesAdicionales: 'funcionalidadesAdicionales',
     creadoEn: 'creadoEn',
     actualizadoEn: 'actualizadoEn'
   };
@@ -19628,6 +19640,7 @@ export namespace Prisma {
     roles?: StringFilter<"User"> | string
     activo?: BoolFilter<"User"> | boolean
     image?: StringNullableFilter<"User"> | string | null
+    funcionalidadesAdicionales?: StringFilter<"User"> | string
     creadoEn?: DateTimeFilter<"User"> | Date | string
     actualizadoEn?: DateTimeFilter<"User"> | Date | string
     accounts?: AccountListRelationFilter
@@ -19651,6 +19664,7 @@ export namespace Prisma {
     roles?: SortOrder
     activo?: SortOrder
     image?: SortOrderInput | SortOrder
+    funcionalidadesAdicionales?: SortOrder
     creadoEn?: SortOrder
     actualizadoEn?: SortOrder
     accounts?: AccountOrderByRelationAggregateInput
@@ -19677,6 +19691,7 @@ export namespace Prisma {
     roles?: StringFilter<"User"> | string
     activo?: BoolFilter<"User"> | boolean
     image?: StringNullableFilter<"User"> | string | null
+    funcionalidadesAdicionales?: StringFilter<"User"> | string
     creadoEn?: DateTimeFilter<"User"> | Date | string
     actualizadoEn?: DateTimeFilter<"User"> | Date | string
     accounts?: AccountListRelationFilter
@@ -19700,6 +19715,7 @@ export namespace Prisma {
     roles?: SortOrder
     activo?: SortOrder
     image?: SortOrderInput | SortOrder
+    funcionalidadesAdicionales?: SortOrder
     creadoEn?: SortOrder
     actualizadoEn?: SortOrder
     _count?: UserCountOrderByAggregateInput
@@ -19722,6 +19738,7 @@ export namespace Prisma {
     roles?: StringWithAggregatesFilter<"User"> | string
     activo?: BoolWithAggregatesFilter<"User"> | boolean
     image?: StringNullableWithAggregatesFilter<"User"> | string | null
+    funcionalidadesAdicionales?: StringWithAggregatesFilter<"User"> | string
     creadoEn?: DateTimeWithAggregatesFilter<"User"> | Date | string
     actualizadoEn?: DateTimeWithAggregatesFilter<"User"> | Date | string
   }
@@ -20855,6 +20872,7 @@ export namespace Prisma {
     roles?: string
     activo?: boolean
     image?: string | null
+    funcionalidadesAdicionales?: string
     creadoEn?: Date | string
     actualizadoEn?: Date | string
     accounts?: AccountCreateNestedManyWithoutUserInput
@@ -20878,6 +20896,7 @@ export namespace Prisma {
     roles?: string
     activo?: boolean
     image?: string | null
+    funcionalidadesAdicionales?: string
     creadoEn?: Date | string
     actualizadoEn?: Date | string
     accounts?: AccountUncheckedCreateNestedManyWithoutUserInput
@@ -20901,6 +20920,7 @@ export namespace Prisma {
     roles?: StringFieldUpdateOperationsInput | string
     activo?: BoolFieldUpdateOperationsInput | boolean
     image?: NullableStringFieldUpdateOperationsInput | string | null
+    funcionalidadesAdicionales?: StringFieldUpdateOperationsInput | string
     creadoEn?: DateTimeFieldUpdateOperationsInput | Date | string
     actualizadoEn?: DateTimeFieldUpdateOperationsInput | Date | string
     accounts?: AccountUpdateManyWithoutUserNestedInput
@@ -20924,6 +20944,7 @@ export namespace Prisma {
     roles?: StringFieldUpdateOperationsInput | string
     activo?: BoolFieldUpdateOperationsInput | boolean
     image?: NullableStringFieldUpdateOperationsInput | string | null
+    funcionalidadesAdicionales?: StringFieldUpdateOperationsInput | string
     creadoEn?: DateTimeFieldUpdateOperationsInput | Date | string
     actualizadoEn?: DateTimeFieldUpdateOperationsInput | Date | string
     accounts?: AccountUncheckedUpdateManyWithoutUserNestedInput
@@ -20947,6 +20968,7 @@ export namespace Prisma {
     roles?: string
     activo?: boolean
     image?: string | null
+    funcionalidadesAdicionales?: string
     creadoEn?: Date | string
     actualizadoEn?: Date | string
   }
@@ -20963,6 +20985,7 @@ export namespace Prisma {
     roles?: StringFieldUpdateOperationsInput | string
     activo?: BoolFieldUpdateOperationsInput | boolean
     image?: NullableStringFieldUpdateOperationsInput | string | null
+    funcionalidadesAdicionales?: StringFieldUpdateOperationsInput | string
     creadoEn?: DateTimeFieldUpdateOperationsInput | Date | string
     actualizadoEn?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -20979,6 +21002,7 @@ export namespace Prisma {
     roles?: StringFieldUpdateOperationsInput | string
     activo?: BoolFieldUpdateOperationsInput | boolean
     image?: NullableStringFieldUpdateOperationsInput | string | null
+    funcionalidadesAdicionales?: StringFieldUpdateOperationsInput | string
     creadoEn?: DateTimeFieldUpdateOperationsInput | Date | string
     actualizadoEn?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -22253,6 +22277,7 @@ export namespace Prisma {
     roles?: SortOrder
     activo?: SortOrder
     image?: SortOrder
+    funcionalidadesAdicionales?: SortOrder
     creadoEn?: SortOrder
     actualizadoEn?: SortOrder
   }
@@ -22269,6 +22294,7 @@ export namespace Prisma {
     roles?: SortOrder
     activo?: SortOrder
     image?: SortOrder
+    funcionalidadesAdicionales?: SortOrder
     creadoEn?: SortOrder
     actualizadoEn?: SortOrder
   }
@@ -22285,6 +22311,7 @@ export namespace Prisma {
     roles?: SortOrder
     activo?: SortOrder
     image?: SortOrder
+    funcionalidadesAdicionales?: SortOrder
     creadoEn?: SortOrder
     actualizadoEn?: SortOrder
   }
@@ -24172,6 +24199,7 @@ export namespace Prisma {
     roles?: string
     activo?: boolean
     image?: string | null
+    funcionalidadesAdicionales?: string
     creadoEn?: Date | string
     actualizadoEn?: Date | string
     sessions?: SessionCreateNestedManyWithoutUserInput
@@ -24194,6 +24222,7 @@ export namespace Prisma {
     roles?: string
     activo?: boolean
     image?: string | null
+    funcionalidadesAdicionales?: string
     creadoEn?: Date | string
     actualizadoEn?: Date | string
     sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
@@ -24232,6 +24261,7 @@ export namespace Prisma {
     roles?: StringFieldUpdateOperationsInput | string
     activo?: BoolFieldUpdateOperationsInput | boolean
     image?: NullableStringFieldUpdateOperationsInput | string | null
+    funcionalidadesAdicionales?: StringFieldUpdateOperationsInput | string
     creadoEn?: DateTimeFieldUpdateOperationsInput | Date | string
     actualizadoEn?: DateTimeFieldUpdateOperationsInput | Date | string
     sessions?: SessionUpdateManyWithoutUserNestedInput
@@ -24254,6 +24284,7 @@ export namespace Prisma {
     roles?: StringFieldUpdateOperationsInput | string
     activo?: BoolFieldUpdateOperationsInput | boolean
     image?: NullableStringFieldUpdateOperationsInput | string | null
+    funcionalidadesAdicionales?: StringFieldUpdateOperationsInput | string
     creadoEn?: DateTimeFieldUpdateOperationsInput | Date | string
     actualizadoEn?: DateTimeFieldUpdateOperationsInput | Date | string
     sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
@@ -24276,6 +24307,7 @@ export namespace Prisma {
     roles?: string
     activo?: boolean
     image?: string | null
+    funcionalidadesAdicionales?: string
     creadoEn?: Date | string
     actualizadoEn?: Date | string
     accounts?: AccountCreateNestedManyWithoutUserInput
@@ -24298,6 +24330,7 @@ export namespace Prisma {
     roles?: string
     activo?: boolean
     image?: string | null
+    funcionalidadesAdicionales?: string
     creadoEn?: Date | string
     actualizadoEn?: Date | string
     accounts?: AccountUncheckedCreateNestedManyWithoutUserInput
@@ -24336,6 +24369,7 @@ export namespace Prisma {
     roles?: StringFieldUpdateOperationsInput | string
     activo?: BoolFieldUpdateOperationsInput | boolean
     image?: NullableStringFieldUpdateOperationsInput | string | null
+    funcionalidadesAdicionales?: StringFieldUpdateOperationsInput | string
     creadoEn?: DateTimeFieldUpdateOperationsInput | Date | string
     actualizadoEn?: DateTimeFieldUpdateOperationsInput | Date | string
     accounts?: AccountUpdateManyWithoutUserNestedInput
@@ -24358,6 +24392,7 @@ export namespace Prisma {
     roles?: StringFieldUpdateOperationsInput | string
     activo?: BoolFieldUpdateOperationsInput | boolean
     image?: NullableStringFieldUpdateOperationsInput | string | null
+    funcionalidadesAdicionales?: StringFieldUpdateOperationsInput | string
     creadoEn?: DateTimeFieldUpdateOperationsInput | Date | string
     actualizadoEn?: DateTimeFieldUpdateOperationsInput | Date | string
     accounts?: AccountUncheckedUpdateManyWithoutUserNestedInput
@@ -25092,6 +25127,7 @@ export namespace Prisma {
     roles?: string
     activo?: boolean
     image?: string | null
+    funcionalidadesAdicionales?: string
     creadoEn?: Date | string
     actualizadoEn?: Date | string
     accounts?: AccountCreateNestedManyWithoutUserInput
@@ -25114,6 +25150,7 @@ export namespace Prisma {
     roles?: string
     activo?: boolean
     image?: string | null
+    funcionalidadesAdicionales?: string
     creadoEn?: Date | string
     actualizadoEn?: Date | string
     accounts?: AccountUncheckedCreateNestedManyWithoutUserInput
@@ -25170,6 +25207,7 @@ export namespace Prisma {
     roles?: StringFieldUpdateOperationsInput | string
     activo?: BoolFieldUpdateOperationsInput | boolean
     image?: NullableStringFieldUpdateOperationsInput | string | null
+    funcionalidadesAdicionales?: StringFieldUpdateOperationsInput | string
     creadoEn?: DateTimeFieldUpdateOperationsInput | Date | string
     actualizadoEn?: DateTimeFieldUpdateOperationsInput | Date | string
     accounts?: AccountUpdateManyWithoutUserNestedInput
@@ -25192,6 +25230,7 @@ export namespace Prisma {
     roles?: StringFieldUpdateOperationsInput | string
     activo?: BoolFieldUpdateOperationsInput | boolean
     image?: NullableStringFieldUpdateOperationsInput | string | null
+    funcionalidadesAdicionales?: StringFieldUpdateOperationsInput | string
     creadoEn?: DateTimeFieldUpdateOperationsInput | Date | string
     actualizadoEn?: DateTimeFieldUpdateOperationsInput | Date | string
     accounts?: AccountUncheckedUpdateManyWithoutUserNestedInput
@@ -25399,6 +25438,7 @@ export namespace Prisma {
     roles?: string
     activo?: boolean
     image?: string | null
+    funcionalidadesAdicionales?: string
     creadoEn?: Date | string
     actualizadoEn?: Date | string
     accounts?: AccountCreateNestedManyWithoutUserInput
@@ -25421,6 +25461,7 @@ export namespace Prisma {
     roles?: string
     activo?: boolean
     image?: string | null
+    funcionalidadesAdicionales?: string
     creadoEn?: Date | string
     actualizadoEn?: Date | string
     accounts?: AccountUncheckedCreateNestedManyWithoutUserInput
@@ -25506,6 +25547,7 @@ export namespace Prisma {
     roles?: string
     activo?: boolean
     image?: string | null
+    funcionalidadesAdicionales?: string
     creadoEn?: Date | string
     actualizadoEn?: Date | string
     accounts?: AccountCreateNestedManyWithoutUserInput
@@ -25528,6 +25570,7 @@ export namespace Prisma {
     roles?: string
     activo?: boolean
     image?: string | null
+    funcionalidadesAdicionales?: string
     creadoEn?: Date | string
     actualizadoEn?: Date | string
     accounts?: AccountUncheckedCreateNestedManyWithoutUserInput
@@ -25591,6 +25634,7 @@ export namespace Prisma {
     roles?: StringFieldUpdateOperationsInput | string
     activo?: BoolFieldUpdateOperationsInput | boolean
     image?: NullableStringFieldUpdateOperationsInput | string | null
+    funcionalidadesAdicionales?: StringFieldUpdateOperationsInput | string
     creadoEn?: DateTimeFieldUpdateOperationsInput | Date | string
     actualizadoEn?: DateTimeFieldUpdateOperationsInput | Date | string
     accounts?: AccountUpdateManyWithoutUserNestedInput
@@ -25613,6 +25657,7 @@ export namespace Prisma {
     roles?: StringFieldUpdateOperationsInput | string
     activo?: BoolFieldUpdateOperationsInput | boolean
     image?: NullableStringFieldUpdateOperationsInput | string | null
+    funcionalidadesAdicionales?: StringFieldUpdateOperationsInput | string
     creadoEn?: DateTimeFieldUpdateOperationsInput | Date | string
     actualizadoEn?: DateTimeFieldUpdateOperationsInput | Date | string
     accounts?: AccountUncheckedUpdateManyWithoutUserNestedInput
@@ -25716,6 +25761,7 @@ export namespace Prisma {
     roles?: StringFieldUpdateOperationsInput | string
     activo?: BoolFieldUpdateOperationsInput | boolean
     image?: NullableStringFieldUpdateOperationsInput | string | null
+    funcionalidadesAdicionales?: StringFieldUpdateOperationsInput | string
     creadoEn?: DateTimeFieldUpdateOperationsInput | Date | string
     actualizadoEn?: DateTimeFieldUpdateOperationsInput | Date | string
     accounts?: AccountUpdateManyWithoutUserNestedInput
@@ -25738,6 +25784,7 @@ export namespace Prisma {
     roles?: StringFieldUpdateOperationsInput | string
     activo?: BoolFieldUpdateOperationsInput | boolean
     image?: NullableStringFieldUpdateOperationsInput | string | null
+    funcionalidadesAdicionales?: StringFieldUpdateOperationsInput | string
     creadoEn?: DateTimeFieldUpdateOperationsInput | Date | string
     actualizadoEn?: DateTimeFieldUpdateOperationsInput | Date | string
     accounts?: AccountUncheckedUpdateManyWithoutUserNestedInput
@@ -25874,6 +25921,7 @@ export namespace Prisma {
     roles?: string
     activo?: boolean
     image?: string | null
+    funcionalidadesAdicionales?: string
     creadoEn?: Date | string
     actualizadoEn?: Date | string
     accounts?: AccountCreateNestedManyWithoutUserInput
@@ -25896,6 +25944,7 @@ export namespace Prisma {
     roles?: string
     activo?: boolean
     image?: string | null
+    funcionalidadesAdicionales?: string
     creadoEn?: Date | string
     actualizadoEn?: Date | string
     accounts?: AccountUncheckedCreateNestedManyWithoutUserInput
@@ -26038,6 +26087,7 @@ export namespace Prisma {
     roles?: StringFieldUpdateOperationsInput | string
     activo?: BoolFieldUpdateOperationsInput | boolean
     image?: NullableStringFieldUpdateOperationsInput | string | null
+    funcionalidadesAdicionales?: StringFieldUpdateOperationsInput | string
     creadoEn?: DateTimeFieldUpdateOperationsInput | Date | string
     actualizadoEn?: DateTimeFieldUpdateOperationsInput | Date | string
     accounts?: AccountUpdateManyWithoutUserNestedInput
@@ -26060,6 +26110,7 @@ export namespace Prisma {
     roles?: StringFieldUpdateOperationsInput | string
     activo?: BoolFieldUpdateOperationsInput | boolean
     image?: NullableStringFieldUpdateOperationsInput | string | null
+    funcionalidadesAdicionales?: StringFieldUpdateOperationsInput | string
     creadoEn?: DateTimeFieldUpdateOperationsInput | Date | string
     actualizadoEn?: DateTimeFieldUpdateOperationsInput | Date | string
     accounts?: AccountUncheckedUpdateManyWithoutUserNestedInput
@@ -26596,6 +26647,7 @@ export namespace Prisma {
     roles?: string
     activo?: boolean
     image?: string | null
+    funcionalidadesAdicionales?: string
     creadoEn?: Date | string
     actualizadoEn?: Date | string
     accounts?: AccountCreateNestedManyWithoutUserInput
@@ -26618,6 +26670,7 @@ export namespace Prisma {
     roles?: string
     activo?: boolean
     image?: string | null
+    funcionalidadesAdicionales?: string
     creadoEn?: Date | string
     actualizadoEn?: Date | string
     accounts?: AccountUncheckedCreateNestedManyWithoutUserInput
@@ -26656,6 +26709,7 @@ export namespace Prisma {
     roles?: StringFieldUpdateOperationsInput | string
     activo?: BoolFieldUpdateOperationsInput | boolean
     image?: NullableStringFieldUpdateOperationsInput | string | null
+    funcionalidadesAdicionales?: StringFieldUpdateOperationsInput | string
     creadoEn?: DateTimeFieldUpdateOperationsInput | Date | string
     actualizadoEn?: DateTimeFieldUpdateOperationsInput | Date | string
     accounts?: AccountUpdateManyWithoutUserNestedInput
@@ -26678,6 +26732,7 @@ export namespace Prisma {
     roles?: StringFieldUpdateOperationsInput | string
     activo?: BoolFieldUpdateOperationsInput | boolean
     image?: NullableStringFieldUpdateOperationsInput | string | null
+    funcionalidadesAdicionales?: StringFieldUpdateOperationsInput | string
     creadoEn?: DateTimeFieldUpdateOperationsInput | Date | string
     actualizadoEn?: DateTimeFieldUpdateOperationsInput | Date | string
     accounts?: AccountUncheckedUpdateManyWithoutUserNestedInput

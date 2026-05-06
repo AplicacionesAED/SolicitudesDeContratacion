@@ -24,6 +24,7 @@ export async function GET(_request: Request) {
           telefono: true,
           rol: true,
           roles: true,
+          funcionalidadesAdicionales: true,
           activo: true,
           creadoEn: true,
           frentesAsignados: {
@@ -37,6 +38,7 @@ export async function GET(_request: Request) {
         users.map((u) => ({
           ...u,
           roles: (() => { try { return JSON.parse(u.roles || "[]"); } catch { return [u.rol]; } })(),
+          funcionalidadesAdicionales: (() => { try { return JSON.parse(u.funcionalidadesAdicionales || "[]"); } catch { return []; } })(),
         }))
       );
     }
@@ -79,7 +81,7 @@ export async function POST(request: Request) {
     }
 
     const body = await request.json();
-    const { nombre, email, password, cargo, telefono, roles, frentesIds } = body;
+    const { nombre, email, password, cargo, telefono, roles, frentesIds, funcionalidadesAdicionales } = body;
 
     if (!nombre || !email || !password || !roles || !Array.isArray(roles) || roles.length === 0) {
       return Response.json(
@@ -106,6 +108,7 @@ export async function POST(request: Request) {
           telefono: telefono ?? null,
           rol: primaryRol,
           roles: JSON.stringify(roles),
+          funcionalidadesAdicionales: JSON.stringify(Array.isArray(funcionalidadesAdicionales) ? funcionalidadesAdicionales : []),
           activo: true,
         },
       });
@@ -129,6 +132,7 @@ export async function POST(request: Request) {
           telefono: true,
           rol: true,
           roles: true,
+          funcionalidadesAdicionales: true,
           activo: true,
           creadoEn: true,
           frentesAsignados: {
@@ -144,6 +148,7 @@ export async function POST(request: Request) {
       {
         ...user,
         roles: (() => { try { return JSON.parse(user.roles || "[]"); } catch { return [user.rol]; } })(),
+        funcionalidadesAdicionales: (() => { try { return JSON.parse(user.funcionalidadesAdicionales || "[]"); } catch { return []; } })(),
       },
       { status: 201 }
     );

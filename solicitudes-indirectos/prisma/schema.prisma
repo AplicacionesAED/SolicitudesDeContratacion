@@ -58,6 +58,7 @@ model User {
   roles         String    @default("[\"SOLICITANTE\"]")
   activo        Boolean   @default(true)
   image         String?
+  funcionalidadesAdicionales String @default("[]") // JSON array of additional permissions
 
   accounts         Account[]
   sessions         Session[]

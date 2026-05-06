@@ -216,3 +216,71 @@ export const ROL_LABELS: Record<string, string> = {
   DIRECTOR_CONTROLES: "Director de Controles",
   ADMIN: "Administrador",
 };
+
+// Funcionalidades por rol (base)
+export const FUNCIONALIDADES_POR_ROL: Record<string, string[]> = {
+  SOLICITANTE: [
+    "crear_enviar_solicitudes",
+    "reenviar_solicitudes",
+    "ver_solicitudes_propias",
+  ],
+  DIRECTOR_PROYECTO: [
+    "crear_enviar_solicitudes",
+    "reenviar_solicitudes",
+    "ver_solicitudes_propias",
+    "aprobar_solicitudes_frente",
+    "devolver_solicitudes",
+    "ver_solicitudes_frentes",
+  ],
+  CONTRATOS: [
+    "ver_todas_solicitudes",
+    "devolver_solicitudes",
+    "revisar_contratos",
+    "tramitar_solicitudes",
+    "crear_minutas",
+    "pasar_controles",
+  ],
+  CONTROLES: [
+    "ver_todas_solicitudes",
+    "registrar_adpro",
+    "revisar_contratos_polizas",
+  ],
+  DIRECTOR_CONTROLES: [
+    "ver_todas_solicitudes",
+    "aprobacion_final",
+    "revisar_contratos_polizas",
+  ],
+  ADMIN: [
+    "acceso_total",
+    "gestionar_usuarios",
+    "configurar_frentes",
+    "asignar_aprobadores",
+    "ver_todas_solicitudes",
+    "crear_terceros",
+  ],
+};
+
+/**
+ * Verifica si un usuario tiene una funcionalidad específica
+ * @param roles Array de roles del usuario
+ * @param funcionalidadesSeleccionadas Array de funcionalidades seleccionadas (del BD)
+ * @param funcionalidad El slug de la funcionalidad a verificar
+ * @returns true si el usuario tiene la funcionalidad
+ */
+export function tienePermiso(
+  roles: string[],
+  funcionalidadesSeleccionadas: string[],
+  funcionalidad: string
+): boolean {
+  // Si tiene ADMIN, tiene todo
+  if (roles.includes("ADMIN")) return true;
+
+  // Verificar si tiene la funcionalidad en su rol base
+  const funcionalidadesDelRol = roles.flatMap(
+    (rol) => FUNCIONALIDADES_POR_ROL[rol] || []
+  );
+
+  // Retorna true si está en su rol o en las seleccionadas (esto incluye si se agregaron o desactivaron)
+  return funcionalidadesDelRol.includes(funcionalidad) ||
+         funcionalidadesSeleccionadas.includes(funcionalidad);
+}

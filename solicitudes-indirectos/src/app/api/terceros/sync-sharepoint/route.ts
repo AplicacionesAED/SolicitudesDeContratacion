@@ -1,6 +1,8 @@
 import { NextResponse } from "next/server";
 import * as XLSX from "xlsx";
 import { prisma } from "@/lib/prisma";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/lib/auth";
 
 const TENANT_ID     = process.env.AZURE_TENANT_ID!;
 const CLIENT_ID     = process.env.AZURE_CLIENT_ID!;
@@ -109,6 +111,11 @@ async function upsertTerceros(rows: ExcelRow[]) {
 // ─── Handler ──────────────────────────────────────────────────────────────────
 export async function POST() {
   try {
+    const session = await getServerSession(authOptions);
+    if (!session?.user) {
+      return NextResponse.json({ error: "No autenticado" }, { status: 401 });
+    }
+
     const token  = await getAccessToken();
     const siteId = await getSiteId(token);          // ← resuelve el ID real
     const buffer = await downloadExcel(token, siteId);

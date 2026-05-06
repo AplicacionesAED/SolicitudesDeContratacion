@@ -9,6 +9,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Spinner } from "@/components/ui/spinner";
 import { useSession } from "next-auth/react";
+import { tienePermiso } from "@/lib/utils";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -62,8 +63,11 @@ let toastId = 0;
 
 export default function TercerosPage() {
   const { data: session } = useSession();
-  const rol = session?.user?.rol;
-  const canEdit = rol === "CONTRATOS" || rol === "ADMIN";
+  const roles = session?.user?.roles ?? [];
+  const funcionalidadesAdicionales = session?.user?.funcionalidadesAdicionales ?? [];
+
+  const canCreate = tienePermiso(roles, funcionalidadesAdicionales, "crear_terceros");
+  const canEdit = canCreate || roles.includes("CONTRATOS"); // Se mantiene acceso a Contratos o quien pueda crear
 
   const [terceros, setTerceros] = useState<Tercero[]>([]);
   const [loading, setLoading] = useState(true);
@@ -166,12 +170,14 @@ export default function TercerosPage() {
             <RefreshCw size={15} className={syncing ? "animate-spin" : ""} />
             {syncing ? "Sincronizando..." : "Sincronizar SharePoint"}
           </Button>
-          <Link href="/terceros/nuevo">
-            <Button>
-              <Plus size={16} />
-              Nuevo Tercero
-            </Button>
-          </Link>
+          {canCreate && (
+            <Link href="/terceros/nuevo">
+              <Button>
+                <Plus size={16} />
+                Nuevo Tercero
+              </Button>
+            </Link>
+          )}
         </div>
       </div>
 

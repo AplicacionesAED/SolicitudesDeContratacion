@@ -8,6 +8,7 @@ declare module "next-auth" {
       roles: string[];
       cargo?: string;
       telefono?: string;
+      funcionalidadesAdicionales: string[];
     };
   }
 }
@@ -19,5 +20,6 @@ declare module "next-auth/jwt" {
     roles: string[];
     cargo?: string;
     telefono?: string;
+    funcionalidadesAdicionales: string[];
   }
 }

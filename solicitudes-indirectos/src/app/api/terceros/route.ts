@@ -1,6 +1,7 @@
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import { tienePermiso } from "@/lib/utils";
 
 export async function GET(request: Request) {
   try {
@@ -39,6 +40,13 @@ export async function POST(request: Request) {
     const session = await getServerSession(authOptions);
     if (!session?.user) {
       return Response.json({ error: "No autenticado" }, { status: 401 });
+    }
+
+    const roles = session.user.roles ?? [];
+    const funcionalidadesAdicionales = session.user.funcionalidadesAdicionales ?? [];
+
+    if (!tienePermiso(roles, funcionalidadesAdicionales, "crear_terceros")) {
+      return Response.json({ error: "No tiene permiso para crear terceros" }, { status: 403 });
     }
 
     const body = await request.json();

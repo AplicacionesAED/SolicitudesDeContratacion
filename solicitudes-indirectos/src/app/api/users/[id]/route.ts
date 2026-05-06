@@ -25,7 +25,7 @@ export async function PATCH(
     }
 
     const body = await request.json();
-    const { nombre, cargo, telefono, roles, activo, frentesIds } = body;
+    const { nombre, cargo, telefono, roles, activo, frentesIds, funcionalidadesAdicionales } = body;
 
     const updated = await prisma.$transaction(async (tx) => {
       // Update user fields (only provided fields)
@@ -39,6 +39,11 @@ export async function PATCH(
         updateData.rol = Array.isArray(roles) ? (roles[0] ?? "SOLICITANTE") : roles;
       }
       if (activo !== undefined) updateData.activo = activo;
+      if (funcionalidadesAdicionales !== undefined) {
+        updateData.funcionalidadesAdicionales = JSON.stringify(
+          Array.isArray(funcionalidadesAdicionales) ? funcionalidadesAdicionales : []
+        );
+      }
 
       await tx.user.update({ where: { id }, data: updateData });
 
@@ -65,6 +70,7 @@ export async function PATCH(
           telefono: true,
           rol: true,
           roles: true,
+          funcionalidadesAdicionales: true,
           activo: true,
           creadoEn: true,
           actualizadoEn: true,
@@ -80,6 +86,7 @@ export async function PATCH(
     return Response.json({
       ...updated,
       roles: (() => { try { return JSON.parse(updated.roles || "[]"); } catch { return [updated.rol]; } })(),
+      funcionalidadesAdicionales: (() => { try { return JSON.parse(updated.funcionalidadesAdicionales || "[]"); } catch { return []; } })(),
     });
   } catch (error) {
     console.error("PATCH /api/users/[id] error:", error);

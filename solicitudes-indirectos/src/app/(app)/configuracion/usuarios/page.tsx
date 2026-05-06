@@ -4,7 +4,7 @@ import { useState, useEffect, useCallback } from "react";
 import { useSession } from "next-auth/react";
 import { Plus, Pencil, UserCheck, UserX, X, Settings } from "lucide-react";
 import { Spinner } from "@/components/ui/spinner";
-import { ROL_LABELS } from "@/lib/utils";
+import { ROL_LABELS, FUNCIONALIDADES_POR_ROL } from "@/lib/utils";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -22,6 +22,7 @@ interface User {
   telefono: string | null;
   roles: string[];
   activo: boolean;
+  funcionalidadesAdicionales?: string[];
   frentesAsignados?: {
     frenteId: number;
     frente: { id: number; nombre: string; proyecto: { nombre: string } };
@@ -36,6 +37,7 @@ interface FormData {
   roles: string[];
   password: string;
   frentesIds: number[];
+  funcionalidadesAdicionales: string[];
 }
 
 const EMPTY_FORM: FormData = {
@@ -46,11 +48,46 @@ const EMPTY_FORM: FormData = {
   roles: ["SOLICITANTE"],
   password: "",
   frentesIds: [],
+  funcionalidadesAdicionales: [],
 };
 
-const ROL_OPTIONS = Object.entries(ROL_LABELS);
+// Todas las funcionalidades disponibles: slug => { nombre, rolPorDefecto }
+const TODAS_LAS_FUNCIONALIDADES: Record<string, { nombre: string; rolPorDefecto: string | null }> = {
+  // SOLICITANTE
+  crear_enviar_solicitudes: { nombre: "Crear y enviar solicitudes", rolPorDefecto: "SOLICITANTE" },
+  reenviar_solicitudes: { nombre: "Reenviar solicitudes devueltas", rolPorDefecto: "SOLICITANTE" },
+  ver_solicitudes_propias: { nombre: "Ver solicitudes propias", rolPorDefecto: "SOLICITANTE" },
+
+  // DIRECTOR_PROYECTO (incluye SOLICITANTE)
+  aprobar_solicitudes_frente: { nombre: "Aprobar solicitudes del frente", rolPorDefecto: "DIRECTOR_PROYECTO" },
+  devolver_solicitudes: { nombre: "Devolver solicitudes", rolPorDefecto: "DIRECTOR_PROYECTO" },
+  ver_solicitudes_frentes: { nombre: "Ver solicitudes de sus frentes", rolPorDefecto: "DIRECTOR_PROYECTO" },
+
+  // CONTRATOS
+  ver_todas_solicitudes: { nombre: "Ver todas las solicitudes", rolPorDefecto: "CONTRATOS" },
+  revisar_contratos: { nombre: "Revisar en contratos", rolPorDefecto: "CONTRATOS" },
+  tramitar_solicitudes: { nombre: "Tramitar solicitudes", rolPorDefecto: "CONTRATOS" },
+  crear_minutas: { nombre: "Crear minutas", rolPorDefecto: "CONTRATOS" },
+  pasar_controles: { nombre: "Pasar a controles", rolPorDefecto: "CONTRATOS" },
+
+  // CONTROLES
+  registrar_adpro: { nombre: "Registrar en ADPRO", rolPorDefecto: "CONTROLES" },
+  revisar_contratos_polizas: { nombre: "Revisar contratos y pólizas", rolPorDefecto: "CONTROLES" },
+
+  // DIRECTOR_CONTROLES
+  aprobacion_final: { nombre: "Aprobación final de solicitudes", rolPorDefecto: "DIRECTOR_CONTROLES" },
+
+  // ADMIN
+  acceso_total: { nombre: "Acceso total al sistema", rolPorDefecto: "ADMIN" },
+  gestionar_usuarios: { nombre: "Gestionar usuarios y roles", rolPorDefecto: "ADMIN" },
+  configurar_frentes: { nombre: "Configurar frentes y proyectos", rolPorDefecto: "ADMIN" },
+  asignar_aprobadores: { nombre: "Asignar aprobadores", rolPorDefecto: "ADMIN" },
+  crear_terceros: { nombre: "Crear y gestionar terceros", rolPorDefecto: "ADMIN" },
+};
 
 // ─── Page ─────────────────────────────────────────────────────────────────────
+
+const ROL_OPTIONS = Object.entries(ROL_LABELS);
 
 export default function UsuariosPage() {
   const { data: session } = useSession();
@@ -96,21 +133,47 @@ export default function UsuariosPage() {
 
   function openNew() {
     setEditingUser(null);
-    setForm(EMPTY_FORM);
+    setForm({
+      nombre: "",
+      cargo: "",
+      email: "",
+      telefono: "",
+      roles: ["SOLICITANTE"],
+      password: "",
+      frentesIds: [],
+      // Cargar funcionalidades por defecto del rol SOLICITANTE
+      funcionalidadesAdicionales: FUNCIONALIDADES_POR_ROL["SOLICITANTE"] || [],
+    });
     setFormError(null);
     setModalOpen(true);
   }
 
   function openEdit(user: User) {
     setEditingUser(user);
+    const userRoles = Array.isArray(user.roles) && user.roles.length > 0 ? user.roles : ["SOLICITANTE"];
+
+    // Cargar funcionalidades: combinar las del rol + las adicionales guardadas
+    const funcionalidadesDelRol = userRoles.flatMap(
+      (rol) => FUNCIONALIDADES_POR_ROL[rol] || []
+    );
+    const funcionalidadesAdicionales = Array.isArray(user.funcionalidadesAdicionales)
+      ? user.funcionalidadesAdicionales
+      : [];
+
+    // Combinar: todas las del rol + las adicionales (evitando duplicados)
+    const todasLasFuncionalidades = [
+      ...new Set([...funcionalidadesDelRol, ...funcionalidadesAdicionales])
+    ];
+
     setForm({
       nombre: user.nombre,
       cargo: user.cargo ?? "",
       email: user.email,
       telefono: user.telefono ?? "",
-      roles: Array.isArray(user.roles) && user.roles.length > 0 ? user.roles : ["SOLICITANTE"],
+      roles: userRoles,
       password: "",
       frentesIds: user.frentesAsignados?.map((fa) => fa.frenteId) ?? [],
+      funcionalidadesAdicionales: todasLasFuncionalidades,
     });
     setFormError(null);
     setModalOpen(true);
@@ -135,12 +198,49 @@ export default function UsuariosPage() {
   function toggleRol(rol: string) {
     setForm((prev) => {
       const has = prev.roles.includes(rol);
-      if (has && prev.roles.length === 1) return prev; // keep at least one
+      let newRoles: string[];
+
+      if (has && prev.roles.length === 1) {
+        // Keep at least one role
+        newRoles = prev.roles;
+      } else {
+        // Add or remove role
+        newRoles = has
+          ? prev.roles.filter((r) => r !== rol)
+          : [...prev.roles, rol];
+      }
+
+      // Auto-update funcionalidades based on new roles
+      const funcionalidadesDelNuevoRol = newRoles.flatMap(
+        (r) => FUNCIONALIDADES_POR_ROL[r] || []
+      );
+
+      // Mantener las funcionalidades adicionales que no vienen del rol base
+      const funcionalidadesActuales = prev.funcionalidadesAdicionales;
+      const funcionalidadesAdicionales = funcionalidadesActuales.filter(
+        (f) => !funcionalidadesDelNuevoRol.includes(f) || funcionalidadesActuales.includes(f)
+      );
+
+      // Combinar: del nuevo rol + las adicionales
+      const nuevasFuncionalidades = [
+        ...new Set([...funcionalidadesDelNuevoRol, ...funcionalidadesAdicionales])
+      ];
+
       return {
         ...prev,
-        roles: has ? prev.roles.filter((r) => r !== rol) : [...prev.roles, rol],
+        roles: newRoles,
+        funcionalidadesAdicionales: nuevasFuncionalidades,
       };
     });
+  }
+
+  function toggleFuncionalidad(slug: string) {
+    setForm((prev) => ({
+      ...prev,
+      funcionalidadesAdicionales: prev.funcionalidadesAdicionales.includes(slug)
+        ? prev.funcionalidadesAdicionales.filter((f) => f !== slug)
+        : [...prev.funcionalidadesAdicionales, slug],
+    }));
   }
 
   const needsFrente =
@@ -159,6 +259,7 @@ export default function UsuariosPage() {
           telefono: form.telefono || null,
           roles: form.roles,
           frentesIds: form.frentesIds,
+          funcionalidadesAdicionales: form.funcionalidadesAdicionales,
         };
         res = await fetch(`/api/users/${editingUser.id}`, {
           method: "PATCH",
@@ -174,6 +275,7 @@ export default function UsuariosPage() {
           roles: form.roles,
           password: form.password,
           frentesIds: form.frentesIds,
+          funcionalidadesAdicionales: form.funcionalidadesAdicionales,
         };
         res = await fetch("/api/users", {
           method: "POST",
@@ -305,11 +407,10 @@ export default function UsuariosPage() {
                     </td>
                     <td className="px-4 py-3 whitespace-nowrap">
                       <span
-                        className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${
-                          user.activo
+                        className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${user.activo
                             ? "bg-green-50 text-green-700"
                             : "bg-gray-100 text-gray-500"
-                        }`}
+                          }`}
                       >
                         {user.activo ? "Activo" : "Inactivo"}
                       </span>
@@ -336,11 +437,10 @@ export default function UsuariosPage() {
                         </button>
                         <button
                           onClick={() => toggleActivo(user)}
-                          className={`inline-flex items-center gap-1 rounded-md px-2.5 py-1.5 text-xs font-medium transition-colors ${
-                            user.activo
+                          className={`inline-flex items-center gap-1 rounded-md px-2.5 py-1.5 text-xs font-medium transition-colors ${user.activo
                               ? "text-red-600 bg-red-50 hover:bg-red-100"
                               : "text-green-600 bg-green-50 hover:bg-green-100"
-                          }`}
+                            }`}
                           title={user.activo ? "Desactivar" : "Activar"}
                         >
                           {user.activo ? <UserX size={12} /> : <UserCheck size={12} />}
@@ -495,6 +595,74 @@ export default function UsuariosPage() {
                       </p>
                     )}
                   </div>
+
+                  {/* Funcionalidades por rol seleccionado */}
+                  {form.roles.length > 0 && (
+                    <div>
+                      <label className="block text-xs font-medium text-gray-700 mb-2">
+                        Funcionalidades
+                      </label>
+                      <div className="border border-gray-200 rounded-lg p-3 space-y-2 max-h-72 overflow-y-auto bg-gray-50">
+                        {Object.entries(TODAS_LAS_FUNCIONALIDADES).map(
+                          ([slug, { nombre, rolPorDefecto }]) => {
+                            // Funcionalidades incluidas por defecto en alguno de los roles seleccionados
+                            const funcionalidadesDelRol = form.roles.flatMap(
+                              (rol) => FUNCIONALIDADES_POR_ROL[rol] || []
+                            );
+                            const estaEnRol = funcionalidadesDelRol.includes(slug);
+
+                            // Si está en funcionalidadesAdicionales, está seleccionada
+                            const isChecked = form.funcionalidadesAdicionales.includes(slug);
+
+                            // Tipos de estado:
+                            // 1. "Por rol" - viene con el rol base
+                            // 2. "Adicional" - no viene con el rol pero está seleccionada
+                            // 3. "Deshabilitada" - viene con el rol pero fue deseleccionada
+                            const estatus = isChecked
+                              ? (estaEnRol ? "por_rol" : "adicional")
+                              : (estaEnRol ? "deshabilitada" : "no_seleccionada");
+
+                            return (
+                              <label
+                                key={slug}
+                                className="flex items-start gap-2 cursor-pointer hover:bg-white rounded px-2 py-1.5 transition-colors"
+                              >
+                                <input
+                                  type="checkbox"
+                                  checked={isChecked}
+                                  onChange={() => toggleFuncionalidad(slug)}
+                                  className="rounded border-gray-300 text-blue-600 focus:ring-blue-500 mt-0.5"
+                                />
+                                <div className="flex-1">
+                                  <span className="text-xs text-gray-700">
+                                    {nombre}
+                                  </span>
+                                  {estatus === "por_rol" && (
+                                    <span className="ml-1.5 inline-block text-xs text-gray-400 italic">
+                                      (Por rol)
+                                    </span>
+                                  )}
+                                  {estatus === "adicional" && (
+                                    <span className="ml-1.5 inline-block text-xs text-orange-600 font-medium">
+                                      (Adicional)
+                                    </span>
+                                  )}
+                                  {estatus === "deshabilitada" && (
+                                    <span className="ml-1.5 inline-block text-xs text-red-500 font-medium">
+                                      (Deshabilitada)
+                                    </span>
+                                  )}
+                                </div>
+                              </label>
+                            );
+                          }
+                        )}
+                      </div>
+                      <p className="text-xs text-gray-500 mt-2">
+                        Los checkmarks representan funcionalidades que el usuario tendrá habilitadas. Desactiva las que quieras deshabilitar incluso si vienen con el rol.
+                      </p>
+                    </div>
+                  )}
 
                   {/* Frentes — only for SOLICITANTE and DIRECTOR_PROYECTO */}
                   {needsFrente ? (
