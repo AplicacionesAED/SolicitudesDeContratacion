@@ -1,6 +1,7 @@
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import { tienePermiso } from "@/lib/utils";
 
 const DD_FIELDS = [
   "dd_identificacionContraparte",
@@ -59,6 +60,13 @@ export async function PATCH(
     const numId = parseInt(id, 10);
     if (isNaN(numId)) {
       return Response.json({ error: "ID inválido" }, { status: 400 });
+    }
+
+    const roles = session.user.roles ?? [];
+    const funcionalidadesAdicionales = session.user.funcionalidadesAdicionales ?? [];
+
+    if (!tienePermiso(roles, funcionalidadesAdicionales, "editar_terceros")) {
+      return Response.json({ error: "No tiene permiso para editar terceros" }, { status: 403 });
     }
 
     const existing = await prisma.tercero.findUnique({ where: { id: numId } });
@@ -122,6 +130,13 @@ export async function DELETE(
     const numId = parseInt(id, 10);
     if (isNaN(numId)) {
       return Response.json({ error: "ID inválido" }, { status: 400 });
+    }
+
+    const roles = session.user.roles ?? [];
+    const funcionalidadesAdicionales = session.user.funcionalidadesAdicionales ?? [];
+
+    if (!tienePermiso(roles, funcionalidadesAdicionales, "editar_terceros")) {
+      return Response.json({ error: "No tiene permiso para eliminar terceros" }, { status: 403 });
     }
 
     const tercero = await prisma.tercero.findUnique({

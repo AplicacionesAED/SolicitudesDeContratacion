@@ -17,7 +17,7 @@ import {
   UserCircle,
 } from "lucide-react";
 import { NotificacionesBell } from "@/components/layout/NotificacionesBell";
-import { ROL_LABELS } from "@/lib/utils";
+import { ROL_LABELS, tienePermiso } from "@/lib/utils";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -27,6 +27,7 @@ interface NavItem {
   icon: React.ElementType;
   /** Roles that can see this item. Undefined = everyone. */
   roles?: string[];
+  permission?: string;
 }
 
 // ─── Nav items definition ─────────────────────────────────────────────────────
@@ -100,17 +101,24 @@ function NavLink({
 function Sidebar({
   collapsed,
   userRoles,
+  funcionalidadesAdicionales,
   pathname,
   onClose,
 }: {
   collapsed: boolean;
   userRoles: string[];
+  funcionalidadesAdicionales: string[];
   pathname: string;
   onClose?: () => void;
 }) {
-  const visibleItems = NAV_ITEMS.filter(
-    (item) => !item.roles || item.roles.some((r) => userRoles.includes(r))
-  );
+  const visibleItems = NAV_ITEMS.filter((item) => {
+    if (!item.roles && !item.permission) return true;
+    
+    const roleMatch = item.roles ? item.roles.some((r) => userRoles.includes(r)) : false;
+    const permMatch = item.permission ? tienePermiso(userRoles, funcionalidadesAdicionales, item.permission) : false;
+    
+    return roleMatch || permMatch;
+  });
 
   return (
     <aside
@@ -189,12 +197,13 @@ export function AppLayout({ children }: AppLayoutProps) {
   };
 
   return (
-    <div className="flex h-screen overflow-hidden bg-gray-50">
+    <div className="flex min-h-screen bg-gray-50">
       {/* ── Desktop sidebar ──────────────────────────────────────── */}
-      <div className="hidden lg:flex flex-shrink-0">
+      <div className="hidden lg:flex flex-shrink-0 sticky top-0 h-screen">
         <Sidebar
           collapsed={sidebarCollapsed}
           userRoles={userRoles}
+          funcionalidadesAdicionales={(session?.user as any)?.funcionalidadesAdicionales ?? []}
           pathname={pathname}
         />
       </div>
@@ -213,6 +222,7 @@ export function AppLayout({ children }: AppLayoutProps) {
             <Sidebar
               collapsed={false}
               userRoles={userRoles}
+              funcionalidadesAdicionales={(session?.user as any)?.funcionalidadesAdicionales ?? []}
               pathname={pathname}
               onClose={() => setMobileSidebarOpen(false)}
             />
@@ -223,7 +233,7 @@ export function AppLayout({ children }: AppLayoutProps) {
       {/* ── Main area ─────────────────────────────────────────────── */}
       <div className="flex flex-col flex-1 min-w-0">
         {/* Top header */}
-        <header className="flex items-center justify-between h-16 px-4 bg-white border-b border-gray-200 shrink-0 gap-4">
+        <header className="sticky top-0 z-20 flex items-center justify-between h-16 px-4 bg-white border-b border-gray-200 shrink-0 gap-4">
           {/* Left: toggle buttons */}
           <div className="flex items-center gap-2">
             {/* Mobile hamburger */}
@@ -314,7 +324,7 @@ export function AppLayout({ children }: AppLayoutProps) {
         </header>
 
         {/* Page content */}
-        <main className="flex-1 overflow-y-auto p-6">{children}</main>
+        <main className="flex-1 p-6 min-h-[calc(100vh-64px)]">{children}</main>
       </div>
     </div>
   );

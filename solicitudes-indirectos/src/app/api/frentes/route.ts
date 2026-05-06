@@ -12,7 +12,7 @@ export async function GET(_request: Request) {
     const frentes = await prisma.frente.findMany({
       include: {
         proyecto: { select: { id: true, nombre: true, activo: true } },
-        aprobadorConfig: { select: { id: true, aprobadorId: true, frenteId: true } },
+        aprobadorConfig: true,
         usuarios: {
           include: {
             user: { select: { id: true, nombre: true, rol: true, cargo: true } },
@@ -37,7 +37,7 @@ export async function POST(request: Request) {
       return Response.json({ error: "No autorizado" }, { status: 403 });
     }
 
-    const { nombre, proyectoId } = await request.json();
+    const { nombre, proyectoId, aprobadorId } = await request.json();
     if (!nombre?.trim()) {
       return Response.json({ error: "El nombre es requerido" }, { status: 400 });
     }
@@ -51,8 +51,19 @@ export async function POST(request: Request) {
     }
 
     const frente = await prisma.frente.create({
-      data: { nombre: nombre.trim(), proyectoId: Number(proyectoId) },
-      include: { proyecto: { select: { id: true, nombre: true, activo: true } } },
+      data: {
+        nombre: nombre.trim(),
+        proyectoId: Number(proyectoId),
+        ...(aprobadorId ? {
+          aprobadorConfig: {
+            create: { aprobadorId }
+          }
+        } : {})
+      },
+      include: {
+        proyecto: { select: { id: true, nombre: true, activo: true } },
+        aprobadorConfig: true
+      },
     });
 
     return Response.json(frente, { status: 201 });
@@ -70,22 +81,45 @@ export async function PATCH(request: Request) {
       return Response.json({ error: "No autorizado" }, { status: 403 });
     }
 
-    const { id, nombre, proyectoId } = await request.json();
+    const { id, nombre, proyectoId, aprobadorId } = await request.json();
     if (!id) {
       return Response.json({ error: "El ID del frente es requerido" }, { status: 400 });
     }
 
+    const data: any = {
+      ...(nombre ? { nombre: nombre.trim() } : {}),
+      ...(proyectoId ? { proyectoId: Number(proyectoId) } : {}),
+    };
+
+    if (aprobadorId !== undefined) {
+      if (aprobadorId) {
+        data.aprobadorConfig = {
+          upsert: {
+            create: { aprobadorId },
+            update: { aprobadorId }
+          }
+        };
+      } else {
+        // Si viene aprobadorId vacío/null, lo eliminamos
+        data.aprobadorConfig = {
+          delete: true
+        };
+      }
+    }
+
     const frente = await prisma.frente.update({
       where: { id: Number(id) },
-      data: {
-        ...(nombre ? { nombre: nombre.trim() } : {}),
-        ...(proyectoId ? { proyectoId: Number(proyectoId) } : {}),
+      data,
+      include: {
+        proyecto: { select: { id: true, nombre: true, activo: true } },
+        aprobadorConfig: true
       },
-      include: { proyecto: { select: { id: true, nombre: true, activo: true } } },
     });
 
     return Response.json(frente);
   } catch (error) {
+    // Si intentamos borrar un aprobador que no existe, Prisma puede dar error. 
+    // Capturamos específicamente errores de delete si no existe el registro.
     console.error("PATCH /api/frentes error:", error);
     return Response.json({ error: "Error interno del servidor" }, { status: 500 });
   }

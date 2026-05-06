@@ -1,6 +1,7 @@
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import { tienePermiso } from "@/lib/utils";
 
 export async function GET(
   _request: Request,
@@ -54,10 +55,13 @@ export async function GET(
     }
 
     // Access control: SOLICITANTE/DIRECTOR_PROYECTO can only see solicitudes from their frentes or their own
-    const userRol = session.user.rol;
+    const userRoles: string[] = session.user.roles ?? [session.user.rol];
+    const funcionalidadesAdicionales: string[] = session.user.funcionalidadesAdicionales ?? [];
     const userId = session.user.id;
 
-    if (userRol === "SOLICITANTE" || userRol === "DIRECTOR_PROYECTO") {
+    const puedeVerTodo = tienePermiso(userRoles, funcionalidadesAdicionales, "revisar_contratos");
+
+    if (!puedeVerTodo) {
       if (solicitud.solicitanteId !== userId) {
         const userFrente = await prisma.frenteUsuario.findMany({
           where: { userId },
@@ -106,14 +110,16 @@ export async function PATCH(
     // Only BORRADOR or DEVUELTA solicitudes can be freely edited
     const userId = session.user.id;
     const userRoles: string[] = session.user.roles ?? [session.user.rol];
+    const funcionalidadesAdicionales: string[] = session.user.funcionalidadesAdicionales ?? [];
+    
     const isAdmin = userRoles.includes("ADMIN");
-    const isContratos = userRoles.includes("CONTRATOS");
+    const puedeRevisar = tienePermiso(userRoles, funcionalidadesAdicionales, "revisar_contratos");
 
     const isOwner = solicitud.solicitanteId === userId;
     const isEditableState =
       solicitud.estado === "BORRADOR" || solicitud.estado === "DEVUELTA" || solicitud.estado === "EN_REVISION";
 
-    if (!isEditableState && !isAdmin && !isContratos) {
+    if (!isEditableState && !isAdmin && !puedeRevisar) {
       return Response.json(
         { error: "Solo se pueden editar solicitudes en estado BORRADOR, DEVUELTA o EN_REVISION" },
         { status: 409 }
@@ -161,6 +167,47 @@ export async function PATCH(
     return Response.json(updated);
   } catch (error) {
     console.error("PATCH /api/solicitudes/[id] error:", error);
+    return Response.json({ error: "Error interno del servidor" }, { status: 500 });
+  }
+}
+
+export async function DELETE(
+  _request: Request,
+  { params }: { params: Promise<{ id: string }> }
+) {
+  try {
+    const session = await getServerSession(authOptions);
+    if (!session?.user) {
+      return Response.json({ error: "No autenticado" }, { status: 401 });
+    }
+
+    const { id } = await params;
+    const numId = parseInt(id, 10);
+    if (isNaN(numId)) {
+      return Response.json({ error: "ID inválido" }, { status: 400 });
+    }
+
+    const solicitud = await prisma.solicitud.findUnique({ where: { id: numId } });
+    if (!solicitud) {
+      return Response.json({ error: "Solicitud no encontrada" }, { status: 404 });
+    }
+
+    // Roles permitidos para eliminar: ADMIN y CONTRATOS
+    const userRoles: string[] = session.user.roles ?? [session.user.rol];
+    const funcionalidadesAdicionales: string[] = session.user.funcionalidadesAdicionales ?? [];
+    
+    const isAdmin = userRoles.includes("ADMIN");
+    const puedeRevisar = tienePermiso(userRoles, funcionalidadesAdicionales, "revisar_contratos");
+
+    if (!isAdmin && !puedeRevisar) {
+      return Response.json({ error: "No autorizado para eliminar solicitudes" }, { status: 403 });
+    }
+
+    await prisma.solicitud.delete({ where: { id: numId } });
+
+    return Response.json({ message: "Solicitud eliminada correctamente" }, { status: 200 });
+  } catch (error) {
+    console.error("DELETE /api/solicitudes/[id] error:", error);
     return Response.json({ error: "Error interno del servidor" }, { status: 500 });
   }
 }

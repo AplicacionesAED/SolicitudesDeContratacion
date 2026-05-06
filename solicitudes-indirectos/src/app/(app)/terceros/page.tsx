@@ -28,26 +28,6 @@ interface Tercero {
   aprobadoDebidaDiligencia: boolean;
 }
 
-const DD_FIELDS = [
-  "dd_identificacionContraparte",
-  "dd_consultaListasRestrictivas",
-  "dd_verificacionPep",
-  "dd_conocimientoNegocio",
-  "dd_monitoreoActualizacion",
-  "dd_senalesAlertaReporte",
-] as const;
-
-function ddCount(t: Tercero): number {
-  return DD_FIELDS.filter((f) => t[f]).length;
-}
-
-const TIPO_CONTRATO_LABEL: Record<string, string> = {
-  OBRA: "Obra",
-  DISENO: "Diseño",
-  SERVICIOS: "Servicios",
-  PROYECTOS: "Proyectos",
-  LICITACIONES: "Licitaciones",
-};
 
 // ─── Toast simple ─────────────────────────────────────────────────────────────
 
@@ -228,8 +208,6 @@ export default function TercerosPage() {
                 <tr className="bg-gray-50">
                   {[
                     "Razón Social",
-                    "Tipo Contrato",
-                    "DD Progress",
                     "Debida Diligencia",
                     "Confidencialidad",
                     "Acciones",
@@ -245,28 +223,10 @@ export default function TercerosPage() {
               </thead>
               <tbody className="divide-y divide-gray-100">
                 {filtered.map((t) => {
-                  const count = ddCount(t);
-                  const pct = Math.round((count / 6) * 100);
-
                   return (
                     <tr key={t.id} className="hover:bg-gray-50 transition-colors">
                       <td className="px-4 py-3">
                         <p className="text-sm font-medium text-gray-900">{t.razonSocial}</p>
-                      </td>
-                      <td className="px-4 py-3 text-sm text-gray-700 whitespace-nowrap">
-                        {TIPO_CONTRATO_LABEL[t.tipoContrato] ?? t.tipoContrato}
-                      </td>
-                      <td className="px-4 py-3">
-                        <div className="flex items-center gap-2 min-w-[120px]">
-                          <div className="flex-1 h-1.5 bg-gray-200 rounded-full overflow-hidden">
-                            <div
-                              className={`h-full rounded-full transition-all ${count === 6 ? "bg-green-500" : count >= 3 ? "bg-blue-500" : "bg-gray-400"
-                                }`}
-                              style={{ width: `${pct}%` }}
-                            />
-                          </div>
-                          <span className="text-xs text-gray-500 whitespace-nowrap">{count}/6</span>
-                        </div>
                       </td>
 
                       {/* Debida Diligencia badge */}

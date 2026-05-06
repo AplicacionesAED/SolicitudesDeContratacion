@@ -1,7 +1,7 @@
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
-import { buildConsecutivo } from "@/lib/utils";
+import { buildConsecutivo, tienePermiso } from "@/lib/utils";
 
 const ROLES_VER_TODAS: string[] = ["CONTRATOS", "CONTROLES", "DIRECTOR_CONTROLES", "ADMIN"];
 
@@ -93,9 +93,11 @@ export async function POST(request: Request) {
     }
 
     const userRoles: string[] = session.user.roles ?? [session.user.rol];
-    if (!userRoles.includes("SOLICITANTE") && !userRoles.includes("DIRECTOR_PROYECTO")) {
+    const funcionalidadesAdicionales: string[] = session.user.funcionalidadesAdicionales ?? [];
+
+    if (!tienePermiso(userRoles, funcionalidadesAdicionales, "crear_enviar_solicitudes")) {
       return Response.json(
-        { error: "Solo SOLICITANTE y DIRECTOR_PROYECTO pueden crear solicitudes" },
+        { error: "No tienes permiso para crear solicitudes. Contacta al administrador." },
         { status: 403 }
       );
     }

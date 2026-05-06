@@ -1,6 +1,7 @@
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import { tienePermiso } from "@/lib/utils";
 import {
   notificarNuevaSolicitud,
   notificarAprobadaDirector,
@@ -24,49 +25,49 @@ type AccionEstado =
 
 interface TransicionConfig {
   estadosOrigen: string[];
-  rolesPermitidos: string[];
+  permisosPermitidos: string[];
 }
 
 const TRANSICIONES: Record<AccionEstado, TransicionConfig> = {
   ENVIAR: {
     estadosOrigen: ["BORRADOR"],
-    rolesPermitidos: ["SOLICITANTE", "DIRECTOR_PROYECTO"],
+    permisosPermitidos: ["crear_enviar_solicitudes"],
   },
   APROBAR_DIRECTOR: {
     estadosOrigen: ["ENVIADA"],
-    rolesPermitidos: ["DIRECTOR_PROYECTO"],
+    permisosPermitidos: ["aprobar_solicitudes_frente"],
   },
   DEVOLVER: {
     estadosOrigen: ["ENVIADA", "EN_TRAMITE_CONTRATOS"],
-    rolesPermitidos: ["DIRECTOR_PROYECTO", "CONTRATOS"],
+    permisosPermitidos: ["aprobar_solicitudes_frente", "revisar_contratos"],
   },
   REVISAR: {
     estadosOrigen: ["APROBADA_DIRECTOR", "EN_TRAMITE_CONTRATOS"],
-    rolesPermitidos: ["CONTRATOS"],
+    permisosPermitidos: ["revisar_contratos"],
   },
   TRAMITAR_OK: {
     estadosOrigen: ["EN_TRAMITE_CONTRATOS", "APROBADA_DIRECTOR"],
-    rolesPermitidos: ["CONTRATOS"],
+    permisosPermitidos: ["revisar_contratos"],
   },
   AVANZAR_CONTRATOS: {
     estadosOrigen: ["CREACION_MINUTA"],
-    rolesPermitidos: ["CONTRATOS"],
+    permisosPermitidos: ["revisar_contratos"],
   },
   PASAR_CONTROLES: {
     estadosOrigen: ["ENVIO_CONTRATO_POLIZAS"],
-    rolesPermitidos: ["CONTRATOS"],
+    permisosPermitidos: ["revisar_contratos"],
   },
   REGISTRAR_ADPRO: {
     estadosOrigen: ["EN_CONTROLES"],
-    rolesPermitidos: ["CONTROLES"],
+    permisosPermitidos: ["registrar_adpro"],
   },
   APROBAR_FINAL: {
     estadosOrigen: ["APROBACION_FINAL"],
-    rolesPermitidos: ["DIRECTOR_CONTROLES"],
+    permisosPermitidos: ["aprobacion_final_controles"],
   },
   REENVIAR: {
     estadosOrigen: ["DEVUELTA", "EN_REVISION"],
-    rolesPermitidos: ["SOLICITANTE", "DIRECTOR_PROYECTO"],
+    permisosPermitidos: ["crear_enviar_solicitudes"],
   },
 };
 
@@ -122,10 +123,15 @@ export async function POST(
     }
 
     const userRoles: string[] = session.user.roles ?? [session.user.rol];
+    const funcionalidadesAdicionales: string[] = session.user.funcionalidadesAdicionales ?? [];
     const userId = session.user.id;
 
-    // Validate role permission
-    if (!transicion.rolesPermitidos.some((r) => userRoles.includes(r))) {
+    // Validate permission
+    const tieneAlgunPermiso = transicion.permisosPermitidos.some((p) => 
+      tienePermiso(userRoles, funcionalidadesAdicionales, p)
+    );
+
+    if (!tieneAlgunPermiso) {
       return Response.json(
         { error: `No tienes permiso para ejecutar la acción ${accion}` },
         { status: 403 }
