@@ -1,10 +1,11 @@
 generator client {
-  provider = "prisma-client"
+  provider = "prisma-client-js"
   output   = "../src/generated/prisma"
 }
 
 datasource db {
   provider = "postgresql"
+  url = "postgresql://postgres:1234@localhost:5432/solicitudes_indirectos?schema=public"
 }
 
 // ─── Auth (NextAuth v4) ───────────────────────────────────────────────────────

@@ -18,41 +18,34 @@ export const authOptions: NextAuthOptions = {
         email: { label: "Email", type: "email" },
         password: { label: "Contraseña", type: "password" },
       },
-      async authorize(credentials) {
-        if (!credentials?.email || !credentials?.password) return null;
+  async authorize(credentials) {
+    if (!credentials?.email || !credentials?.password) return null;
 
-        const user = await prisma.user.findUnique({
-          where: { email: credentials.email },
-          include: {
-            frentesAsignados: { include: { frente: true } },
-          },
-        });
+    const user = await prisma.user.findUnique({
+      where: { email: credentials.email },
+    });
 
-        if (!user || !user.password || !user.activo) return null;
+    if (!user) return null;
 
-        const passwordValid = await bcrypt.compare(
-          credentials.password,
-          user.password
-        );
-        if (!passwordValid) return null;
+    // Validar contraseña
+    const isValid = await bcrypt.compare(credentials.password, user.password!);
+    if (!isValid) {
+      console.log("Contraseña inválida para", credentials.email);
+      return null;
+    }
+    console.log("User encontrado:", user);
+    console.log("Password en DB:", user.password);
 
-        let parsedRoles: string[];
-        try {
-          parsedRoles = JSON.parse(user.roles || '["SOLICITANTE"]');
-        } catch {
-          parsedRoles = ["SOLICITANTE"];
-        }
 
-        return {
-          id: user.id,
-          email: user.email,
-          name: user.nombre,
-          rol: parsedRoles[0] ?? "SOLICITANTE",
-          roles: parsedRoles,
-          cargo: user.cargo,
-          telefono: user.telefono,
-        };
-      },
+    return {
+      id: user.id,
+      email: user.email,
+      name: user.nombre,
+      rol: user.rol,
+    };
+    
+  },
+
     }),
   ],
   callbacks: {
