@@ -4,7 +4,7 @@ import { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
 import {
   Plus, Search, Users, CheckCircle, Clock,
-  Eye, Pencil, RefreshCw, X,
+  Eye, Pencil, RefreshCw, X, ChevronLeft, ChevronRight,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Spinner } from "@/components/ui/spinner";
@@ -55,6 +55,8 @@ export default function TercerosPage() {
   const [syncing, setSyncing] = useState(false);
   const [search, setSearch] = useState("");
   const [toasts, setToasts] = useState<Toast[]>([]);
+  const [page, setPage] = useState(1);
+  const PAGE_SIZE = 20;
 
   // ── Helpers ──────────────────────────────────────────────────────────────────
 
@@ -102,7 +104,7 @@ export default function TercerosPage() {
     }
   };
 
-  // ── Filter ────────────────────────────────────────────────────────────────────
+  // ── Filter + Pagination ───────────────────────────────────────────────────────
 
   const filtered = terceros.filter((t) => {
     if (!search) return true;
@@ -112,6 +114,14 @@ export default function TercerosPage() {
       t.nit.toLowerCase().includes(q)
     );
   });
+
+  const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
+  const currentPage = Math.min(page, totalPages);
+  const paginated = filtered.slice((currentPage - 1) * PAGE_SIZE, currentPage * PAGE_SIZE);
+
+  function goTo(p: number) {
+    setPage(Math.max(1, Math.min(p, totalPages)));
+  }
 
   // ── Render ────────────────────────────────────────────────────────────────────
 
@@ -172,7 +182,7 @@ export default function TercerosPage() {
           <input
             type="text"
             value={search}
-            onChange={(e) => setSearch(e.target.value)}
+            onChange={(e) => { setSearch(e.target.value); setPage(1); }}
             placeholder="Buscar por razón social o NIT..."
             className="block w-full rounded-md border border-gray-300 pl-9 pr-3 py-2 text-sm
               text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-2
@@ -203,6 +213,7 @@ export default function TercerosPage() {
             </p>
           </div>
         ) : (
+          <>
           <div className="overflow-x-auto">
             <table className="min-w-full divide-y divide-gray-100">
               <thead>
@@ -224,7 +235,7 @@ export default function TercerosPage() {
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-100">
-                {filtered.map((t) => {
+                {paginated.map((t) => {
                   const diasRestantes = t.fechaVencimientoSagrilaft
                     ? Math.ceil((new Date(t.fechaVencimientoSagrilaft).getTime() - Date.now()) / (1000 * 60 * 60 * 24))
                     : null;
@@ -317,6 +328,58 @@ export default function TercerosPage() {
               </tbody>
             </table>
           </div>
+
+          {/* Pagination footer */}
+          {totalPages > 1 && (
+            <div className="flex items-center justify-between px-4 py-3 border-t border-gray-100">
+              <p className="text-xs text-gray-500">
+                Mostrando {(currentPage - 1) * PAGE_SIZE + 1}–{Math.min(currentPage * PAGE_SIZE, filtered.length)} de {filtered.length}
+              </p>
+              <div className="flex items-center gap-1">
+                <button
+                  onClick={() => goTo(currentPage - 1)}
+                  disabled={currentPage === 1}
+                  className="inline-flex items-center justify-center h-7 w-7 rounded-md border border-gray-200 text-gray-500 hover:bg-gray-50 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+                >
+                  <ChevronLeft size={14} />
+                </button>
+
+                {Array.from({ length: totalPages }, (_, i) => i + 1)
+                  .filter(p => p === 1 || p === totalPages || Math.abs(p - currentPage) <= 1)
+                  .reduce<(number | "…")[]>((acc, p, idx, arr) => {
+                    if (idx > 0 && (p as number) - (arr[idx - 1] as number) > 1) acc.push("…");
+                    acc.push(p);
+                    return acc;
+                  }, [])
+                  .map((p, i) =>
+                    p === "…" ? (
+                      <span key={`ellipsis-${i}`} className="px-1 text-xs text-gray-400">…</span>
+                    ) : (
+                      <button
+                        key={p}
+                        onClick={() => goTo(p as number)}
+                        className={`inline-flex items-center justify-center h-7 min-w-[28px] rounded-md text-xs font-medium transition-colors ${
+                          p === currentPage
+                            ? "bg-blue-600 text-white"
+                            : "border border-gray-200 text-gray-600 hover:bg-gray-50"
+                        }`}
+                      >
+                        {p}
+                      </button>
+                    )
+                  )}
+
+                <button
+                  onClick={() => goTo(currentPage + 1)}
+                  disabled={currentPage === totalPages}
+                  className="inline-flex items-center justify-center h-7 w-7 rounded-md border border-gray-200 text-gray-500 hover:bg-gray-50 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+                >
+                  <ChevronRight size={14} />
+                </button>
+              </div>
+            </div>
+          )}
+          </>
         )}
       </div>
     </div>
