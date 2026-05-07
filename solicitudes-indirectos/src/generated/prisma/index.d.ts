@@ -7553,29 +7553,34 @@ export namespace Prisma {
 
   export type FrenteAvgAggregateOutputType = {
     id: number | null
+    etapa: number | null
     proyectoId: number | null
   }
 
   export type FrenteSumAggregateOutputType = {
     id: number | null
+    etapa: number | null
     proyectoId: number | null
   }
 
   export type FrenteMinAggregateOutputType = {
     id: number | null
     nombre: string | null
+    etapa: number | null
     proyectoId: number | null
   }
 
   export type FrenteMaxAggregateOutputType = {
     id: number | null
     nombre: string | null
+    etapa: number | null
     proyectoId: number | null
   }
 
   export type FrenteCountAggregateOutputType = {
     id: number
     nombre: number
+    etapa: number
     proyectoId: number
     _all: number
   }
@@ -7583,29 +7588,34 @@ export namespace Prisma {
 
   export type FrenteAvgAggregateInputType = {
     id?: true
+    etapa?: true
     proyectoId?: true
   }
 
   export type FrenteSumAggregateInputType = {
     id?: true
+    etapa?: true
     proyectoId?: true
   }
 
   export type FrenteMinAggregateInputType = {
     id?: true
     nombre?: true
+    etapa?: true
     proyectoId?: true
   }
 
   export type FrenteMaxAggregateInputType = {
     id?: true
     nombre?: true
+    etapa?: true
     proyectoId?: true
   }
 
   export type FrenteCountAggregateInputType = {
     id?: true
     nombre?: true
+    etapa?: true
     proyectoId?: true
     _all?: true
   }
@@ -7699,6 +7709,7 @@ export namespace Prisma {
   export type FrenteGroupByOutputType = {
     id: number
     nombre: string
+    etapa: number | null
     proyectoId: number
     _count: FrenteCountAggregateOutputType | null
     _avg: FrenteAvgAggregateOutputType | null
@@ -7724,6 +7735,7 @@ export namespace Prisma {
   export type FrenteSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
     nombre?: boolean
+    etapa?: boolean
     proyectoId?: boolean
     proyecto?: boolean | ProyectoDefaultArgs<ExtArgs>
     usuarios?: boolean | Frente$usuariosArgs<ExtArgs>
@@ -7734,6 +7746,7 @@ export namespace Prisma {
   export type FrenteSelectScalar = {
     id?: boolean
     nombre?: boolean
+    etapa?: boolean
     proyectoId?: boolean
   }
 
@@ -7756,6 +7769,7 @@ export namespace Prisma {
     scalars: $Extensions.GetPayloadResult<{
       id: number
       nombre: string
+      etapa: number | null
       proyectoId: number
     }, ExtArgs["result"]["frente"]>
     composites: {}
@@ -8184,6 +8198,7 @@ export namespace Prisma {
   interface FrenteFieldRefs {
     readonly id: FieldRef<"Frente", 'Int'>
     readonly nombre: FieldRef<"Frente", 'String'>
+    readonly etapa: FieldRef<"Frente", 'Int'>
     readonly proyectoId: FieldRef<"Frente", 'Int'>
   }
     
@@ -19291,6 +19306,7 @@ export namespace Prisma {
   export const FrenteScalarFieldEnum: {
     id: 'id',
     nombre: 'nombre',
+    etapa: 'etapa',
     proyectoId: 'proyectoId'
   };
 
@@ -19933,6 +19949,7 @@ export namespace Prisma {
     NOT?: FrenteWhereInput | FrenteWhereInput[]
     id?: IntFilter<"Frente"> | number
     nombre?: StringFilter<"Frente"> | string
+    etapa?: IntNullableFilter<"Frente"> | number | null
     proyectoId?: IntFilter<"Frente"> | number
     proyecto?: XOR<ProyectoRelationFilter, ProyectoWhereInput>
     usuarios?: FrenteUsuarioListRelationFilter
@@ -19942,6 +19959,7 @@ export namespace Prisma {
   export type FrenteOrderByWithRelationInput = {
     id?: SortOrder
     nombre?: SortOrder
+    etapa?: SortOrderInput | SortOrder
     proyectoId?: SortOrder
     proyecto?: ProyectoOrderByWithRelationInput
     usuarios?: FrenteUsuarioOrderByRelationAggregateInput
@@ -19954,6 +19972,7 @@ export namespace Prisma {
     OR?: FrenteWhereInput[]
     NOT?: FrenteWhereInput | FrenteWhereInput[]
     nombre?: StringFilter<"Frente"> | string
+    etapa?: IntNullableFilter<"Frente"> | number | null
     proyectoId?: IntFilter<"Frente"> | number
     proyecto?: XOR<ProyectoRelationFilter, ProyectoWhereInput>
     usuarios?: FrenteUsuarioListRelationFilter
@@ -19963,6 +19982,7 @@ export namespace Prisma {
   export type FrenteOrderByWithAggregationInput = {
     id?: SortOrder
     nombre?: SortOrder
+    etapa?: SortOrderInput | SortOrder
     proyectoId?: SortOrder
     _count?: FrenteCountOrderByAggregateInput
     _avg?: FrenteAvgOrderByAggregateInput
@@ -19977,6 +19997,7 @@ export namespace Prisma {
     NOT?: FrenteScalarWhereWithAggregatesInput | FrenteScalarWhereWithAggregatesInput[]
     id?: IntWithAggregatesFilter<"Frente"> | number
     nombre?: StringWithAggregatesFilter<"Frente"> | string
+    etapa?: IntNullableWithAggregatesFilter<"Frente"> | number | null
     proyectoId?: IntWithAggregatesFilter<"Frente"> | number
   }
 
@@ -21246,6 +21267,7 @@ export namespace Prisma {
 
   export type FrenteCreateInput = {
     nombre: string
+    etapa?: number | null
     proyecto: ProyectoCreateNestedOneWithoutFrentesInput
     usuarios?: FrenteUsuarioCreateNestedManyWithoutFrenteInput
     aprobadorConfig?: AprobadorFrenteCreateNestedOneWithoutFrenteInput
@@ -21254,6 +21276,7 @@ export namespace Prisma {
   export type FrenteUncheckedCreateInput = {
     id?: number
     nombre: string
+    etapa?: number | null
     proyectoId: number
     usuarios?: FrenteUsuarioUncheckedCreateNestedManyWithoutFrenteInput
     aprobadorConfig?: AprobadorFrenteUncheckedCreateNestedOneWithoutFrenteInput
@@ -21261,6 +21284,7 @@ export namespace Prisma {
 
   export type FrenteUpdateInput = {
     nombre?: StringFieldUpdateOperationsInput | string
+    etapa?: NullableIntFieldUpdateOperationsInput | number | null
     proyecto?: ProyectoUpdateOneRequiredWithoutFrentesNestedInput
     usuarios?: FrenteUsuarioUpdateManyWithoutFrenteNestedInput
     aprobadorConfig?: AprobadorFrenteUpdateOneWithoutFrenteNestedInput
@@ -21269,6 +21293,7 @@ export namespace Prisma {
   export type FrenteUncheckedUpdateInput = {
     id?: IntFieldUpdateOperationsInput | number
     nombre?: StringFieldUpdateOperationsInput | string
+    etapa?: NullableIntFieldUpdateOperationsInput | number | null
     proyectoId?: IntFieldUpdateOperationsInput | number
     usuarios?: FrenteUsuarioUncheckedUpdateManyWithoutFrenteNestedInput
     aprobadorConfig?: AprobadorFrenteUncheckedUpdateOneWithoutFrenteNestedInput
@@ -21277,16 +21302,19 @@ export namespace Prisma {
   export type FrenteCreateManyInput = {
     id?: number
     nombre: string
+    etapa?: number | null
     proyectoId: number
   }
 
   export type FrenteUpdateManyMutationInput = {
     nombre?: StringFieldUpdateOperationsInput | string
+    etapa?: NullableIntFieldUpdateOperationsInput | number | null
   }
 
   export type FrenteUncheckedUpdateManyInput = {
     id?: IntFieldUpdateOperationsInput | number
     nombre?: StringFieldUpdateOperationsInput | string
+    etapa?: NullableIntFieldUpdateOperationsInput | number | null
     proyectoId?: IntFieldUpdateOperationsInput | number
   }
 
@@ -22681,28 +22709,33 @@ export namespace Prisma {
   export type FrenteCountOrderByAggregateInput = {
     id?: SortOrder
     nombre?: SortOrder
+    etapa?: SortOrder
     proyectoId?: SortOrder
   }
 
   export type FrenteAvgOrderByAggregateInput = {
     id?: SortOrder
+    etapa?: SortOrder
     proyectoId?: SortOrder
   }
 
   export type FrenteMaxOrderByAggregateInput = {
     id?: SortOrder
     nombre?: SortOrder
+    etapa?: SortOrder
     proyectoId?: SortOrder
   }
 
   export type FrenteMinOrderByAggregateInput = {
     id?: SortOrder
     nombre?: SortOrder
+    etapa?: SortOrder
     proyectoId?: SortOrder
   }
 
   export type FrenteSumOrderByAggregateInput = {
     id?: SortOrder
+    etapa?: SortOrder
     proyectoId?: SortOrder
   }
 
@@ -25285,6 +25318,7 @@ export namespace Prisma {
 
   export type FrenteCreateWithoutProyectoInput = {
     nombre: string
+    etapa?: number | null
     usuarios?: FrenteUsuarioCreateNestedManyWithoutFrenteInput
     aprobadorConfig?: AprobadorFrenteCreateNestedOneWithoutFrenteInput
   }
@@ -25292,6 +25326,7 @@ export namespace Prisma {
   export type FrenteUncheckedCreateWithoutProyectoInput = {
     id?: number
     nombre: string
+    etapa?: number | null
     usuarios?: FrenteUsuarioUncheckedCreateNestedManyWithoutFrenteInput
     aprobadorConfig?: AprobadorFrenteUncheckedCreateNestedOneWithoutFrenteInput
   }
@@ -25328,6 +25363,7 @@ export namespace Prisma {
     NOT?: FrenteScalarWhereInput | FrenteScalarWhereInput[]
     id?: IntFilter<"Frente"> | number
     nombre?: StringFilter<"Frente"> | string
+    etapa?: IntNullableFilter<"Frente"> | number | null
     proyectoId?: IntFilter<"Frente"> | number
   }
 
@@ -25510,6 +25546,7 @@ export namespace Prisma {
 
   export type FrenteCreateWithoutUsuariosInput = {
     nombre: string
+    etapa?: number | null
     proyecto: ProyectoCreateNestedOneWithoutFrentesInput
     aprobadorConfig?: AprobadorFrenteCreateNestedOneWithoutFrenteInput
   }
@@ -25517,6 +25554,7 @@ export namespace Prisma {
   export type FrenteUncheckedCreateWithoutUsuariosInput = {
     id?: number
     nombre: string
+    etapa?: number | null
     proyectoId: number
     aprobadorConfig?: AprobadorFrenteUncheckedCreateNestedOneWithoutFrenteInput
   }
@@ -25596,6 +25634,7 @@ export namespace Prisma {
 
   export type FrenteUpdateWithoutUsuariosInput = {
     nombre?: StringFieldUpdateOperationsInput | string
+    etapa?: NullableIntFieldUpdateOperationsInput | number | null
     proyecto?: ProyectoUpdateOneRequiredWithoutFrentesNestedInput
     aprobadorConfig?: AprobadorFrenteUpdateOneWithoutFrenteNestedInput
   }
@@ -25603,12 +25642,14 @@ export namespace Prisma {
   export type FrenteUncheckedUpdateWithoutUsuariosInput = {
     id?: IntFieldUpdateOperationsInput | number
     nombre?: StringFieldUpdateOperationsInput | string
+    etapa?: NullableIntFieldUpdateOperationsInput | number | null
     proyectoId?: IntFieldUpdateOperationsInput | number
     aprobadorConfig?: AprobadorFrenteUncheckedUpdateOneWithoutFrenteNestedInput
   }
 
   export type FrenteCreateWithoutAprobadorConfigInput = {
     nombre: string
+    etapa?: number | null
     proyecto: ProyectoCreateNestedOneWithoutFrentesInput
     usuarios?: FrenteUsuarioCreateNestedManyWithoutFrenteInput
   }
@@ -25616,6 +25657,7 @@ export namespace Prisma {
   export type FrenteUncheckedCreateWithoutAprobadorConfigInput = {
     id?: number
     nombre: string
+    etapa?: number | null
     proyectoId: number
     usuarios?: FrenteUsuarioUncheckedCreateNestedManyWithoutFrenteInput
   }
@@ -25638,6 +25680,7 @@ export namespace Prisma {
 
   export type FrenteUpdateWithoutAprobadorConfigInput = {
     nombre?: StringFieldUpdateOperationsInput | string
+    etapa?: NullableIntFieldUpdateOperationsInput | number | null
     proyecto?: ProyectoUpdateOneRequiredWithoutFrentesNestedInput
     usuarios?: FrenteUsuarioUpdateManyWithoutFrenteNestedInput
   }
@@ -25645,6 +25688,7 @@ export namespace Prisma {
   export type FrenteUncheckedUpdateWithoutAprobadorConfigInput = {
     id?: IntFieldUpdateOperationsInput | number
     nombre?: StringFieldUpdateOperationsInput | string
+    etapa?: NullableIntFieldUpdateOperationsInput | number | null
     proyectoId?: IntFieldUpdateOperationsInput | number
     usuarios?: FrenteUsuarioUncheckedUpdateManyWithoutFrenteNestedInput
   }
@@ -27710,10 +27754,12 @@ export namespace Prisma {
   export type FrenteCreateManyProyectoInput = {
     id?: number
     nombre: string
+    etapa?: number | null
   }
 
   export type FrenteUpdateWithoutProyectoInput = {
     nombre?: StringFieldUpdateOperationsInput | string
+    etapa?: NullableIntFieldUpdateOperationsInput | number | null
     usuarios?: FrenteUsuarioUpdateManyWithoutFrenteNestedInput
     aprobadorConfig?: AprobadorFrenteUpdateOneWithoutFrenteNestedInput
   }
@@ -27721,6 +27767,7 @@ export namespace Prisma {
   export type FrenteUncheckedUpdateWithoutProyectoInput = {
     id?: IntFieldUpdateOperationsInput | number
     nombre?: StringFieldUpdateOperationsInput | string
+    etapa?: NullableIntFieldUpdateOperationsInput | number | null
     usuarios?: FrenteUsuarioUncheckedUpdateManyWithoutFrenteNestedInput
     aprobadorConfig?: AprobadorFrenteUncheckedUpdateOneWithoutFrenteNestedInput
   }
@@ -27728,6 +27775,7 @@ export namespace Prisma {
   export type FrenteUncheckedUpdateManyWithoutProyectoInput = {
     id?: IntFieldUpdateOperationsInput | number
     nombre?: StringFieldUpdateOperationsInput | string
+    etapa?: NullableIntFieldUpdateOperationsInput | number | null
   }
 
   export type FrenteUsuarioCreateManyFrenteInput = {

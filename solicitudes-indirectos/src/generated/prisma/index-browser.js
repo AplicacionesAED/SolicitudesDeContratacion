@@ -174,6 +174,7 @@ exports.Prisma.ProyectoScalarFieldEnum = {
 exports.Prisma.FrenteScalarFieldEnum = {
   id: 'id',
   nombre: 'nombre',
+  etapa: 'etapa',
   proyectoId: 'proyectoId'
 };
 

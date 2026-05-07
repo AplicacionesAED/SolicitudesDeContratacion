@@ -13,6 +13,7 @@ import {
   DollarSign,
   Hash,
   Paperclip,
+  Layers,
 } from "lucide-react";
 import { SolicitudBadge } from "@/components/solicitudes/SolicitudBadge";
 import { SolicitudActions } from "@/components/solicitudes/SolicitudActions";
@@ -104,9 +105,11 @@ export default async function SolicitudDetallePage({ params }: PageProps) {
   const [proyecto, frentes] = await Promise.all([
     prisma.proyecto.findUnique({ where: { id: raw.proyectoId }, select: { nombre: true } }),
     parsedFrentesIds.length > 0
-      ? prisma.frente.findMany({ where: { id: { in: parsedFrentesIds } }, select: { id: true, nombre: true } })
+      ? prisma.frente.findMany({ where: { id: { in: parsedFrentesIds } }, select: { id: true, nombre: true, etapa: true } })
       : Promise.resolve([]),
   ]);
+
+  const etapasUnicas = [...new Set(frentes.map((f) => f.etapa).filter(Boolean))].sort() as number[];
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const solicitud: any = {
@@ -114,6 +117,7 @@ export default async function SolicitudDetallePage({ params }: PageProps) {
     frentesIds: parsedFrentesIds,
     proyectoNombre: proyecto?.nombre ?? `Proyecto #${raw.proyectoId}`,
     frentesNombres: frentes.map((f) => f.nombre),
+    etapasUnicas,
   };
 
   const archivos = [
@@ -231,6 +235,24 @@ export default async function SolicitudDetallePage({ params }: PageProps) {
                 : "—"
             }
             icon={Hash}
+          />
+          <InfoRow
+            label="Etapa"
+            value={
+              solicitud.etapasUnicas.length > 0
+                ? (
+                  <span className="flex flex-wrap gap-1.5">
+                    {solicitud.etapasUnicas.map((e: number) => (
+                      <span key={e} className="inline-flex items-center gap-1 text-xs font-semibold bg-purple-50 text-purple-700 border border-purple-200 rounded-full px-2.5 py-0.5">
+                        <Layers size={11} />
+                        Etapa {e}
+                      </span>
+                    ))}
+                  </span>
+                )
+                : null
+            }
+            icon={Layers}
           />
           {solicitud.numeroContratoAdpro && (
             <InfoRow

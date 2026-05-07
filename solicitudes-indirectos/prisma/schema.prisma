@@ -85,6 +85,7 @@ model Proyecto {
 model Frente {
   id         Int      @id @default(autoincrement())
   nombre     String
+  etapa      Int?
   proyectoId Int
   proyecto   Proyecto @relation(fields: [proyectoId], references: [id])
 

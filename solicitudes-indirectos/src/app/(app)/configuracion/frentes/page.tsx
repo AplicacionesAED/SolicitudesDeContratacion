@@ -24,6 +24,7 @@ interface FrenteUsuario {
 interface Frente {
   id: number;
   nombre: string;
+  etapa?: number | null;
   proyecto: { id: number; nombre: string; activo: boolean };
   aprobadorConfig?: {
     aprobadorId: string;
@@ -63,7 +64,7 @@ export default function FrentesPage() {
   const [frenteModal, setFrenteModal] = useState(false);
   const [frenteNombre, setFrenteNombre] = useState("");
   const [frenteProyectoId, setFrenteProyectoId] = useState<number | "">("");
-  const [frenteAprobadorId, setFrenteAprobadorId] = useState("");
+  const [frenteEtapa, setFrenteEtapa] = useState<number | "">("");
 
   // Modal — editar proyecto
   const [editProyectoModal, setEditProyectoModal] = useState(false);
@@ -76,7 +77,7 @@ export default function FrentesPage() {
   const [editFrente, setEditFrente] = useState<Frente | null>(null);
   const [editNombre, setEditNombre] = useState("");
   const [editProyectoId, setEditProyectoId] = useState<number | "">("");
-  const [editAprobadorId, setEditAprobadorId] = useState("");
+  const [editEtapa, setEditEtapa] = useState<number | "">("");
 
   // Modal — confirmar eliminación
   const [deleteModal, setDeleteModal] = useState(false);
@@ -179,10 +180,10 @@ export default function FrentesPage() {
       const res = await fetch("/api/frentes", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ 
-          nombre: frenteNombre, 
+        body: JSON.stringify({
+          nombre: frenteNombre,
           proyectoId: frenteProyectoId,
-          aprobadorId: frenteAprobadorId || null 
+          etapa: frenteEtapa || null,
         }),
       });
       const data = await res.json();
@@ -190,6 +191,7 @@ export default function FrentesPage() {
       setFrenteModal(false);
       setFrenteNombre("");
       setFrenteProyectoId("");
+      setFrenteEtapa("");
       fetchData();
     } catch (e) {
       setFormError(e instanceof Error ? e.message : "Error desconocido");
@@ -203,7 +205,7 @@ export default function FrentesPage() {
     setEditFrente(frente);
     setEditNombre(frente.nombre);
     setEditProyectoId(frente.proyecto.id);
-    setEditAprobadorId(frente.aprobadorConfig?.aprobadorId ?? "");
+    setEditEtapa(frente.etapa ?? "");
     setFormError(null);
     setEditModal(true);
   }
@@ -221,7 +223,7 @@ export default function FrentesPage() {
           id: editFrente.id,
           nombre: editNombre,
           proyectoId: editProyectoId,
-          aprobadorId: editAprobadorId || "", // "" se interpretará como eliminar en el backend
+          etapa: editEtapa || null,
         }),
       });
       const data = await res.json();
@@ -318,11 +320,11 @@ export default function FrentesPage() {
           </button>
           <button
             onClick={() => { 
-              setFrenteNombre(""); 
-              setFrenteProyectoId(""); 
-              setFrenteAprobadorId("");
-              setFormError(null); 
-              setFrenteModal(true); 
+              setFrenteNombre("");
+              setFrenteProyectoId("");
+              setFrenteEtapa("");
+              setFormError(null);
+              setFrenteModal(true);
             }}
             className="inline-flex items-center gap-2 rounded-lg bg-blue-600 px-3 py-2 text-sm font-medium text-white hover:bg-blue-700 transition-colors"
           >
@@ -410,9 +412,16 @@ export default function FrentesPage() {
                           href={`/configuracion/frentes/${frente.id}`}
                           className="flex-1 text-left group"
                         >
-                          <h3 className="text-sm font-semibold text-gray-800 group-hover:text-blue-600 transition-colors">
-                            {frente.nombre}
-                          </h3>
+                          <div className="flex items-center gap-2 flex-wrap">
+                            <h3 className="text-sm font-semibold text-gray-800 group-hover:text-blue-600 transition-colors">
+                              {frente.nombre}
+                            </h3>
+                            {frente.etapa && (
+                              <span className="inline-flex items-center text-[10px] font-semibold bg-purple-50 text-purple-700 border border-purple-200 rounded-full px-2 py-0.5 shrink-0">
+                                Etapa {frente.etapa}
+                              </span>
+                            )}
+                          </div>
                         </Link>
 
                         <div className="shrink-0 flex items-center gap-1">
@@ -574,20 +583,17 @@ export default function FrentesPage() {
                   />
                 </div>
                 <div>
-                  <label className="block text-xs font-medium text-gray-700 mb-1">Aprobador del Frente</label>
+                  <label className="block text-xs font-medium text-gray-700 mb-1">Etapa</label>
                   <select
-                    value={frenteAprobadorId}
-                    onChange={(e) => setFrenteAprobadorId(e.target.value)}
+                    value={frenteEtapa}
+                    onChange={(e) => setFrenteEtapa(e.target.value ? Number(e.target.value) : "")}
                     className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                   >
-                    <option value="">Sin aprobador específico...</option>
-                    {possibleApprovers.map((u) => (
-                      <option key={u.id} value={u.id}>{u.nombre}</option>
+                    <option value="">Sin etapa</option>
+                    {Array.from({ length: 10 }, (_, i) => i + 1).map((n) => (
+                      <option key={n} value={n}>Etapa {n}</option>
                     ))}
                   </select>
-                  <p className="text-[10px] text-gray-400 mt-1 italic">
-                    Si no seleccionas uno, el sistema usará el aprobador por defecto del rol.
-                  </p>
                 </div>
                 <div className="flex justify-end gap-3">
                   <button type="button" onClick={() => setFrenteModal(false)} className="rounded-lg border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50">Cancelar</button>
@@ -640,15 +646,15 @@ export default function FrentesPage() {
                   />
                 </div>
                 <div>
-                  <label className="block text-xs font-medium text-gray-700 mb-1">Aprobador del Frente</label>
+                  <label className="block text-xs font-medium text-gray-700 mb-1">Etapa</label>
                   <select
-                    value={editAprobadorId}
-                    onChange={(e) => setEditAprobadorId(e.target.value)}
+                    value={editEtapa}
+                    onChange={(e) => setEditEtapa(e.target.value ? Number(e.target.value) : "")}
                     className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                   >
-                    <option value="">Sin aprobador específico...</option>
-                    {possibleApprovers.map((u) => (
-                      <option key={u.id} value={u.id}>{u.nombre}</option>
+                    <option value="">Sin etapa</option>
+                    {Array.from({ length: 10 }, (_, i) => i + 1).map((n) => (
+                      <option key={n} value={n}>Etapa {n}</option>
                     ))}
                   </select>
                 </div>

@@ -37,7 +37,7 @@ export async function POST(request: Request) {
       return Response.json({ error: "No autorizado" }, { status: 403 });
     }
 
-    const { nombre, proyectoId, aprobadorId } = await request.json();
+    const { nombre, proyectoId, etapa } = await request.json();
     if (!nombre?.trim()) {
       return Response.json({ error: "El nombre es requerido" }, { status: 400 });
     }
@@ -54,11 +54,7 @@ export async function POST(request: Request) {
       data: {
         nombre: nombre.trim(),
         proyectoId: Number(proyectoId),
-        ...(aprobadorId ? {
-          aprobadorConfig: {
-            create: { aprobadorId }
-          }
-        } : {})
+        etapa: etapa ? Number(etapa) : null,
       },
       include: {
         proyecto: { select: { id: true, nombre: true, activo: true } },
@@ -81,14 +77,15 @@ export async function PATCH(request: Request) {
       return Response.json({ error: "No autorizado" }, { status: 403 });
     }
 
-    const { id, nombre, proyectoId, aprobadorId, contratosTramiteId, contratosMinutaId, controlesId, directorControlesId } = await request.json();
+    const { id, nombre, proyectoId, etapa, aprobadorId, contratosTramiteId, contratosMinutaId, controlesId, directorControlesId } = await request.json();
     if (!id) {
       return Response.json({ error: "El ID del frente es requerido" }, { status: 400 });
     }
 
     const data: any = {
       ...(nombre ? { nombre: nombre.trim() } : {}),
-      ...(proyectoId ? { proyectoId: Number(proyectoId) } : {}),
+      ...(proyectoId ? { proyecto: { connect: { id: Number(proyectoId) } } } : {}),
+      etapa: etapa ? Number(etapa) : null,
     };
 
     if (aprobadorId !== undefined || contratosTramiteId !== undefined || contratosMinutaId !== undefined || controlesId !== undefined || directorControlesId !== undefined) {

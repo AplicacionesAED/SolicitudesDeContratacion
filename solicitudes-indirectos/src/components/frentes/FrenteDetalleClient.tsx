@@ -2,15 +2,16 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { 
-  ArrowLeft, 
-  Users, 
-  ShieldCheck, 
-  Settings, 
-  User as UserIcon, 
+import {
+  ArrowLeft,
+  Users,
+  ShieldCheck,
+  Settings,
+  User as UserIcon,
   Building2,
   CheckCircle2,
-  AlertCircle
+  AlertCircle,
+  Layers
 } from "lucide-react";
 import Link from "next/link";
 import { Spinner } from "@/components/ui/spinner";
@@ -25,6 +26,7 @@ interface User {
 interface Frente {
   id: number;
   nombre: string;
+  etapa?: number | null;
   proyecto: { nombre: string };
   aprobadorConfig?: {
     aprobadorId: string;
@@ -144,7 +146,15 @@ export default function FrenteDetalleClient({ frente, allUsers }: Props) {
         </Link>
         <div className="flex flex-wrap items-end justify-between gap-4">
           <div>
-            <h1 className="text-3xl font-extrabold text-gray-900 tracking-tight">{frente.nombre}</h1>
+            <div className="flex items-center gap-3 flex-wrap">
+              <h1 className="text-3xl font-extrabold text-gray-900 tracking-tight">{frente.nombre}</h1>
+              {frente.etapa && (
+                <span className="inline-flex items-center gap-1.5 text-xs font-bold bg-purple-100 text-purple-700 border border-purple-200 rounded-full px-3 py-1">
+                  <Layers size={12} />
+                  Etapa {frente.etapa}
+                </span>
+              )}
+            </div>
             <p className="text-sm text-gray-500 font-medium mt-1 flex items-center gap-2">
               <Building2 size={14} />
               {frente.proyecto.nombre}
@@ -178,8 +188,39 @@ export default function FrenteDetalleClient({ frente, allUsers }: Props) {
       )}
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Left Column: Personal Asignado */}
+        {/* Left Column: Info + Personal Asignado */}
         <div className="lg:col-span-1 space-y-6">
+
+          {/* Información General */}
+          <div className="bg-white border border-gray-200 rounded-2xl shadow-sm overflow-hidden">
+            <div className="px-6 py-4 border-b border-gray-50 bg-gray-50/50 flex items-center gap-2">
+              <Building2 size={16} className="text-gray-500" />
+              <h3 className="text-sm font-bold text-gray-800 uppercase tracking-widest">Información General</h3>
+            </div>
+            <div className="p-6 space-y-5">
+              <InfoRow
+                label="Proyecto"
+                value={frente.proyecto.nombre}
+                icon={Building2}
+              />
+              <InfoRow
+                label="Etapa"
+                value={
+                  frente.etapa
+                    ? (
+                      <span className="inline-flex items-center gap-1.5 text-xs font-semibold bg-purple-50 text-purple-700 border border-purple-200 rounded-full px-2.5 py-0.5">
+                        <Layers size={11} />
+                        Etapa {frente.etapa}
+                      </span>
+                    )
+                    : <span className="text-gray-400 italic text-sm">Sin etapa asignada</span>
+                }
+                icon={Layers}
+              />
+            </div>
+          </div>
+
+          {/* Personal Asignado */}
           <div className="bg-white border border-gray-200 rounded-2xl shadow-sm overflow-hidden">
             <div className="px-6 py-4 border-b border-gray-50 bg-gray-50/50 flex items-center gap-2">
               <Users size={16} className="text-blue-600" />
