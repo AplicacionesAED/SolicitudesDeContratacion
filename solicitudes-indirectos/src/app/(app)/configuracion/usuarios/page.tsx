@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback } from "react";
 import { useSession } from "next-auth/react";
-import { Plus, Pencil, UserCheck, UserX, X, Settings } from "lucide-react";
+import { Plus, Pencil, UserCheck, UserX, X, Settings, Search, Filter } from "lucide-react";
 import { Spinner } from "@/components/ui/spinner";
 import { ROL_LABELS, FUNCIONALIDADES_POR_ROL } from "@/lib/utils";
 
@@ -104,6 +104,10 @@ export default function UsuariosPage() {
   const [saving, setSaving] = useState(false);
   const [formError, setFormError] = useState<string | null>(null);
 
+  // Filtros
+  const [busqueda, setBusqueda] = useState("");
+  const [filtroRol, setFiltroRol] = useState("");
+
   // Bulk Selection
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
   const [bulkModalOpen, setBulkModalOpen] = useState(false);
@@ -136,11 +140,18 @@ export default function UsuariosPage() {
     fetchData();
   }, [fetchData]);
 
+  const usuariosFiltrados = users.filter((u) => {
+    const q = busqueda.toLowerCase();
+    const coincideNombre = !busqueda || u.nombre.toLowerCase().includes(q) || u.email.toLowerCase().includes(q);
+    const coincideRol = !filtroRol || u.roles.includes(filtroRol);
+    return coincideNombre && coincideRol;
+  });
+
   const toggleSelectAll = () => {
-    if (selectedIds.length === users.length) {
+    if (selectedIds.length === usuariosFiltrados.length) {
       setSelectedIds([]);
     } else {
-      setSelectedIds(users.map(u => u.id));
+      setSelectedIds(usuariosFiltrados.map(u => u.id));
     }
   };
 
@@ -397,6 +408,45 @@ export default function UsuariosPage() {
         </div>
       </div>
 
+      {/* Filtros */}
+      <div className="bg-white border border-gray-200 rounded-xl p-4 flex flex-wrap gap-3">
+        <div className="relative flex-1 min-w-[200px]">
+          <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" />
+          <input
+            type="text"
+            value={busqueda}
+            onChange={(e) => setBusqueda(e.target.value)}
+            placeholder="Buscar por nombre o email..."
+            className="w-full rounded-lg border border-gray-300 pl-9 pr-3 py-2 text-sm text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
+          />
+        </div>
+        <div className="relative flex items-center">
+          <Filter size={13} className="absolute left-2.5 text-gray-400 pointer-events-none" />
+          <select
+            value={filtroRol}
+            onChange={(e) => setFiltroRol(e.target.value)}
+            className="rounded-lg border border-gray-300 bg-white pl-8 pr-3 py-2 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 appearance-none"
+          >
+            <option value="">Todos los perfiles</option>
+            {ROL_OPTIONS.map(([value, label]) => (
+              <option key={value} value={value}>{label}</option>
+            ))}
+          </select>
+        </div>
+        {(busqueda || filtroRol) && (
+          <button
+            onClick={() => { setBusqueda(""); setFiltroRol(""); }}
+            className="inline-flex items-center gap-1.5 rounded-lg border border-gray-300 px-3 py-2 text-sm text-gray-500 hover:bg-gray-50 transition-colors"
+          >
+            <X size={13} />
+            Limpiar
+          </button>
+        )}
+        <p className="self-center text-xs text-gray-400 ml-auto">
+          {usuariosFiltrados.length} de {users.length} usuario{users.length !== 1 ? "s" : ""}
+        </p>
+      </div>
+
       {/* Table */}
       <div className="bg-white border border-gray-200 rounded-xl overflow-hidden">
         {loading ? (
@@ -425,7 +475,7 @@ export default function UsuariosPage() {
                   <th className="px-4 py-3 text-left w-10">
                     <input
                       type="checkbox"
-                      checked={selectedIds.length > 0 && selectedIds.length === users.length}
+                      checked={usuariosFiltrados.length > 0 && selectedIds.length === usuariosFiltrados.length}
                       onChange={toggleSelectAll}
                       className="rounded border-gray-300 text-blue-600 focus:ring-blue-500 cursor-pointer"
                     />
@@ -443,9 +493,15 @@ export default function UsuariosPage() {
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-100">
-                {users.map((user) => (
-                  <tr 
-                    key={user.id} 
+                {usuariosFiltrados.length === 0 ? (
+                  <tr>
+                    <td colSpan={9} className="px-4 py-10 text-center text-sm text-gray-400 italic">
+                      No se encontraron usuarios con los filtros aplicados.
+                    </td>
+                  </tr>
+                ) : usuariosFiltrados.map((user) => (
+                  <tr
+                    key={user.id}
                     className={`hover:bg-gray-50 transition-colors ${selectedIds.includes(user.id) ? 'bg-blue-50/40' : ''}`}
                   >
                     <td className="px-4 py-3">

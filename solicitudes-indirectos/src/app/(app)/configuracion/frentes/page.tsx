@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback } from "react";
 import { useSession } from "next-auth/react";
-import { MapPin, Users, Settings, Plus, X, Pencil, Trash2, LayoutDashboard, Hash } from "lucide-react";
+import { MapPin, Users, Settings, Plus, X, Pencil, Trash2, LayoutDashboard, Hash, Filter } from "lucide-react";
 import { Spinner } from "@/components/ui/spinner";
 import Link from "next/link";
 
@@ -86,6 +86,9 @@ export default function FrentesPage() {
   const [saving, setSaving] = useState(false);
   const [deleting, setDeleting] = useState(false);
   const [formError, setFormError] = useState<string | null>(null);
+
+  // Filtro por etapa
+  const [filtroEtapa, setFiltroEtapa] = useState<number | "">("");
 
   const fetchData = useCallback(async () => {
     setLoading(true);
@@ -278,21 +281,36 @@ export default function FrentesPage() {
     );
   }
 
-  // ── Group frentes by project ────────────────────────────────────────────────
+  // ── Group frentes by project (with etapa filter) ────────────────────────────
+  const frentesFiltrados = filtroEtapa !== ""
+    ? frentes.filter((f) => f.etapa === filtroEtapa)
+    : frentes;
+
   const byProject: Record<string, { proyectoId: number; proyectoNombre: string; activo: boolean; frentes: Frente[] }> = {};
-  for (const f of frentes) {
+  for (const f of frentesFiltrados) {
     const key = String(f.proyecto.id);
     if (!byProject[key]) {
       byProject[key] = { proyectoId: f.proyecto.id, proyectoNombre: f.proyecto.nombre, activo: f.proyecto.activo, frentes: [] };
     }
     byProject[key].frentes.push(f);
   }
-  for (const p of proyectos) {
-    if (!byProject[String(p.id)]) {
-      byProject[String(p.id)] = { proyectoId: p.id, proyectoNombre: p.nombre, activo: p.activo, frentes: [] };
+  // Solo mostrar proyectos sin frentes cuando no hay filtro activo
+  if (filtroEtapa === "") {
+    for (const p of proyectos) {
+      if (!byProject[String(p.id)]) {
+        byProject[String(p.id)] = { proyectoId: p.id, proyectoNombre: p.nombre, activo: p.activo, frentes: [] };
+      }
     }
   }
-  const projects = Object.values(byProject).sort((a, b) => a.proyectoNombre.localeCompare(b.proyectoNombre));
+  const projects = Object.values(byProject)
+    .sort((a, b) => a.proyectoNombre.localeCompare(b.proyectoNombre))
+    .map((p) => ({
+      ...p,
+      frentes: [...p.frentes].sort((a, b) => (a.etapa ?? 999) - (b.etapa ?? 999)),
+    }));
+
+  // Etapas disponibles en los frentes cargados
+  const etapasDisponibles = [...new Set(frentes.map((f) => f.etapa).filter(Boolean))].sort() as number[];
 
   // ── Approvers list ──────────────────────────────────────────────────────────
   const possibleApprovers = usuarios.filter(u => 
@@ -310,7 +328,21 @@ export default function FrentesPage() {
           <h1 className="text-2xl font-bold text-gray-900">Proyectos y Frentes</h1>
           <p className="text-sm text-gray-500 mt-0.5">Gestiona proyectos, frentes y usuarios asignados.</p>
         </div>
-        <div className="flex gap-2">
+        <div className="flex flex-wrap items-center gap-2">
+          {/* Filtro por etapa */}
+          <div className="relative flex items-center gap-1.5">
+            <Filter size={13} className="absolute left-2.5 text-gray-400 pointer-events-none" />
+            <select
+              value={filtroEtapa}
+              onChange={(e) => setFiltroEtapa(e.target.value ? Number(e.target.value) : "")}
+              className="rounded-lg border border-gray-300 bg-white pl-8 pr-3 py-2 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 appearance-none"
+            >
+              <option value="">Todas las etapas</option>
+              {etapasDisponibles.map((n) => (
+                <option key={n} value={n}>Etapa {n}</option>
+              ))}
+            </select>
+          </div>
           <button
             onClick={() => { setProyectoNombre(""); setFormError(null); setProyectoModal(true); }}
             className="inline-flex items-center gap-2 rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors"
@@ -319,7 +351,7 @@ export default function FrentesPage() {
             Nuevo Proyecto
           </button>
           <button
-            onClick={() => { 
+            onClick={() => {
               setFrenteNombre("");
               setFrenteProyectoId("");
               setFrenteEtapa("");
