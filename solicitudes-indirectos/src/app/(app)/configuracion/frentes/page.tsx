@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback } from "react";
 import { useSession } from "next-auth/react";
-import { MapPin, Users, Settings, Plus, X, Pencil, Trash2, LayoutDashboard } from "lucide-react";
+import { MapPin, Users, Settings, Plus, X, Pencil, Trash2, LayoutDashboard, Hash } from "lucide-react";
 import { Spinner } from "@/components/ui/spinner";
 import Link from "next/link";
 
@@ -38,6 +38,7 @@ interface Frente {
 interface Proyecto {
   id: number;
   nombre: string;
+  codigoConsecutivo?: string | null;
   activo: boolean;
   _count?: { frentes: number };
 }
@@ -63,6 +64,12 @@ export default function FrentesPage() {
   const [frenteNombre, setFrenteNombre] = useState("");
   const [frenteProyectoId, setFrenteProyectoId] = useState<number | "">("");
   const [frenteAprobadorId, setFrenteAprobadorId] = useState("");
+
+  // Modal — editar proyecto
+  const [editProyectoModal, setEditProyectoModal] = useState(false);
+  const [editProyecto, setEditProyecto] = useState<Proyecto | null>(null);
+  const [editProyectoNombre, setEditProyectoNombre] = useState("");
+  const [editProyectoCodigo, setEditProyectoCodigo] = useState("");
 
   // Modal — editar frente
   const [editModal, setEditModal] = useState(false);
@@ -103,6 +110,42 @@ export default function FrentesPage() {
   }, []);
 
   useEffect(() => { fetchData(); }, [fetchData]);
+
+  // ── Editar proyecto ─────────────────────────────────────────────────────────
+  function openEditProyectoModal(p: Proyecto) {
+    setEditProyecto(p);
+    setEditProyectoNombre(p.nombre);
+    setEditProyectoCodigo(p.codigoConsecutivo ?? "");
+    setFormError(null);
+    setEditProyectoModal(true);
+  }
+
+  async function editarProyecto(e: React.FormEvent) {
+    e.preventDefault();
+    if (!editProyecto) return;
+    setFormError(null);
+    setSaving(true);
+    try {
+      const res = await fetch("/api/proyectos", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          id: editProyecto.id,
+          nombre: editProyectoNombre,
+          codigoConsecutivo: editProyectoCodigo,
+        }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error ?? "Error al editar proyecto");
+      setEditProyectoModal(false);
+      setEditProyecto(null);
+      fetchData();
+    } catch (e) {
+      setFormError(e instanceof Error ? e.message : "Error desconocido");
+    } finally {
+      setSaving(false);
+    }
+  }
 
   // ── Crear proyecto ──────────────────────────────────────────────────────────
   async function crearProyecto(e: React.FormEvent) {
@@ -313,7 +356,17 @@ export default function FrentesPage() {
                     <MapPin size={16} className="text-blue-600" />
                   </div>
                   <div>
-                    <h2 className="text-base font-semibold text-gray-900">{project.proyectoNombre}</h2>
+                    <div className="flex items-center gap-2">
+                      <h2 className="text-base font-semibold text-gray-900">{project.proyectoNombre}</h2>
+                      {(() => {
+                        const p = proyectos.find(p => p.id === project.proyectoId);
+                        return p?.codigoConsecutivo ? (
+                          <span className="inline-flex items-center gap-1 text-xs font-mono font-medium bg-indigo-50 text-indigo-700 border border-indigo-200 rounded px-1.5 py-0.5">
+                            <Hash size={10} />{p.codigoConsecutivo}
+                          </span>
+                        ) : null;
+                      })()}
+                    </div>
                     <p className="text-xs text-gray-500">
                       {project.frentes.length} frente{project.frentes.length !== 1 ? "s" : ""}
                     </p>
@@ -323,6 +376,16 @@ export default function FrentesPage() {
                   <span className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${project.activo ? "bg-green-50 text-green-700" : "bg-gray-100 text-gray-500"}`}>
                     {project.activo ? "Activo" : "Inactivo"}
                   </span>
+                  <button
+                    onClick={() => {
+                      const p = proyectos.find(p => p.id === project.proyectoId);
+                      if (p) openEditProyectoModal(p);
+                    }}
+                    title="Editar proyecto"
+                    className="inline-flex items-center justify-center h-7 w-7 rounded-md text-gray-400 hover:text-blue-600 hover:bg-blue-50 transition-colors"
+                  >
+                    <Pencil size={13} />
+                  </button>
                   <button
                     onClick={() => { setFrenteNombre(""); setFrenteProyectoId(project.proyectoId); setFormError(null); setFrenteModal(true); }}
                     className="inline-flex items-center gap-1.5 rounded-md bg-blue-50 px-2.5 py-1.5 text-xs font-medium text-blue-700 hover:bg-blue-100 transition-colors"
@@ -388,6 +451,54 @@ export default function FrentesPage() {
             </div>
           ))}
         </div>
+      )}
+
+      {/* ── Modal: Editar Proyecto ───────────────────────────────────────────── */}
+      {editProyectoModal && editProyecto && (
+        <>
+          <div className="fixed inset-0 z-40 bg-black/40" onClick={() => setEditProyectoModal(false)} />
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+            <div className="bg-white rounded-xl shadow-xl w-full max-w-sm">
+              <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100">
+                <h2 className="text-base font-semibold text-gray-900">Editar Proyecto</h2>
+                <button onClick={() => setEditProyectoModal(false)} className="p-1.5 rounded-md text-gray-400 hover:text-gray-600 hover:bg-gray-100"><X size={16} /></button>
+              </div>
+              <form onSubmit={editarProyecto} className="px-6 py-4 space-y-4">
+                {formError && <div className="rounded-lg bg-red-50 border border-red-200 px-4 py-3 text-sm text-red-700">{formError}</div>}
+                <div>
+                  <label className="block text-xs font-medium text-gray-700 mb-1">Nombre del Proyecto <span className="text-red-500">*</span></label>
+                  <input
+                    required
+                    value={editProyectoNombre}
+                    onChange={(e) => setEditProyectoNombre(e.target.value)}
+                    className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    autoFocus
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs font-medium text-gray-700 mb-1">Código en consecutivo</label>
+                  <input
+                    value={editProyectoCodigo}
+                    onChange={(e) => setEditProyectoCodigo(e.target.value.toUpperCase())}
+                    className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm font-mono focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    placeholder="Ej. BAI"
+                    maxLength={10}
+                  />
+                  <p className="text-[10px] text-gray-400 mt-1">
+                    Código corto que aparecerá en el consecutivo (ej. <span className="font-mono">SOL-CONT-<strong>BAI</strong>-KALA1-001</span>). Si se deja vacío se genera automáticamente.
+                  </p>
+                </div>
+                <div className="flex justify-end gap-3">
+                  <button type="button" onClick={() => setEditProyectoModal(false)} className="rounded-lg border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50">Cancelar</button>
+                  <button type="submit" disabled={saving} className="inline-flex items-center gap-2 rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 disabled:opacity-50">
+                    {saving && <Spinner size="sm" />}
+                    Guardar
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </>
       )}
 
       {/* ── Modal: Nuevo Proyecto ─────────────────────────────────────────────── */}

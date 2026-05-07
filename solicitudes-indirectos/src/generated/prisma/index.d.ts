@@ -6567,18 +6567,21 @@ export namespace Prisma {
   export type ProyectoMinAggregateOutputType = {
     id: number | null
     nombre: string | null
+    codigoConsecutivo: string | null
     activo: boolean | null
   }
 
   export type ProyectoMaxAggregateOutputType = {
     id: number | null
     nombre: string | null
+    codigoConsecutivo: string | null
     activo: boolean | null
   }
 
   export type ProyectoCountAggregateOutputType = {
     id: number
     nombre: number
+    codigoConsecutivo: number
     activo: number
     _all: number
   }
@@ -6595,18 +6598,21 @@ export namespace Prisma {
   export type ProyectoMinAggregateInputType = {
     id?: true
     nombre?: true
+    codigoConsecutivo?: true
     activo?: true
   }
 
   export type ProyectoMaxAggregateInputType = {
     id?: true
     nombre?: true
+    codigoConsecutivo?: true
     activo?: true
   }
 
   export type ProyectoCountAggregateInputType = {
     id?: true
     nombre?: true
+    codigoConsecutivo?: true
     activo?: true
     _all?: true
   }
@@ -6700,6 +6706,7 @@ export namespace Prisma {
   export type ProyectoGroupByOutputType = {
     id: number
     nombre: string
+    codigoConsecutivo: string | null
     activo: boolean
     _count: ProyectoCountAggregateOutputType | null
     _avg: ProyectoAvgAggregateOutputType | null
@@ -6725,6 +6732,7 @@ export namespace Prisma {
   export type ProyectoSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
     nombre?: boolean
+    codigoConsecutivo?: boolean
     activo?: boolean
     frentes?: boolean | Proyecto$frentesArgs<ExtArgs>
     _count?: boolean | ProyectoCountOutputTypeDefaultArgs<ExtArgs>
@@ -6733,6 +6741,7 @@ export namespace Prisma {
   export type ProyectoSelectScalar = {
     id?: boolean
     nombre?: boolean
+    codigoConsecutivo?: boolean
     activo?: boolean
   }
 
@@ -6751,6 +6760,7 @@ export namespace Prisma {
     scalars: $Extensions.GetPayloadResult<{
       id: number
       nombre: string
+      codigoConsecutivo: string | null
       activo: boolean
     }, ExtArgs["result"]["proyecto"]>
     composites: {}
@@ -7175,6 +7185,7 @@ export namespace Prisma {
   interface ProyectoFieldRefs {
     readonly id: FieldRef<"Proyecto", 'Int'>
     readonly nombre: FieldRef<"Proyecto", 'String'>
+    readonly codigoConsecutivo: FieldRef<"Proyecto", 'String'>
     readonly activo: FieldRef<"Proyecto", 'Boolean'>
   }
     
@@ -19270,6 +19281,7 @@ export namespace Prisma {
   export const ProyectoScalarFieldEnum: {
     id: 'id',
     nombre: 'nombre',
+    codigoConsecutivo: 'codigoConsecutivo',
     activo: 'activo'
   };
 
@@ -19869,6 +19881,7 @@ export namespace Prisma {
     NOT?: ProyectoWhereInput | ProyectoWhereInput[]
     id?: IntFilter<"Proyecto"> | number
     nombre?: StringFilter<"Proyecto"> | string
+    codigoConsecutivo?: StringNullableFilter<"Proyecto"> | string | null
     activo?: BoolFilter<"Proyecto"> | boolean
     frentes?: FrenteListRelationFilter
   }
@@ -19876,6 +19889,7 @@ export namespace Prisma {
   export type ProyectoOrderByWithRelationInput = {
     id?: SortOrder
     nombre?: SortOrder
+    codigoConsecutivo?: SortOrderInput | SortOrder
     activo?: SortOrder
     frentes?: FrenteOrderByRelationAggregateInput
   }
@@ -19886,6 +19900,7 @@ export namespace Prisma {
     OR?: ProyectoWhereInput[]
     NOT?: ProyectoWhereInput | ProyectoWhereInput[]
     nombre?: StringFilter<"Proyecto"> | string
+    codigoConsecutivo?: StringNullableFilter<"Proyecto"> | string | null
     activo?: BoolFilter<"Proyecto"> | boolean
     frentes?: FrenteListRelationFilter
   }, "id">
@@ -19893,6 +19908,7 @@ export namespace Prisma {
   export type ProyectoOrderByWithAggregationInput = {
     id?: SortOrder
     nombre?: SortOrder
+    codigoConsecutivo?: SortOrderInput | SortOrder
     activo?: SortOrder
     _count?: ProyectoCountOrderByAggregateInput
     _avg?: ProyectoAvgOrderByAggregateInput
@@ -19907,6 +19923,7 @@ export namespace Prisma {
     NOT?: ProyectoScalarWhereWithAggregatesInput | ProyectoScalarWhereWithAggregatesInput[]
     id?: IntWithAggregatesFilter<"Proyecto"> | number
     nombre?: StringWithAggregatesFilter<"Proyecto"> | string
+    codigoConsecutivo?: StringNullableWithAggregatesFilter<"Proyecto"> | string | null
     activo?: BoolWithAggregatesFilter<"Proyecto"> | boolean
   }
 
@@ -21179,6 +21196,7 @@ export namespace Prisma {
 
   export type ProyectoCreateInput = {
     nombre: string
+    codigoConsecutivo?: string | null
     activo?: boolean
     frentes?: FrenteCreateNestedManyWithoutProyectoInput
   }
@@ -21186,12 +21204,14 @@ export namespace Prisma {
   export type ProyectoUncheckedCreateInput = {
     id?: number
     nombre: string
+    codigoConsecutivo?: string | null
     activo?: boolean
     frentes?: FrenteUncheckedCreateNestedManyWithoutProyectoInput
   }
 
   export type ProyectoUpdateInput = {
     nombre?: StringFieldUpdateOperationsInput | string
+    codigoConsecutivo?: NullableStringFieldUpdateOperationsInput | string | null
     activo?: BoolFieldUpdateOperationsInput | boolean
     frentes?: FrenteUpdateManyWithoutProyectoNestedInput
   }
@@ -21199,6 +21219,7 @@ export namespace Prisma {
   export type ProyectoUncheckedUpdateInput = {
     id?: IntFieldUpdateOperationsInput | number
     nombre?: StringFieldUpdateOperationsInput | string
+    codigoConsecutivo?: NullableStringFieldUpdateOperationsInput | string | null
     activo?: BoolFieldUpdateOperationsInput | boolean
     frentes?: FrenteUncheckedUpdateManyWithoutProyectoNestedInput
   }
@@ -21206,17 +21227,20 @@ export namespace Prisma {
   export type ProyectoCreateManyInput = {
     id?: number
     nombre: string
+    codigoConsecutivo?: string | null
     activo?: boolean
   }
 
   export type ProyectoUpdateManyMutationInput = {
     nombre?: StringFieldUpdateOperationsInput | string
+    codigoConsecutivo?: NullableStringFieldUpdateOperationsInput | string | null
     activo?: BoolFieldUpdateOperationsInput | boolean
   }
 
   export type ProyectoUncheckedUpdateManyInput = {
     id?: IntFieldUpdateOperationsInput | number
     nombre?: StringFieldUpdateOperationsInput | string
+    codigoConsecutivo?: NullableStringFieldUpdateOperationsInput | string | null
     activo?: BoolFieldUpdateOperationsInput | boolean
   }
 
@@ -22602,6 +22626,7 @@ export namespace Prisma {
   export type ProyectoCountOrderByAggregateInput = {
     id?: SortOrder
     nombre?: SortOrder
+    codigoConsecutivo?: SortOrder
     activo?: SortOrder
   }
 
@@ -22612,12 +22637,14 @@ export namespace Prisma {
   export type ProyectoMaxOrderByAggregateInput = {
     id?: SortOrder
     nombre?: SortOrder
+    codigoConsecutivo?: SortOrder
     activo?: SortOrder
   }
 
   export type ProyectoMinOrderByAggregateInput = {
     id?: SortOrder
     nombre?: SortOrder
+    codigoConsecutivo?: SortOrder
     activo?: SortOrder
   }
 
@@ -25306,12 +25333,14 @@ export namespace Prisma {
 
   export type ProyectoCreateWithoutFrentesInput = {
     nombre: string
+    codigoConsecutivo?: string | null
     activo?: boolean
   }
 
   export type ProyectoUncheckedCreateWithoutFrentesInput = {
     id?: number
     nombre: string
+    codigoConsecutivo?: string | null
     activo?: boolean
   }
 
@@ -25373,12 +25402,14 @@ export namespace Prisma {
 
   export type ProyectoUpdateWithoutFrentesInput = {
     nombre?: StringFieldUpdateOperationsInput | string
+    codigoConsecutivo?: NullableStringFieldUpdateOperationsInput | string | null
     activo?: BoolFieldUpdateOperationsInput | boolean
   }
 
   export type ProyectoUncheckedUpdateWithoutFrentesInput = {
     id?: IntFieldUpdateOperationsInput | number
     nombre?: StringFieldUpdateOperationsInput | string
+    codigoConsecutivo?: NullableStringFieldUpdateOperationsInput | string | null
     activo?: BoolFieldUpdateOperationsInput | boolean
   }
 

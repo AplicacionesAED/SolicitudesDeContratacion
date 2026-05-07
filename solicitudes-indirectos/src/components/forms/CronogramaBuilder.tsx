@@ -84,7 +84,10 @@ function ActividadesTable({
   }
 
   function addRow() {
-    onChange([...actividades, emptyActividad()]);
+    const cleared = actividades.map((a, i) =>
+      i === actividades.length - 1 ? { ...a, fechaFin: "" } : a
+    );
+    onChange([...cleared, { ...emptyActividad(), fechaFin: maxDate ?? "" }]);
   }
 
   function removeRow(idx: number) {
@@ -187,6 +190,21 @@ export function CronogramaBuilder({ value, onChange }: CronogramaBuilderProps) {
     onChange({ ...value, [key]: val });
   }
 
+  function setFechaInicio(fecha: string) {
+    const actividades = value.actividades.map((a, i) =>
+      i === 0 ? { ...a, fechaInicio: fecha } : a
+    );
+    onChange({ ...value, fechaInicio: fecha, actividades });
+  }
+
+  function setFechaFin(fecha: string) {
+    const last = value.actividades.length - 1;
+    const actividades = value.actividades.map((a, i) =>
+      i === last ? { ...a, fechaFin: fecha } : a
+    );
+    onChange({ ...value, fechaFin: fecha, actividades });
+  }
+
   // ── Render ───────────────────────────────────────────────────────────────────
 
   return (
@@ -200,7 +218,7 @@ export function CronogramaBuilder({ value, onChange }: CronogramaBuilderProps) {
             required
             value={value.fechaInicio}
             min={minStartDate}
-            onChange={(e) => set("fechaInicio", e.target.value)}
+            onChange={(e) => setFechaInicio(e.target.value)}
             error={fechaInicioError}
           />
           {!fechaInicioError && (
@@ -216,7 +234,7 @@ export function CronogramaBuilder({ value, onChange }: CronogramaBuilderProps) {
           required
           value={value.fechaFin}
           min={value.fechaInicio || minStartDate}
-          onChange={(e) => set("fechaFin", e.target.value)}
+          onChange={(e) => setFechaFin(e.target.value)}
           error={fechaFinError}
         />
       </div>

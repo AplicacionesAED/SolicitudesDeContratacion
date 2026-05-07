@@ -40,7 +40,7 @@ export async function PATCH(request: Request) {
     return Response.json({ error: "No autorizado" }, { status: 403 });
   }
 
-  const { id, nombre } = await request.json();
+  const { id, nombre, codigoConsecutivo } = await request.json();
   if (!id) {
     return Response.json({ error: "El ID del proyecto es requerido" }, { status: 400 });
   }
@@ -50,7 +50,10 @@ export async function PATCH(request: Request) {
 
   const proyecto = await prisma.proyecto.update({
     where: { id: Number(id) },
-    data: { nombre: nombre.trim() },
+    data: {
+      nombre: nombre.trim(),
+      codigoConsecutivo: codigoConsecutivo?.trim() || null,
+    },
   });
 
   return Response.json(proyecto);

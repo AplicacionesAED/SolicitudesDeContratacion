@@ -167,6 +167,7 @@ exports.Prisma.UserScalarFieldEnum = {
 exports.Prisma.ProyectoScalarFieldEnum = {
   id: 'id',
   nombre: 'nombre',
+  codigoConsecutivo: 'codigoConsecutivo',
   activo: 'activo'
 };
 

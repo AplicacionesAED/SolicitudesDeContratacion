@@ -42,6 +42,21 @@ export function abbreviate(name: string, letterLength: number, appendDigits = fa
   return letters + digits;
 }
 
+// Returns the full frente name uppercased with accents removed, spaces and special chars stripped.
+// Digits are kept. Example: "KALA 1" → "KALA1", "Área Norte 10" → "AREANORTE10"
+export function normalizeFrenteName(name: string): string {
+  return name
+    .normalize("NFD")
+    .split("")
+    .filter((ch) => {
+      const cp = ch.codePointAt(0) ?? 0;
+      return cp < 0x0300 || cp > 0x036f;
+    })
+    .join("")
+    .toUpperCase()
+    .replace(/[^A-Z0-9]/g, "");
+}
+
 export function buildConsecutivo(
   tipo: TipoSolicitud,
   proyAbbr: string,

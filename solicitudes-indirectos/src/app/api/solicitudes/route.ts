@@ -1,7 +1,7 @@
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
-import { buildConsecutivo, abbreviate, tienePermiso } from "@/lib/utils";
+import { buildConsecutivo, abbreviate, normalizeFrenteName, tienePermiso } from "@/lib/utils";
 
 const ROLES_VER_TODAS: string[] = ["CONTRATOS", "CONTROLES", "DIRECTOR_CONTROLES", "ADMIN"];
 
@@ -202,12 +202,15 @@ export async function POST(request: Request) {
 
     // Fetch proyecto and frente names for the consecutivo abbreviation
     const [proyectoData, frenteData] = await Promise.all([
-      prisma.proyecto.findUnique({ where: { id: Number(proyectoId) }, select: { nombre: true } }),
+      prisma.proyecto.findUnique({ where: { id: Number(proyectoId) }, select: { nombre: true, codigoConsecutivo: true } }),
       prisma.frente.findUnique({ where: { id: Number(firstFrenteId) }, select: { nombre: true } }),
     ]);
 
-    const proyAbbr = abbreviate(proyectoData?.nombre ?? String(proyectoId), 3);
-    const frenAbbr = abbreviate(frenteData?.nombre ?? String(firstFrenteId), 4, true);
+    // Use hardcoded code if set, otherwise auto-abbreviate to 3 chars
+    const proyAbbr = proyectoData?.codigoConsecutivo?.trim()
+      || abbreviate(proyectoData?.nombre ?? String(proyectoId), 3);
+    // Full frente name uppercased with no spaces (e.g. "KALA 1" → "KALA1")
+    const frenAbbr = normalizeFrenteName(frenteData?.nombre ?? String(firstFrenteId));
 
     // Transactional consecutive number generation
     const solicitud = await prisma.$transaction(async (tx) => {
