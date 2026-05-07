@@ -11,7 +11,8 @@ import {
   Building2,
   CheckCircle2,
   AlertCircle,
-  Layers
+  Layers,
+  Info,
 } from "lucide-react";
 import Link from "next/link";
 import { Spinner } from "@/components/ui/spinner";
@@ -266,11 +267,52 @@ export default function FrenteDetalleClient({ frente, allUsers }: Props) {
               </p>
 
               <form onSubmit={handleSave} className="space-y-6">
+                {/* Pasos 1–3 y 5: asignación específica */}
                 {[
                   { label: "1. Aprobación Director (Director de Proyecto)", value: aprobadorId, setter: setAprobadorId, options: directoresProyecto, icon: UserIcon },
                   { label: "2. Trámite Contratos (Contratos)", value: contratosTramiteId, setter: setContratosTramiteId, options: personalContratos, icon: Building2 },
                   { label: "3. Creación de Minuta (Contratos)", value: contratosMinutaId, setter: setContratosMinutaId, options: personalContratos, icon: Building2 },
-                  { label: "4. Agregar Minuta (Coordinador Controles)", value: controlesId, setter: setControlesId, options: coordinadoresControles, icon: Settings },
+                ].map((item, idx) => (
+                  <div key={idx} className="group">
+                    <label className="text-[11px] text-gray-400 font-bold uppercase tracking-wider block mb-2 group-focus-within:text-blue-600 transition-colors">
+                      {item.label}
+                    </label>
+                    <div className="relative">
+                      <div className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none group-focus-within:text-blue-500 transition-colors">
+                        <item.icon size={16} />
+                      </div>
+                      <select
+                        value={item.value}
+                        onChange={(e) => item.setter(e.target.value)}
+                        className="w-full rounded-xl border border-gray-200 bg-white pl-11 pr-10 py-3 text-sm font-medium focus:ring-4 focus:ring-blue-50 focus:border-blue-500 outline-none transition-all appearance-none text-gray-700 shadow-sm"
+                      >
+                        <option value="">Seleccionar responsable...</option>
+                        {item.options.map(u => (
+                          <option key={u.id} value={u.id}>{u.nombre}</option>
+                        ))}
+                      </select>
+                      <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-gray-300">
+                        <Settings size={14} />
+                      </div>
+                    </div>
+                  </div>
+                ))}
+
+                {/* Paso 4: abierto a cualquier usuario con perfil Controles */}
+                <div>
+                  <p className="text-[11px] text-gray-400 font-bold uppercase tracking-wider mb-2">
+                    4. Registro ADPRO (Coordinador Controles)
+                  </p>
+                  <div className="flex items-start gap-3 rounded-xl border border-blue-100 bg-blue-50/40 px-4 py-3.5">
+                    <Info size={15} className="text-blue-500 mt-0.5 shrink-0" />
+                    <p className="text-sm text-blue-700 leading-relaxed">
+                      Cualquier usuario con perfil <strong>Controles</strong> puede realizar esta acción. No requiere asignación específica.
+                    </p>
+                  </div>
+                </div>
+
+                {/* Paso 5 */}
+                {[
                   { label: "5. Aprobación Final (Director de Controles)", value: directorControlesId, setter: setDirectorControlesId, options: directoresControles, icon: ShieldCheck },
                 ].map((item, idx) => (
                   <div key={idx} className="group">

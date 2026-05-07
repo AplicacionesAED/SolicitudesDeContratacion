@@ -85,7 +85,7 @@ export async function PATCH(request: Request) {
     const data: any = {
       ...(nombre ? { nombre: nombre.trim() } : {}),
       ...(proyectoId ? { proyecto: { connect: { id: Number(proyectoId) } } } : {}),
-      etapa: etapa ? Number(etapa) : null,
+      ...(etapa !== undefined ? { etapa: etapa ? Number(etapa) : null } : {}),
     };
 
     if (aprobadorId !== undefined || contratosTramiteId !== undefined || contratosMinutaId !== undefined || controlesId !== undefined || directorControlesId !== undefined) {

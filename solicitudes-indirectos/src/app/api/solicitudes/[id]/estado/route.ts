@@ -248,14 +248,6 @@ export async function POST(
     }
 
     if (accion === "REGISTRAR_ADPRO") {
-      // Must be the assigned Coordinador de Controles
-      if (solicitud.coordinadorControlesId && solicitud.coordinadorControlesId !== userId && !userRoles.includes("ADMIN")) {
-        return Response.json(
-          { error: "Solo el coordinador de controles asignado puede registrar en ADPRO" },
-          { status: 403 }
-        );
-      }
-
       if (!numeroContratoAdpro || numeroContratoAdpro.trim() === "") {
         return Response.json(
           { error: "Se requiere el número de contrato Adpro" },
