@@ -480,7 +480,7 @@ export default function UsuariosPage() {
                       className="rounded border-gray-300 text-blue-600 focus:ring-blue-500 cursor-pointer"
                     />
                   </th>
-                  {["Nombre", "Cargo", "Email", "Teléfono", "Perfiles", "Estado", "Frentes", "Acciones"].map(
+                  {["Nombre", "Cargo", "Email", "Teléfono", "Perfiles", "Estado", "Acciones"].map(
                     (h) => (
                       <th
                         key={h}
@@ -495,7 +495,7 @@ export default function UsuariosPage() {
               <tbody className="divide-y divide-gray-100">
                 {usuariosFiltrados.length === 0 ? (
                   <tr>
-                    <td colSpan={9} className="px-4 py-10 text-center text-sm text-gray-400 italic">
+                    <td colSpan={8} className="px-4 py-10 text-center text-sm text-gray-400 italic">
                       No se encontraron usuarios con los filtros aplicados.
                     </td>
                   </tr>
@@ -545,17 +545,6 @@ export default function UsuariosPage() {
                       >
                         {user.activo ? "Activo" : "Inactivo"}
                       </span>
-                    </td>
-                    <td className="px-4 py-3 text-sm text-gray-600 max-w-[200px]">
-                      {user.frentesAsignados && user.frentesAsignados.length > 0 ? (
-                        <span className="text-xs">
-                          {user.frentesAsignados
-                            .map((fa) => fa.frente.nombre)
-                            .join(", ")}
-                        </span>
-                      ) : (
-                        <span className="text-gray-300 italic text-xs">—</span>
-                      )}
                     </td>
                     <td className="px-4 py-3 whitespace-nowrap">
                       <div className="flex items-center gap-2">
