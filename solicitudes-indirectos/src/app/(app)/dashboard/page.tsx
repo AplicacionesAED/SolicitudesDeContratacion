@@ -107,15 +107,32 @@ export default async function DashboardPage() {
         frentesIds: true,
         estado: true,
         fechaSolicitud: true,
+        numeroContratoAdpro: true,
         solicitante: { select: { nombre: true } },
         tercero: { select: { razonSocial: true } },
       },
     }),
   ]);
 
-  const solicitudes = rawSolicitudes.map((s) => ({
+  const solicitudesBase = rawSolicitudes.map((s) => ({
     ...s,
     frentesIds: (() => { try { return JSON.parse(s.frentesIds as string) as number[]; } catch { return []; } })(),
+  }));
+
+  // Resolver nombres de frentes en una sola query
+  const allFrenteIds = [...new Set(solicitudesBase.flatMap((s) => s.frentesIds))];
+  const frentesMap = allFrenteIds.length > 0
+    ? Object.fromEntries(
+        (await prisma.frente.findMany({
+          where: { id: { in: allFrenteIds } },
+          select: { id: true, nombre: true },
+        })).map((f) => [f.id, f.nombre])
+      )
+    : {} as Record<number, string>;
+
+  const solicitudes = solicitudesBase.map((s) => ({
+    ...s,
+    frentesNombres: s.frentesIds.map((id) => frentesMap[id]).filter(Boolean) as string[],
   }));
 
   const userName = session?.user?.name ?? "Usuario";
@@ -209,10 +226,13 @@ export default async function DashboardPage() {
                     Tipo
                   </th>
                   <th className="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wide">
-                    Frente(s)
+                    Frente
                   </th>
                   <th className="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wide">
                     Tercero
+                  </th>
+                  <th className="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wide">
+                    N° ADPRO
                   </th>
                   <th className="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wide">
                     Estado
@@ -239,13 +259,27 @@ export default async function DashboardPage() {
                     <td className="px-4 py-3 text-sm text-gray-700 whitespace-nowrap">
                       {TIPO_SOLICITUD_LABELS[sol.tipo] ?? sol.tipo}
                     </td>
-                    <td className="px-4 py-3 text-sm text-gray-500 whitespace-nowrap">
-                      {sol.frentesIds.length > 0
-                        ? `${sol.frentesIds.length} frente${sol.frentesIds.length !== 1 ? "s" : ""}`
-                        : "—"}
+                    <td className="px-4 py-3 text-sm text-gray-700 whitespace-nowrap">
+                      {sol.frentesNombres.length > 0 ? (
+                        <span className="flex items-center gap-1.5">
+                          <span>{sol.frentesNombres[0]}</span>
+                          {sol.frentesNombres.length > 1 && (
+                            <span className="text-xs text-gray-400 font-medium">
+                              +{sol.frentesNombres.length - 1}
+                            </span>
+                          )}
+                        </span>
+                      ) : "—"}
                     </td>
                     <td className="px-4 py-3 text-sm text-gray-700 whitespace-nowrap max-w-[160px] truncate">
                       {sol.tercero?.razonSocial ?? "—"}
+                    </td>
+                    <td className="px-4 py-3 text-sm whitespace-nowrap">
+                      {sol.numeroContratoAdpro ? (
+                        <span className="font-mono font-medium text-gray-900">{sol.numeroContratoAdpro}</span>
+                      ) : (
+                        <span className="text-gray-300 italic">—</span>
+                      )}
                     </td>
                     <td className="px-4 py-3 whitespace-nowrap">
                       <SolicitudBadge estado={sol.estado} />

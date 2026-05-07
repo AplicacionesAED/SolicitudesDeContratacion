@@ -430,65 +430,76 @@ export default function FrentesPage() {
                 </div>
               </div>
 
-              {/* Frentes */}
+              {/* Frentes agrupados por etapa */}
               {project.frentes.length === 0 ? (
                 <div className="px-5 py-6 text-center">
                   <p className="text-xs text-gray-400 italic">Sin frentes. Usa el botón "Agregar frente" para crear el primero.</p>
                 </div>
-              ) : (
-                <div className="divide-y divide-gray-100">
-                  {project.frentes.map((frente) => (
-                    <div key={frente.id} className="px-5 py-3 hover:bg-gray-50/50 transition-colors">
-                      <div className="flex items-center justify-between gap-4">
-                        <Link
-                          href={`/configuracion/frentes/${frente.id}`}
-                          className="flex-1 text-left group"
-                        >
-                          <div className="flex items-center gap-2 flex-wrap">
-                            <h3 className="text-sm font-semibold text-gray-800 group-hover:text-blue-600 transition-colors">
-                              {frente.nombre}
-                            </h3>
-                            {frente.etapa && (
-                              <span className="inline-flex items-center text-[10px] font-semibold bg-purple-50 text-purple-700 border border-purple-200 rounded-full px-2 py-0.5 shrink-0">
-                                Etapa {frente.etapa}
-                              </span>
-                            )}
-                          </div>
-                        </Link>
-
-                        <div className="shrink-0 flex items-center gap-1">
-                          {/* Details button */}
-                          <Link
-                            href={`/configuracion/frentes/${frente.id}`}
-                            title="Ver detalles y configurar aprobadores"
-                            className="inline-flex items-center justify-center h-8 w-8 rounded-md text-blue-600 hover:bg-blue-50 transition-colors"
-                          >
-                            <LayoutDashboard size={16} />
-                          </Link>
-
-                          {/* Edit button */}
-                          <button
-                            onClick={() => openEditModal(frente)}
-                            title="Editar frente"
-                            className="inline-flex items-center justify-center h-8 w-8 rounded-md text-gray-400 hover:text-blue-600 hover:bg-blue-50 transition-colors"
-                          >
-                            <Pencil size={14} />
-                          </button>
-
-                          {/* Delete button */}
-                          <button
-                            onClick={() => openDeleteModal(frente)}
-                            title="Eliminar frente"
-                            className="inline-flex items-center justify-center h-8 w-8 rounded-md text-gray-400 hover:text-red-600 hover:bg-red-50 transition-colors"
-                          >
-                            <Trash2 size={14} />
-                          </button>
+              ) : (() => {
+                // Agrupar por etapa manteniendo el orden ya aplicado
+                const grupos: { etapa: number | null; frentes: Frente[] }[] = [];
+                for (const frente of project.frentes) {
+                  const etapa = frente.etapa ?? null;
+                  const grupo = grupos.find(g => g.etapa === etapa);
+                  if (grupo) grupo.frentes.push(frente);
+                  else grupos.push({ etapa, frentes: [frente] });
+                }
+                return (
+                  <div>
+                    {grupos.map((grupo) => (
+                      <div key={grupo.etapa ?? "sin-etapa"}>
+                        {/* Subtítulo de etapa */}
+                        <div className="px-5 pt-5 pb-2 flex items-center gap-3">
+                          <span className="text-sm font-bold text-purple-600">
+                            {grupo.etapa !== null ? `Etapa ${grupo.etapa}` : "Sin etapa"}
+                          </span>
+                          <div className="flex-1 h-px bg-purple-100" />
+                        </div>
+                        {/* Frentes de este grupo */}
+                        <div className="divide-y divide-gray-100">
+                          {grupo.frentes.map((frente) => (
+                            <div key={frente.id} className="px-5 py-3 hover:bg-gray-50/50 transition-colors">
+                              <div className="flex items-center justify-between gap-4">
+                                <Link
+                                  href={`/configuracion/frentes/${frente.id}`}
+                                  className="flex-1 text-left group"
+                                >
+                                  <h3 className="text-sm font-semibold text-gray-800 group-hover:text-blue-600 transition-colors">
+                                    {frente.nombre}
+                                  </h3>
+                                </Link>
+                                <div className="shrink-0 flex items-center gap-1">
+                                  <Link
+                                    href={`/configuracion/frentes/${frente.id}`}
+                                    title="Ver detalles y configurar aprobadores"
+                                    className="inline-flex items-center justify-center h-8 w-8 rounded-md text-blue-600 hover:bg-blue-50 transition-colors"
+                                  >
+                                    <LayoutDashboard size={16} />
+                                  </Link>
+                                  <button
+                                    onClick={() => openEditModal(frente)}
+                                    title="Editar frente"
+                                    className="inline-flex items-center justify-center h-8 w-8 rounded-md text-gray-400 hover:text-blue-600 hover:bg-blue-50 transition-colors"
+                                  >
+                                    <Pencil size={14} />
+                                  </button>
+                                  <button
+                                    onClick={() => openDeleteModal(frente)}
+                                    title="Eliminar frente"
+                                    className="inline-flex items-center justify-center h-8 w-8 rounded-md text-gray-400 hover:text-red-600 hover:bg-red-50 transition-colors"
+                                  >
+                                    <Trash2 size={14} />
+                                  </button>
+                                </div>
+                              </div>
+                            </div>
+                          ))}
                         </div>
                       </div>
-                    </div>
-                  ))}
-                </div>
-              )}
+                    ))}
+                  </div>
+                );
+              })()}
             </div>
           ))}
         </div>

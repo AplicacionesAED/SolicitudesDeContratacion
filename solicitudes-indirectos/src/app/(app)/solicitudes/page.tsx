@@ -182,7 +182,6 @@ export default function SolicitudesPage() {
                   {[
                     "Consecutivo",
                     "Tipo",
-                    "Frente(s)",
                     "Tercero",
                     "Solicitante",
                     "Valor",
@@ -215,11 +214,6 @@ export default function SolicitudesPage() {
                       <span className="block truncate">
                         {TIPO_SOLICITUD_LABELS[sol.tipo] ?? sol.tipo}
                       </span>
-                    </td>
-                    <td className="px-4 py-3 text-sm text-gray-500 whitespace-nowrap">
-                      {sol.frentesIds.length > 0
-                        ? `${sol.frentesIds.length} frente${sol.frentesIds.length !== 1 ? "s" : ""}`
-                        : "—"}
                     </td>
                     <td className="px-4 py-3 text-sm text-gray-700 whitespace-nowrap max-w-[180px]">
                       <span className="block truncate">
