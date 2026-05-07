@@ -9,7 +9,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Spinner } from "@/components/ui/spinner";
 import { useSession } from "next-auth/react";
-import { tienePermiso } from "@/lib/utils";
+import { tienePermiso, formatDate } from "@/lib/utils";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -18,7 +18,8 @@ interface Tercero {
   razonSocial: string;
   nit: string;
   tipoContrato: string;
-  confidencialidad: boolean;           // ← NUEVO
+  confidencialidad: boolean;
+  fechaVencimientoSagrilaft: string | null;
   dd_identificacionContraparte: boolean;
   dd_consultaListasRestrictivas: boolean;
   dd_verificacionPep: boolean;
@@ -209,6 +210,7 @@ export default function TercerosPage() {
                   {[
                     "Razón Social",
                     "Debida Diligencia",
+                    "Vcto. SAGRILAFT",
                     "Confidencialidad",
                     "Acciones",
                   ].map((h) => (
@@ -223,8 +225,18 @@ export default function TercerosPage() {
               </thead>
               <tbody className="divide-y divide-gray-100">
                 {filtered.map((t) => {
+                  const diasRestantes = t.fechaVencimientoSagrilaft
+                    ? Math.ceil((new Date(t.fechaVencimientoSagrilaft).getTime() - Date.now()) / (1000 * 60 * 60 * 24))
+                    : null;
+                  const rowColor =
+                    diasRestantes !== null && diasRestantes <= 20
+                      ? "bg-red-50 hover:bg-red-100"
+                      : diasRestantes !== null && diasRestantes <= 30
+                      ? "bg-yellow-50 hover:bg-yellow-100"
+                      : "hover:bg-gray-50";
+
                   return (
-                    <tr key={t.id} className="hover:bg-gray-50 transition-colors">
+                    <tr key={t.id} className={`${rowColor} transition-colors`}>
                       <td className="px-4 py-3">
                         <p className="text-sm font-medium text-gray-900">{t.razonSocial}</p>
                       </td>
@@ -242,7 +254,33 @@ export default function TercerosPage() {
                         )}
                       </td>
 
-                      {/* Confidencialidad badge — NUEVO */}
+                      {/* Fecha vencimiento SAGRILAFT */}
+                      <td className="px-4 py-3 whitespace-nowrap">
+                        {t.fechaVencimientoSagrilaft ? (
+                          <div className="flex flex-col gap-0.5">
+                            <span className="text-sm text-gray-700">
+                              {formatDate(t.fechaVencimientoSagrilaft)}
+                            </span>
+                            {diasRestantes !== null && (
+                              <span className={`text-xs font-medium ${
+                                diasRestantes <= 20
+                                  ? "text-red-600"
+                                  : diasRestantes <= 30
+                                  ? "text-yellow-600"
+                                  : "text-gray-400"
+                              }`}>
+                                {diasRestantes <= 0
+                                  ? "Vencido"
+                                  : `${diasRestantes} días restantes`}
+                              </span>
+                            )}
+                          </div>
+                        ) : (
+                          <span className="text-sm text-gray-400 italic">—</span>
+                        )}
+                      </td>
+
+                      {/* Confidencialidad badge */}
                       <td className="px-4 py-3 whitespace-nowrap">
                         {t.confidencialidad ? (
                           <span className="inline-flex items-center gap-1 text-xs font-medium bg-blue-100 text-blue-700 rounded-full px-2.5 py-0.5">

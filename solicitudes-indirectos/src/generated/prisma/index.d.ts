@@ -10533,6 +10533,7 @@ export namespace Prisma {
     nit: string | null
     tipoContrato: string | null
     confidencialidad: boolean | null
+    fechaVencimientoSagrilaft: Date | null
     dd_identificacionContraparte: boolean | null
     dd_consultaListasRestrictivas: boolean | null
     dd_verificacionPep: boolean | null
@@ -10548,6 +10549,7 @@ export namespace Prisma {
     nit: string | null
     tipoContrato: string | null
     confidencialidad: boolean | null
+    fechaVencimientoSagrilaft: Date | null
     dd_identificacionContraparte: boolean | null
     dd_consultaListasRestrictivas: boolean | null
     dd_verificacionPep: boolean | null
@@ -10563,6 +10565,7 @@ export namespace Prisma {
     nit: number
     tipoContrato: number
     confidencialidad: number
+    fechaVencimientoSagrilaft: number
     dd_identificacionContraparte: number
     dd_consultaListasRestrictivas: number
     dd_verificacionPep: number
@@ -10588,6 +10591,7 @@ export namespace Prisma {
     nit?: true
     tipoContrato?: true
     confidencialidad?: true
+    fechaVencimientoSagrilaft?: true
     dd_identificacionContraparte?: true
     dd_consultaListasRestrictivas?: true
     dd_verificacionPep?: true
@@ -10603,6 +10607,7 @@ export namespace Prisma {
     nit?: true
     tipoContrato?: true
     confidencialidad?: true
+    fechaVencimientoSagrilaft?: true
     dd_identificacionContraparte?: true
     dd_consultaListasRestrictivas?: true
     dd_verificacionPep?: true
@@ -10618,6 +10623,7 @@ export namespace Prisma {
     nit?: true
     tipoContrato?: true
     confidencialidad?: true
+    fechaVencimientoSagrilaft?: true
     dd_identificacionContraparte?: true
     dd_consultaListasRestrictivas?: true
     dd_verificacionPep?: true
@@ -10720,6 +10726,7 @@ export namespace Prisma {
     nit: string
     tipoContrato: string
     confidencialidad: boolean
+    fechaVencimientoSagrilaft: Date | null
     dd_identificacionContraparte: boolean
     dd_consultaListasRestrictivas: boolean
     dd_verificacionPep: boolean
@@ -10754,6 +10761,7 @@ export namespace Prisma {
     nit?: boolean
     tipoContrato?: boolean
     confidencialidad?: boolean
+    fechaVencimientoSagrilaft?: boolean
     dd_identificacionContraparte?: boolean
     dd_consultaListasRestrictivas?: boolean
     dd_verificacionPep?: boolean
@@ -10771,6 +10779,7 @@ export namespace Prisma {
     nit?: boolean
     tipoContrato?: boolean
     confidencialidad?: boolean
+    fechaVencimientoSagrilaft?: boolean
     dd_identificacionContraparte?: boolean
     dd_consultaListasRestrictivas?: boolean
     dd_verificacionPep?: boolean
@@ -10798,6 +10807,7 @@ export namespace Prisma {
       nit: string
       tipoContrato: string
       confidencialidad: boolean
+      fechaVencimientoSagrilaft: Date | null
       dd_identificacionContraparte: boolean
       dd_consultaListasRestrictivas: boolean
       dd_verificacionPep: boolean
@@ -11231,6 +11241,7 @@ export namespace Prisma {
     readonly nit: FieldRef<"Tercero", 'String'>
     readonly tipoContrato: FieldRef<"Tercero", 'String'>
     readonly confidencialidad: FieldRef<"Tercero", 'Boolean'>
+    readonly fechaVencimientoSagrilaft: FieldRef<"Tercero", 'DateTime'>
     readonly dd_identificacionContraparte: FieldRef<"Tercero", 'Boolean'>
     readonly dd_consultaListasRestrictivas: FieldRef<"Tercero", 'Boolean'>
     readonly dd_verificacionPep: FieldRef<"Tercero", 'Boolean'>
@@ -11635,6 +11646,7 @@ export namespace Prisma {
     contratanteNombre: string | null
     contratanteNit: string | null
     alcance: string | null
+    terminosReferencia: string | null
     condicionesEspeciales: string | null
     valorEnLetras: string | null
     docTerminosReferencia: boolean | null
@@ -11685,6 +11697,7 @@ export namespace Prisma {
     contratanteNombre: string | null
     contratanteNit: string | null
     alcance: string | null
+    terminosReferencia: string | null
     condicionesEspeciales: string | null
     valorEnLetras: string | null
     docTerminosReferencia: boolean | null
@@ -11735,6 +11748,7 @@ export namespace Prisma {
     contratanteNombre: number
     contratanteNit: number
     alcance: number
+    terminosReferencia: number
     condicionesEspeciales: number
     valorEnLetras: number
     docTerminosReferencia: number
@@ -11801,6 +11815,7 @@ export namespace Prisma {
     contratanteNombre?: true
     contratanteNit?: true
     alcance?: true
+    terminosReferencia?: true
     condicionesEspeciales?: true
     valorEnLetras?: true
     docTerminosReferencia?: true
@@ -11851,6 +11866,7 @@ export namespace Prisma {
     contratanteNombre?: true
     contratanteNit?: true
     alcance?: true
+    terminosReferencia?: true
     condicionesEspeciales?: true
     valorEnLetras?: true
     docTerminosReferencia?: true
@@ -11901,6 +11917,7 @@ export namespace Prisma {
     contratanteNombre?: true
     contratanteNit?: true
     alcance?: true
+    terminosReferencia?: true
     condicionesEspeciales?: true
     valorEnLetras?: true
     docTerminosReferencia?: true
@@ -12038,6 +12055,7 @@ export namespace Prisma {
     contratanteNombre: string | null
     contratanteNit: string | null
     alcance: string | null
+    terminosReferencia: string | null
     condicionesEspeciales: string | null
     valorEnLetras: string | null
     docTerminosReferencia: boolean
@@ -12107,6 +12125,7 @@ export namespace Prisma {
     contratanteNombre?: boolean
     contratanteNit?: boolean
     alcance?: boolean
+    terminosReferencia?: boolean
     condicionesEspeciales?: boolean
     valorEnLetras?: boolean
     docTerminosReferencia?: boolean
@@ -12163,6 +12182,7 @@ export namespace Prisma {
     contratanteNombre?: boolean
     contratanteNit?: boolean
     alcance?: boolean
+    terminosReferencia?: boolean
     condicionesEspeciales?: boolean
     valorEnLetras?: boolean
     docTerminosReferencia?: boolean
@@ -12233,6 +12253,7 @@ export namespace Prisma {
       contratanteNombre: string | null
       contratanteNit: string | null
       alcance: string | null
+      terminosReferencia: string | null
       condicionesEspeciales: string | null
       valorEnLetras: string | null
       docTerminosReferencia: boolean
@@ -12709,6 +12730,7 @@ export namespace Prisma {
     readonly contratanteNombre: FieldRef<"Solicitud", 'String'>
     readonly contratanteNit: FieldRef<"Solicitud", 'String'>
     readonly alcance: FieldRef<"Solicitud", 'String'>
+    readonly terminosReferencia: FieldRef<"Solicitud", 'String'>
     readonly condicionesEspeciales: FieldRef<"Solicitud", 'String'>
     readonly valorEnLetras: FieldRef<"Solicitud", 'String'>
     readonly docTerminosReferencia: FieldRef<"Solicitud", 'Boolean'>
@@ -19290,6 +19312,7 @@ export namespace Prisma {
     nit: 'nit',
     tipoContrato: 'tipoContrato',
     confidencialidad: 'confidencialidad',
+    fechaVencimientoSagrilaft: 'fechaVencimientoSagrilaft',
     dd_identificacionContraparte: 'dd_identificacionContraparte',
     dd_consultaListasRestrictivas: 'dd_consultaListasRestrictivas',
     dd_verificacionPep: 'dd_verificacionPep',
@@ -19321,6 +19344,7 @@ export namespace Prisma {
     contratanteNombre: 'contratanteNombre',
     contratanteNit: 'contratanteNit',
     alcance: 'alcance',
+    terminosReferencia: 'terminosReferencia',
     condicionesEspeciales: 'condicionesEspeciales',
     valorEnLetras: 'valorEnLetras',
     docTerminosReferencia: 'docTerminosReferencia',
@@ -20061,6 +20085,7 @@ export namespace Prisma {
     nit?: StringFilter<"Tercero"> | string
     tipoContrato?: StringFilter<"Tercero"> | string
     confidencialidad?: BoolFilter<"Tercero"> | boolean
+    fechaVencimientoSagrilaft?: DateTimeNullableFilter<"Tercero"> | Date | string | null
     dd_identificacionContraparte?: BoolFilter<"Tercero"> | boolean
     dd_consultaListasRestrictivas?: BoolFilter<"Tercero"> | boolean
     dd_verificacionPep?: BoolFilter<"Tercero"> | boolean
@@ -20077,6 +20102,7 @@ export namespace Prisma {
     nit?: SortOrder
     tipoContrato?: SortOrder
     confidencialidad?: SortOrder
+    fechaVencimientoSagrilaft?: SortOrderInput | SortOrder
     dd_identificacionContraparte?: SortOrder
     dd_consultaListasRestrictivas?: SortOrder
     dd_verificacionPep?: SortOrder
@@ -20096,6 +20122,7 @@ export namespace Prisma {
     nit?: StringFilter<"Tercero"> | string
     tipoContrato?: StringFilter<"Tercero"> | string
     confidencialidad?: BoolFilter<"Tercero"> | boolean
+    fechaVencimientoSagrilaft?: DateTimeNullableFilter<"Tercero"> | Date | string | null
     dd_identificacionContraparte?: BoolFilter<"Tercero"> | boolean
     dd_consultaListasRestrictivas?: BoolFilter<"Tercero"> | boolean
     dd_verificacionPep?: BoolFilter<"Tercero"> | boolean
@@ -20112,6 +20139,7 @@ export namespace Prisma {
     nit?: SortOrder
     tipoContrato?: SortOrder
     confidencialidad?: SortOrder
+    fechaVencimientoSagrilaft?: SortOrderInput | SortOrder
     dd_identificacionContraparte?: SortOrder
     dd_consultaListasRestrictivas?: SortOrder
     dd_verificacionPep?: SortOrder
@@ -20135,6 +20163,7 @@ export namespace Prisma {
     nit?: StringWithAggregatesFilter<"Tercero"> | string
     tipoContrato?: StringWithAggregatesFilter<"Tercero"> | string
     confidencialidad?: BoolWithAggregatesFilter<"Tercero"> | boolean
+    fechaVencimientoSagrilaft?: DateTimeNullableWithAggregatesFilter<"Tercero"> | Date | string | null
     dd_identificacionContraparte?: BoolWithAggregatesFilter<"Tercero"> | boolean
     dd_consultaListasRestrictivas?: BoolWithAggregatesFilter<"Tercero"> | boolean
     dd_verificacionPep?: BoolWithAggregatesFilter<"Tercero"> | boolean
@@ -20166,6 +20195,7 @@ export namespace Prisma {
     contratanteNombre?: StringNullableFilter<"Solicitud"> | string | null
     contratanteNit?: StringNullableFilter<"Solicitud"> | string | null
     alcance?: StringNullableFilter<"Solicitud"> | string | null
+    terminosReferencia?: StringNullableFilter<"Solicitud"> | string | null
     condicionesEspeciales?: StringNullableFilter<"Solicitud"> | string | null
     valorEnLetras?: StringNullableFilter<"Solicitud"> | string | null
     docTerminosReferencia?: BoolFilter<"Solicitud"> | boolean
@@ -20221,6 +20251,7 @@ export namespace Prisma {
     contratanteNombre?: SortOrderInput | SortOrder
     contratanteNit?: SortOrderInput | SortOrder
     alcance?: SortOrderInput | SortOrder
+    terminosReferencia?: SortOrderInput | SortOrder
     condicionesEspeciales?: SortOrderInput | SortOrder
     valorEnLetras?: SortOrderInput | SortOrder
     docTerminosReferencia?: SortOrder
@@ -20279,6 +20310,7 @@ export namespace Prisma {
     contratanteNombre?: StringNullableFilter<"Solicitud"> | string | null
     contratanteNit?: StringNullableFilter<"Solicitud"> | string | null
     alcance?: StringNullableFilter<"Solicitud"> | string | null
+    terminosReferencia?: StringNullableFilter<"Solicitud"> | string | null
     condicionesEspeciales?: StringNullableFilter<"Solicitud"> | string | null
     valorEnLetras?: StringNullableFilter<"Solicitud"> | string | null
     docTerminosReferencia?: BoolFilter<"Solicitud"> | boolean
@@ -20334,6 +20366,7 @@ export namespace Prisma {
     contratanteNombre?: SortOrderInput | SortOrder
     contratanteNit?: SortOrderInput | SortOrder
     alcance?: SortOrderInput | SortOrder
+    terminosReferencia?: SortOrderInput | SortOrder
     condicionesEspeciales?: SortOrderInput | SortOrder
     valorEnLetras?: SortOrderInput | SortOrder
     docTerminosReferencia?: SortOrder
@@ -20392,6 +20425,7 @@ export namespace Prisma {
     contratanteNombre?: StringNullableWithAggregatesFilter<"Solicitud"> | string | null
     contratanteNit?: StringNullableWithAggregatesFilter<"Solicitud"> | string | null
     alcance?: StringNullableWithAggregatesFilter<"Solicitud"> | string | null
+    terminosReferencia?: StringNullableWithAggregatesFilter<"Solicitud"> | string | null
     condicionesEspeciales?: StringNullableWithAggregatesFilter<"Solicitud"> | string | null
     valorEnLetras?: StringNullableWithAggregatesFilter<"Solicitud"> | string | null
     docTerminosReferencia?: BoolWithAggregatesFilter<"Solicitud"> | boolean
@@ -21337,6 +21371,7 @@ export namespace Prisma {
     nit: string
     tipoContrato: string
     confidencialidad?: boolean
+    fechaVencimientoSagrilaft?: Date | string | null
     dd_identificacionContraparte?: boolean
     dd_consultaListasRestrictivas?: boolean
     dd_verificacionPep?: boolean
@@ -21353,6 +21388,7 @@ export namespace Prisma {
     nit: string
     tipoContrato: string
     confidencialidad?: boolean
+    fechaVencimientoSagrilaft?: Date | string | null
     dd_identificacionContraparte?: boolean
     dd_consultaListasRestrictivas?: boolean
     dd_verificacionPep?: boolean
@@ -21368,6 +21404,7 @@ export namespace Prisma {
     nit?: StringFieldUpdateOperationsInput | string
     tipoContrato?: StringFieldUpdateOperationsInput | string
     confidencialidad?: BoolFieldUpdateOperationsInput | boolean
+    fechaVencimientoSagrilaft?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     dd_identificacionContraparte?: BoolFieldUpdateOperationsInput | boolean
     dd_consultaListasRestrictivas?: BoolFieldUpdateOperationsInput | boolean
     dd_verificacionPep?: BoolFieldUpdateOperationsInput | boolean
@@ -21384,6 +21421,7 @@ export namespace Prisma {
     nit?: StringFieldUpdateOperationsInput | string
     tipoContrato?: StringFieldUpdateOperationsInput | string
     confidencialidad?: BoolFieldUpdateOperationsInput | boolean
+    fechaVencimientoSagrilaft?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     dd_identificacionContraparte?: BoolFieldUpdateOperationsInput | boolean
     dd_consultaListasRestrictivas?: BoolFieldUpdateOperationsInput | boolean
     dd_verificacionPep?: BoolFieldUpdateOperationsInput | boolean
@@ -21400,6 +21438,7 @@ export namespace Prisma {
     nit: string
     tipoContrato: string
     confidencialidad?: boolean
+    fechaVencimientoSagrilaft?: Date | string | null
     dd_identificacionContraparte?: boolean
     dd_consultaListasRestrictivas?: boolean
     dd_verificacionPep?: boolean
@@ -21414,6 +21453,7 @@ export namespace Prisma {
     nit?: StringFieldUpdateOperationsInput | string
     tipoContrato?: StringFieldUpdateOperationsInput | string
     confidencialidad?: BoolFieldUpdateOperationsInput | boolean
+    fechaVencimientoSagrilaft?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     dd_identificacionContraparte?: BoolFieldUpdateOperationsInput | boolean
     dd_consultaListasRestrictivas?: BoolFieldUpdateOperationsInput | boolean
     dd_verificacionPep?: BoolFieldUpdateOperationsInput | boolean
@@ -21429,6 +21469,7 @@ export namespace Prisma {
     nit?: StringFieldUpdateOperationsInput | string
     tipoContrato?: StringFieldUpdateOperationsInput | string
     confidencialidad?: BoolFieldUpdateOperationsInput | boolean
+    fechaVencimientoSagrilaft?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     dd_identificacionContraparte?: BoolFieldUpdateOperationsInput | boolean
     dd_consultaListasRestrictivas?: BoolFieldUpdateOperationsInput | boolean
     dd_verificacionPep?: BoolFieldUpdateOperationsInput | boolean
@@ -21454,6 +21495,7 @@ export namespace Prisma {
     contratanteNombre?: string | null
     contratanteNit?: string | null
     alcance?: string | null
+    terminosReferencia?: string | null
     condicionesEspeciales?: string | null
     valorEnLetras?: string | null
     docTerminosReferencia?: boolean
@@ -21508,6 +21550,7 @@ export namespace Prisma {
     contratanteNombre?: string | null
     contratanteNit?: string | null
     alcance?: string | null
+    terminosReferencia?: string | null
     condicionesEspeciales?: string | null
     valorEnLetras?: string | null
     docTerminosReferencia?: boolean
@@ -21557,6 +21600,7 @@ export namespace Prisma {
     contratanteNombre?: NullableStringFieldUpdateOperationsInput | string | null
     contratanteNit?: NullableStringFieldUpdateOperationsInput | string | null
     alcance?: NullableStringFieldUpdateOperationsInput | string | null
+    terminosReferencia?: NullableStringFieldUpdateOperationsInput | string | null
     condicionesEspeciales?: NullableStringFieldUpdateOperationsInput | string | null
     valorEnLetras?: NullableStringFieldUpdateOperationsInput | string | null
     docTerminosReferencia?: BoolFieldUpdateOperationsInput | boolean
@@ -21611,6 +21655,7 @@ export namespace Prisma {
     contratanteNombre?: NullableStringFieldUpdateOperationsInput | string | null
     contratanteNit?: NullableStringFieldUpdateOperationsInput | string | null
     alcance?: NullableStringFieldUpdateOperationsInput | string | null
+    terminosReferencia?: NullableStringFieldUpdateOperationsInput | string | null
     condicionesEspeciales?: NullableStringFieldUpdateOperationsInput | string | null
     valorEnLetras?: NullableStringFieldUpdateOperationsInput | string | null
     docTerminosReferencia?: BoolFieldUpdateOperationsInput | boolean
@@ -21663,6 +21708,7 @@ export namespace Prisma {
     contratanteNombre?: string | null
     contratanteNit?: string | null
     alcance?: string | null
+    terminosReferencia?: string | null
     condicionesEspeciales?: string | null
     valorEnLetras?: string | null
     docTerminosReferencia?: boolean
@@ -21710,6 +21756,7 @@ export namespace Prisma {
     contratanteNombre?: NullableStringFieldUpdateOperationsInput | string | null
     contratanteNit?: NullableStringFieldUpdateOperationsInput | string | null
     alcance?: NullableStringFieldUpdateOperationsInput | string | null
+    terminosReferencia?: NullableStringFieldUpdateOperationsInput | string | null
     condicionesEspeciales?: NullableStringFieldUpdateOperationsInput | string | null
     valorEnLetras?: NullableStringFieldUpdateOperationsInput | string | null
     docTerminosReferencia?: BoolFieldUpdateOperationsInput | boolean
@@ -21759,6 +21806,7 @@ export namespace Prisma {
     contratanteNombre?: NullableStringFieldUpdateOperationsInput | string | null
     contratanteNit?: NullableStringFieldUpdateOperationsInput | string | null
     alcance?: NullableStringFieldUpdateOperationsInput | string | null
+    terminosReferencia?: NullableStringFieldUpdateOperationsInput | string | null
     condicionesEspeciales?: NullableStringFieldUpdateOperationsInput | string | null
     valorEnLetras?: NullableStringFieldUpdateOperationsInput | string | null
     docTerminosReferencia?: BoolFieldUpdateOperationsInput | boolean
@@ -22710,6 +22758,7 @@ export namespace Prisma {
     nit?: SortOrder
     tipoContrato?: SortOrder
     confidencialidad?: SortOrder
+    fechaVencimientoSagrilaft?: SortOrder
     dd_identificacionContraparte?: SortOrder
     dd_consultaListasRestrictivas?: SortOrder
     dd_verificacionPep?: SortOrder
@@ -22729,6 +22778,7 @@ export namespace Prisma {
     nit?: SortOrder
     tipoContrato?: SortOrder
     confidencialidad?: SortOrder
+    fechaVencimientoSagrilaft?: SortOrder
     dd_identificacionContraparte?: SortOrder
     dd_consultaListasRestrictivas?: SortOrder
     dd_verificacionPep?: SortOrder
@@ -22744,6 +22794,7 @@ export namespace Prisma {
     nit?: SortOrder
     tipoContrato?: SortOrder
     confidencialidad?: SortOrder
+    fechaVencimientoSagrilaft?: SortOrder
     dd_identificacionContraparte?: SortOrder
     dd_consultaListasRestrictivas?: SortOrder
     dd_verificacionPep?: SortOrder
@@ -22807,6 +22858,7 @@ export namespace Prisma {
     contratanteNombre?: SortOrder
     contratanteNit?: SortOrder
     alcance?: SortOrder
+    terminosReferencia?: SortOrder
     condicionesEspeciales?: SortOrder
     valorEnLetras?: SortOrder
     docTerminosReferencia?: SortOrder
@@ -22864,6 +22916,7 @@ export namespace Prisma {
     contratanteNombre?: SortOrder
     contratanteNit?: SortOrder
     alcance?: SortOrder
+    terminosReferencia?: SortOrder
     condicionesEspeciales?: SortOrder
     valorEnLetras?: SortOrder
     docTerminosReferencia?: SortOrder
@@ -22914,6 +22967,7 @@ export namespace Prisma {
     contratanteNombre?: SortOrder
     contratanteNit?: SortOrder
     alcance?: SortOrder
+    terminosReferencia?: SortOrder
     condicionesEspeciales?: SortOrder
     valorEnLetras?: SortOrder
     docTerminosReferencia?: SortOrder
@@ -24695,6 +24749,7 @@ export namespace Prisma {
     contratanteNombre?: string | null
     contratanteNit?: string | null
     alcance?: string | null
+    terminosReferencia?: string | null
     condicionesEspeciales?: string | null
     valorEnLetras?: string | null
     docTerminosReferencia?: boolean
@@ -24747,6 +24802,7 @@ export namespace Prisma {
     contratanteNombre?: string | null
     contratanteNit?: string | null
     alcance?: string | null
+    terminosReferencia?: string | null
     condicionesEspeciales?: string | null
     valorEnLetras?: string | null
     docTerminosReferencia?: boolean
@@ -24806,6 +24862,7 @@ export namespace Prisma {
     contratanteNombre?: string | null
     contratanteNit?: string | null
     alcance?: string | null
+    terminosReferencia?: string | null
     condicionesEspeciales?: string | null
     valorEnLetras?: string | null
     docTerminosReferencia?: boolean
@@ -24859,6 +24916,7 @@ export namespace Prisma {
     contratanteNombre?: string | null
     contratanteNit?: string | null
     alcance?: string | null
+    terminosReferencia?: string | null
     condicionesEspeciales?: string | null
     valorEnLetras?: string | null
     docTerminosReferencia?: boolean
@@ -25069,6 +25127,7 @@ export namespace Prisma {
     contratanteNombre?: StringNullableFilter<"Solicitud"> | string | null
     contratanteNit?: StringNullableFilter<"Solicitud"> | string | null
     alcance?: StringNullableFilter<"Solicitud"> | string | null
+    terminosReferencia?: StringNullableFilter<"Solicitud"> | string | null
     condicionesEspeciales?: StringNullableFilter<"Solicitud"> | string | null
     valorEnLetras?: StringNullableFilter<"Solicitud"> | string | null
     docTerminosReferencia?: BoolFilter<"Solicitud"> | boolean
@@ -25575,6 +25634,7 @@ export namespace Prisma {
     contratanteNombre?: string | null
     contratanteNit?: string | null
     alcance?: string | null
+    terminosReferencia?: string | null
     condicionesEspeciales?: string | null
     valorEnLetras?: string | null
     docTerminosReferencia?: boolean
@@ -25627,6 +25687,7 @@ export namespace Prisma {
     contratanteNombre?: string | null
     contratanteNit?: string | null
     alcance?: string | null
+    terminosReferencia?: string | null
     condicionesEspeciales?: string | null
     valorEnLetras?: string | null
     docTerminosReferencia?: boolean
@@ -25742,6 +25803,7 @@ export namespace Prisma {
     nit: string
     tipoContrato: string
     confidencialidad?: boolean
+    fechaVencimientoSagrilaft?: Date | string | null
     dd_identificacionContraparte?: boolean
     dd_consultaListasRestrictivas?: boolean
     dd_verificacionPep?: boolean
@@ -25757,6 +25819,7 @@ export namespace Prisma {
     nit: string
     tipoContrato: string
     confidencialidad?: boolean
+    fechaVencimientoSagrilaft?: Date | string | null
     dd_identificacionContraparte?: boolean
     dd_consultaListasRestrictivas?: boolean
     dd_verificacionPep?: boolean
@@ -25944,6 +26007,7 @@ export namespace Prisma {
     nit?: StringFieldUpdateOperationsInput | string
     tipoContrato?: StringFieldUpdateOperationsInput | string
     confidencialidad?: BoolFieldUpdateOperationsInput | boolean
+    fechaVencimientoSagrilaft?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     dd_identificacionContraparte?: BoolFieldUpdateOperationsInput | boolean
     dd_consultaListasRestrictivas?: BoolFieldUpdateOperationsInput | boolean
     dd_verificacionPep?: BoolFieldUpdateOperationsInput | boolean
@@ -25959,6 +26023,7 @@ export namespace Prisma {
     nit?: StringFieldUpdateOperationsInput | string
     tipoContrato?: StringFieldUpdateOperationsInput | string
     confidencialidad?: BoolFieldUpdateOperationsInput | boolean
+    fechaVencimientoSagrilaft?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     dd_identificacionContraparte?: BoolFieldUpdateOperationsInput | boolean
     dd_consultaListasRestrictivas?: BoolFieldUpdateOperationsInput | boolean
     dd_verificacionPep?: BoolFieldUpdateOperationsInput | boolean
@@ -26087,6 +26152,7 @@ export namespace Prisma {
     contratanteNombre?: string | null
     contratanteNit?: string | null
     alcance?: string | null
+    terminosReferencia?: string | null
     condicionesEspeciales?: string | null
     valorEnLetras?: string | null
     docTerminosReferencia?: boolean
@@ -26140,6 +26206,7 @@ export namespace Prisma {
     contratanteNombre?: string | null
     contratanteNit?: string | null
     alcance?: string | null
+    terminosReferencia?: string | null
     condicionesEspeciales?: string | null
     valorEnLetras?: string | null
     docTerminosReferencia?: boolean
@@ -26255,6 +26322,7 @@ export namespace Prisma {
     contratanteNombre?: NullableStringFieldUpdateOperationsInput | string | null
     contratanteNit?: NullableStringFieldUpdateOperationsInput | string | null
     alcance?: NullableStringFieldUpdateOperationsInput | string | null
+    terminosReferencia?: NullableStringFieldUpdateOperationsInput | string | null
     condicionesEspeciales?: NullableStringFieldUpdateOperationsInput | string | null
     valorEnLetras?: NullableStringFieldUpdateOperationsInput | string | null
     docTerminosReferencia?: BoolFieldUpdateOperationsInput | boolean
@@ -26308,6 +26376,7 @@ export namespace Prisma {
     contratanteNombre?: NullableStringFieldUpdateOperationsInput | string | null
     contratanteNit?: NullableStringFieldUpdateOperationsInput | string | null
     alcance?: NullableStringFieldUpdateOperationsInput | string | null
+    terminosReferencia?: NullableStringFieldUpdateOperationsInput | string | null
     condicionesEspeciales?: NullableStringFieldUpdateOperationsInput | string | null
     valorEnLetras?: NullableStringFieldUpdateOperationsInput | string | null
     docTerminosReferencia?: BoolFieldUpdateOperationsInput | boolean
@@ -26413,6 +26482,7 @@ export namespace Prisma {
     contratanteNombre?: string | null
     contratanteNit?: string | null
     alcance?: string | null
+    terminosReferencia?: string | null
     condicionesEspeciales?: string | null
     valorEnLetras?: string | null
     docTerminosReferencia?: boolean
@@ -26466,6 +26536,7 @@ export namespace Prisma {
     contratanteNombre?: string | null
     contratanteNit?: string | null
     alcance?: string | null
+    terminosReferencia?: string | null
     condicionesEspeciales?: string | null
     valorEnLetras?: string | null
     docTerminosReferencia?: boolean
@@ -26584,6 +26655,7 @@ export namespace Prisma {
     contratanteNombre?: NullableStringFieldUpdateOperationsInput | string | null
     contratanteNit?: NullableStringFieldUpdateOperationsInput | string | null
     alcance?: NullableStringFieldUpdateOperationsInput | string | null
+    terminosReferencia?: NullableStringFieldUpdateOperationsInput | string | null
     condicionesEspeciales?: NullableStringFieldUpdateOperationsInput | string | null
     valorEnLetras?: NullableStringFieldUpdateOperationsInput | string | null
     docTerminosReferencia?: BoolFieldUpdateOperationsInput | boolean
@@ -26637,6 +26709,7 @@ export namespace Prisma {
     contratanteNombre?: NullableStringFieldUpdateOperationsInput | string | null
     contratanteNit?: NullableStringFieldUpdateOperationsInput | string | null
     alcance?: NullableStringFieldUpdateOperationsInput | string | null
+    terminosReferencia?: NullableStringFieldUpdateOperationsInput | string | null
     condicionesEspeciales?: NullableStringFieldUpdateOperationsInput | string | null
     valorEnLetras?: NullableStringFieldUpdateOperationsInput | string | null
     docTerminosReferencia?: BoolFieldUpdateOperationsInput | boolean
@@ -27073,6 +27146,7 @@ export namespace Prisma {
     contratanteNombre?: string | null
     contratanteNit?: string | null
     alcance?: string | null
+    terminosReferencia?: string | null
     condicionesEspeciales?: string | null
     valorEnLetras?: string | null
     docTerminosReferencia?: boolean
@@ -27123,6 +27197,7 @@ export namespace Prisma {
     contratanteNombre?: string | null
     contratanteNit?: string | null
     alcance?: string | null
+    terminosReferencia?: string | null
     condicionesEspeciales?: string | null
     valorEnLetras?: string | null
     docTerminosReferencia?: boolean
@@ -27250,6 +27325,7 @@ export namespace Prisma {
     contratanteNombre?: NullableStringFieldUpdateOperationsInput | string | null
     contratanteNit?: NullableStringFieldUpdateOperationsInput | string | null
     alcance?: NullableStringFieldUpdateOperationsInput | string | null
+    terminosReferencia?: NullableStringFieldUpdateOperationsInput | string | null
     condicionesEspeciales?: NullableStringFieldUpdateOperationsInput | string | null
     valorEnLetras?: NullableStringFieldUpdateOperationsInput | string | null
     docTerminosReferencia?: BoolFieldUpdateOperationsInput | boolean
@@ -27302,6 +27378,7 @@ export namespace Prisma {
     contratanteNombre?: NullableStringFieldUpdateOperationsInput | string | null
     contratanteNit?: NullableStringFieldUpdateOperationsInput | string | null
     alcance?: NullableStringFieldUpdateOperationsInput | string | null
+    terminosReferencia?: NullableStringFieldUpdateOperationsInput | string | null
     condicionesEspeciales?: NullableStringFieldUpdateOperationsInput | string | null
     valorEnLetras?: NullableStringFieldUpdateOperationsInput | string | null
     docTerminosReferencia?: BoolFieldUpdateOperationsInput | boolean
@@ -27353,6 +27430,7 @@ export namespace Prisma {
     contratanteNombre?: NullableStringFieldUpdateOperationsInput | string | null
     contratanteNit?: NullableStringFieldUpdateOperationsInput | string | null
     alcance?: NullableStringFieldUpdateOperationsInput | string | null
+    terminosReferencia?: NullableStringFieldUpdateOperationsInput | string | null
     condicionesEspeciales?: NullableStringFieldUpdateOperationsInput | string | null
     valorEnLetras?: NullableStringFieldUpdateOperationsInput | string | null
     docTerminosReferencia?: BoolFieldUpdateOperationsInput | boolean
@@ -27400,6 +27478,7 @@ export namespace Prisma {
     contratanteNombre?: NullableStringFieldUpdateOperationsInput | string | null
     contratanteNit?: NullableStringFieldUpdateOperationsInput | string | null
     alcance?: NullableStringFieldUpdateOperationsInput | string | null
+    terminosReferencia?: NullableStringFieldUpdateOperationsInput | string | null
     condicionesEspeciales?: NullableStringFieldUpdateOperationsInput | string | null
     valorEnLetras?: NullableStringFieldUpdateOperationsInput | string | null
     docTerminosReferencia?: BoolFieldUpdateOperationsInput | boolean
@@ -27453,6 +27532,7 @@ export namespace Prisma {
     contratanteNombre?: NullableStringFieldUpdateOperationsInput | string | null
     contratanteNit?: NullableStringFieldUpdateOperationsInput | string | null
     alcance?: NullableStringFieldUpdateOperationsInput | string | null
+    terminosReferencia?: NullableStringFieldUpdateOperationsInput | string | null
     condicionesEspeciales?: NullableStringFieldUpdateOperationsInput | string | null
     valorEnLetras?: NullableStringFieldUpdateOperationsInput | string | null
     docTerminosReferencia?: BoolFieldUpdateOperationsInput | boolean
@@ -27504,6 +27584,7 @@ export namespace Prisma {
     contratanteNombre?: NullableStringFieldUpdateOperationsInput | string | null
     contratanteNit?: NullableStringFieldUpdateOperationsInput | string | null
     alcance?: NullableStringFieldUpdateOperationsInput | string | null
+    terminosReferencia?: NullableStringFieldUpdateOperationsInput | string | null
     condicionesEspeciales?: NullableStringFieldUpdateOperationsInput | string | null
     valorEnLetras?: NullableStringFieldUpdateOperationsInput | string | null
     docTerminosReferencia?: BoolFieldUpdateOperationsInput | boolean
@@ -27652,6 +27733,7 @@ export namespace Prisma {
     contratanteNombre?: string | null
     contratanteNit?: string | null
     alcance?: string | null
+    terminosReferencia?: string | null
     condicionesEspeciales?: string | null
     valorEnLetras?: string | null
     docTerminosReferencia?: boolean
@@ -27699,6 +27781,7 @@ export namespace Prisma {
     contratanteNombre?: NullableStringFieldUpdateOperationsInput | string | null
     contratanteNit?: NullableStringFieldUpdateOperationsInput | string | null
     alcance?: NullableStringFieldUpdateOperationsInput | string | null
+    terminosReferencia?: NullableStringFieldUpdateOperationsInput | string | null
     condicionesEspeciales?: NullableStringFieldUpdateOperationsInput | string | null
     valorEnLetras?: NullableStringFieldUpdateOperationsInput | string | null
     docTerminosReferencia?: BoolFieldUpdateOperationsInput | boolean
@@ -27751,6 +27834,7 @@ export namespace Prisma {
     contratanteNombre?: NullableStringFieldUpdateOperationsInput | string | null
     contratanteNit?: NullableStringFieldUpdateOperationsInput | string | null
     alcance?: NullableStringFieldUpdateOperationsInput | string | null
+    terminosReferencia?: NullableStringFieldUpdateOperationsInput | string | null
     condicionesEspeciales?: NullableStringFieldUpdateOperationsInput | string | null
     valorEnLetras?: NullableStringFieldUpdateOperationsInput | string | null
     docTerminosReferencia?: BoolFieldUpdateOperationsInput | boolean
@@ -27802,6 +27886,7 @@ export namespace Prisma {
     contratanteNombre?: NullableStringFieldUpdateOperationsInput | string | null
     contratanteNit?: NullableStringFieldUpdateOperationsInput | string | null
     alcance?: NullableStringFieldUpdateOperationsInput | string | null
+    terminosReferencia?: NullableStringFieldUpdateOperationsInput | string | null
     condicionesEspeciales?: NullableStringFieldUpdateOperationsInput | string | null
     valorEnLetras?: NullableStringFieldUpdateOperationsInput | string | null
     docTerminosReferencia?: BoolFieldUpdateOperationsInput | boolean

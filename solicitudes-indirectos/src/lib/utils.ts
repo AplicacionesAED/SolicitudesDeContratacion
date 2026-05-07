@@ -21,14 +21,36 @@ const TIPO_ABREV: Record<TipoSolicitud, string> = {
   TRAMITE_BONIFICACIONES_COMISIONES: "TBC",
 };
 
+// Returns first `letterLength` uppercase letters of a name.
+// If `appendDigits` is true, all digits from the name are appended after the letters.
+// Accents, spaces and special characters are stripped. Result is always deterministic.
+export function abbreviate(name: string, letterLength: number, appendDigits = false): string {
+  const normalized = name
+    .normalize("NFD")
+    .split("")
+    .filter((ch) => {
+      const cp = ch.codePointAt(0) ?? 0;
+      return cp < 0x0300 || cp > 0x036f; // strip combining diacritical marks
+    })
+    .join("")
+    .toUpperCase();
+
+  const letters = normalized.replace(/[^A-Z]/g, "").slice(0, letterLength).padEnd(letterLength, "X");
+  if (!appendDigits) return letters;
+
+  const digits = normalized.replace(/[^0-9]/g, "");
+  return letters + digits;
+}
+
 export function buildConsecutivo(
   tipo: TipoSolicitud,
-  anio: number,
+  proyAbbr: string,
+  frenAbbr: string,
   numero: number
 ): string {
-  const abrev = TIPO_ABREV[tipo];
+  const abrev = TIPO_ABREV[tipo] ?? tipo;
   const num = String(numero).padStart(3, "0");
-  return `SOL-${abrev}-${anio}-${num}`;
+  return `SOL-${abrev}-${proyAbbr}-${frenAbbr}-${num}`;
 }
 
 // ─── Formateo ────────────────────────────────────────────────────────────────
@@ -168,44 +190,44 @@ export const TIPO_SOLICITUD_LABELS: Record<string, string> = {
 };
 
 export const ACCION_LABELS: Record<string, string> = {
-  ENVIAR:             "Solicitud enviada para aprobación",
-  APROBAR_DIRECTOR:   "Aprobada por Director de Proyecto",
-  DEVOLVER:           "Devuelta al solicitante",
-  REVISAR:            "Enviada a revisión por el solicitante",
-  TRAMITAR_OK:        "Documentación revisada — En creación de minuta",
-  AVANZAR_CONTRATOS:  "Anexos adjuntados — Enviada a Controles",
-  PASAR_CONTROLES:    "Contrato y pólizas enviados a Controles",
-  REGISTRAR_ADPRO:    "Número de contrato Adpro registrado",
-  APROBAR_FINAL:      "Aprobación definitiva por Director de Controles",
-  REENVIAR:           "Solicitud reenviada para aprobación",
+  ENVIAR: "Solicitud enviada para aprobación",
+  APROBAR_DIRECTOR: "Aprobada por Director de Proyecto",
+  DEVOLVER: "Devuelta al solicitante",
+  REVISAR: "Enviada a revisión por el solicitante",
+  TRAMITAR_OK: "Documentación revisada — En creación de minuta",
+  AVANZAR_CONTRATOS: "Anexos adjuntados — Enviada a Controles",
+  PASAR_CONTROLES: "Contrato y pólizas enviados a Controles",
+  REGISTRAR_ADPRO: "Número de contrato Adpro registrado",
+  APROBAR_FINAL: "Aprobación definitiva por Director de Controles",
+  REENVIAR: "Solicitud reenviada para aprobación",
 };
 
 // Color del indicador según el tipo de acción
 export const ACCION_COLOR: Record<string, string> = {
-  ENVIAR:             "bg-blue-400",
-  APROBAR_DIRECTOR:   "bg-green-500",
-  DEVOLVER:           "bg-red-400",
-  REVISAR:            "bg-yellow-400",
-  TRAMITAR_OK:        "bg-green-500",
-  AVANZAR_CONTRATOS:  "bg-green-500",
-  PASAR_CONTROLES:    "bg-green-500",
-  REGISTRAR_ADPRO:    "bg-indigo-400",
-  APROBAR_FINAL:      "bg-green-600",
-  REENVIAR:           "bg-blue-400",
+  ENVIAR: "bg-blue-400",
+  APROBAR_DIRECTOR: "bg-green-500",
+  DEVOLVER: "bg-red-400",
+  REVISAR: "bg-yellow-400",
+  TRAMITAR_OK: "bg-green-500",
+  AVANZAR_CONTRATOS: "bg-green-500",
+  PASAR_CONTROLES: "bg-green-500",
+  REGISTRAR_ADPRO: "bg-indigo-400",
+  APROBAR_FINAL: "bg-green-600",
+  REENVIAR: "bg-blue-400",
 };
 
 // Estado al que queda la solicitud después de cada acción
 export const ACCION_ESTADO_DESTINO: Record<string, string> = {
-  ENVIAR:             "ENVIADA",
-  APROBAR_DIRECTOR:   "EN_TRAMITE_CONTRATOS",
-  DEVOLVER:           "DEVUELTA",
-  REVISAR:            "EN_REVISION",
-  TRAMITAR_OK:        "CREACION_MINUTA",
-  AVANZAR_CONTRATOS:  "EN_CONTROLES",
-  PASAR_CONTROLES:    "EN_CONTROLES",
-  REGISTRAR_ADPRO:    "APROBACION_FINAL",
-  APROBAR_FINAL:      "COMPLETADA",
-  REENVIAR:           "ENVIADA",
+  ENVIAR: "ENVIADA",
+  APROBAR_DIRECTOR: "EN_TRAMITE_CONTRATOS",
+  DEVOLVER: "DEVUELTA",
+  REVISAR: "EN_REVISION",
+  TRAMITAR_OK: "CREACION_MINUTA",
+  AVANZAR_CONTRATOS: "EN_CONTROLES",
+  PASAR_CONTROLES: "EN_CONTROLES",
+  REGISTRAR_ADPRO: "APROBACION_FINAL",
+  APROBAR_FINAL: "COMPLETADA",
+  REENVIAR: "ENVIADA",
 };
 
 export const ROL_LABELS: Record<string, string> = {
@@ -282,5 +304,5 @@ export function tienePermiso(
 
   // Retorna true si está en su rol o en las seleccionadas (esto incluye si se agregaron o desactivaron)
   return funcionalidadesDelRol.includes(funcionalidad) ||
-         funcionalidadesSeleccionadas.includes(funcionalidad);
+    funcionalidadesSeleccionadas.includes(funcionalidad);
 }

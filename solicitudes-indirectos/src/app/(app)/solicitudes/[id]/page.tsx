@@ -1,3 +1,4 @@
+import React from "react";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { notFound } from "next/navigation";
@@ -80,6 +81,18 @@ export default async function SolicitudDetallePage({ params }: PageProps) {
       historial: {
         orderBy: { fecha: "asc" },
         include: { usuario: { select: { nombre: true, rol: true } } },
+      },
+      cronograma: {
+        include: {
+          fases: {
+            orderBy: { numeroFase: "asc" },
+            include: { actividades: { orderBy: { fechaInicio: "asc" } } },
+          },
+          actividades: {
+            where: { faseId: null },
+            orderBy: { fechaInicio: "asc" },
+          },
+        },
       },
     },
   });
@@ -314,6 +327,87 @@ export default async function SolicitudDetallePage({ params }: PageProps) {
             </p>
           </div>
         )}
+      </div>
+
+      {/* Sección 6 — Cronograma */}
+      <div className="bg-white border border-gray-200 rounded-xl overflow-hidden">
+        <div className="px-5 py-4 border-b border-gray-100 flex items-center justify-between bg-white">
+          <span className="text-sm font-semibold text-gray-900">Sección 6 — Cronograma</span>
+          <Calendar size={16} className="text-gray-400" />
+        </div>
+        <div className="p-5 space-y-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+            <div className="space-y-1.5">
+              <p className="text-xs font-medium text-gray-500 uppercase tracking-wide">Fecha de inicio del contrato</p>
+              <div className="flex items-center gap-2.5 p-2.5 bg-gray-50 border border-gray-200 rounded-lg text-sm text-gray-700">
+                <Calendar size={14} className="text-gray-400" />
+                {solicitud.cronograma ? formatDate(solicitud.cronograma.fechaInicio) : <span className="text-gray-400 italic">Sin fecha</span>}
+              </div>
+            </div>
+            <div className="space-y-1.5">
+              <p className="text-xs font-medium text-gray-500 uppercase tracking-wide">Fecha de fin del contrato</p>
+              <div className="flex items-center gap-2.5 p-2.5 bg-gray-50 border border-gray-200 rounded-lg text-sm text-gray-700">
+                <Calendar size={14} className="text-gray-400" />
+                {solicitud.cronograma ? formatDate(solicitud.cronograma.fechaFin) : <span className="text-gray-400 italic">Sin fecha</span>}
+              </div>
+            </div>
+          </div>
+
+          <div className="space-y-3">
+            <p className="text-xs font-medium text-gray-500 uppercase tracking-wide">Actividades del contrato</p>
+            <div className="border border-gray-200 rounded-xl overflow-hidden">
+              <table className="w-full text-left border-collapse">
+                <thead>
+                  <tr className="bg-gray-50 border-b border-gray-200">
+                    <th className="px-4 py-2.5 text-[11px] font-bold text-gray-500 uppercase tracking-wider">Descripción</th>
+                    <th className="px-4 py-2.5 text-[11px] font-bold text-gray-500 uppercase tracking-wider w-32">Fecha Inicio</th>
+                    <th className="px-4 py-2.5 text-[11px] font-bold text-gray-500 uppercase tracking-wider w-32">Fecha Fin</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-gray-100">
+                  {!solicitud.cronograma ? (
+                    <tr>
+                      <td colSpan={3} className="px-4 py-6 text-center text-sm text-gray-400 italic">
+                        Sin actividades registradas
+                      </td>
+                    </tr>
+                  ) : solicitud.cronograma.tieneFases ? (
+                    solicitud.cronograma.fases.map((fase: any) => (
+                      <React.Fragment key={fase.id}>
+                        <tr className="bg-blue-50/30">
+                          <td colSpan={3} className="px-4 py-1.5 text-[10px] font-bold text-blue-700 uppercase tracking-wider">
+                            Fase {fase.numeroFase}: {fase.nombreFase}
+                          </td>
+                        </tr>
+                        {fase.actividades.map((act: any) => (
+                          <tr key={act.id} className="hover:bg-gray-50/50">
+                            <td className="px-4 py-2.5 text-sm text-gray-700">{act.descripcion}</td>
+                            <td className="px-4 py-2.5 text-sm text-gray-600 font-mono">{formatDate(act.fechaInicio)}</td>
+                            <td className="px-4 py-2.5 text-sm text-gray-600 font-mono">{formatDate(act.fechaFin)}</td>
+                          </tr>
+                        ))}
+                      </React.Fragment>
+                    ))
+                  ) : solicitud.cronograma.actividades.length > 0 ? (
+                    solicitud.cronograma.actividades.map((act: any) => (
+                      <tr key={act.id} className="hover:bg-gray-50/50">
+                        <td className="px-4 py-2.5 text-sm text-gray-700">{act.descripcion}</td>
+                        <td className="px-4 py-2.5 text-sm text-gray-600 font-mono">{formatDate(act.fechaInicio)}</td>
+                        <td className="px-4 py-2.5 text-sm text-gray-600 font-mono">{formatDate(act.fechaFin)}</td>
+                      </tr>
+                    ))
+                  ) : (
+                    <tr>
+                      <td colSpan={3} className="px-4 py-6 text-center text-sm text-gray-400 italic">
+                        Sin actividades registradas
+                      </td>
+                    </tr>
+                  )}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
       </div>
 
       {/* Nota de Contratación */}

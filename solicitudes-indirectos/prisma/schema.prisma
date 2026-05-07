@@ -120,6 +120,8 @@ model Tercero {
   tipoContrato                 String
   confidencialidad             Boolean  @default(false)   // ← NUEVO
 
+  fechaVencimientoSagrilaft         DateTime?
+
   dd_identificacionContraparte      Boolean @default(false)
   dd_consultaListasRestrictivas     Boolean @default(false)
   dd_verificacionPep                Boolean @default(false)
@@ -159,6 +161,7 @@ model Solicitud {
   contratanteNombre     String?  @default("AED CONSTRUCTORES S.A.S")
   contratanteNit        String?  @default("901237628-1")
   alcance               String?
+  terminosReferencia    String?
   condicionesEspeciales String?
   valorEnLetras         String?
 

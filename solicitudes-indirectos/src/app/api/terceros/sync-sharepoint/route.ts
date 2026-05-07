@@ -60,27 +60,65 @@ async function downloadExcel(token: string, siteId: string): Promise<Buffer> {
   return Buffer.from(await contentRes.arrayBuffer());
 }
 
+// ─── Helpers ─────────────────────────────────────────────────────────────────
+
+function parseExcelDate(raw: unknown): Date | null {
+  if (raw instanceof Date) return isNaN(raw.getTime()) ? null : raw;
+  if (typeof raw === "string") {
+    const trimmed = raw.trim();
+    // DD/MM/YYYY
+    const parts = trimmed.split("/");
+    if (parts.length === 3) {
+      const [d, m, y] = parts;
+      const date = new Date(`${y}-${m.padStart(2, "0")}-${d.padStart(2, "0")}T00:00:00`);
+      return isNaN(date.getTime()) ? null : date;
+    }
+  }
+  if (typeof raw === "number") {
+    // Excel serial number fallback
+    const date = new Date(Math.round((raw - 25569) * 86400 * 1000));
+    return isNaN(date.getTime()) ? null : date;
+  }
+  return null;
+}
+
 // ─── Parsear Excel ────────────────────────────────────────────────────────────
 interface ExcelRow {
-  razonSocial:      string;
-  tipoContrato:     string;
-  aprobadoDD:       boolean;
-  confidencialidad: boolean;
+  razonSocial:               string;
+  tipoContrato:              string;
+  aprobadoDD:                boolean;
+  confidencialidad:          boolean;
+  fechaVencimientoSagrilaft: Date | null;
 }
 
 function parseExcel(buffer: Buffer): ExcelRow[] {
-  const wb   = XLSX.read(buffer, { type: "buffer" });
+  const wb   = XLSX.read(buffer, { type: "buffer", cellDates: true });
   const ws   = wb.Sheets[wb.SheetNames[0]];
   const rows = XLSX.utils.sheet_to_json<Record<string, unknown>>(ws, { defval: null });
 
+  // Debug: log first row keys and SOLICITUD value
+  if (rows.length > 0) {
+    const first = rows[0];
+    console.log("[sync] Column keys:", Object.keys(first));
+    console.log("[sync] SOLICITUD raw:", first["SOLICITUD"], typeof first["SOLICITUD"]);
+  }
+
   return rows
     .filter((row) => row["CONTRATISTA"])
-    .map((row) => ({
-      razonSocial:      String(row["CONTRATISTA"] ?? "").trim(),
-      tipoContrato:     String(row["AREA"] ?? "").trim().toUpperCase(),
-      aprobadoDD:       Boolean(row["DEBIDA DILIGENCIA"]),
-      confidencialidad: Boolean(row["CONFIDENCIALIDAD"]),
-    }));
+    .map((row) => {
+      const solicitudDate = parseExcelDate(row["SOLICITUD"]);
+      const fechaVencimientoSagrilaft = solicitudDate
+        ? new Date(solicitudDate.getTime() + 365 * 24 * 60 * 60 * 1000)
+        : null;
+
+      return {
+        razonSocial:               String(row["CONTRATISTA"] ?? "").trim(),
+        tipoContrato:              String(row["AREA"] ?? "").trim().toUpperCase(),
+        aprobadoDD:                Boolean(row["DEBIDA DILIGENCIA"]),
+        confidencialidad:          Boolean(row["CONFIDENCIALIDAD"]),
+        fechaVencimientoSagrilaft,
+      };
+    });
 }
 
 // ─── Upsert ───────────────────────────────────────────────────────────────────
@@ -93,13 +131,15 @@ async function upsertTerceros(rows: ExcelRow[]) {
           tipoContrato:             row.tipoContrato,
           aprobadoDebidaDiligencia: row.aprobadoDD,
           confidencialidad:         row.confidencialidad,
+          fechaVencimientoSagrilaft: row.fechaVencimientoSagrilaft,
         },
         create: {
-          razonSocial:              row.razonSocial,
-          nit:                      "",
-          tipoContrato:             row.tipoContrato,
-          aprobadoDebidaDiligencia: row.aprobadoDD,
-          confidencialidad:         row.confidencialidad,
+          razonSocial:               row.razonSocial,
+          nit:                       "",
+          tipoContrato:              row.tipoContrato,
+          aprobadoDebidaDiligencia:  row.aprobadoDD,
+          confidencialidad:          row.confidencialidad,
+          fechaVencimientoSagrilaft: row.fechaVencimientoSagrilaft,
         },
       })
     )

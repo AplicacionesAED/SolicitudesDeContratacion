@@ -1,7 +1,7 @@
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
-import { buildConsecutivo, tienePermiso } from "@/lib/utils";
+import { buildConsecutivo, abbreviate, tienePermiso } from "@/lib/utils";
 
 const ROLES_VER_TODAS: string[] = ["CONTRATOS", "CONTROLES", "DIRECTOR_CONTROLES", "ADMIN"];
 
@@ -154,8 +154,14 @@ export async function POST(request: Request) {
       asunto,
       creacionTercero,
       alcance,
+      terminosReferencia,
       condicionesEspeciales,
       valorEnLetras,
+      contratanteNombre,
+      contratanteNit,
+      archivoCuadroComparativo,
+      archivoCotizacion,
+      archivoBEP,
     } = body;
 
     if (!tipo || !proyectoId || !frentesIds || frentesIds.length === 0) {
@@ -194,19 +200,25 @@ export async function POST(request: Request) {
       }
     }
 
-    const anio = new Date().getFullYear();
+    // Fetch proyecto and frente names for the consecutivo abbreviation
+    const [proyectoData, frenteData] = await Promise.all([
+      prisma.proyecto.findUnique({ where: { id: Number(proyectoId) }, select: { nombre: true } }),
+      prisma.frente.findUnique({ where: { id: Number(firstFrenteId) }, select: { nombre: true } }),
+    ]);
+
+    const proyAbbr = abbreviate(proyectoData?.nombre ?? String(proyectoId), 3);
+    const frenAbbr = abbreviate(frenteData?.nombre ?? String(firstFrenteId), 4, true);
 
     // Transactional consecutive number generation
     const solicitud = await prisma.$transaction(async (tx) => {
-      // Upsert counter for this tipo+anio
-      const key = `${tipo}-${anio}`;
+      const key = `${tipo}-${proyAbbr}-${frenAbbr}`;
       const counter = await tx.contadorConsecutivo.upsert({
         where: { tipo: key },
         update: { ultimo: { increment: 1 } },
-        create: { tipo: key, anio, ultimo: 1 },
+        create: { tipo: key, anio: new Date().getFullYear(), ultimo: 1 },
       });
 
-      const consecutivo = buildConsecutivo(tipo as string, anio, counter.ultimo);
+      const consecutivo = buildConsecutivo(tipo as string, proyAbbr, frenAbbr, counter.ultimo);
 
       return tx.solicitud.create({
         data: {
@@ -230,8 +242,14 @@ export async function POST(request: Request) {
           asunto: asunto ?? null,
           creacionTercero: creacionTercero ?? false,
           alcance: alcance ?? null,
+          terminosReferencia: terminosReferencia ?? null,
           condicionesEspeciales: condicionesEspeciales ?? null,
           valorEnLetras: valorEnLetras ?? null,
+          contratanteNombre: contratanteNombre ?? "AED CONSTRUCTORES S.A.S",
+          contratanteNit: contratanteNit ?? "901237628-1",
+          archivoCuadroComparativo: archivoCuadroComparativo ?? null,
+          archivoCotizacion: archivoCotizacion ?? null,
+          archivoBEP: archivoBEP ?? null,
         },
         include: {
           solicitante: { select: { id: true, nombre: true, cargo: true } },

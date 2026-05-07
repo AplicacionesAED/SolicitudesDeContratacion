@@ -159,6 +159,7 @@ model Solicitud {
   contratanteNombre     String?  @default("AED CONSTRUCTORES S.A.S")
   contratanteNit        String?  @default("901237628-1")
   alcance               String?
+  terminosReferencia    String?
   condicionesEspeciales String?
   valorEnLetras         String?
 

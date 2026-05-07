@@ -12,7 +12,9 @@ import {
   ChevronRight,
   Upload,
   FileCheck,
+  PenLine,
 } from "lucide-react";
+import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Modal } from "@/components/ui/modal";
 import { useToast } from "@/components/ui/toaster";
@@ -124,6 +126,10 @@ export function SolicitudActions({ solicitud, userSession }: SolicitudActionsPro
     (userRoles.includes("SOLICITANTE") || userRoles.includes("DIRECTOR_PROYECTO")) &&
     solicitanteId === userId;
 
+  const canEdit =
+    (estado === "BORRADOR" || estado === "DEVUELTA" || estado === "EN_REVISION") &&
+    solicitanteId === userId;
+
   const hasAnyAction =
     canEnviar ||
     canAprobarDirector ||
@@ -133,7 +139,8 @@ export function SolicitudActions({ solicitud, userSession }: SolicitudActionsPro
     canAvanzarContratos ||
     canRegistrarAdpro ||
     canAprobarFinal ||
-    canReenviar;
+    canReenviar ||
+    canEdit;
 
   if (!hasAnyAction) return null;
 
@@ -280,14 +287,14 @@ export function SolicitudActions({ solicitud, userSession }: SolicitudActionsPro
 
   function getModalTitle() {
     switch (modalType) {
-      case "enviar":      return "Confirmar envío de solicitud";
-      case "aprobar":     return "Aprobar solicitud";
-      case "devolver":    return "Devolver solicitud";
-      case "contratos":   return "Revisión de Contratos";
-      case "adpro":       return "Registrar Número Adpro";
+      case "enviar": return "Confirmar envío de solicitud";
+      case "aprobar": return "Aprobar solicitud";
+      case "devolver": return "Devolver solicitud";
+      case "contratos": return "Revisión de Contratos";
+      case "adpro": return "Registrar Número Adpro";
       case "aprobar_final": return "Aprobación definitiva";
-      case "reenviar":    return "Reenviar solicitud";
-      default:            return "";
+      case "reenviar": return "Reenviar solicitud";
+      default: return "";
     }
   }
 
@@ -447,6 +454,16 @@ export function SolicitudActions({ solicitud, userSession }: SolicitudActionsPro
               Reenviar
             </Button>
           )}
+
+          {canEdit && (
+            <Link
+              href={`/solicitudes/${solicitud.id}/editar`}
+              className="inline-flex items-center gap-2 rounded-lg bg-indigo-50 px-4 py-2 text-sm font-medium text-indigo-700 hover:bg-indigo-100 transition-colors"
+            >
+              <PenLine size={15} />
+              Editar Solicitud
+            </Link>
+          )}
         </div>
       </div>
 
@@ -603,6 +620,7 @@ export function SolicitudActions({ solicitud, userSession }: SolicitudActionsPro
             </p>
           )}
 
+
           {/* Footer buttons */}
           <div className="flex justify-end gap-3 pt-2 border-t border-gray-100">
             <Button
@@ -617,13 +635,13 @@ export function SolicitudActions({ solicitud, userSession }: SolicitudActionsPro
               onClick={handleModalConfirm}
               loading={loading}
             >
-              {modalType === "enviar"       && "Enviar"}
-              {modalType === "aprobar"      && "Aprobar"}
-              {modalType === "devolver"     && "Devolver"}
-              {modalType === "contratos"    && (contratosOpcion === "OK" ? "Confirmar OK" : "Enviar a Revisión")}
-              {modalType === "adpro"        && "Registrar"}
+              {modalType === "enviar" && "Enviar"}
+              {modalType === "aprobar" && "Aprobar"}
+              {modalType === "devolver" && "Devolver"}
+              {modalType === "contratos" && (contratosOpcion === "OK" ? "Confirmar OK" : "Enviar a Revisión")}
+              {modalType === "adpro" && "Registrar"}
               {modalType === "aprobar_final" && "Aprobar Definitivamente"}
-              {modalType === "reenviar"     && "Reenviar"}
+              {modalType === "reenviar" && "Reenviar"}
             </Button>
           </div>
         </div>

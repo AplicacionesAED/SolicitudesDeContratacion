@@ -238,7 +238,7 @@ export async function POST(
             twoColTable([
               ["Área / Frente", frenteNames || "—"],
               ["Proyecto", "Baia Kristal"],
-              ["Tipo de Contrato", solicitud.tipoContrato === "OBRA" ? "Obra" : solicitud.tipoContrato === "DISENO" ? "Diseño" : "—"],
+              ["Tipo de Contrato", solicitud.tipoContrato === "OBRA" ? "Otros Servicios" : solicitud.tipoContrato === "DISENO" ? "Diseño" : "—"],
               ["Estado", solicitud.estado],
             ]),
 
@@ -312,8 +312,17 @@ export async function POST(
 
             spacer(),
 
-            // ── Valor ─────────────────────────────────────────────────────────
-            heading("9. VALOR DEL CONTRATO"),
+            // ── Términos de referencia ──────────────────────────────────────────
+            heading("9. TÉRMINOS DE REFERENCIA / ESPECIFICACIONES TÉCNICAS"),
+            new Paragraph({
+              children: [plain(solicitud.terminosReferencia || "No aplica.")],
+              spacing: { after: 120 },
+            }),
+
+            spacer(),
+
+            // ── Valor ──────────────────────────────────────────────
+            heading("10. VALOR DEL CONTRATO"),
             twoColTable([
               [
                 "Valor",
@@ -327,7 +336,7 @@ export async function POST(
             spacer(),
 
             // ── Forma de pago ─────────────────────────────────────────────────
-            heading("10. FORMA DE PAGO"),
+            heading("12. FORMA DE PAGO"),
             new Paragraph({
               children: [plain(solicitud.formaPago)],
               spacing: { after: 120 },
@@ -336,7 +345,7 @@ export async function POST(
             spacer(),
 
             // ── Plazo ─────────────────────────────────────────────────────────
-            heading("11. PLAZO DE EJECUCIÓN"),
+            heading("13. PLAZO DE EJECUCIÓN"),
             new Paragraph({
               children: [plain(solicitud.plazoEjecucion)],
               spacing: { after: 120 },
@@ -345,7 +354,7 @@ export async function POST(
             spacer(),
 
             // ── Condiciones especiales ────────────────────────────────────────
-            heading("12. CONDICIONES ESPECIALES"),
+            heading("14. CONDICIONES ESPECIALES"),
             new Paragraph({
               children: [plain(solicitud.condicionesEspeciales || "No aplica.")],
               spacing: { after: 120 },
@@ -354,7 +363,7 @@ export async function POST(
             spacer(),
 
             // ── Asunto ────────────────────────────────────────────────────────
-            heading("13. ASUNTO"),
+            heading("15. ASUNTO"),
             new Paragraph({
               children: [plain(solicitud.asunto)],
             }),

@@ -136,9 +136,16 @@ async function upsertCronograma(
         },
       });
 
+      function isValidDate(s: string) {
+        if (!s) return false;
+        const d = new Date(s);
+        return !isNaN(d.getTime());
+      }
+
       if (tieneFases && fases && fases.length > 0) {
-        // Create fases with nested actividades
         for (const fase of fases) {
+          if (!isValidDate(fase.fechaInicio) || !isValidDate(fase.fechaFin)) continue;
+
           const faseCreated = await tx.faseCronograma.create({
             data: {
               cronogramaId: created.id,
@@ -149,9 +156,12 @@ async function upsertCronograma(
             },
           });
 
-          if (fase.actividades && fase.actividades.length > 0) {
+          const validActs = (fase.actividades ?? []).filter(
+            (a) => isValidDate(a.fechaInicio) && isValidDate(a.fechaFin)
+          );
+          if (validActs.length > 0) {
             await tx.actividadCronograma.createMany({
-              data: fase.actividades.map((act) => ({
+              data: validActs.map((act) => ({
                 cronogramaId: created.id,
                 faseId: faseCreated.id,
                 descripcion: act.descripcion,
@@ -162,18 +172,22 @@ async function upsertCronograma(
             });
           }
         }
-      } else if (!tieneFases && actividades && actividades.length > 0) {
-        // Create actividades directly on cronograma (no fases)
-        await tx.actividadCronograma.createMany({
-          data: actividades.map((act) => ({
-            cronogramaId: created.id,
-            faseId: null,
-            descripcion: act.descripcion,
-            fechaInicio: new Date(act.fechaInicio),
-            fechaFin: new Date(act.fechaFin),
-            responsable: act.responsable ?? null,
-          })),
-        });
+      } else if (!tieneFases) {
+        const validActs = (actividades ?? []).filter(
+          (a) => isValidDate(a.fechaInicio) && isValidDate(a.fechaFin)
+        );
+        if (validActs.length > 0) {
+          await tx.actividadCronograma.createMany({
+            data: validActs.map((act) => ({
+              cronogramaId: created.id,
+              faseId: null,
+              descripcion: act.descripcion,
+              fechaInicio: new Date(act.fechaInicio),
+              fechaFin: new Date(act.fechaFin),
+              responsable: act.responsable ?? null,
+            })),
+          });
+        }
       }
 
       // Return the full cronograma with relations

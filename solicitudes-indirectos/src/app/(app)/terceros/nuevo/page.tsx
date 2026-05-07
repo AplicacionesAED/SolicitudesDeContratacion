@@ -30,7 +30,7 @@ interface FormErrors {
 }
 
 const TIPO_CONTRATO_OPTIONS = [
-  { value: "OBRA", label: "Obra" },
+  { value: "OBRA", label: "Otros Servicios" },
   { value: "DISENO", label: "Diseño" },
   { value: "SERVICIOS", label: "Servicios" },
 ];

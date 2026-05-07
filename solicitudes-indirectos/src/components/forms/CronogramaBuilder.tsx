@@ -4,7 +4,6 @@ import { useState } from "react";
 import {
   Plus,
   Trash2,
-  Download,
   CalendarDays,
 } from "lucide-react";
 import { countBusinessDays, getMinStartDate } from "@/lib/holidays";
@@ -165,8 +164,6 @@ function ActividadesTable({
 // ─── Main Component ───────────────────────────────────────────────────────────
 
 export function CronogramaBuilder({ value, onChange }: CronogramaBuilderProps) {
-  const [exportLoading, setExportLoading] = useState(false);
-
   const minStartDate = toInputDate(getMinStartDate());
   const minStartDisplay = formatDisplayDate(minStartDate);
 
@@ -188,35 +185,6 @@ export function CronogramaBuilder({ value, onChange }: CronogramaBuilderProps) {
 
   function set<K extends keyof CronogramaData>(key: K, val: CronogramaData[K]) {
     onChange({ ...value, [key]: val });
-  }
-
-  // ── Export ───────────────────────────────────────────────────────────────────
-
-  async function handleExport() {
-    setExportLoading(true);
-    try {
-      const res = await fetch("/api/solicitudes/cronograma/export", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(value),
-      });
-      if (!res.ok) {
-        const err = await res.json();
-        alert(err.error ?? "Error al exportar");
-        return;
-      }
-      const blob = await res.blob();
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement("a");
-      a.href = url;
-      a.download = "cronograma.xlsx";
-      a.click();
-      URL.revokeObjectURL(url);
-    } catch {
-      alert("Error al exportar el cronograma");
-    } finally {
-      setExportLoading(false);
-    }
   }
 
   // ── Render ───────────────────────────────────────────────────────────────────
@@ -274,20 +242,6 @@ export function CronogramaBuilder({ value, onChange }: CronogramaBuilderProps) {
         />
       </div>
 
-      {/* Export button */}
-      <div className="pt-2 border-t border-gray-100">
-        <Button
-          type="button"
-          variant="secondary"
-          size="sm"
-          onClick={handleExport}
-          loading={exportLoading}
-          disabled={!value.fechaInicio || !value.fechaFin}
-        >
-          <Download size={14} />
-          Descargar Cronograma Excel
-        </Button>
-      </div>
     </div>
   );
 }

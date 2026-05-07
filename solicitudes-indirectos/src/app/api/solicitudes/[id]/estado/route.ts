@@ -127,7 +127,7 @@ export async function POST(
     const userId = session.user.id;
 
     // Validate permission
-    const tieneAlgunPermiso = transicion.permisosPermitidos.some((p) => 
+    const tieneAlgunPermiso = transicion.permisosPermitidos.some((p) =>
       tienePermiso(userRoles, funcionalidadesAdicionales, p)
     );
 
@@ -237,7 +237,7 @@ export async function POST(
           { status: 403 }
         );
       }
-      
+
       const anexos: unknown[] = (() => { try { return JSON.parse(solicitud.archivosAnexos || "[]"); } catch { return []; } })();
       if (anexos.length === 0) {
         return Response.json(

@@ -32,6 +32,7 @@ interface Tercero {
   telefonoContacto?: string | null;
   correoContacto?: string | null;
   tipoContrato: string;
+  fechaVencimientoSagrilaft?: string | null;
   creadoEn: string;
   actualizadoEn: string;
 }
@@ -47,7 +48,7 @@ interface SolicitudSimple {
 }
 
 const TIPO_CONTRATO_LABEL: Record<string, string> = {
-  OBRA: "Obra",
+  OBRA: "Otros Servicios",
   DISENO: "Diseño",
   SERVICIOS: "Servicios",
 };
@@ -159,6 +160,11 @@ export default function TerceroDetallePage() {
           <InfoItem
             label="Tipo de Contrato"
             value={TIPO_CONTRATO_LABEL[tercero.tipoContrato] ?? tercero.tipoContrato}
+            icon={FileText}
+          />
+          <InfoItem
+            label="Vcto. SAGRILAFT"
+            value={tercero.fechaVencimientoSagrilaft ? formatDate(tercero.fechaVencimientoSagrilaft) : undefined}
             icon={FileText}
           />
         </div>
