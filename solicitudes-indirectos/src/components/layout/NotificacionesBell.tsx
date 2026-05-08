@@ -24,9 +24,10 @@ export function NotificacionesBell() {
   const [notificaciones, setNotificaciones] = useState<Notificacion[]>([]);
   const [totalNoLeidas, setTotalNoLeidas] = useState(0);
   const [markingAll, setMarkingAll] = useState(false);
+  const [newPulse, setNewPulse] = useState(false);
 
   const panelRef = useRef<HTMLDivElement>(null);
-  const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const prevCountRef = useRef(0);
 
   const fetchNotificaciones = useCallback(async () => {
     try {
@@ -35,21 +36,56 @@ export function NotificacionesBell() {
       const data = await res.json();
       setNotificaciones(data.notificaciones?.slice(0, 10) ?? []);
       setTotalNoLeidas(data.totalNoLeidas ?? 0);
+      prevCountRef.current = data.totalNoLeidas ?? 0;
     } catch {
       // silently fail
     }
   }, []);
 
-  // Initial fetch + poll every 30 seconds
+  // ── SSE: recibir actualizaciones en tiempo real ───────────────────────────
+
   useEffect(() => {
     fetchNotificaciones();
-    intervalRef.current = setInterval(fetchNotificaciones, 30_000);
+
+    let es: EventSource;
+    let retryTimeout: ReturnType<typeof setTimeout>;
+
+    function connect() {
+      es = new EventSource("/api/notificaciones/stream");
+
+      es.onmessage = (event) => {
+        try {
+          const { totalNoLeidas: newCount } = JSON.parse(event.data);
+          if (newCount > prevCountRef.current) {
+            // Llegaron notificaciones nuevas: refrescar lista y pulsar la campana
+            fetchNotificaciones();
+            setNewPulse(true);
+            setTimeout(() => setNewPulse(false), 2000);
+          }
+          setTotalNoLeidas(newCount);
+          prevCountRef.current = newCount;
+        } catch {
+          // ignorar mensajes malformados
+        }
+      };
+
+      es.onerror = () => {
+        es.close();
+        // Reconectar en 15 s si falla
+        retryTimeout = setTimeout(connect, 15_000);
+      };
+    }
+
+    connect();
+
     return () => {
-      if (intervalRef.current) clearInterval(intervalRef.current);
+      es?.close();
+      clearTimeout(retryTimeout);
     };
   }, [fetchNotificaciones]);
 
-  // Close on outside click
+  // ── Cerrar panel al hacer clic fuera ─────────────────────────────────────
+
   useEffect(() => {
     function handleClick(e: MouseEvent) {
       if (panelRef.current && !panelRef.current.contains(e.target as Node)) {
@@ -60,8 +96,9 @@ export function NotificacionesBell() {
     return () => document.removeEventListener("mousedown", handleClick);
   }, [open]);
 
+  // ── Handlers ──────────────────────────────────────────────────────────────
+
   async function handleNotificacionClick(notif: Notificacion) {
-    // Mark as read
     if (!notif.leida) {
       try {
         await fetch("/api/notificaciones", {
@@ -72,7 +109,11 @@ export function NotificacionesBell() {
         setNotificaciones((prev) =>
           prev.map((n) => (n.id === notif.id ? { ...n, leida: true } : n))
         );
-        setTotalNoLeidas((c) => Math.max(0, c - 1));
+        setTotalNoLeidas((c) => {
+          const next = Math.max(0, c - 1);
+          prevCountRef.current = next;
+          return next;
+        });
       } catch {
         // ignore
       }
@@ -92,6 +133,7 @@ export function NotificacionesBell() {
       if (res.ok) {
         setNotificaciones((prev) => prev.map((n) => ({ ...n, leida: true })));
         setTotalNoLeidas(0);
+        prevCountRef.current = 0;
       }
     } catch {
       // ignore
@@ -118,10 +160,18 @@ export function NotificacionesBell() {
         className="relative p-2 rounded-md text-gray-500 hover:bg-gray-100 transition-colors"
         aria-label={`Notificaciones${totalNoLeidas > 0 ? ` (${totalNoLeidas} sin leer)` : ""}`}
       >
-        <Bell size={20} />
+        <Bell
+          size={20}
+          className={newPulse ? "animate-bounce text-blue-500" : undefined}
+        />
         {totalNoLeidas > 0 && (
-          <span className="absolute top-1 right-1 flex h-4 w-4 items-center justify-center rounded-full bg-red-500 text-[10px] font-bold text-white">
-            {totalNoLeidas > 99 ? "99+" : totalNoLeidas}
+          <span className="absolute top-1 right-1 flex h-4 w-4">
+            {newPulse && (
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75" />
+            )}
+            <span className="relative flex h-4 w-4 items-center justify-center rounded-full bg-red-500 text-[10px] font-bold text-white">
+              {totalNoLeidas > 99 ? "99+" : totalNoLeidas}
+            </span>
           </span>
         )}
       </button>

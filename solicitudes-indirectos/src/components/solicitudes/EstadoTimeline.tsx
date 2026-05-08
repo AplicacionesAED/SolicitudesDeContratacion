@@ -115,7 +115,28 @@ export function EstadoTimeline({
             const Icon = step.icon;
             const isCompleted = currentIndex > index;
             const isCurrent = currentIndex === index && !isSideState;
+            const isCompletadaStep = step.estado === "COMPLETADA";
             const date = getEstadoDate(step.estado, historial);
+
+            const circleClass = isCompleted
+              ? isCompletadaStep
+                ? "bg-green-600 border-green-600 text-white"
+                : "bg-blue-600 border-blue-600 text-white"
+              : isCurrent
+              ? isCompletadaStep
+                ? "bg-green-600 border-green-600 text-white"
+                : "bg-white border-blue-600 text-blue-600"
+              : "bg-white border-gray-300 text-gray-400";
+
+            const labelClass = isCurrent
+              ? isCompletadaStep
+                ? "font-semibold text-green-700"
+                : "font-semibold text-blue-700"
+              : isCompleted
+              ? isCompletadaStep
+                ? "font-medium text-green-700"
+                : "font-medium text-gray-700"
+              : "text-gray-400";
 
             return (
               <li
@@ -126,13 +147,7 @@ export function EstadoTimeline({
                 <div
                   className={`
                     relative z-10 flex h-10 w-10 items-center justify-center rounded-full border-2 shrink-0
-                    transition-colors
-                    ${isCompleted
-                      ? "bg-blue-600 border-blue-600 text-white"
-                      : isCurrent
-                      ? "bg-white border-blue-600 text-blue-600"
-                      : "bg-white border-gray-300 text-gray-400"
-                    }
+                    transition-colors ${circleClass}
                   `}
                   aria-current={isCurrent ? "step" : undefined}
                 >
@@ -141,15 +156,7 @@ export function EstadoTimeline({
 
                 {/* Label */}
                 <span
-                  className={`
-                    text-center text-xs leading-tight max-w-[72px]
-                    ${isCurrent
-                      ? "font-semibold text-blue-700"
-                      : isCompleted
-                      ? "font-medium text-gray-700"
-                      : "text-gray-400"
-                    }
-                  `}
+                  className={`text-center text-xs leading-tight max-w-[72px] ${labelClass}`}
                 >
                   {step.label}
                 </span>

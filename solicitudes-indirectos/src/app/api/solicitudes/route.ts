@@ -16,6 +16,7 @@ export async function GET(request: Request) {
     const estado = searchParams.get("estado");
     const tipo = searchParams.get("tipo");
     const frenteId = searchParams.get("frenteId");
+    const proyectoId = searchParams.get("proyectoId");
     const solicitanteId = searchParams.get("solicitanteId");
     const fechaDesde = searchParams.get("fechaDesde");
     const fechaHasta = searchParams.get("fechaHasta");
@@ -30,6 +31,7 @@ export async function GET(request: Request) {
     if (estado) where.estado = estado;
     if (tipo) where.tipo = tipo;
     if (solicitanteId) where.solicitanteId = solicitanteId;
+    if (proyectoId) where.proyectoId = parseInt(proyectoId, 10);
 
     if (fechaDesde || fechaHasta) {
       where.fechaSolicitud = {};

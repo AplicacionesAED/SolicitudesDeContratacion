@@ -188,7 +188,7 @@ export const ESTADO_COLORS: Record<string, string> = {
   ENVIO_CONTRATO_POLIZAS: "bg-cyan-100 text-cyan-700",
   EN_CONTROLES: "bg-teal-100 text-teal-700",
   APROBACION_FINAL: "bg-lime-100 text-lime-700",
-  COMPLETADA: "bg-green-100 text-green-700",
+  COMPLETADA: "bg-green-600 text-white",
   DEVUELTA: "bg-red-100 text-red-700",
 };
 
