@@ -14,10 +14,11 @@ import {
   Hash,
   Paperclip,
   Layers,
+  GitMerge,
 } from "lucide-react";
-import { SolicitudBadge } from "@/components/solicitudes/SolicitudBadge";
-import { SolicitudActions } from "@/components/solicitudes/SolicitudActions";
-import { EstadoTimeline } from "@/components/solicitudes/EstadoTimeline";
+import { SolicitudBadge } from "@/features/solicitudes/components/solicitudBadge";
+import { SolicitudActions } from "@/features/solicitudes/components/solicitudActions";
+import { EstadoTimeline } from "@/features/solicitudes/components/estadoTimeline";
 import {
   TIPO_SOLICITUD_LABELS,
   ESTADO_LABELS,
@@ -95,6 +96,32 @@ export default async function SolicitudDetallePage({ params }: PageProps) {
           },
         },
       },
+      solicitudPadre: {
+        select: { id: true, consecutivo: true, tipo: true },
+      },
+      otrosis: {
+        select: {
+          id: true,
+          consecutivo: true,
+          tipo: true,
+          estado: true,
+          creadoEn: true,
+          valorFinal: true,
+          cronograma: {
+            include: {
+              fases: {
+                orderBy: { numeroFase: "asc" },
+                include: { actividades: { orderBy: { fechaInicio: "asc" } } },
+              },
+              actividades: {
+                where: { faseId: null },
+                orderBy: { fechaInicio: "asc" },
+              },
+            },
+          },
+        },
+        orderBy: { creadoEn: "asc" },
+      },
     },
   });
 
@@ -135,6 +162,23 @@ export default async function SolicitudDetallePage({ params }: PageProps) {
 
   return (
     <div className="max-w-5xl mx-auto space-y-5">
+      {/* Banner: viewing an otrosí — link back to parent */}
+      {solicitud.solicitudPadre && (
+        <div className="flex items-center gap-3 bg-blue-50 border border-blue-200 rounded-xl px-4 py-3">
+          <GitMerge size={15} className="text-blue-500 shrink-0" />
+          <p className="text-sm text-blue-800">
+            Este otrosí pertenece al contrato base{" "}
+            <Link
+              href={`/solicitudes/${solicitud.solicitudPadre.id}`}
+              className="font-mono font-semibold text-blue-700 hover:underline"
+            >
+              {solicitud.solicitudPadre.consecutivo}
+            </Link>
+            .
+          </p>
+        </div>
+      )}
+
       {/* Back + header */}
       <div>
         <Link
@@ -431,6 +475,147 @@ export default async function SolicitudDetallePage({ params }: PageProps) {
           </div>
         </div>
       </div>
+
+      {/* Cronogramas de Otrosís */}
+      {solicitud.otrosis && solicitud.otrosis.length > 0 && (
+        <div className="space-y-4">
+          <div className="flex items-center gap-2">
+            <GitMerge size={15} className="text-blue-500" />
+            <h2 className="text-sm font-semibold text-gray-900">
+              Cronogramas de Otrosís ({solicitud.otrosis.length})
+            </h2>
+          </div>
+
+          {(() => {
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            const completados = (solicitud.otrosis as any[]).filter((o: any) => o.estado === "COMPLETADA");
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            const vigenteId = completados.length > 0 ? completados[completados.length - 1].id : null;
+
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            return (solicitud.otrosis as any[]).map((otrosi: any, idx: number) => {
+              const isVigente = otrosi.id === vigenteId;
+              const isEnTramite = otrosi.estado !== "COMPLETADA";
+              return (
+                <div
+                  key={otrosi.id}
+                  className={`bg-white border rounded-xl overflow-hidden ${
+                    isVigente ? "border-blue-400 shadow-sm" : "border-gray-200"
+                  }`}
+                >
+                  {/* Header */}
+                  <div className={`px-5 py-3 border-b flex items-center justify-between ${
+                    isVigente ? "bg-blue-50 border-blue-100" : "bg-gray-50 border-gray-100"
+                  }`}>
+                    <div className="flex items-center gap-2.5">
+                      <Link
+                        href={`/solicitudes/${otrosi.id}`}
+                        className="text-sm font-mono font-semibold text-blue-600 hover:underline"
+                      >
+                        {otrosi.consecutivo}
+                      </Link>
+                      <span className="text-xs text-gray-500">
+                        Otrosí #{idx + 1} — {TIPO_SOLICITUD_LABELS[otrosi.tipo] ?? otrosi.tipo}
+                      </span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      {otrosi.valorFinal != null && (
+                        <span className="text-xs font-medium text-gray-600">
+                          {formatCurrency(otrosi.valorFinal)}
+                        </span>
+                      )}
+                      {isVigente && (
+                        <span className="inline-flex items-center gap-1 rounded-full bg-blue-600 text-white text-[10px] font-semibold px-2 py-0.5">
+                          <GitMerge size={9} />
+                          Vigente
+                        </span>
+                      )}
+                      {isEnTramite && (
+                        <span className="inline-flex items-center rounded-full bg-yellow-100 text-yellow-700 border border-yellow-200 text-[10px] font-semibold px-2 py-0.5">
+                          En trámite
+                        </span>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* Cronograma */}
+                  {otrosi.cronograma ? (
+                    <div className="p-5 space-y-4">
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div className="space-y-1">
+                          <p className="text-xs font-medium text-gray-500 uppercase tracking-wide">Inicio</p>
+                          <div className="flex items-center gap-2 p-2.5 bg-gray-50 border border-gray-200 rounded-lg text-sm text-gray-700">
+                            <Calendar size={13} className="text-gray-400" />
+                            {formatDate(otrosi.cronograma.fechaInicio)}
+                          </div>
+                        </div>
+                        <div className="space-y-1">
+                          <p className="text-xs font-medium text-gray-500 uppercase tracking-wide">Fin</p>
+                          <div className="flex items-center gap-2 p-2.5 bg-gray-50 border border-gray-200 rounded-lg text-sm text-gray-700">
+                            <Calendar size={13} className="text-gray-400" />
+                            {formatDate(otrosi.cronograma.fechaFin)}
+                          </div>
+                        </div>
+                      </div>
+
+                      <div className="border border-gray-200 rounded-xl overflow-hidden">
+                        <table className="w-full text-left border-collapse">
+                          <thead>
+                            <tr className="bg-gray-50 border-b border-gray-200">
+                              <th className="px-4 py-2 text-[11px] font-bold text-gray-500 uppercase tracking-wider">Descripción</th>
+                              <th className="px-4 py-2 text-[11px] font-bold text-gray-500 uppercase tracking-wider w-32">Inicio</th>
+                              <th className="px-4 py-2 text-[11px] font-bold text-gray-500 uppercase tracking-wider w-32">Fin</th>
+                            </tr>
+                          </thead>
+                          <tbody className="divide-y divide-gray-100">
+                            {otrosi.cronograma.tieneFases ? (
+                              // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                              otrosi.cronograma.fases.map((fase: any) => (
+                                <React.Fragment key={fase.id}>
+                                  <tr className="bg-blue-50/30">
+                                    <td colSpan={3} className="px-4 py-1.5 text-[10px] font-bold text-blue-700 uppercase tracking-wider">
+                                      Fase {fase.numeroFase}: {fase.nombreFase}
+                                    </td>
+                                  </tr>
+                                  {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
+                                  {fase.actividades.map((act: any) => (
+                                    <tr key={act.id} className="hover:bg-gray-50/50">
+                                      <td className="px-4 py-2 text-sm text-gray-700">{act.descripcion}</td>
+                                      <td className="px-4 py-2 text-sm text-gray-600 font-mono">{formatDate(act.fechaInicio)}</td>
+                                      <td className="px-4 py-2 text-sm text-gray-600 font-mono">{formatDate(act.fechaFin)}</td>
+                                    </tr>
+                                  ))}
+                                </React.Fragment>
+                              ))
+                            ) : otrosi.cronograma.actividades.length > 0 ? (
+                              // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                              otrosi.cronograma.actividades.map((act: any) => (
+                                <tr key={act.id} className="hover:bg-gray-50/50">
+                                  <td className="px-4 py-2 text-sm text-gray-700">{act.descripcion}</td>
+                                  <td className="px-4 py-2 text-sm text-gray-600 font-mono">{formatDate(act.fechaInicio)}</td>
+                                  <td className="px-4 py-2 text-sm text-gray-600 font-mono">{formatDate(act.fechaFin)}</td>
+                                </tr>
+                              ))
+                            ) : (
+                              <tr>
+                                <td colSpan={3} className="px-4 py-4 text-center text-sm text-gray-400 italic">
+                                  Sin actividades
+                                </td>
+                              </tr>
+                            )}
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+                  ) : (
+                    <p className="px-5 py-4 text-sm text-gray-400 italic">Sin cronograma registrado.</p>
+                  )}
+                </div>
+              );
+            });
+          })()}
+        </div>
+      )}
 
       {/* Nota de Contratación */}
       {solicitud.notaContratacion && (
