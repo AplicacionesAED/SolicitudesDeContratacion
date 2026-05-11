@@ -2,6 +2,7 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { buildConsecutivo, abbreviate, normalizeFrenteName, tienePermiso } from "@/lib/utils";
+import { notificarNuevaSolicitud } from "@/lib/notifications";
 
 const ROLES_VER_TODAS: string[] = ["CONTRATOS", "CONTROLES", "DIRECTOR_CONTROLES", "ADMIN"];
 
@@ -33,7 +34,12 @@ export async function GET(request: Request) {
     if (tipo) where.tipo = tipo;
     if (solicitanteId) where.solicitanteId = solicitanteId;
     if (proyectoId) where.proyectoId = parseInt(proyectoId, 10);
-    if (solicitudPadreIdParam) where.solicitudPadreId = parseInt(solicitudPadreIdParam, 10);
+    if (solicitudPadreIdParam) {
+      where.solicitudPadreId = parseInt(solicitudPadreIdParam, 10);
+    } else {
+      // Exclude child otrosís from the main list — they only appear under their parent
+      where.solicitudPadreId = null;
+    }
 
     if (fechaDesde || fechaHasta) {
       where.fechaSolicitud = {};
@@ -237,7 +243,7 @@ export async function POST(request: Request) {
 
         const consecutivo = buildConsecutivo(tipo as string, proyAbbr, frenAbbr, counter.ultimo);
 
-        return tx.solicitud.create({
+        const created = await tx.solicitud.create({
           data: {
             consecutivo,
             tipo,
@@ -250,7 +256,7 @@ export async function POST(request: Request) {
             responsableContratosMinutaId: parent.responsableContratosMinutaId ?? null,
             coordinadorControlesId: parent.coordinadorControlesId ?? null,
             directorControlesId: parent.directorControlesId ?? null,
-            estado: "BORRADOR",
+            estado: "ENVIADA",
             terceroId: parent.terceroId ?? null,
             descripcionActividad: parent.descripcionActividad ?? null,
             plazoEjecucion: parent.plazoEjecucion ?? null,
@@ -267,7 +273,32 @@ export async function POST(request: Request) {
             tercero: { select: { id: true, razonSocial: true, nit: true } },
           },
         });
+
+        await tx.historialSolicitud.create({
+          data: {
+            solicitudId: created.id,
+            usuarioId: session.user.id,
+            accion: "ENVIAR",
+            nota: null,
+          },
+        });
+
+        return created;
       });
+
+      // Notify aprobador (non-critical)
+      if (parent.aprobadorId) {
+        try {
+          await notificarNuevaSolicitud(
+            solicitud.id,
+            solicitud.solicitante.nombre,
+            solicitud.consecutivo,
+            parent.aprobadorId
+          );
+        } catch (e) {
+          console.error("Error notificando otrosí:", e);
+        }
+      }
 
       return Response.json(solicitud, { status: 201 });
     }

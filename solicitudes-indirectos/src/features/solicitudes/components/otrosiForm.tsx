@@ -187,7 +187,7 @@ export function OtrosiForm({ tipo }: OtrosiFormProps) {
         return;
       }
 
-      addToast("Otrosí creado exitosamente", "success");
+      addToast("Otrosí enviado exitosamente", "success");
       router.push(`/solicitudes/${data.id}`);
     } catch {
       addToast("Error de conexión", "error");
