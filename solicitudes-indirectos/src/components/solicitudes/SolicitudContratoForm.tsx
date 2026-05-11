@@ -247,6 +247,7 @@ export function SolicitudContratoForm({
   const [saving, setSaving] = useState(false);
   const [sending, setSending] = useState(false);
   const [submitError, setSubmitError] = useState("");
+  const [cronogramaError, setCronogramaError] = useState("");
   const [valorEnLetras, setValorEnLetras] = useState("");
   const [selectedTercero, setSelectedTercero] = useState<Tercero | null>(null);
 
@@ -342,6 +343,19 @@ export function SolicitudContratoForm({
     }
   }, [watchFrentesIds, selectedTercero, watchDescripcion, frentes, setValue, isEdit]);
 
+  function validateCronograma(): boolean {
+    const allActividades = cronograma.tieneFases
+      ? cronograma.fases.flatMap((f) => f.actividades)
+      : cronograma.actividades;
+    const hasActivity = allActividades.some((a) => a.descripcion.trim().length > 0);
+    if (!hasActivity) {
+      setCronogramaError("Debes registrar al menos una actividad en el cronograma.");
+      return false;
+    }
+    setCronogramaError("");
+    return true;
+  }
+
   function validateFiles(): boolean {
     const errs: Record<string, string> = {};
     if (!archivoCuadroComparativo) errs.cuadroComparativo = "El cuadro comparativo es obligatorio";
@@ -402,6 +416,7 @@ export function SolicitudContratoForm({
 
   async function onSaveDraft(data: FormValues) {
     validateFiles();
+    if (!validateCronograma()) return;
     setSaving(true);
     setSubmitError("");
     try {
@@ -434,6 +449,7 @@ export function SolicitudContratoForm({
 
   async function onSendForm(data: FormValues) {
     if (!validateFiles()) return;
+    if (!validateCronograma()) return;
     setSending(true);
     setSubmitError("");
     try {
@@ -756,7 +772,13 @@ export function SolicitudContratoForm({
       </Section>
 
       <Section title="Sección 6 — Cronograma" collapsible defaultOpen={true}>
-        <CronogramaBuilder value={cronograma} onChange={setCronograma} />
+        <CronogramaBuilder value={cronograma} onChange={(data) => { setCronograma(data); setCronogramaError(""); }} />
+        {cronogramaError && (
+          <div className="flex items-center gap-2 mt-2 text-xs text-red-600">
+            <AlertCircle size={13} className="shrink-0" />
+            {cronogramaError}
+          </div>
+        )}
       </Section>
 
       {submitError && (
