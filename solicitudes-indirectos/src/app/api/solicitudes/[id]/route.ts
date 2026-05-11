@@ -47,6 +47,32 @@ export async function GET(
           },
           orderBy: { fecha: "desc" },
         },
+        solicitudPadre: {
+          select: { id: true, consecutivo: true, tipo: true },
+        },
+        otrosis: {
+          select: {
+            id: true,
+            consecutivo: true,
+            tipo: true,
+            estado: true,
+            creadoEn: true,
+            valorFinal: true,
+            cronograma: {
+              include: {
+                fases: {
+                  orderBy: { numeroFase: "asc" },
+                  include: { actividades: { orderBy: { fechaInicio: "asc" } } },
+                },
+                actividades: {
+                  where: { faseId: null },
+                  orderBy: { fechaInicio: "asc" },
+                },
+              },
+            },
+          },
+          orderBy: { creadoEn: "asc" },
+        },
       },
     });
 
