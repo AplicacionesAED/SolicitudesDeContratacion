@@ -202,6 +202,10 @@ model Solicitud {
   estado    String @default("BORRADOR") // EstadoSolicitud enum stored as string
   historial HistorialSolicitud[]
 
+  solicitudPadreId Int?
+  solicitudPadre   Solicitud?  @relation("OtrosiPadre", fields: [solicitudPadreId], references: [id])
+  otrosis          Solicitud[] @relation("OtrosiPadre")
+
   creadoEn      DateTime @default(now())
   actualizadoEn DateTime @updatedAt
 }
