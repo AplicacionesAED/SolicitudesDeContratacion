@@ -20,6 +20,7 @@ export async function GET(request: Request) {
     const solicitanteId = searchParams.get("solicitanteId");
     const fechaDesde = searchParams.get("fechaDesde");
     const fechaHasta = searchParams.get("fechaHasta");
+    const solicitudPadreIdParam = searchParams.get("solicitudPadreId");
 
     const userRoles: string[] = session.user.roles ?? [session.user.rol];
     const userId = session.user.id;
@@ -32,6 +33,7 @@ export async function GET(request: Request) {
     if (tipo) where.tipo = tipo;
     if (solicitanteId) where.solicitanteId = solicitanteId;
     if (proyectoId) where.proyectoId = parseInt(proyectoId, 10);
+    if (solicitudPadreIdParam) where.solicitudPadreId = parseInt(solicitudPadreIdParam, 10);
 
     if (fechaDesde || fechaHasta) {
       where.fechaSolicitud = {};
@@ -78,6 +80,7 @@ export async function GET(request: Request) {
         solicitante: { select: { id: true, nombre: true, cargo: true, email: true } },
         tercero: { select: { id: true, razonSocial: true, nit: true } },
         aprobador: { select: { id: true, nombre: true, cargo: true } },
+        _count: { select: { otrosis: true } },
       },
       orderBy: { creadoEn: "desc" },
     });
@@ -164,7 +167,111 @@ export async function POST(request: Request) {
       archivoCuadroComparativo,
       archivoCotizacion,
       archivoBEP,
+      solicitudPadreId,
     } = body;
+
+    // ── Flujo otrosí ────────────────────────────────────────────────────────────
+    if (solicitudPadreId) {
+      if (!tienePermiso(userRoles, funcionalidadesAdicionales, "crear_otrosi")) {
+        return Response.json(
+          { error: "No tienes permiso para crear otrosís. Contacta al administrador." },
+          { status: 403 }
+        );
+      }
+
+      const parent = await prisma.solicitud.findUnique({
+        where: { id: Number(solicitudPadreId) },
+      });
+
+      if (!parent) {
+        return Response.json({ error: "Solicitud padre no encontrada" }, { status: 404 });
+      }
+      if (parent.estado !== "COMPLETADA") {
+        return Response.json(
+          { error: "Solo se pueden crear otrosís de solicitudes en estado COMPLETADA" },
+          { status: 400 }
+        );
+      }
+      if (!tipo || !["OTROSI_TIEMPO", "OTROSI_TIEMPO_CANTIDAD"].includes(tipo)) {
+        return Response.json({ error: "Tipo inválido para otrosí" }, { status: 400 });
+      }
+
+      const parentFrentesIds: number[] = (() => {
+        try { return JSON.parse(parent.frentesIds || "[]"); } catch { return []; }
+      })();
+      const firstFrenteId = parentFrentesIds[0];
+
+      const [proyectoData, frenteData] = await Promise.all([
+        prisma.proyecto.findUnique({
+          where: { id: parent.proyectoId },
+          select: { nombre: true, codigoConsecutivo: true },
+        }),
+        firstFrenteId
+          ? prisma.frente.findUnique({ where: { id: firstFrenteId }, select: { nombre: true } })
+          : Promise.resolve(null),
+      ]);
+
+      const proyAbbr =
+        proyectoData?.codigoConsecutivo?.trim() ||
+        abbreviate(proyectoData?.nombre ?? String(parent.proyectoId), 3);
+      const frenAbbr = frenteData
+        ? normalizeFrenteName(frenteData.nombre)
+        : String(firstFrenteId ?? "");
+
+      const finalValorFinal =
+        tipo === "OTROSI_TIEMPO_CANTIDAD" && valorFinal != null
+          ? valorFinal
+          : parent.valorFinal;
+      const finalValorEnLetras =
+        tipo === "OTROSI_TIEMPO_CANTIDAD" && valorFinal != null
+          ? (valorEnLetras ?? null)
+          : parent.valorEnLetras;
+
+      const solicitud = await prisma.$transaction(async (tx) => {
+        const key = `${tipo}-${proyAbbr}-${frenAbbr}`;
+        const counter = await tx.contadorConsecutivo.upsert({
+          where: { tipo: key },
+          update: { ultimo: { increment: 1 } },
+          create: { tipo: key, anio: new Date().getFullYear(), ultimo: 1 },
+        });
+
+        const consecutivo = buildConsecutivo(tipo as string, proyAbbr, frenAbbr, counter.ultimo);
+
+        return tx.solicitud.create({
+          data: {
+            consecutivo,
+            tipo,
+            solicitudPadreId: parent.id,
+            proyectoId: parent.proyectoId,
+            frentesIds: parent.frentesIds,
+            solicitanteId: session.user.id,
+            aprobadorId: parent.aprobadorId ?? null,
+            responsableContratosTramiteId: parent.responsableContratosTramiteId ?? null,
+            responsableContratosMinutaId: parent.responsableContratosMinutaId ?? null,
+            coordinadorControlesId: parent.coordinadorControlesId ?? null,
+            directorControlesId: parent.directorControlesId ?? null,
+            estado: "BORRADOR",
+            terceroId: parent.terceroId ?? null,
+            descripcionActividad: parent.descripcionActividad ?? null,
+            plazoEjecucion: parent.plazoEjecucion ?? null,
+            formaPago: parent.formaPago ?? null,
+            valorFinal: finalValorFinal ?? null,
+            valorEnLetras: finalValorEnLetras ?? null,
+            tipoContrato: parent.tipoContrato ?? null,
+            asunto: parent.asunto ?? null,
+            contratanteNombre: parent.contratanteNombre ?? "AED CONSTRUCTORES S.A.S",
+            contratanteNit: parent.contratanteNit ?? "901237628-1",
+          },
+          include: {
+            solicitante: { select: { id: true, nombre: true, cargo: true } },
+            tercero: { select: { id: true, razonSocial: true, nit: true } },
+          },
+        });
+      });
+
+      return Response.json(solicitud, { status: 201 });
+    }
+    // ── Fin flujo otrosí ───────────────────────────────────────────────────────
 
     if (!tipo || !proyectoId || !frentesIds || frentesIds.length === 0) {
       return Response.json(
