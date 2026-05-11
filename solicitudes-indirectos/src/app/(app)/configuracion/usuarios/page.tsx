@@ -3,7 +3,7 @@
 import { useState, useEffect, useCallback } from "react";
 import { useSession } from "next-auth/react";
 import { Plus, Pencil, UserCheck, UserX, X, Settings, Search, Filter } from "lucide-react";
-import { Spinner } from "@/components/ui/spinner";
+import { Spinner } from "@/shared/ui/spinner";
 import { ROL_LABELS, FUNCIONALIDADES_POR_ROL } from "@/lib/utils";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
@@ -57,6 +57,7 @@ const TODAS_LAS_FUNCIONALIDADES: Record<string, { nombre: string; rolPorDefecto:
   crear_enviar_solicitudes: { nombre: "Crear y enviar solicitudes", rolPorDefecto: "SOLICITANTE" },
   reenviar_solicitudes: { nombre: "Reenviar solicitudes devueltas", rolPorDefecto: "SOLICITANTE" },
   ver_solicitudes_propias: { nombre: "Ver solicitudes propias", rolPorDefecto: "SOLICITANTE" },
+  crear_otrosi: { nombre: "Crear otrosís de contratos completados", rolPorDefecto: "SOLICITANTE" },
 
   // DIRECTOR_PROYECTO (incluye SOLICITANTE)
   aprobar_solicitudes_frente: { nombre: "Aprobar solicitudes del frente", rolPorDefecto: "DIRECTOR_PROYECTO" },
