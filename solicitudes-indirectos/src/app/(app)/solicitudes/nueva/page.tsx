@@ -18,6 +18,7 @@ import { TIPO_SOLICITUD_LABELS } from "@/lib/utils";
 
 interface TipoCard {
   tipo: string;
+  url: string;
   label: string;
   description: string;
   icon: React.ElementType;
@@ -27,6 +28,7 @@ interface TipoCard {
 const TIPOS: TipoCard[] = [
   {
     tipo: "CONTRATO",
+    url: "contrato",
     label: TIPO_SOLICITUD_LABELS.CONTRATO,
     description: "Solicitud de nuevo contrato de obra, diseño o servicios.",
     icon: Briefcase,
@@ -34,27 +36,31 @@ const TIPOS: TipoCard[] = [
   },
   {
     tipo: "ORDEN_SERVICIO",
+    url: "orden-servicio",
     label: TIPO_SOLICITUD_LABELS.ORDEN_SERVICIO,
     description: "Orden de servicio para proveedores o contratistas.",
     icon: FileText,
-    active: false,
+    active: true,
   },
   {
     tipo: "OTROSI_TIEMPO",
+    url: "otrosi-tiempo",
     label: TIPO_SOLICITUD_LABELS.OTROSI_TIEMPO,
     description: "Modificación del plazo de un contrato existente.",
     icon: Clock,
-    active: false,
+    active: true,
   },
   {
     tipo: "OTROSI_TIEMPO_CANTIDAD",
+    url: "otrosi-tiempo-cantidad",
     label: TIPO_SOLICITUD_LABELS.OTROSI_TIEMPO_CANTIDAD,
     description: "Modificación de tiempo, cantidad y/o valor del contrato.",
     icon: PlusCircle,
-    active: false,
+    active: true,
   },
   {
     tipo: "TRAMITE_CUENTA",
+    url: "tramite-cuenta",
     label: TIPO_SOLICITUD_LABELS.TRAMITE_CUENTA,
     description: "Trámite de cuenta individual para un contratista.",
     icon: Receipt,
@@ -62,6 +68,7 @@ const TIPOS: TipoCard[] = [
   },
   {
     tipo: "TRAMITE_FACTURAS",
+    url: "tramite-facturas",
     label: TIPO_SOLICITUD_LABELS.TRAMITE_FACTURAS,
     description: "Trámite de facturas de proveedor.",
     icon: FileCheck,
@@ -69,6 +76,7 @@ const TIPOS: TipoCard[] = [
   },
   {
     tipo: "TRAMITE_CUENTAS_RECURRENTES",
+    url: "tramite-cuentas-recurrentes",
     label: TIPO_SOLICITUD_LABELS.TRAMITE_CUENTAS_RECURRENTES,
     description: "Cuentas de cobro con periodicidad fija.",
     icon: RefreshCw,
@@ -76,6 +84,7 @@ const TIPOS: TipoCard[] = [
   },
   {
     tipo: "TRAMITE_CUENTAS_OCASIONALES",
+    url: "tramite-cuentas-ocasionales",
     label: TIPO_SOLICITUD_LABELS.TRAMITE_CUENTAS_OCASIONALES,
     description: "Cuentas de cobro esporádicas u ocasionales.",
     icon: CalendarClock,
@@ -83,6 +92,7 @@ const TIPOS: TipoCard[] = [
   },
   {
     tipo: "TRAMITE_BONIFICACIONES_COMISIONES",
+    url: "tramite-bonificaciones-comisiones",
     label: TIPO_SOLICITUD_LABELS.TRAMITE_BONIFICACIONES_COMISIONES,
     description: "Pagos de bonificaciones y comisiones.",
     icon: Award,
@@ -97,7 +107,7 @@ export default function NuevaSolicitudPage() {
 
   function handleSelect(tipo: TipoCard) {
     if (!tipo.active) return;
-    router.push(`/solicitudes/nueva/${tipo.tipo}`);
+    router.push(`/solicitudes/nueva/${tipo.url}`);
   }
 
   return (
