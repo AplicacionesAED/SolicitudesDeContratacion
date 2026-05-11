@@ -260,6 +260,7 @@ export const FUNCIONALIDADES_POR_ROL: Record<string, string[]> = {
     "crear_enviar_solicitudes",
     "reenviar_solicitudes",
     "ver_solicitudes_propias",
+    "crear_otrosi",
   ],
   DIRECTOR_PROYECTO: [
     "crear_enviar_solicitudes",
