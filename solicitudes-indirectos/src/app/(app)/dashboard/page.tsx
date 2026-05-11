@@ -8,7 +8,7 @@ import {
   CheckCircle2,
   ArrowRight,
 } from "lucide-react";
-import { SolicitudBadge } from "@/components/solicitudes/SolicitudBadge";
+import { SolicitudBadge } from "@/features/solicitudes/components/solicitudBadge";
 import { TIPO_SOLICITUD_LABELS, formatDate } from "@/lib/utils";
 import { prisma } from "@/lib/prisma";
 

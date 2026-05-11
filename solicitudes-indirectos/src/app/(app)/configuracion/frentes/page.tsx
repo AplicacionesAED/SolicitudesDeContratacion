@@ -3,7 +3,7 @@
 import { useState, useEffect, useCallback } from "react";
 import { useSession } from "next-auth/react";
 import { MapPin, Users, Settings, Plus, X, Pencil, Trash2, LayoutDashboard, Hash, Filter } from "lucide-react";
-import { Spinner } from "@/components/ui/spinner";
+import { Spinner } from "@/shared/ui/spinner";
 import Link from "next/link";
 
 // ─── Types ────────────────────────────────────────────────────────────────────

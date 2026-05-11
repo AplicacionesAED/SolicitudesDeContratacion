@@ -17,11 +17,11 @@ import {
   Send,
   X,
 } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import { Spinner } from "@/components/ui/spinner";
-import { CronogramaBuilder, type CronogramaData } from "@/components/forms/CronogramaBuilder";
+import { Button } from "@/shared/ui/button";
+import { Input } from "@/shared/ui/input";
+import { Textarea } from "@/shared/ui/textarea";
+import { Spinner } from "@/shared/ui/spinner";
+import { CronogramaBuilder, type CronogramaData } from "@/features/solicitudes/components/cronogramaBuilder";
 import { formatDate, formatCurrency, numeroALetras } from "@/lib/utils";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
@@ -218,17 +218,19 @@ const defaultCronograma: CronogramaData = {
   actividades: [{ descripcion: "", fechaInicio: "", fechaFin: "" }],
 };
 
-interface SolicitudContratoFormProps {
+interface SolicitudFormProps {
   initialData?: any;
   initialCronograma?: CronogramaData;
   isEdit?: boolean;
+  tipoSolicitud?: "CONTRATO" | "ORDEN_SERVICIO";
 }
 
-export function SolicitudContratoForm({
+export function SolicitudForm({
   initialData,
   initialCronograma,
   isEdit = false,
-}: SolicitudContratoFormProps) {
+  tipoSolicitud = "CONTRATO",
+}: SolicitudFormProps) {
   const { data: session } = useSession();
   const router = useRouter();
 
@@ -263,7 +265,7 @@ export function SolicitudContratoForm({
     defaultValues: {
       frentesIds: initialData?.frentesIds ? (typeof initialData.frentesIds === 'string' ? JSON.parse(initialData.frentesIds) : initialData.frentesIds) : [],
       terceroId: initialData?.terceroId || undefined,
-      tipoContrato: initialData?.tipoContrato as "OBRA" | "DISENO" | undefined,
+      tipoContrato: tipoSolicitud === "ORDEN_SERVICIO" ? "OBRA" : (initialData?.tipoContrato as "OBRA" | "DISENO" | undefined),
       descripcionActividad: initialData?.descripcionActividad || "",
       plazoEjecucion: initialData?.plazoEjecucion || "",
       formaPago: initialData?.formaPago || "",
@@ -277,7 +279,6 @@ export function SolicitudContratoForm({
     },
   });
 
-  // Log validation errors for debugging
   const onInvalid = (errors: any) => {
     console.error("Form validation errors:", errors);
     setSubmitError("Hay errores en el formulario. Por favor revise todos los campos.");
@@ -330,7 +331,7 @@ export function SolicitudContratoForm({
   }, [watchTerceroId, terceros]);
 
   useEffect(() => {
-    if (isEdit) return; // Don't auto-update if editing
+    if (isEdit) return;
     const frenteNames = frentes
       .filter((f) => watchFrentesIds?.includes(f.id))
       .map((f) => f.nombre)
@@ -338,7 +339,8 @@ export function SolicitudContratoForm({
     const terceroName = selectedTercero?.razonSocial ?? "";
     const desc = watchDescripcion?.slice(0, 80) ?? "";
     if (frenteNames || terceroName || desc) {
-      const autoAsunto = `[CONTRATO] – ${frenteNames || "Frente(s)"} – ${terceroName || "Contratista"} – ${desc}`;
+      const prefijo = tipoSolicitud === "ORDEN_SERVICIO" ? "ORDEN DE SERVICIO" : "CONTRATO";
+      const autoAsunto = `[${prefijo}] – ${frenteNames || "Frente(s)"} – ${terceroName || "Contratista"} – ${desc}`;
       setValue("asunto", autoAsunto, { shouldValidate: false });
     }
   }, [watchFrentesIds, selectedTercero, watchDescripcion, frentes, setValue, isEdit]);
@@ -375,7 +377,7 @@ export function SolicitudContratoForm({
     const proyectoId = firstFrente?.proyectoId ?? 1;
 
     return {
-      tipo: "CONTRATO",
+      tipo: tipoSolicitud,
       proyectoId,
       frentesIds: data.frentesIds,
       terceroId: data.terceroId,
@@ -434,13 +436,13 @@ export function SolicitudContratoForm({
       const json = await res.json();
       if (!res.ok) throw new Error(json.error ?? "Error al guardar");
       const solicitudId = isEdit ? initialData.id : json.id;
-      
+
       const cronoOk = await saveCronograma(solicitudId);
       if (!cronoOk) {
         setSaving(false);
         return;
       }
-      
+
       router.push(`/solicitudes/${solicitudId}`);
       router.refresh();
     } catch (err: any) {
@@ -511,13 +513,19 @@ export function SolicitudContratoForm({
         <span className="text-gray-300">/</span>
         <span className="text-sm text-gray-500">{isEdit ? "Editar Solicitud" : "Nueva Solicitud"}</span>
         <span className="text-gray-300">/</span>
-        <span className="text-sm font-medium text-gray-800">Contrato</span>
+        <span className="text-sm font-medium text-gray-800">
+          {tipoSolicitud === "ORDEN_SERVICIO" ? "Orden de Servicio" : "Contrato"}
+        </span>
       </div>
 
       <div>
-        <h1 className="text-2xl font-bold text-gray-900">{isEdit ? "Editar Solicitud de Contrato" : "Solicitud de Contrato"}</h1>
+        <h1 className="text-2xl font-bold text-gray-900">
+          {isEdit
+            ? tipoSolicitud === "ORDEN_SERVICIO" ? "Editar Orden de Servicio" : "Editar Solicitud de Contrato"
+            : tipoSolicitud === "ORDEN_SERVICIO" ? "Orden de Servicio" : "Solicitud de Contrato"}
+        </h1>
         <p className="text-sm text-gray-500 mt-0.5">
-          {isEdit ? "Modifica los campos necesarios para actualizar la solicitud." : "Complete todos los campos para generar la solicitud de contrato."}
+          {isEdit ? "Modifica los campos necesarios para actualizar la solicitud." : "Complete todos los campos para generar la solicitud."}
         </p>
       </div>
 
@@ -639,29 +647,31 @@ export function SolicitudContratoForm({
           {errors.terceroId && <p className="text-xs text-red-500 mt-1">{errors.terceroId.message}</p>}
         </div>
 
-        <div>
-          <label className="text-sm font-medium text-gray-700 block mb-1.5">Tipo de Contrato <span className="text-red-500">*</span></label>
-          <Controller
-            name="tipoContrato"
-            control={control}
-            render={({ field }) => (
-              <div className="flex gap-4">
-                {(["OBRA", "DISENO"] as const).map((opt) => (
-                  <label key={opt} className={`flex items-center gap-2 rounded-lg border px-4 py-2.5 cursor-pointer transition-colors ${field.value === opt ? "border-blue-400 bg-blue-50 text-blue-800" : "border-gray-200 hover:border-gray-300 text-gray-700"}`}>
-                    <input type="radio" checked={field.value === opt} onChange={() => field.onChange(opt)} className="h-4 w-4 border-gray-300 text-blue-600 focus:ring-blue-500" />
-                    <span className="text-sm font-medium">{opt === "OBRA" ? "Otros Servicios" : "Diseño"}</span>
-                  </label>
-                ))}
+        {tipoSolicitud === "CONTRATO" && (
+          <div>
+            <label className="text-sm font-medium text-gray-700 block mb-1.5">Tipo de Contrato <span className="text-red-500">*</span></label>
+            <Controller
+              name="tipoContrato"
+              control={control}
+              render={({ field }) => (
+                <div className="flex gap-4">
+                  {(["OBRA", "DISENO"] as const).map((opt) => (
+                    <label key={opt} className={`flex items-center gap-2 rounded-lg border px-4 py-2.5 cursor-pointer transition-colors ${field.value === opt ? "border-blue-400 bg-blue-50 text-blue-800" : "border-gray-200 hover:border-gray-300 text-gray-700"}`}>
+                      <input type="radio" checked={field.value === opt} onChange={() => field.onChange(opt)} className="h-4 w-4 border-gray-300 text-blue-600 focus:ring-blue-500" />
+                      <span className="text-sm font-medium">{opt === "OBRA" ? "Otros Servicios" : "Diseño"}</span>
+                    </label>
+                  ))}
+                </div>
+              )}
+            />
+            {watchTipoContrato === "DISENO" && (
+              <div className="mt-2 flex items-start gap-2 text-xs text-blue-700 bg-blue-50 border border-blue-200 rounded-lg px-3 py-2">
+                <Info size={13} className="mt-0.5 shrink-0" /> Los contratos de diseño requieren adjuntar el archivo BEP.
               </div>
             )}
-          />
-          {watchTipoContrato === "DISENO" && (
-            <div className="mt-2 flex items-start gap-2 text-xs text-blue-700 bg-blue-50 border border-blue-200 rounded-lg px-3 py-2">
-              <Info size={13} className="mt-0.5 shrink-0" /> Los contratos de diseño requieren adjuntar el archivo BEP.
-            </div>
-          )}
-          {errors.tipoContrato && <p className="text-xs text-red-500 mt-1">{errors.tipoContrato.message}</p>}
-        </div>
+            {errors.tipoContrato && <p className="text-xs text-red-500 mt-1">{errors.tipoContrato.message}</p>}
+          </div>
+        )}
 
         <Textarea label="Descripción de la Actividad" required placeholder="Describa en detalle las actividades a contratar (mínimo 50 caracteres)…" showCount rows={4} {...register("descripcionActividad")} error={errors.descripcionActividad?.message} />
         <Input label="Plazo de Ejecución" required placeholder="Ej: 25 días calendario a partir del anticipo" {...register("plazoEjecucion")} error={errors.plazoEjecucion?.message} />
@@ -707,7 +717,7 @@ export function SolicitudContratoForm({
         <p className="text-xs text-gray-400 flex items-center gap-1"><Info size={11} /> Se actualiza automáticamente al cambiar el frente, contratista o descripción.</p>
       </Section>
 
-      <Section title="Sección 5 — Formato de Solicitud de Contrato" collapsible badge="*">
+      <Section title="Sección 5 — Formato de Solicitud" collapsible badge="*">
         <div className="space-y-4">
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
@@ -726,8 +736,12 @@ export function SolicitudContratoForm({
               </p>
             </div>
             <div>
-              <p className="text-xs font-medium text-gray-500 uppercase tracking-wide mb-1">Tipo Contrato</p>
-              <p className="text-sm text-gray-800">{watchTipoContrato === "OBRA" ? "Otros Servicios" : watchTipoContrato === "DISENO" ? "Diseño" : "—"}</p>
+              <p className="text-xs font-medium text-gray-500 uppercase tracking-wide mb-1">Tipo</p>
+              <p className="text-sm text-gray-800">
+                {tipoSolicitud === "ORDEN_SERVICIO"
+                  ? "Orden de Servicio"
+                  : watchTipoContrato === "OBRA" ? "Otros Servicios" : watchTipoContrato === "DISENO" ? "Diseño" : "—"}
+              </p>
             </div>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -774,7 +788,7 @@ export function SolicitudContratoForm({
         </div>
       </Section>
 
-      <Section title="Sección 6 — Cronograma" collapsible defaultOpen={true}>
+      <Section title="Cronograma" collapsible defaultOpen={true}>
         <CronogramaBuilder value={cronograma} onChange={(data) => { setCronograma(data); setCronogramaError(""); }} />
         {cronogramaError && (
           <div className="flex items-center gap-2 mt-2 text-xs text-red-600">

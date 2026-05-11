@@ -256,6 +256,7 @@ exports.Prisma.SolicitudScalarFieldEnum = {
   necesitaRevision: 'necesitaRevision',
   numeroContratoAdpro: 'numeroContratoAdpro',
   estado: 'estado',
+  solicitudPadreId: 'solicitudPadreId',
   creadoEn: 'creadoEn',
   actualizadoEn: 'actualizadoEn'
 };

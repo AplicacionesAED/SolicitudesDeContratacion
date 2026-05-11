@@ -28,22 +28,6 @@ interface ToastContextValue {
 
 const ToastContext = createContext<ToastContextValue | null>(null);
 
-// ─── Global singleton (allows <Toaster /> as sibling, not wrapper) ────────────
-
-// The context provider is mounted once at the root via Providers.tsx.
-// However, since Providers.tsx renders <Toaster /> as a sibling (not wrapping
-// children), we expose an imperative API through a module-level ref so that
-// useToast() still works from anywhere in the tree via a separate provider.
-//
-// Architecture:
-//   <SessionProvider>
-//     {children}          ← app pages that call useToast()
-//     <Toaster />         ← renders toasts + exposes ToastContext
-//   </SessionProvider>
-//
-// To bridge the gap, Toaster registers itself in a module-level store that
-// ToastProvider (re-exported as a no-op wrapper) and useToast both share.
-
 type AddToastFn = (message: string, type?: ToastType) => void;
 
 let _globalAddToast: AddToastFn | null = null;
@@ -53,7 +37,6 @@ let _globalAddToast: AddToastFn | null = null;
 export function useToast(): ToastContextValue {
   const ctx = useContext(ToastContext);
 
-  // If inside the ToastContext tree use that; otherwise fall back to global ref.
   if (ctx) return ctx;
 
   return {
@@ -138,15 +121,6 @@ function ToastItem({
 }
 
 // ─── Toaster ──────────────────────────────────────────────────────────────────
-// Can be used in two ways:
-//
-//   1. As a standalone sibling (current Providers.tsx pattern):
-//        <SessionProvider>{children}<Toaster /></SessionProvider>
-//      Pages call useToast() — it falls back to the global ref.
-//
-//   2. As a wrapper provider (optional future use):
-//        <Toaster>{children}</Toaster>
-//      Pages call useToast() — it uses the React context.
 
 export function Toaster({ children }: { children?: ReactNode }) {
   const [toasts, setToasts] = useState<Toast[]>([]);
@@ -163,7 +137,6 @@ export function Toaster({ children }: { children?: ReactNode }) {
     setToasts((prev) => prev.filter((t) => t.id !== id));
   }, []);
 
-  // Register in global ref so useToast() works even when Toaster is a sibling
   useEffect(() => {
     _globalAddToast = addToast;
     return () => {
@@ -185,7 +158,6 @@ export function Toaster({ children }: { children?: ReactNode }) {
     </div>
   );
 
-  // When used as a provider wrapper, supply context + render children
   if (children !== undefined) {
     return (
       <ToastContext.Provider value={{ addToast }}>
@@ -195,6 +167,5 @@ export function Toaster({ children }: { children?: ReactNode }) {
     );
   }
 
-  // When used as a standalone sibling, just render the toast stack
   return toastList;
 }

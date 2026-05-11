@@ -3,7 +3,7 @@
 import { useState, useEffect, useCallback } from "react";
 import { useSession } from "next-auth/react";
 import { Save, Settings } from "lucide-react";
-import { Spinner } from "@/components/ui/spinner";
+import { Spinner } from "@/shared/ui/spinner";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 

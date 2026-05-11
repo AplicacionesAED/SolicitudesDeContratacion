@@ -170,7 +170,7 @@ export function CronogramasSection({ originalCronograma, otrosis }: Props) {
       {/* Section header */}
       <div className="px-5 py-4 border-b border-gray-100 flex items-center justify-between bg-white">
         <span className="text-sm font-semibold text-gray-900">
-          Sección 6 — Cronograma
+          Cronograma
           {sorted.length > 0 && (
             <span className="ml-2 text-xs font-normal text-gray-400">
               {totalCount} versiones

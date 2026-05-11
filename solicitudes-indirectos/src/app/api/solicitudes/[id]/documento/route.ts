@@ -197,7 +197,9 @@ export async function POST(
             new Paragraph({
               children: [
                 new TextRun({
-                  text: "FORMATO DE SOLICITUD DE CONTRATO",
+                  text: solicitud.tipo === "ORDEN_SERVICIO"
+                    ? "FORMATO DE SOLICITUD DE ORDEN DE SERVICIO"
+                    : "FORMATO DE SOLICITUD DE CONTRATO",
                   bold: true,
                   size: 32,
                   color: "1E3A8A",
@@ -238,7 +240,9 @@ export async function POST(
             twoColTable([
               ["Área / Frente", frenteNames || "—"],
               ["Proyecto", "Baia Kristal"],
-              ["Tipo de Contrato", solicitud.tipoContrato === "OBRA" ? "Otros Servicios" : solicitud.tipoContrato === "DISENO" ? "Diseño" : "—"],
+              solicitud.tipo === "ORDEN_SERVICIO"
+                ? ["Tipo", "Orden de Servicio"]
+                : ["Tipo de Contrato", solicitud.tipoContrato === "OBRA" ? "Otros Servicios" : solicitud.tipoContrato === "DISENO" ? "Diseño" : "—"],
               ["Estado", solicitud.estado],
             ]),
 

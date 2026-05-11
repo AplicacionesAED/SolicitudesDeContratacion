@@ -2,7 +2,7 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { notFound } from "next/navigation";
 import { prisma } from "@/lib/prisma";
-import FrenteDetalleClient from "@/components/frentes/FrenteDetalleClient";
+import FrenteDetalle from "@/features/frentes/components/frenteDetalle";
 
 interface PageProps {
   params: Promise<{ id: string }>;
@@ -82,5 +82,5 @@ export default async function FrenteDetallePage({ params }: PageProps) {
     roles: parseRoles(u.roles)
   }));
 
-  return <FrenteDetalleClient frente={frente as any} allUsers={allUsers as any} />;
+  return <FrenteDetalle frente={frente as any} allUsers={allUsers as any} />;
 }

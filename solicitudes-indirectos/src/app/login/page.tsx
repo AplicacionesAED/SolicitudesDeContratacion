@@ -3,7 +3,7 @@
 import { Suspense, useState, type FormEvent } from "react";
 import { signIn } from "next-auth/react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { Spinner } from "@/components/ui/spinner";
+import { Spinner } from "@/shared/ui/spinner";
 
 
 function LoginForm() {

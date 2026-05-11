@@ -1,7 +1,7 @@
 import { getServerSession } from "next-auth";
 import { redirect } from "next/navigation";
 import { authOptions } from "@/lib/auth";
-import { AppLayout } from "@/components/layout/AppLayout";
+import { AppLayout } from "@/shared/layout/appLayout";
 import type { ReactNode } from "react";
 
 // ─── Auth-protected route group layout ───────────────────────────────────────

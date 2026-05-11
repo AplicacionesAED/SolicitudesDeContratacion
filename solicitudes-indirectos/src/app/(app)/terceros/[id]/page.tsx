@@ -13,7 +13,7 @@ import {
   CreditCard,
   FileText,
 } from "lucide-react";
-import { Spinner } from "@/components/ui/spinner";
+import { Spinner } from "@/shared/ui/spinner";
 import { useSession } from "next-auth/react";
 import { formatDate } from "@/lib/utils";
 

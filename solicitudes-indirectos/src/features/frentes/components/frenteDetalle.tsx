@@ -15,7 +15,7 @@ import {
   Info,
 } from "lucide-react";
 import Link from "next/link";
-import { Spinner } from "@/components/ui/spinner";
+import { Spinner } from "@/shared/ui/spinner";
 
 interface User {
   id: string;
@@ -72,24 +72,21 @@ function InfoRow({
   );
 }
 
-export default function FrenteDetalleClient({ frente, allUsers }: Props) {
+export default function FrenteDetalle({ frente, allUsers }: Props) {
   const router = useRouter();
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
 
-  // Form states
   const [aprobadorId, setAprobadorId] = useState(frente.aprobadorConfig?.aprobadorId ?? "");
   const [contratosTramiteId, setContratosTramiteId] = useState(frente.aprobadorConfig?.contratosTramiteId ?? "");
   const [contratosMinutaId, setContratosMinutaId] = useState(frente.aprobadorConfig?.contratosMinutaId ?? "");
   const [controlesId, setControlesId] = useState(frente.aprobadorConfig?.controlesId ?? "");
   const [directorControlesId, setDirectorControlesId] = useState(frente.aprobadorConfig?.directorControlesId ?? "");
 
-  // Assigned users in this frente
   const assignedUserIds = frente.usuarios?.map(fu => fu.userId) ?? [];
   const assignedUsers = allUsers.filter(u => assignedUserIds.includes(u.id));
 
-  // Filter helpers
   const filterByRole = (role: string) => {
     return assignedUsers.filter(u => u.roles.includes(role) || u.roles.includes("ADMIN"));
   };
@@ -161,7 +158,7 @@ export default function FrenteDetalleClient({ frente, allUsers }: Props) {
               {frente.proyecto.nombre}
             </p>
           </div>
-          
+
           <div className="flex items-center gap-3">
             {success && (
               <span className="flex items-center gap-1.5 text-green-600 text-sm font-bold animate-in fade-in slide-in-from-right-2">
@@ -236,7 +233,7 @@ export default function FrenteDetalleClient({ frente, allUsers }: Props) {
               ) : (
                 <div className="space-y-5">
                   {assignedUsers.map(user => (
-                    <InfoRow 
+                    <InfoRow
                       key={user.id}
                       label={user.cargo ?? "Sin cargo"}
                       value={user.nombre}
@@ -267,7 +264,6 @@ export default function FrenteDetalleClient({ frente, allUsers }: Props) {
               </p>
 
               <form onSubmit={handleSave} className="space-y-6">
-                {/* Pasos 1–3 y 5: asignación específica */}
                 {[
                   { label: "1. Aprobación Director (Director de Proyecto)", value: aprobadorId, setter: setAprobadorId, options: directoresProyecto, icon: UserIcon },
                   { label: "2. Trámite Contratos (Contratos)", value: contratosTramiteId, setter: setContratosTramiteId, options: personalContratos, icon: Building2 },
@@ -311,7 +307,6 @@ export default function FrenteDetalleClient({ frente, allUsers }: Props) {
                   </div>
                 </div>
 
-                {/* Paso 5 */}
                 {[
                   { label: "5. Aprobación Final (Director de Controles)", value: directorControlesId, setter: setDirectorControlesId, options: directoresControles, icon: ShieldCheck },
                 ].map((item, idx) => (

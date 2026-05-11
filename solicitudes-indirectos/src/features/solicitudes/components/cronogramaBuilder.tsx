@@ -7,8 +7,8 @@ import {
   CalendarDays,
 } from "lucide-react";
 import { countBusinessDays, getMinStartDate } from "@/lib/holidays";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+import { Button } from "@/shared/ui/button";
+import { Input } from "@/shared/ui/input";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -170,10 +170,8 @@ export function CronogramaBuilder({ value, onChange }: CronogramaBuilderProps) {
   const minStartDate = toInputDate(getMinStartDate());
   const minStartDisplay = formatDisplayDate(minStartDate);
 
-  // Computed total duration
   const totalDays = calcDuration(value.fechaInicio, value.fechaFin);
 
-  // Fecha inicio validation
   const fechaInicioError =
     value.fechaInicio && value.fechaInicio < minStartDate
       ? `La fecha de inicio debe ser mínimo el ${minStartDisplay}, considerando 13 días hábiles desde hoy.`

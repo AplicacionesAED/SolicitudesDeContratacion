@@ -16,7 +16,7 @@ import {
   ChevronDown,
   UserCircle,
 } from "lucide-react";
-import { NotificacionesBell } from "@/components/layout/NotificacionesBell";
+import { NotificacionesBell } from "@/shared/layout/notificacionesBell";
 import { ROL_LABELS, tienePermiso } from "@/lib/utils";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
@@ -113,10 +113,10 @@ function Sidebar({
 }) {
   const visibleItems = NAV_ITEMS.filter((item) => {
     if (!item.roles && !item.permission) return true;
-    
+
     const roleMatch = item.roles ? item.roles.some((r) => userRoles.includes(r)) : false;
     const permMatch = item.permission ? tienePermiso(userRoles, funcionalidadesAdicionales, item.permission) : false;
-    
+
     return roleMatch || permMatch;
   });
 
@@ -150,7 +150,6 @@ function Sidebar({
       {/* Nav */}
       <nav className="flex-1 overflow-y-auto px-2 py-4 space-y-0.5">
         {visibleItems.map((item) => {
-          // Mark Dashboard active only at exact "/"
           const active =
             item.href === "/dashboard"
               ? pathname === "/"
@@ -187,7 +186,6 @@ export function AppLayout({ children }: AppLayoutProps) {
   const [userMenuOpen, setUserMenuOpen] = useState(false);
 
   const userRoles: string[] = (session?.user?.roles ?? (session?.user?.rol ? [session.user.rol] : [])) as string[];
-  const userRole = userRoles[0] ?? "";
   const userName = session?.user?.name;
   const userEmail = session?.user?.email;
 

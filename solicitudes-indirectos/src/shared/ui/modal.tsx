@@ -33,7 +33,6 @@ export function Modal({
   children,
   size = "md",
 }: ModalProps) {
-  // Close on ESC key
   const handleKeyDown = useCallback(
     (e: KeyboardEvent) => {
       if (e.key === "Escape") onClose();
@@ -45,7 +44,6 @@ export function Modal({
     if (!isOpen) return;
 
     document.addEventListener("keydown", handleKeyDown);
-    // Prevent body scroll while open
     document.body.style.overflow = "hidden";
 
     return () => {
@@ -57,21 +55,18 @@ export function Modal({
   if (!isOpen) return null;
 
   return (
-    /* Backdrop */
     <div
       className="fixed inset-0 z-50 flex items-center justify-center p-4"
       aria-modal="true"
       role="dialog"
       aria-labelledby={title ? "modal-title" : undefined}
     >
-      {/* Overlay */}
       <div
         className="absolute inset-0 bg-black/50 backdrop-blur-sm transition-opacity"
         onClick={onClose}
         aria-hidden="true"
       />
 
-      {/* Panel */}
       <div
         className={`
           relative z-10 w-full ${sizeStyles[size]}
@@ -80,7 +75,6 @@ export function Modal({
           animate-in fade-in zoom-in-95 duration-200
         `}
       >
-        {/* Header */}
         {(title !== undefined) && (
           <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100 shrink-0">
             <h2
@@ -99,7 +93,6 @@ export function Modal({
           </div>
         )}
 
-        {/* Body */}
         <div className="overflow-y-auto flex-1 px-6 py-5">{children}</div>
       </div>
     </div>

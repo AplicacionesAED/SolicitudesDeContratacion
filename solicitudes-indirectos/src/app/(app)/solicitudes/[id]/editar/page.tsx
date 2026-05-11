@@ -4,8 +4,8 @@ import { useState, useEffect, useCallback } from "react";
 import { useSession } from "next-auth/react";
 import { useRouter, useParams } from "next/navigation";
 import { AlertCircle } from "lucide-react";
-import { Spinner } from "@/components/ui/spinner";
-import { SolicitudContratoForm } from "@/components/solicitudes/SolicitudContratoForm";
+import { Spinner } from "@/shared/ui/spinner";
+import { SolicitudForm } from "@/features/solicitudes/components/solicitudForm";
 
 export default function EditarSolicitudPage() {
   const { data: session } = useSession();
@@ -100,11 +100,14 @@ export default function EditarSolicitudPage() {
     }))
   } : undefined;
 
+  const tipoSolicitud = solicitud.tipo === "ORDEN_SERVICIO" ? "ORDEN_SERVICIO" : "CONTRATO";
+
   return (
-    <SolicitudContratoForm
+    <SolicitudForm
       initialData={solicitud}
       initialCronograma={cronogramaData}
       isEdit={true}
+      tipoSolicitud={tipoSolicitud}
     />
   );
 }

@@ -12,7 +12,12 @@
       "Bash(ls \"/c/SOLICITUD INDIRECTOS/solicitudes-indirectos/src/app/\\(app\\)/solicitudes/[id]/editar/\")",
       "Bash(npm install tsx --save-dev)",
       "Bash(npx prisma generate)",
-      "Bash(npm install @prisma/adapter-pg pg @types/pg)"
+      "Bash(npm install @prisma/adapter-pg pg @types/pg)",
+      "Bash(tasklist /FI \"IMAGENAME eq node.exe\")",
+      "PowerShell(Get-Process -Name \"node\" -ErrorAction SilentlyContinue)",
+      "Bash(git add *)",
+      "Bash(git commit *)",
+      "Bash(node -e ' *)"
     ],
     "additionalDirectories": [
       "C:\\SOLICITUD INDIRECTOS\\solicitudes-indirectos\\src\\app\\api\\solicitudes\\[id]",

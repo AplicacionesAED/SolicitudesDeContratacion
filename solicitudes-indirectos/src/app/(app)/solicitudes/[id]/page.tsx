@@ -142,10 +142,15 @@ export default async function SolicitudDetallePage({ params }: PageProps) {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const solicitud: any = {
     ...raw,
+    valorFinal: raw.valorFinal ? Number(raw.valorFinal) : null,
     frentesIds: parsedFrentesIds,
     proyectoNombre: proyecto?.nombre ?? `Proyecto #${raw.proyectoId}`,
     frentesNombres: frentes.map((f) => f.nombre),
     etapasUnicas,
+    otrosis: raw.otrosis.map((o) => ({
+      ...o,
+      valorFinal: o.valorFinal ? Number(o.valorFinal) : null,
+    })),
   };
 
   const archivos = [
@@ -396,7 +401,7 @@ export default async function SolicitudDetallePage({ params }: PageProps) {
         )}
       </div>
 
-      {/* Sección 6 — Cronograma */}
+      {/* Cronograma */}
       <CronogramasSection
         originalCronograma={solicitud.cronograma ?? null}
         otrosis={solicitud.otrosis ?? []}
@@ -515,11 +520,10 @@ export default async function SolicitudDetallePage({ params }: PageProps) {
                       )}
                       {/* Nota */}
                       {entry.nota && (
-                        <p className={`text-sm mt-1 px-3 py-2 rounded-lg border-l-4 ${
-                          isNegative
-                            ? "bg-red-50 border-red-300 text-red-800"
-                            : "bg-gray-50 border-gray-300 text-gray-700"
-                        }`}>
+                        <p className={`text-sm mt-1 px-3 py-2 rounded-lg border-l-4 ${isNegative
+                          ? "bg-red-50 border-red-300 text-red-800"
+                          : "bg-gray-50 border-gray-300 text-gray-700"
+                          }`}>
                           {entry.nota}
                         </p>
                       )}

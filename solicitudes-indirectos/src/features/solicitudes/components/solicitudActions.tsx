@@ -15,10 +15,10 @@ import {
   PenLine,
 } from "lucide-react";
 import Link from "next/link";
-import { Button } from "@/components/ui/button";
-import { Modal } from "@/components/ui/modal";
-import { useToast } from "@/components/ui/toaster";
-import { Spinner } from "@/components/ui/spinner";
+import { Button } from "@/shared/ui/button";
+import { Modal } from "@/shared/ui/modal";
+import { useToast } from "@/shared/ui/toaster";
+import { Spinner } from "@/shared/ui/spinner";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 

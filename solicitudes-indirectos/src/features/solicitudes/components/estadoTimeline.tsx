@@ -45,7 +45,6 @@ function getEstadoDate(
   estado: string,
   historial: HistorialEntry[]
 ): string | null {
-  // Map estado to the accion that produces it
   const accionMap: Record<string, string> = {
     ENVIADA: "ENVIAR",
     APROBADA_DIRECTOR: "APROBAR_DIRECTOR",

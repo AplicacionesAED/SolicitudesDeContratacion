@@ -46,6 +46,13 @@ interface CronogramaDetalle {
 
 interface SolicitudDetalle extends SolicitudRow {
   cronograma?: CronogramaDetalle | null;
+  otrosis?: {
+    id: number;
+    estado: string;
+    creadoEn: string;
+    valorFinal?: number | string | null;
+    cronograma: CronogramaDetalle | null;
+  }[];
 }
 
 export interface OtrosiFormProps {
@@ -107,8 +114,48 @@ export function OtrosiForm({ tipo }: OtrosiFormProps) {
       if (!res.ok) throw new Error("Error al cargar detalle");
       const data: SolicitudDetalle = await res.json();
       setSelectedParent(data);
-      setCronograma(defaultCronograma);
-      setNuevoValor("");
+
+      // Find the "vigente" (current) baseline: most recent completed Otrosí, or the parent itself
+      const completedOtrosis = (data.otrosis || [])
+        .filter((o) => o.estado === "COMPLETADA")
+        .sort((a, b) => new Date(b.creadoEn).getTime() - new Date(a.creadoEn).getTime());
+
+      const baseline = completedOtrosis.length > 0 ? completedOtrosis[0] : data;
+
+      // Pre-fill cronograma from baseline if it exists
+      if (baseline.cronograma) {
+        setCronograma({
+          tieneFases: baseline.cronograma.tieneFases,
+          fechaInicio: baseline.cronograma.fechaInicio ? new Date(baseline.cronograma.fechaInicio).toISOString().split('T')[0] : "",
+          fechaFin: baseline.cronograma.fechaFin ? new Date(baseline.cronograma.fechaFin).toISOString().split('T')[0] : "",
+          fases: baseline.cronograma.fases.map(f => ({
+            numeroFase: f.numeroFase,
+            nombreFase: f.nombreFase,
+            fechaInicio: f.fechaInicio ? new Date(f.fechaInicio).toISOString().split('T')[0] : "",
+            fechaFin: f.fechaFin ? new Date(f.fechaFin).toISOString().split('T')[0] : "",
+            actividades: f.actividades.map(a => ({
+              descripcion: a.descripcion,
+              fechaInicio: a.fechaInicio ? new Date(a.fechaInicio).toISOString().split('T')[0] : "",
+              fechaFin: a.fechaFin ? new Date(a.fechaFin).toISOString().split('T')[0] : "",
+            }))
+          })),
+          actividades: baseline.cronograma.actividades.map(a => ({
+            descripcion: a.descripcion,
+            fechaInicio: a.fechaInicio ? new Date(a.fechaInicio).toISOString().split('T')[0] : "",
+            fechaFin: a.fechaFin ? new Date(a.fechaFin).toISOString().split('T')[0] : "",
+          }))
+        });
+      } else {
+        setCronograma(defaultCronograma);
+      }
+
+      // Pre-fill nuevoValor if applicable (TIEMPO_CANTIDAD) from baseline
+      if (tipo === "OTROSI_TIEMPO_CANTIDAD" && baseline.valorFinal != null) {
+        setNuevoValor(String(baseline.valorFinal));
+      } else {
+        setNuevoValor("");
+      }
+
       setCronogramaError("");
       setValorError("");
     } catch {

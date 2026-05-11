@@ -57,7 +57,6 @@ export function NotificacionesBell() {
         try {
           const { totalNoLeidas: newCount } = JSON.parse(event.data);
           if (newCount > prevCountRef.current) {
-            // Llegaron notificaciones nuevas: refrescar lista y pulsar la campana
             fetchNotificaciones();
             setNewPulse(true);
             setTimeout(() => setNewPulse(false), 2000);
@@ -71,7 +70,6 @@ export function NotificacionesBell() {
 
       es.onerror = () => {
         es.close();
-        // Reconectar en 15 s si falla
         retryTimeout = setTimeout(connect, 15_000);
       };
     }

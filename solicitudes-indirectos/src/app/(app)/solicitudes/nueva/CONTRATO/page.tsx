@@ -1,7 +1,7 @@
 "use client";
 
-import { SolicitudContratoForm } from "@/components/solicitudes/SolicitudContratoForm";
+import { SolicitudForm } from "@/features/solicitudes/components/solicitudForm";
 
 export default function NuevaContratoPage() {
-  return <SolicitudContratoForm />;
+  return <SolicitudForm tipoSolicitud="CONTRATO" />;
 }

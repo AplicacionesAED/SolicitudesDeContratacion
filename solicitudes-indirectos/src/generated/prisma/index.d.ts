@@ -2347,10 +2347,12 @@ export namespace Prisma {
 
   export type SolicitudCountOutputType = {
     historial: number
+    otrosis: number
   }
 
   export type SolicitudCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     historial?: boolean | SolicitudCountOutputTypeCountHistorialArgs
+    otrosis?: boolean | SolicitudCountOutputTypeCountOtrosisArgs
   }
 
   // Custom InputTypes
@@ -2369,6 +2371,13 @@ export namespace Prisma {
    */
   export type SolicitudCountOutputTypeCountHistorialArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: HistorialSolicitudWhereInput
+  }
+
+  /**
+   * SolicitudCountOutputType without action
+   */
+  export type SolicitudCountOutputTypeCountOtrosisArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: SolicitudWhereInput
   }
 
 
@@ -11644,6 +11653,7 @@ export namespace Prisma {
     proyectoId: number | null
     terceroId: number | null
     valorFinal: Decimal | null
+    solicitudPadreId: number | null
   }
 
   export type SolicitudSumAggregateOutputType = {
@@ -11651,6 +11661,7 @@ export namespace Prisma {
     proyectoId: number | null
     terceroId: number | null
     valorFinal: Decimal | null
+    solicitudPadreId: number | null
   }
 
   export type SolicitudMinAggregateOutputType = {
@@ -11700,6 +11711,7 @@ export namespace Prisma {
     necesitaRevision: boolean | null
     numeroContratoAdpro: string | null
     estado: string | null
+    solicitudPadreId: number | null
     creadoEn: Date | null
     actualizadoEn: Date | null
   }
@@ -11751,6 +11763,7 @@ export namespace Prisma {
     necesitaRevision: boolean | null
     numeroContratoAdpro: string | null
     estado: string | null
+    solicitudPadreId: number | null
     creadoEn: Date | null
     actualizadoEn: Date | null
   }
@@ -11802,6 +11815,7 @@ export namespace Prisma {
     necesitaRevision: number
     numeroContratoAdpro: number
     estado: number
+    solicitudPadreId: number
     creadoEn: number
     actualizadoEn: number
     _all: number
@@ -11813,6 +11827,7 @@ export namespace Prisma {
     proyectoId?: true
     terceroId?: true
     valorFinal?: true
+    solicitudPadreId?: true
   }
 
   export type SolicitudSumAggregateInputType = {
@@ -11820,6 +11835,7 @@ export namespace Prisma {
     proyectoId?: true
     terceroId?: true
     valorFinal?: true
+    solicitudPadreId?: true
   }
 
   export type SolicitudMinAggregateInputType = {
@@ -11869,6 +11885,7 @@ export namespace Prisma {
     necesitaRevision?: true
     numeroContratoAdpro?: true
     estado?: true
+    solicitudPadreId?: true
     creadoEn?: true
     actualizadoEn?: true
   }
@@ -11920,6 +11937,7 @@ export namespace Prisma {
     necesitaRevision?: true
     numeroContratoAdpro?: true
     estado?: true
+    solicitudPadreId?: true
     creadoEn?: true
     actualizadoEn?: true
   }
@@ -11971,6 +11989,7 @@ export namespace Prisma {
     necesitaRevision?: true
     numeroContratoAdpro?: true
     estado?: true
+    solicitudPadreId?: true
     creadoEn?: true
     actualizadoEn?: true
     _all?: true
@@ -12109,6 +12128,7 @@ export namespace Prisma {
     necesitaRevision: boolean
     numeroContratoAdpro: string | null
     estado: string
+    solicitudPadreId: number | null
     creadoEn: Date
     actualizadoEn: Date
     _count: SolicitudCountAggregateOutputType | null
@@ -12179,6 +12199,7 @@ export namespace Prisma {
     necesitaRevision?: boolean
     numeroContratoAdpro?: boolean
     estado?: boolean
+    solicitudPadreId?: boolean
     creadoEn?: boolean
     actualizadoEn?: boolean
     solicitante?: boolean | UserDefaultArgs<ExtArgs>
@@ -12186,6 +12207,8 @@ export namespace Prisma {
     cronograma?: boolean | Solicitud$cronogramaArgs<ExtArgs>
     aprobador?: boolean | Solicitud$aprobadorArgs<ExtArgs>
     historial?: boolean | Solicitud$historialArgs<ExtArgs>
+    solicitudPadre?: boolean | Solicitud$solicitudPadreArgs<ExtArgs>
+    otrosis?: boolean | Solicitud$otrosisArgs<ExtArgs>
     _count?: boolean | SolicitudCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["solicitud"]>
 
@@ -12236,6 +12259,7 @@ export namespace Prisma {
     necesitaRevision?: boolean
     numeroContratoAdpro?: boolean
     estado?: boolean
+    solicitudPadreId?: boolean
     creadoEn?: boolean
     actualizadoEn?: boolean
   }
@@ -12247,6 +12271,8 @@ export namespace Prisma {
     cronograma?: boolean | Solicitud$cronogramaArgs<ExtArgs>
     aprobador?: boolean | Solicitud$aprobadorArgs<ExtArgs>
     historial?: boolean | Solicitud$historialArgs<ExtArgs>
+    solicitudPadre?: boolean | Solicitud$solicitudPadreArgs<ExtArgs>
+    otrosis?: boolean | Solicitud$otrosisArgs<ExtArgs>
     _count?: boolean | SolicitudCountOutputTypeDefaultArgs<ExtArgs>
   }
 
@@ -12259,6 +12285,8 @@ export namespace Prisma {
       cronograma: Prisma.$CronogramaContratoPayload<ExtArgs> | null
       aprobador: Prisma.$UserPayload<ExtArgs> | null
       historial: Prisma.$HistorialSolicitudPayload<ExtArgs>[]
+      solicitudPadre: Prisma.$SolicitudPayload<ExtArgs> | null
+      otrosis: Prisma.$SolicitudPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: number
@@ -12307,6 +12335,7 @@ export namespace Prisma {
       necesitaRevision: boolean
       numeroContratoAdpro: string | null
       estado: string
+      solicitudPadreId: number | null
       creadoEn: Date
       actualizadoEn: Date
     }, ExtArgs["result"]["solicitud"]>
@@ -12710,6 +12739,10 @@ export namespace Prisma {
 
     historial<T extends Solicitud$historialArgs<ExtArgs> = {}>(args?: Subset<T, Solicitud$historialArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$HistorialSolicitudPayload<ExtArgs>, T, 'findMany'> | Null>;
 
+    solicitudPadre<T extends Solicitud$solicitudPadreArgs<ExtArgs> = {}>(args?: Subset<T, Solicitud$solicitudPadreArgs<ExtArgs>>): Prisma__SolicitudClient<$Result.GetResult<Prisma.$SolicitudPayload<ExtArgs>, T, 'findUniqueOrThrow'> | null, null, ExtArgs>;
+
+    otrosis<T extends Solicitud$otrosisArgs<ExtArgs> = {}>(args?: Subset<T, Solicitud$otrosisArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$SolicitudPayload<ExtArgs>, T, 'findMany'> | Null>;
+
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -12784,6 +12817,7 @@ export namespace Prisma {
     readonly necesitaRevision: FieldRef<"Solicitud", 'Boolean'>
     readonly numeroContratoAdpro: FieldRef<"Solicitud", 'String'>
     readonly estado: FieldRef<"Solicitud", 'String'>
+    readonly solicitudPadreId: FieldRef<"Solicitud", 'Int'>
     readonly creadoEn: FieldRef<"Solicitud", 'DateTime'>
     readonly actualizadoEn: FieldRef<"Solicitud", 'DateTime'>
   }
@@ -13166,6 +13200,41 @@ export namespace Prisma {
     take?: number
     skip?: number
     distinct?: HistorialSolicitudScalarFieldEnum | HistorialSolicitudScalarFieldEnum[]
+  }
+
+  /**
+   * Solicitud.solicitudPadre
+   */
+  export type Solicitud$solicitudPadreArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Solicitud
+     */
+    select?: SolicitudSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SolicitudInclude<ExtArgs> | null
+    where?: SolicitudWhereInput
+  }
+
+  /**
+   * Solicitud.otrosis
+   */
+  export type Solicitud$otrosisArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Solicitud
+     */
+    select?: SolicitudSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SolicitudInclude<ExtArgs> | null
+    where?: SolicitudWhereInput
+    orderBy?: SolicitudOrderByWithRelationInput | SolicitudOrderByWithRelationInput[]
+    cursor?: SolicitudWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: SolicitudScalarFieldEnum | SolicitudScalarFieldEnum[]
   }
 
   /**
@@ -19400,6 +19469,7 @@ export namespace Prisma {
     necesitaRevision: 'necesitaRevision',
     numeroContratoAdpro: 'numeroContratoAdpro',
     estado: 'estado',
+    solicitudPadreId: 'solicitudPadreId',
     creadoEn: 'creadoEn',
     actualizadoEn: 'actualizadoEn'
   };
@@ -20261,6 +20331,7 @@ export namespace Prisma {
     necesitaRevision?: BoolFilter<"Solicitud"> | boolean
     numeroContratoAdpro?: StringNullableFilter<"Solicitud"> | string | null
     estado?: StringFilter<"Solicitud"> | string
+    solicitudPadreId?: IntNullableFilter<"Solicitud"> | number | null
     creadoEn?: DateTimeFilter<"Solicitud"> | Date | string
     actualizadoEn?: DateTimeFilter<"Solicitud"> | Date | string
     solicitante?: XOR<UserRelationFilter, UserWhereInput>
@@ -20268,6 +20339,8 @@ export namespace Prisma {
     cronograma?: XOR<CronogramaContratoNullableRelationFilter, CronogramaContratoWhereInput> | null
     aprobador?: XOR<UserNullableRelationFilter, UserWhereInput> | null
     historial?: HistorialSolicitudListRelationFilter
+    solicitudPadre?: XOR<SolicitudNullableRelationFilter, SolicitudWhereInput> | null
+    otrosis?: SolicitudListRelationFilter
   }
 
   export type SolicitudOrderByWithRelationInput = {
@@ -20317,6 +20390,7 @@ export namespace Prisma {
     necesitaRevision?: SortOrder
     numeroContratoAdpro?: SortOrderInput | SortOrder
     estado?: SortOrder
+    solicitudPadreId?: SortOrderInput | SortOrder
     creadoEn?: SortOrder
     actualizadoEn?: SortOrder
     solicitante?: UserOrderByWithRelationInput
@@ -20324,6 +20398,8 @@ export namespace Prisma {
     cronograma?: CronogramaContratoOrderByWithRelationInput
     aprobador?: UserOrderByWithRelationInput
     historial?: HistorialSolicitudOrderByRelationAggregateInput
+    solicitudPadre?: SolicitudOrderByWithRelationInput
+    otrosis?: SolicitudOrderByRelationAggregateInput
   }
 
   export type SolicitudWhereUniqueInput = Prisma.AtLeast<{
@@ -20376,6 +20452,7 @@ export namespace Prisma {
     necesitaRevision?: BoolFilter<"Solicitud"> | boolean
     numeroContratoAdpro?: StringNullableFilter<"Solicitud"> | string | null
     estado?: StringFilter<"Solicitud"> | string
+    solicitudPadreId?: IntNullableFilter<"Solicitud"> | number | null
     creadoEn?: DateTimeFilter<"Solicitud"> | Date | string
     actualizadoEn?: DateTimeFilter<"Solicitud"> | Date | string
     solicitante?: XOR<UserRelationFilter, UserWhereInput>
@@ -20383,6 +20460,8 @@ export namespace Prisma {
     cronograma?: XOR<CronogramaContratoNullableRelationFilter, CronogramaContratoWhereInput> | null
     aprobador?: XOR<UserNullableRelationFilter, UserWhereInput> | null
     historial?: HistorialSolicitudListRelationFilter
+    solicitudPadre?: XOR<SolicitudNullableRelationFilter, SolicitudWhereInput> | null
+    otrosis?: SolicitudListRelationFilter
   }, "id" | "consecutivo">
 
   export type SolicitudOrderByWithAggregationInput = {
@@ -20432,6 +20511,7 @@ export namespace Prisma {
     necesitaRevision?: SortOrder
     numeroContratoAdpro?: SortOrderInput | SortOrder
     estado?: SortOrder
+    solicitudPadreId?: SortOrderInput | SortOrder
     creadoEn?: SortOrder
     actualizadoEn?: SortOrder
     _count?: SolicitudCountOrderByAggregateInput
@@ -20491,6 +20571,7 @@ export namespace Prisma {
     necesitaRevision?: BoolWithAggregatesFilter<"Solicitud"> | boolean
     numeroContratoAdpro?: StringNullableWithAggregatesFilter<"Solicitud"> | string | null
     estado?: StringWithAggregatesFilter<"Solicitud"> | string
+    solicitudPadreId?: IntNullableWithAggregatesFilter<"Solicitud"> | number | null
     creadoEn?: DateTimeWithAggregatesFilter<"Solicitud"> | Date | string
     actualizadoEn?: DateTimeWithAggregatesFilter<"Solicitud"> | Date | string
   }
@@ -21581,6 +21662,8 @@ export namespace Prisma {
     cronograma?: CronogramaContratoCreateNestedOneWithoutSolicitudInput
     aprobador?: UserCreateNestedOneWithoutAprobacionesInput
     historial?: HistorialSolicitudCreateNestedManyWithoutSolicitudInput
+    solicitudPadre?: SolicitudCreateNestedOneWithoutOtrosisInput
+    otrosis?: SolicitudCreateNestedManyWithoutSolicitudPadreInput
   }
 
   export type SolicitudUncheckedCreateInput = {
@@ -21630,10 +21713,12 @@ export namespace Prisma {
     necesitaRevision?: boolean
     numeroContratoAdpro?: string | null
     estado?: string
+    solicitudPadreId?: number | null
     creadoEn?: Date | string
     actualizadoEn?: Date | string
     cronograma?: CronogramaContratoUncheckedCreateNestedOneWithoutSolicitudInput
     historial?: HistorialSolicitudUncheckedCreateNestedManyWithoutSolicitudInput
+    otrosis?: SolicitudUncheckedCreateNestedManyWithoutSolicitudPadreInput
   }
 
   export type SolicitudUpdateInput = {
@@ -21686,6 +21771,8 @@ export namespace Prisma {
     cronograma?: CronogramaContratoUpdateOneWithoutSolicitudNestedInput
     aprobador?: UserUpdateOneWithoutAprobacionesNestedInput
     historial?: HistorialSolicitudUpdateManyWithoutSolicitudNestedInput
+    solicitudPadre?: SolicitudUpdateOneWithoutOtrosisNestedInput
+    otrosis?: SolicitudUpdateManyWithoutSolicitudPadreNestedInput
   }
 
   export type SolicitudUncheckedUpdateInput = {
@@ -21735,10 +21822,12 @@ export namespace Prisma {
     necesitaRevision?: BoolFieldUpdateOperationsInput | boolean
     numeroContratoAdpro?: NullableStringFieldUpdateOperationsInput | string | null
     estado?: StringFieldUpdateOperationsInput | string
+    solicitudPadreId?: NullableIntFieldUpdateOperationsInput | number | null
     creadoEn?: DateTimeFieldUpdateOperationsInput | Date | string
     actualizadoEn?: DateTimeFieldUpdateOperationsInput | Date | string
     cronograma?: CronogramaContratoUncheckedUpdateOneWithoutSolicitudNestedInput
     historial?: HistorialSolicitudUncheckedUpdateManyWithoutSolicitudNestedInput
+    otrosis?: SolicitudUncheckedUpdateManyWithoutSolicitudPadreNestedInput
   }
 
   export type SolicitudCreateManyInput = {
@@ -21788,6 +21877,7 @@ export namespace Prisma {
     necesitaRevision?: boolean
     numeroContratoAdpro?: string | null
     estado?: string
+    solicitudPadreId?: number | null
     creadoEn?: Date | string
     actualizadoEn?: Date | string
   }
@@ -21886,6 +21976,7 @@ export namespace Prisma {
     necesitaRevision?: BoolFieldUpdateOperationsInput | boolean
     numeroContratoAdpro?: NullableStringFieldUpdateOperationsInput | string | null
     estado?: StringFieldUpdateOperationsInput | string
+    solicitudPadreId?: NullableIntFieldUpdateOperationsInput | number | null
     creadoEn?: DateTimeFieldUpdateOperationsInput | Date | string
     actualizadoEn?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -22899,6 +22990,11 @@ export namespace Prisma {
     isNot?: UserWhereInput | null
   }
 
+  export type SolicitudNullableRelationFilter = {
+    is?: SolicitudWhereInput | null
+    isNot?: SolicitudWhereInput | null
+  }
+
   export type SolicitudCountOrderByAggregateInput = {
     id?: SortOrder
     consecutivo?: SortOrder
@@ -22946,6 +23042,7 @@ export namespace Prisma {
     necesitaRevision?: SortOrder
     numeroContratoAdpro?: SortOrder
     estado?: SortOrder
+    solicitudPadreId?: SortOrder
     creadoEn?: SortOrder
     actualizadoEn?: SortOrder
   }
@@ -22955,6 +23052,7 @@ export namespace Prisma {
     proyectoId?: SortOrder
     terceroId?: SortOrder
     valorFinal?: SortOrder
+    solicitudPadreId?: SortOrder
   }
 
   export type SolicitudMaxOrderByAggregateInput = {
@@ -23004,6 +23102,7 @@ export namespace Prisma {
     necesitaRevision?: SortOrder
     numeroContratoAdpro?: SortOrder
     estado?: SortOrder
+    solicitudPadreId?: SortOrder
     creadoEn?: SortOrder
     actualizadoEn?: SortOrder
   }
@@ -23055,6 +23154,7 @@ export namespace Prisma {
     necesitaRevision?: SortOrder
     numeroContratoAdpro?: SortOrder
     estado?: SortOrder
+    solicitudPadreId?: SortOrder
     creadoEn?: SortOrder
     actualizadoEn?: SortOrder
   }
@@ -23064,6 +23164,7 @@ export namespace Prisma {
     proyectoId?: SortOrder
     terceroId?: SortOrder
     valorFinal?: SortOrder
+    solicitudPadreId?: SortOrder
   }
 
   export type DecimalNullableWithAggregatesFilter<$PrismaModel = never> = {
@@ -23949,6 +24050,19 @@ export namespace Prisma {
     connect?: HistorialSolicitudWhereUniqueInput | HistorialSolicitudWhereUniqueInput[]
   }
 
+  export type SolicitudCreateNestedOneWithoutOtrosisInput = {
+    create?: XOR<SolicitudCreateWithoutOtrosisInput, SolicitudUncheckedCreateWithoutOtrosisInput>
+    connectOrCreate?: SolicitudCreateOrConnectWithoutOtrosisInput
+    connect?: SolicitudWhereUniqueInput
+  }
+
+  export type SolicitudCreateNestedManyWithoutSolicitudPadreInput = {
+    create?: XOR<SolicitudCreateWithoutSolicitudPadreInput, SolicitudUncheckedCreateWithoutSolicitudPadreInput> | SolicitudCreateWithoutSolicitudPadreInput[] | SolicitudUncheckedCreateWithoutSolicitudPadreInput[]
+    connectOrCreate?: SolicitudCreateOrConnectWithoutSolicitudPadreInput | SolicitudCreateOrConnectWithoutSolicitudPadreInput[]
+    createMany?: SolicitudCreateManySolicitudPadreInputEnvelope
+    connect?: SolicitudWhereUniqueInput | SolicitudWhereUniqueInput[]
+  }
+
   export type CronogramaContratoUncheckedCreateNestedOneWithoutSolicitudInput = {
     create?: XOR<CronogramaContratoCreateWithoutSolicitudInput, CronogramaContratoUncheckedCreateWithoutSolicitudInput>
     connectOrCreate?: CronogramaContratoCreateOrConnectWithoutSolicitudInput
@@ -23960,6 +24074,13 @@ export namespace Prisma {
     connectOrCreate?: HistorialSolicitudCreateOrConnectWithoutSolicitudInput | HistorialSolicitudCreateOrConnectWithoutSolicitudInput[]
     createMany?: HistorialSolicitudCreateManySolicitudInputEnvelope
     connect?: HistorialSolicitudWhereUniqueInput | HistorialSolicitudWhereUniqueInput[]
+  }
+
+  export type SolicitudUncheckedCreateNestedManyWithoutSolicitudPadreInput = {
+    create?: XOR<SolicitudCreateWithoutSolicitudPadreInput, SolicitudUncheckedCreateWithoutSolicitudPadreInput> | SolicitudCreateWithoutSolicitudPadreInput[] | SolicitudUncheckedCreateWithoutSolicitudPadreInput[]
+    connectOrCreate?: SolicitudCreateOrConnectWithoutSolicitudPadreInput | SolicitudCreateOrConnectWithoutSolicitudPadreInput[]
+    createMany?: SolicitudCreateManySolicitudPadreInputEnvelope
+    connect?: SolicitudWhereUniqueInput | SolicitudWhereUniqueInput[]
   }
 
   export type NullableDecimalFieldUpdateOperationsInput = {
@@ -24026,6 +24147,30 @@ export namespace Prisma {
     deleteMany?: HistorialSolicitudScalarWhereInput | HistorialSolicitudScalarWhereInput[]
   }
 
+  export type SolicitudUpdateOneWithoutOtrosisNestedInput = {
+    create?: XOR<SolicitudCreateWithoutOtrosisInput, SolicitudUncheckedCreateWithoutOtrosisInput>
+    connectOrCreate?: SolicitudCreateOrConnectWithoutOtrosisInput
+    upsert?: SolicitudUpsertWithoutOtrosisInput
+    disconnect?: SolicitudWhereInput | boolean
+    delete?: SolicitudWhereInput | boolean
+    connect?: SolicitudWhereUniqueInput
+    update?: XOR<XOR<SolicitudUpdateToOneWithWhereWithoutOtrosisInput, SolicitudUpdateWithoutOtrosisInput>, SolicitudUncheckedUpdateWithoutOtrosisInput>
+  }
+
+  export type SolicitudUpdateManyWithoutSolicitudPadreNestedInput = {
+    create?: XOR<SolicitudCreateWithoutSolicitudPadreInput, SolicitudUncheckedCreateWithoutSolicitudPadreInput> | SolicitudCreateWithoutSolicitudPadreInput[] | SolicitudUncheckedCreateWithoutSolicitudPadreInput[]
+    connectOrCreate?: SolicitudCreateOrConnectWithoutSolicitudPadreInput | SolicitudCreateOrConnectWithoutSolicitudPadreInput[]
+    upsert?: SolicitudUpsertWithWhereUniqueWithoutSolicitudPadreInput | SolicitudUpsertWithWhereUniqueWithoutSolicitudPadreInput[]
+    createMany?: SolicitudCreateManySolicitudPadreInputEnvelope
+    set?: SolicitudWhereUniqueInput | SolicitudWhereUniqueInput[]
+    disconnect?: SolicitudWhereUniqueInput | SolicitudWhereUniqueInput[]
+    delete?: SolicitudWhereUniqueInput | SolicitudWhereUniqueInput[]
+    connect?: SolicitudWhereUniqueInput | SolicitudWhereUniqueInput[]
+    update?: SolicitudUpdateWithWhereUniqueWithoutSolicitudPadreInput | SolicitudUpdateWithWhereUniqueWithoutSolicitudPadreInput[]
+    updateMany?: SolicitudUpdateManyWithWhereWithoutSolicitudPadreInput | SolicitudUpdateManyWithWhereWithoutSolicitudPadreInput[]
+    deleteMany?: SolicitudScalarWhereInput | SolicitudScalarWhereInput[]
+  }
+
   export type CronogramaContratoUncheckedUpdateOneWithoutSolicitudNestedInput = {
     create?: XOR<CronogramaContratoCreateWithoutSolicitudInput, CronogramaContratoUncheckedCreateWithoutSolicitudInput>
     connectOrCreate?: CronogramaContratoCreateOrConnectWithoutSolicitudInput
@@ -24048,6 +24193,20 @@ export namespace Prisma {
     update?: HistorialSolicitudUpdateWithWhereUniqueWithoutSolicitudInput | HistorialSolicitudUpdateWithWhereUniqueWithoutSolicitudInput[]
     updateMany?: HistorialSolicitudUpdateManyWithWhereWithoutSolicitudInput | HistorialSolicitudUpdateManyWithWhereWithoutSolicitudInput[]
     deleteMany?: HistorialSolicitudScalarWhereInput | HistorialSolicitudScalarWhereInput[]
+  }
+
+  export type SolicitudUncheckedUpdateManyWithoutSolicitudPadreNestedInput = {
+    create?: XOR<SolicitudCreateWithoutSolicitudPadreInput, SolicitudUncheckedCreateWithoutSolicitudPadreInput> | SolicitudCreateWithoutSolicitudPadreInput[] | SolicitudUncheckedCreateWithoutSolicitudPadreInput[]
+    connectOrCreate?: SolicitudCreateOrConnectWithoutSolicitudPadreInput | SolicitudCreateOrConnectWithoutSolicitudPadreInput[]
+    upsert?: SolicitudUpsertWithWhereUniqueWithoutSolicitudPadreInput | SolicitudUpsertWithWhereUniqueWithoutSolicitudPadreInput[]
+    createMany?: SolicitudCreateManySolicitudPadreInputEnvelope
+    set?: SolicitudWhereUniqueInput | SolicitudWhereUniqueInput[]
+    disconnect?: SolicitudWhereUniqueInput | SolicitudWhereUniqueInput[]
+    delete?: SolicitudWhereUniqueInput | SolicitudWhereUniqueInput[]
+    connect?: SolicitudWhereUniqueInput | SolicitudWhereUniqueInput[]
+    update?: SolicitudUpdateWithWhereUniqueWithoutSolicitudPadreInput | SolicitudUpdateWithWhereUniqueWithoutSolicitudPadreInput[]
+    updateMany?: SolicitudUpdateManyWithWhereWithoutSolicitudPadreInput | SolicitudUpdateManyWithWhereWithoutSolicitudPadreInput[]
+    deleteMany?: SolicitudScalarWhereInput | SolicitudScalarWhereInput[]
   }
 
   export type SolicitudCreateNestedOneWithoutHistorialInput = {
@@ -24842,6 +25001,8 @@ export namespace Prisma {
     cronograma?: CronogramaContratoCreateNestedOneWithoutSolicitudInput
     aprobador?: UserCreateNestedOneWithoutAprobacionesInput
     historial?: HistorialSolicitudCreateNestedManyWithoutSolicitudInput
+    solicitudPadre?: SolicitudCreateNestedOneWithoutOtrosisInput
+    otrosis?: SolicitudCreateNestedManyWithoutSolicitudPadreInput
   }
 
   export type SolicitudUncheckedCreateWithoutSolicitanteInput = {
@@ -24890,10 +25051,12 @@ export namespace Prisma {
     necesitaRevision?: boolean
     numeroContratoAdpro?: string | null
     estado?: string
+    solicitudPadreId?: number | null
     creadoEn?: Date | string
     actualizadoEn?: Date | string
     cronograma?: CronogramaContratoUncheckedCreateNestedOneWithoutSolicitudInput
     historial?: HistorialSolicitudUncheckedCreateNestedManyWithoutSolicitudInput
+    otrosis?: SolicitudUncheckedCreateNestedManyWithoutSolicitudPadreInput
   }
 
   export type SolicitudCreateOrConnectWithoutSolicitanteInput = {
@@ -24955,6 +25118,8 @@ export namespace Prisma {
     tercero?: TerceroCreateNestedOneWithoutSolicitudesInput
     cronograma?: CronogramaContratoCreateNestedOneWithoutSolicitudInput
     historial?: HistorialSolicitudCreateNestedManyWithoutSolicitudInput
+    solicitudPadre?: SolicitudCreateNestedOneWithoutOtrosisInput
+    otrosis?: SolicitudCreateNestedManyWithoutSolicitudPadreInput
   }
 
   export type SolicitudUncheckedCreateWithoutAprobadorInput = {
@@ -25003,10 +25168,12 @@ export namespace Prisma {
     necesitaRevision?: boolean
     numeroContratoAdpro?: string | null
     estado?: string
+    solicitudPadreId?: number | null
     creadoEn?: Date | string
     actualizadoEn?: Date | string
     cronograma?: CronogramaContratoUncheckedCreateNestedOneWithoutSolicitudInput
     historial?: HistorialSolicitudUncheckedCreateNestedManyWithoutSolicitudInput
+    otrosis?: SolicitudUncheckedCreateNestedManyWithoutSolicitudPadreInput
   }
 
   export type SolicitudCreateOrConnectWithoutAprobadorInput = {
@@ -25215,6 +25382,7 @@ export namespace Prisma {
     necesitaRevision?: BoolFilter<"Solicitud"> | boolean
     numeroContratoAdpro?: StringNullableFilter<"Solicitud"> | string | null
     estado?: StringFilter<"Solicitud"> | string
+    solicitudPadreId?: IntNullableFilter<"Solicitud"> | number | null
     creadoEn?: DateTimeFilter<"Solicitud"> | Date | string
     actualizadoEn?: DateTimeFilter<"Solicitud"> | Date | string
   }
@@ -25742,6 +25910,8 @@ export namespace Prisma {
     cronograma?: CronogramaContratoCreateNestedOneWithoutSolicitudInput
     aprobador?: UserCreateNestedOneWithoutAprobacionesInput
     historial?: HistorialSolicitudCreateNestedManyWithoutSolicitudInput
+    solicitudPadre?: SolicitudCreateNestedOneWithoutOtrosisInput
+    otrosis?: SolicitudCreateNestedManyWithoutSolicitudPadreInput
   }
 
   export type SolicitudUncheckedCreateWithoutTerceroInput = {
@@ -25790,10 +25960,12 @@ export namespace Prisma {
     necesitaRevision?: boolean
     numeroContratoAdpro?: string | null
     estado?: string
+    solicitudPadreId?: number | null
     creadoEn?: Date | string
     actualizadoEn?: Date | string
     cronograma?: CronogramaContratoUncheckedCreateNestedOneWithoutSolicitudInput
     historial?: HistorialSolicitudUncheckedCreateNestedManyWithoutSolicitudInput
+    otrosis?: SolicitudUncheckedCreateNestedManyWithoutSolicitudPadreInput
   }
 
   export type SolicitudCreateOrConnectWithoutTerceroInput = {
@@ -26009,6 +26181,235 @@ export namespace Prisma {
     skipDuplicates?: boolean
   }
 
+  export type SolicitudCreateWithoutOtrosisInput = {
+    consecutivo: string
+    tipo: string
+    fechaSolicitud?: Date | string
+    proyectoId: number
+    frentesIds?: string
+    descripcionActividad?: string | null
+    plazoEjecucion?: string | null
+    formaPago?: string | null
+    valorFinal?: Decimal | DecimalJsLike | number | string | null
+    tipoContrato?: string | null
+    asunto?: string | null
+    creacionTercero?: boolean | null
+    contratanteNombre?: string | null
+    contratanteNit?: string | null
+    alcance?: string | null
+    terminosReferencia?: string | null
+    condicionesEspeciales?: string | null
+    valorEnLetras?: string | null
+    docTerminosReferencia?: boolean
+    docCamaraComercio?: boolean
+    docEstadosFinancieros?: boolean
+    docEstadoResultados?: boolean
+    docSagrilaft?: boolean
+    docComposicionAccionaria?: boolean
+    docRut?: boolean
+    docCedulaRepresentante?: boolean
+    docCertificacionBancaria?: boolean
+    docCotizacion?: boolean
+    archivoCuadroComparativo?: string | null
+    archivoCotizacion?: string | null
+    archivoFormatoSolicitud?: string | null
+    archivoBEP?: string | null
+    archivosAnexos?: string
+    fechaAprobacionDirector?: Date | string | null
+    responsableContratosTramiteId?: string | null
+    responsableContratosMinutaId?: string | null
+    coordinadorControlesId?: string | null
+    directorControlesId?: string | null
+    notaContratacion?: string | null
+    necesitaRevision?: boolean
+    numeroContratoAdpro?: string | null
+    estado?: string
+    creadoEn?: Date | string
+    actualizadoEn?: Date | string
+    solicitante: UserCreateNestedOneWithoutSolicitudesInput
+    tercero?: TerceroCreateNestedOneWithoutSolicitudesInput
+    cronograma?: CronogramaContratoCreateNestedOneWithoutSolicitudInput
+    aprobador?: UserCreateNestedOneWithoutAprobacionesInput
+    historial?: HistorialSolicitudCreateNestedManyWithoutSolicitudInput
+    solicitudPadre?: SolicitudCreateNestedOneWithoutOtrosisInput
+  }
+
+  export type SolicitudUncheckedCreateWithoutOtrosisInput = {
+    id?: number
+    consecutivo: string
+    tipo: string
+    fechaSolicitud?: Date | string
+    solicitanteId: string
+    proyectoId: number
+    frentesIds?: string
+    terceroId?: number | null
+    descripcionActividad?: string | null
+    plazoEjecucion?: string | null
+    formaPago?: string | null
+    valorFinal?: Decimal | DecimalJsLike | number | string | null
+    tipoContrato?: string | null
+    asunto?: string | null
+    creacionTercero?: boolean | null
+    contratanteNombre?: string | null
+    contratanteNit?: string | null
+    alcance?: string | null
+    terminosReferencia?: string | null
+    condicionesEspeciales?: string | null
+    valorEnLetras?: string | null
+    docTerminosReferencia?: boolean
+    docCamaraComercio?: boolean
+    docEstadosFinancieros?: boolean
+    docEstadoResultados?: boolean
+    docSagrilaft?: boolean
+    docComposicionAccionaria?: boolean
+    docRut?: boolean
+    docCedulaRepresentante?: boolean
+    docCertificacionBancaria?: boolean
+    docCotizacion?: boolean
+    archivoCuadroComparativo?: string | null
+    archivoCotizacion?: string | null
+    archivoFormatoSolicitud?: string | null
+    archivoBEP?: string | null
+    archivosAnexos?: string
+    aprobadorId?: string | null
+    fechaAprobacionDirector?: Date | string | null
+    responsableContratosTramiteId?: string | null
+    responsableContratosMinutaId?: string | null
+    coordinadorControlesId?: string | null
+    directorControlesId?: string | null
+    notaContratacion?: string | null
+    necesitaRevision?: boolean
+    numeroContratoAdpro?: string | null
+    estado?: string
+    solicitudPadreId?: number | null
+    creadoEn?: Date | string
+    actualizadoEn?: Date | string
+    cronograma?: CronogramaContratoUncheckedCreateNestedOneWithoutSolicitudInput
+    historial?: HistorialSolicitudUncheckedCreateNestedManyWithoutSolicitudInput
+  }
+
+  export type SolicitudCreateOrConnectWithoutOtrosisInput = {
+    where: SolicitudWhereUniqueInput
+    create: XOR<SolicitudCreateWithoutOtrosisInput, SolicitudUncheckedCreateWithoutOtrosisInput>
+  }
+
+  export type SolicitudCreateWithoutSolicitudPadreInput = {
+    consecutivo: string
+    tipo: string
+    fechaSolicitud?: Date | string
+    proyectoId: number
+    frentesIds?: string
+    descripcionActividad?: string | null
+    plazoEjecucion?: string | null
+    formaPago?: string | null
+    valorFinal?: Decimal | DecimalJsLike | number | string | null
+    tipoContrato?: string | null
+    asunto?: string | null
+    creacionTercero?: boolean | null
+    contratanteNombre?: string | null
+    contratanteNit?: string | null
+    alcance?: string | null
+    terminosReferencia?: string | null
+    condicionesEspeciales?: string | null
+    valorEnLetras?: string | null
+    docTerminosReferencia?: boolean
+    docCamaraComercio?: boolean
+    docEstadosFinancieros?: boolean
+    docEstadoResultados?: boolean
+    docSagrilaft?: boolean
+    docComposicionAccionaria?: boolean
+    docRut?: boolean
+    docCedulaRepresentante?: boolean
+    docCertificacionBancaria?: boolean
+    docCotizacion?: boolean
+    archivoCuadroComparativo?: string | null
+    archivoCotizacion?: string | null
+    archivoFormatoSolicitud?: string | null
+    archivoBEP?: string | null
+    archivosAnexos?: string
+    fechaAprobacionDirector?: Date | string | null
+    responsableContratosTramiteId?: string | null
+    responsableContratosMinutaId?: string | null
+    coordinadorControlesId?: string | null
+    directorControlesId?: string | null
+    notaContratacion?: string | null
+    necesitaRevision?: boolean
+    numeroContratoAdpro?: string | null
+    estado?: string
+    creadoEn?: Date | string
+    actualizadoEn?: Date | string
+    solicitante: UserCreateNestedOneWithoutSolicitudesInput
+    tercero?: TerceroCreateNestedOneWithoutSolicitudesInput
+    cronograma?: CronogramaContratoCreateNestedOneWithoutSolicitudInput
+    aprobador?: UserCreateNestedOneWithoutAprobacionesInput
+    historial?: HistorialSolicitudCreateNestedManyWithoutSolicitudInput
+    otrosis?: SolicitudCreateNestedManyWithoutSolicitudPadreInput
+  }
+
+  export type SolicitudUncheckedCreateWithoutSolicitudPadreInput = {
+    id?: number
+    consecutivo: string
+    tipo: string
+    fechaSolicitud?: Date | string
+    solicitanteId: string
+    proyectoId: number
+    frentesIds?: string
+    terceroId?: number | null
+    descripcionActividad?: string | null
+    plazoEjecucion?: string | null
+    formaPago?: string | null
+    valorFinal?: Decimal | DecimalJsLike | number | string | null
+    tipoContrato?: string | null
+    asunto?: string | null
+    creacionTercero?: boolean | null
+    contratanteNombre?: string | null
+    contratanteNit?: string | null
+    alcance?: string | null
+    terminosReferencia?: string | null
+    condicionesEspeciales?: string | null
+    valorEnLetras?: string | null
+    docTerminosReferencia?: boolean
+    docCamaraComercio?: boolean
+    docEstadosFinancieros?: boolean
+    docEstadoResultados?: boolean
+    docSagrilaft?: boolean
+    docComposicionAccionaria?: boolean
+    docRut?: boolean
+    docCedulaRepresentante?: boolean
+    docCertificacionBancaria?: boolean
+    docCotizacion?: boolean
+    archivoCuadroComparativo?: string | null
+    archivoCotizacion?: string | null
+    archivoFormatoSolicitud?: string | null
+    archivoBEP?: string | null
+    archivosAnexos?: string
+    aprobadorId?: string | null
+    fechaAprobacionDirector?: Date | string | null
+    responsableContratosTramiteId?: string | null
+    responsableContratosMinutaId?: string | null
+    coordinadorControlesId?: string | null
+    directorControlesId?: string | null
+    notaContratacion?: string | null
+    necesitaRevision?: boolean
+    numeroContratoAdpro?: string | null
+    estado?: string
+    creadoEn?: Date | string
+    actualizadoEn?: Date | string
+    cronograma?: CronogramaContratoUncheckedCreateNestedOneWithoutSolicitudInput
+    historial?: HistorialSolicitudUncheckedCreateNestedManyWithoutSolicitudInput
+    otrosis?: SolicitudUncheckedCreateNestedManyWithoutSolicitudPadreInput
+  }
+
+  export type SolicitudCreateOrConnectWithoutSolicitudPadreInput = {
+    where: SolicitudWhereUniqueInput
+    create: XOR<SolicitudCreateWithoutSolicitudPadreInput, SolicitudUncheckedCreateWithoutSolicitudPadreInput>
+  }
+
+  export type SolicitudCreateManySolicitudPadreInputEnvelope = {
+    data: SolicitudCreateManySolicitudPadreInput | SolicitudCreateManySolicitudPadreInput[]
+    skipDuplicates?: boolean
+  }
+
   export type UserUpsertWithoutSolicitudesInput = {
     update: XOR<UserUpdateWithoutSolicitudesInput, UserUncheckedUpdateWithoutSolicitudesInput>
     create: XOR<UserCreateWithoutSolicitudesInput, UserUncheckedCreateWithoutSolicitudesInput>
@@ -26211,6 +26612,140 @@ export namespace Prisma {
     data: XOR<HistorialSolicitudUpdateManyMutationInput, HistorialSolicitudUncheckedUpdateManyWithoutSolicitudInput>
   }
 
+  export type SolicitudUpsertWithoutOtrosisInput = {
+    update: XOR<SolicitudUpdateWithoutOtrosisInput, SolicitudUncheckedUpdateWithoutOtrosisInput>
+    create: XOR<SolicitudCreateWithoutOtrosisInput, SolicitudUncheckedCreateWithoutOtrosisInput>
+    where?: SolicitudWhereInput
+  }
+
+  export type SolicitudUpdateToOneWithWhereWithoutOtrosisInput = {
+    where?: SolicitudWhereInput
+    data: XOR<SolicitudUpdateWithoutOtrosisInput, SolicitudUncheckedUpdateWithoutOtrosisInput>
+  }
+
+  export type SolicitudUpdateWithoutOtrosisInput = {
+    consecutivo?: StringFieldUpdateOperationsInput | string
+    tipo?: StringFieldUpdateOperationsInput | string
+    fechaSolicitud?: DateTimeFieldUpdateOperationsInput | Date | string
+    proyectoId?: IntFieldUpdateOperationsInput | number
+    frentesIds?: StringFieldUpdateOperationsInput | string
+    descripcionActividad?: NullableStringFieldUpdateOperationsInput | string | null
+    plazoEjecucion?: NullableStringFieldUpdateOperationsInput | string | null
+    formaPago?: NullableStringFieldUpdateOperationsInput | string | null
+    valorFinal?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    tipoContrato?: NullableStringFieldUpdateOperationsInput | string | null
+    asunto?: NullableStringFieldUpdateOperationsInput | string | null
+    creacionTercero?: NullableBoolFieldUpdateOperationsInput | boolean | null
+    contratanteNombre?: NullableStringFieldUpdateOperationsInput | string | null
+    contratanteNit?: NullableStringFieldUpdateOperationsInput | string | null
+    alcance?: NullableStringFieldUpdateOperationsInput | string | null
+    terminosReferencia?: NullableStringFieldUpdateOperationsInput | string | null
+    condicionesEspeciales?: NullableStringFieldUpdateOperationsInput | string | null
+    valorEnLetras?: NullableStringFieldUpdateOperationsInput | string | null
+    docTerminosReferencia?: BoolFieldUpdateOperationsInput | boolean
+    docCamaraComercio?: BoolFieldUpdateOperationsInput | boolean
+    docEstadosFinancieros?: BoolFieldUpdateOperationsInput | boolean
+    docEstadoResultados?: BoolFieldUpdateOperationsInput | boolean
+    docSagrilaft?: BoolFieldUpdateOperationsInput | boolean
+    docComposicionAccionaria?: BoolFieldUpdateOperationsInput | boolean
+    docRut?: BoolFieldUpdateOperationsInput | boolean
+    docCedulaRepresentante?: BoolFieldUpdateOperationsInput | boolean
+    docCertificacionBancaria?: BoolFieldUpdateOperationsInput | boolean
+    docCotizacion?: BoolFieldUpdateOperationsInput | boolean
+    archivoCuadroComparativo?: NullableStringFieldUpdateOperationsInput | string | null
+    archivoCotizacion?: NullableStringFieldUpdateOperationsInput | string | null
+    archivoFormatoSolicitud?: NullableStringFieldUpdateOperationsInput | string | null
+    archivoBEP?: NullableStringFieldUpdateOperationsInput | string | null
+    archivosAnexos?: StringFieldUpdateOperationsInput | string
+    fechaAprobacionDirector?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    responsableContratosTramiteId?: NullableStringFieldUpdateOperationsInput | string | null
+    responsableContratosMinutaId?: NullableStringFieldUpdateOperationsInput | string | null
+    coordinadorControlesId?: NullableStringFieldUpdateOperationsInput | string | null
+    directorControlesId?: NullableStringFieldUpdateOperationsInput | string | null
+    notaContratacion?: NullableStringFieldUpdateOperationsInput | string | null
+    necesitaRevision?: BoolFieldUpdateOperationsInput | boolean
+    numeroContratoAdpro?: NullableStringFieldUpdateOperationsInput | string | null
+    estado?: StringFieldUpdateOperationsInput | string
+    creadoEn?: DateTimeFieldUpdateOperationsInput | Date | string
+    actualizadoEn?: DateTimeFieldUpdateOperationsInput | Date | string
+    solicitante?: UserUpdateOneRequiredWithoutSolicitudesNestedInput
+    tercero?: TerceroUpdateOneWithoutSolicitudesNestedInput
+    cronograma?: CronogramaContratoUpdateOneWithoutSolicitudNestedInput
+    aprobador?: UserUpdateOneWithoutAprobacionesNestedInput
+    historial?: HistorialSolicitudUpdateManyWithoutSolicitudNestedInput
+    solicitudPadre?: SolicitudUpdateOneWithoutOtrosisNestedInput
+  }
+
+  export type SolicitudUncheckedUpdateWithoutOtrosisInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    consecutivo?: StringFieldUpdateOperationsInput | string
+    tipo?: StringFieldUpdateOperationsInput | string
+    fechaSolicitud?: DateTimeFieldUpdateOperationsInput | Date | string
+    solicitanteId?: StringFieldUpdateOperationsInput | string
+    proyectoId?: IntFieldUpdateOperationsInput | number
+    frentesIds?: StringFieldUpdateOperationsInput | string
+    terceroId?: NullableIntFieldUpdateOperationsInput | number | null
+    descripcionActividad?: NullableStringFieldUpdateOperationsInput | string | null
+    plazoEjecucion?: NullableStringFieldUpdateOperationsInput | string | null
+    formaPago?: NullableStringFieldUpdateOperationsInput | string | null
+    valorFinal?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    tipoContrato?: NullableStringFieldUpdateOperationsInput | string | null
+    asunto?: NullableStringFieldUpdateOperationsInput | string | null
+    creacionTercero?: NullableBoolFieldUpdateOperationsInput | boolean | null
+    contratanteNombre?: NullableStringFieldUpdateOperationsInput | string | null
+    contratanteNit?: NullableStringFieldUpdateOperationsInput | string | null
+    alcance?: NullableStringFieldUpdateOperationsInput | string | null
+    terminosReferencia?: NullableStringFieldUpdateOperationsInput | string | null
+    condicionesEspeciales?: NullableStringFieldUpdateOperationsInput | string | null
+    valorEnLetras?: NullableStringFieldUpdateOperationsInput | string | null
+    docTerminosReferencia?: BoolFieldUpdateOperationsInput | boolean
+    docCamaraComercio?: BoolFieldUpdateOperationsInput | boolean
+    docEstadosFinancieros?: BoolFieldUpdateOperationsInput | boolean
+    docEstadoResultados?: BoolFieldUpdateOperationsInput | boolean
+    docSagrilaft?: BoolFieldUpdateOperationsInput | boolean
+    docComposicionAccionaria?: BoolFieldUpdateOperationsInput | boolean
+    docRut?: BoolFieldUpdateOperationsInput | boolean
+    docCedulaRepresentante?: BoolFieldUpdateOperationsInput | boolean
+    docCertificacionBancaria?: BoolFieldUpdateOperationsInput | boolean
+    docCotizacion?: BoolFieldUpdateOperationsInput | boolean
+    archivoCuadroComparativo?: NullableStringFieldUpdateOperationsInput | string | null
+    archivoCotizacion?: NullableStringFieldUpdateOperationsInput | string | null
+    archivoFormatoSolicitud?: NullableStringFieldUpdateOperationsInput | string | null
+    archivoBEP?: NullableStringFieldUpdateOperationsInput | string | null
+    archivosAnexos?: StringFieldUpdateOperationsInput | string
+    aprobadorId?: NullableStringFieldUpdateOperationsInput | string | null
+    fechaAprobacionDirector?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    responsableContratosTramiteId?: NullableStringFieldUpdateOperationsInput | string | null
+    responsableContratosMinutaId?: NullableStringFieldUpdateOperationsInput | string | null
+    coordinadorControlesId?: NullableStringFieldUpdateOperationsInput | string | null
+    directorControlesId?: NullableStringFieldUpdateOperationsInput | string | null
+    notaContratacion?: NullableStringFieldUpdateOperationsInput | string | null
+    necesitaRevision?: BoolFieldUpdateOperationsInput | boolean
+    numeroContratoAdpro?: NullableStringFieldUpdateOperationsInput | string | null
+    estado?: StringFieldUpdateOperationsInput | string
+    solicitudPadreId?: NullableIntFieldUpdateOperationsInput | number | null
+    creadoEn?: DateTimeFieldUpdateOperationsInput | Date | string
+    actualizadoEn?: DateTimeFieldUpdateOperationsInput | Date | string
+    cronograma?: CronogramaContratoUncheckedUpdateOneWithoutSolicitudNestedInput
+    historial?: HistorialSolicitudUncheckedUpdateManyWithoutSolicitudNestedInput
+  }
+
+  export type SolicitudUpsertWithWhereUniqueWithoutSolicitudPadreInput = {
+    where: SolicitudWhereUniqueInput
+    update: XOR<SolicitudUpdateWithoutSolicitudPadreInput, SolicitudUncheckedUpdateWithoutSolicitudPadreInput>
+    create: XOR<SolicitudCreateWithoutSolicitudPadreInput, SolicitudUncheckedCreateWithoutSolicitudPadreInput>
+  }
+
+  export type SolicitudUpdateWithWhereUniqueWithoutSolicitudPadreInput = {
+    where: SolicitudWhereUniqueInput
+    data: XOR<SolicitudUpdateWithoutSolicitudPadreInput, SolicitudUncheckedUpdateWithoutSolicitudPadreInput>
+  }
+
+  export type SolicitudUpdateManyWithWhereWithoutSolicitudPadreInput = {
+    where: SolicitudScalarWhereInput
+    data: XOR<SolicitudUpdateManyMutationInput, SolicitudUncheckedUpdateManyWithoutSolicitudPadreInput>
+  }
+
   export type SolicitudCreateWithoutHistorialInput = {
     consecutivo: string
     tipo: string
@@ -26260,6 +26795,8 @@ export namespace Prisma {
     tercero?: TerceroCreateNestedOneWithoutSolicitudesInput
     cronograma?: CronogramaContratoCreateNestedOneWithoutSolicitudInput
     aprobador?: UserCreateNestedOneWithoutAprobacionesInput
+    solicitudPadre?: SolicitudCreateNestedOneWithoutOtrosisInput
+    otrosis?: SolicitudCreateNestedManyWithoutSolicitudPadreInput
   }
 
   export type SolicitudUncheckedCreateWithoutHistorialInput = {
@@ -26309,9 +26846,11 @@ export namespace Prisma {
     necesitaRevision?: boolean
     numeroContratoAdpro?: string | null
     estado?: string
+    solicitudPadreId?: number | null
     creadoEn?: Date | string
     actualizadoEn?: Date | string
     cronograma?: CronogramaContratoUncheckedCreateNestedOneWithoutSolicitudInput
+    otrosis?: SolicitudUncheckedCreateNestedManyWithoutSolicitudPadreInput
   }
 
   export type SolicitudCreateOrConnectWithoutHistorialInput = {
@@ -26430,6 +26969,8 @@ export namespace Prisma {
     tercero?: TerceroUpdateOneWithoutSolicitudesNestedInput
     cronograma?: CronogramaContratoUpdateOneWithoutSolicitudNestedInput
     aprobador?: UserUpdateOneWithoutAprobacionesNestedInput
+    solicitudPadre?: SolicitudUpdateOneWithoutOtrosisNestedInput
+    otrosis?: SolicitudUpdateManyWithoutSolicitudPadreNestedInput
   }
 
   export type SolicitudUncheckedUpdateWithoutHistorialInput = {
@@ -26479,9 +27020,11 @@ export namespace Prisma {
     necesitaRevision?: BoolFieldUpdateOperationsInput | boolean
     numeroContratoAdpro?: NullableStringFieldUpdateOperationsInput | string | null
     estado?: StringFieldUpdateOperationsInput | string
+    solicitudPadreId?: NullableIntFieldUpdateOperationsInput | number | null
     creadoEn?: DateTimeFieldUpdateOperationsInput | Date | string
     actualizadoEn?: DateTimeFieldUpdateOperationsInput | Date | string
     cronograma?: CronogramaContratoUncheckedUpdateOneWithoutSolicitudNestedInput
+    otrosis?: SolicitudUncheckedUpdateManyWithoutSolicitudPadreNestedInput
   }
 
   export type UserUpsertWithoutHistorialInput = {
@@ -26590,6 +27133,8 @@ export namespace Prisma {
     tercero?: TerceroCreateNestedOneWithoutSolicitudesInput
     aprobador?: UserCreateNestedOneWithoutAprobacionesInput
     historial?: HistorialSolicitudCreateNestedManyWithoutSolicitudInput
+    solicitudPadre?: SolicitudCreateNestedOneWithoutOtrosisInput
+    otrosis?: SolicitudCreateNestedManyWithoutSolicitudPadreInput
   }
 
   export type SolicitudUncheckedCreateWithoutCronogramaInput = {
@@ -26639,9 +27184,11 @@ export namespace Prisma {
     necesitaRevision?: boolean
     numeroContratoAdpro?: string | null
     estado?: string
+    solicitudPadreId?: number | null
     creadoEn?: Date | string
     actualizadoEn?: Date | string
     historial?: HistorialSolicitudUncheckedCreateNestedManyWithoutSolicitudInput
+    otrosis?: SolicitudUncheckedCreateNestedManyWithoutSolicitudPadreInput
   }
 
   export type SolicitudCreateOrConnectWithoutCronogramaInput = {
@@ -26763,6 +27310,8 @@ export namespace Prisma {
     tercero?: TerceroUpdateOneWithoutSolicitudesNestedInput
     aprobador?: UserUpdateOneWithoutAprobacionesNestedInput
     historial?: HistorialSolicitudUpdateManyWithoutSolicitudNestedInput
+    solicitudPadre?: SolicitudUpdateOneWithoutOtrosisNestedInput
+    otrosis?: SolicitudUpdateManyWithoutSolicitudPadreNestedInput
   }
 
   export type SolicitudUncheckedUpdateWithoutCronogramaInput = {
@@ -26812,9 +27361,11 @@ export namespace Prisma {
     necesitaRevision?: BoolFieldUpdateOperationsInput | boolean
     numeroContratoAdpro?: NullableStringFieldUpdateOperationsInput | string | null
     estado?: StringFieldUpdateOperationsInput | string
+    solicitudPadreId?: NullableIntFieldUpdateOperationsInput | number | null
     creadoEn?: DateTimeFieldUpdateOperationsInput | Date | string
     actualizadoEn?: DateTimeFieldUpdateOperationsInput | Date | string
     historial?: HistorialSolicitudUncheckedUpdateManyWithoutSolicitudNestedInput
+    otrosis?: SolicitudUncheckedUpdateManyWithoutSolicitudPadreNestedInput
   }
 
   export type FaseCronogramaUpsertWithWhereUniqueWithoutCronogramaInput = {
@@ -27249,6 +27800,7 @@ export namespace Prisma {
     necesitaRevision?: boolean
     numeroContratoAdpro?: string | null
     estado?: string
+    solicitudPadreId?: number | null
     creadoEn?: Date | string
     actualizadoEn?: Date | string
   }
@@ -27299,6 +27851,7 @@ export namespace Prisma {
     necesitaRevision?: boolean
     numeroContratoAdpro?: string | null
     estado?: string
+    solicitudPadreId?: number | null
     creadoEn?: Date | string
     actualizadoEn?: Date | string
   }
@@ -27433,6 +27986,8 @@ export namespace Prisma {
     cronograma?: CronogramaContratoUpdateOneWithoutSolicitudNestedInput
     aprobador?: UserUpdateOneWithoutAprobacionesNestedInput
     historial?: HistorialSolicitudUpdateManyWithoutSolicitudNestedInput
+    solicitudPadre?: SolicitudUpdateOneWithoutOtrosisNestedInput
+    otrosis?: SolicitudUpdateManyWithoutSolicitudPadreNestedInput
   }
 
   export type SolicitudUncheckedUpdateWithoutSolicitanteInput = {
@@ -27481,10 +28036,12 @@ export namespace Prisma {
     necesitaRevision?: BoolFieldUpdateOperationsInput | boolean
     numeroContratoAdpro?: NullableStringFieldUpdateOperationsInput | string | null
     estado?: StringFieldUpdateOperationsInput | string
+    solicitudPadreId?: NullableIntFieldUpdateOperationsInput | number | null
     creadoEn?: DateTimeFieldUpdateOperationsInput | Date | string
     actualizadoEn?: DateTimeFieldUpdateOperationsInput | Date | string
     cronograma?: CronogramaContratoUncheckedUpdateOneWithoutSolicitudNestedInput
     historial?: HistorialSolicitudUncheckedUpdateManyWithoutSolicitudNestedInput
+    otrosis?: SolicitudUncheckedUpdateManyWithoutSolicitudPadreNestedInput
   }
 
   export type SolicitudUncheckedUpdateManyWithoutSolicitanteInput = {
@@ -27533,6 +28090,7 @@ export namespace Prisma {
     necesitaRevision?: BoolFieldUpdateOperationsInput | boolean
     numeroContratoAdpro?: NullableStringFieldUpdateOperationsInput | string | null
     estado?: StringFieldUpdateOperationsInput | string
+    solicitudPadreId?: NullableIntFieldUpdateOperationsInput | number | null
     creadoEn?: DateTimeFieldUpdateOperationsInput | Date | string
     actualizadoEn?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -27586,6 +28144,8 @@ export namespace Prisma {
     tercero?: TerceroUpdateOneWithoutSolicitudesNestedInput
     cronograma?: CronogramaContratoUpdateOneWithoutSolicitudNestedInput
     historial?: HistorialSolicitudUpdateManyWithoutSolicitudNestedInput
+    solicitudPadre?: SolicitudUpdateOneWithoutOtrosisNestedInput
+    otrosis?: SolicitudUpdateManyWithoutSolicitudPadreNestedInput
   }
 
   export type SolicitudUncheckedUpdateWithoutAprobadorInput = {
@@ -27634,10 +28194,12 @@ export namespace Prisma {
     necesitaRevision?: BoolFieldUpdateOperationsInput | boolean
     numeroContratoAdpro?: NullableStringFieldUpdateOperationsInput | string | null
     estado?: StringFieldUpdateOperationsInput | string
+    solicitudPadreId?: NullableIntFieldUpdateOperationsInput | number | null
     creadoEn?: DateTimeFieldUpdateOperationsInput | Date | string
     actualizadoEn?: DateTimeFieldUpdateOperationsInput | Date | string
     cronograma?: CronogramaContratoUncheckedUpdateOneWithoutSolicitudNestedInput
     historial?: HistorialSolicitudUncheckedUpdateManyWithoutSolicitudNestedInput
+    otrosis?: SolicitudUncheckedUpdateManyWithoutSolicitudPadreNestedInput
   }
 
   export type SolicitudUncheckedUpdateManyWithoutAprobadorInput = {
@@ -27686,6 +28248,7 @@ export namespace Prisma {
     necesitaRevision?: BoolFieldUpdateOperationsInput | boolean
     numeroContratoAdpro?: NullableStringFieldUpdateOperationsInput | string | null
     estado?: StringFieldUpdateOperationsInput | string
+    solicitudPadreId?: NullableIntFieldUpdateOperationsInput | number | null
     creadoEn?: DateTimeFieldUpdateOperationsInput | Date | string
     actualizadoEn?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -27840,6 +28403,7 @@ export namespace Prisma {
     necesitaRevision?: boolean
     numeroContratoAdpro?: string | null
     estado?: string
+    solicitudPadreId?: number | null
     creadoEn?: Date | string
     actualizadoEn?: Date | string
   }
@@ -27893,6 +28457,8 @@ export namespace Prisma {
     cronograma?: CronogramaContratoUpdateOneWithoutSolicitudNestedInput
     aprobador?: UserUpdateOneWithoutAprobacionesNestedInput
     historial?: HistorialSolicitudUpdateManyWithoutSolicitudNestedInput
+    solicitudPadre?: SolicitudUpdateOneWithoutOtrosisNestedInput
+    otrosis?: SolicitudUpdateManyWithoutSolicitudPadreNestedInput
   }
 
   export type SolicitudUncheckedUpdateWithoutTerceroInput = {
@@ -27941,10 +28507,12 @@ export namespace Prisma {
     necesitaRevision?: BoolFieldUpdateOperationsInput | boolean
     numeroContratoAdpro?: NullableStringFieldUpdateOperationsInput | string | null
     estado?: StringFieldUpdateOperationsInput | string
+    solicitudPadreId?: NullableIntFieldUpdateOperationsInput | number | null
     creadoEn?: DateTimeFieldUpdateOperationsInput | Date | string
     actualizadoEn?: DateTimeFieldUpdateOperationsInput | Date | string
     cronograma?: CronogramaContratoUncheckedUpdateOneWithoutSolicitudNestedInput
     historial?: HistorialSolicitudUncheckedUpdateManyWithoutSolicitudNestedInput
+    otrosis?: SolicitudUncheckedUpdateManyWithoutSolicitudPadreNestedInput
   }
 
   export type SolicitudUncheckedUpdateManyWithoutTerceroInput = {
@@ -27993,6 +28561,7 @@ export namespace Prisma {
     necesitaRevision?: BoolFieldUpdateOperationsInput | boolean
     numeroContratoAdpro?: NullableStringFieldUpdateOperationsInput | string | null
     estado?: StringFieldUpdateOperationsInput | string
+    solicitudPadreId?: NullableIntFieldUpdateOperationsInput | number | null
     creadoEn?: DateTimeFieldUpdateOperationsInput | Date | string
     actualizadoEn?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -28003,6 +28572,57 @@ export namespace Prisma {
     accion: string
     nota?: string | null
     fecha?: Date | string
+  }
+
+  export type SolicitudCreateManySolicitudPadreInput = {
+    id?: number
+    consecutivo: string
+    tipo: string
+    fechaSolicitud?: Date | string
+    solicitanteId: string
+    proyectoId: number
+    frentesIds?: string
+    terceroId?: number | null
+    descripcionActividad?: string | null
+    plazoEjecucion?: string | null
+    formaPago?: string | null
+    valorFinal?: Decimal | DecimalJsLike | number | string | null
+    tipoContrato?: string | null
+    asunto?: string | null
+    creacionTercero?: boolean | null
+    contratanteNombre?: string | null
+    contratanteNit?: string | null
+    alcance?: string | null
+    terminosReferencia?: string | null
+    condicionesEspeciales?: string | null
+    valorEnLetras?: string | null
+    docTerminosReferencia?: boolean
+    docCamaraComercio?: boolean
+    docEstadosFinancieros?: boolean
+    docEstadoResultados?: boolean
+    docSagrilaft?: boolean
+    docComposicionAccionaria?: boolean
+    docRut?: boolean
+    docCedulaRepresentante?: boolean
+    docCertificacionBancaria?: boolean
+    docCotizacion?: boolean
+    archivoCuadroComparativo?: string | null
+    archivoCotizacion?: string | null
+    archivoFormatoSolicitud?: string | null
+    archivoBEP?: string | null
+    archivosAnexos?: string
+    aprobadorId?: string | null
+    fechaAprobacionDirector?: Date | string | null
+    responsableContratosTramiteId?: string | null
+    responsableContratosMinutaId?: string | null
+    coordinadorControlesId?: string | null
+    directorControlesId?: string | null
+    notaContratacion?: string | null
+    necesitaRevision?: boolean
+    numeroContratoAdpro?: string | null
+    estado?: string
+    creadoEn?: Date | string
+    actualizadoEn?: Date | string
   }
 
   export type HistorialSolicitudUpdateWithoutSolicitudInput = {
@@ -28026,6 +28646,164 @@ export namespace Prisma {
     accion?: StringFieldUpdateOperationsInput | string
     nota?: NullableStringFieldUpdateOperationsInput | string | null
     fecha?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type SolicitudUpdateWithoutSolicitudPadreInput = {
+    consecutivo?: StringFieldUpdateOperationsInput | string
+    tipo?: StringFieldUpdateOperationsInput | string
+    fechaSolicitud?: DateTimeFieldUpdateOperationsInput | Date | string
+    proyectoId?: IntFieldUpdateOperationsInput | number
+    frentesIds?: StringFieldUpdateOperationsInput | string
+    descripcionActividad?: NullableStringFieldUpdateOperationsInput | string | null
+    plazoEjecucion?: NullableStringFieldUpdateOperationsInput | string | null
+    formaPago?: NullableStringFieldUpdateOperationsInput | string | null
+    valorFinal?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    tipoContrato?: NullableStringFieldUpdateOperationsInput | string | null
+    asunto?: NullableStringFieldUpdateOperationsInput | string | null
+    creacionTercero?: NullableBoolFieldUpdateOperationsInput | boolean | null
+    contratanteNombre?: NullableStringFieldUpdateOperationsInput | string | null
+    contratanteNit?: NullableStringFieldUpdateOperationsInput | string | null
+    alcance?: NullableStringFieldUpdateOperationsInput | string | null
+    terminosReferencia?: NullableStringFieldUpdateOperationsInput | string | null
+    condicionesEspeciales?: NullableStringFieldUpdateOperationsInput | string | null
+    valorEnLetras?: NullableStringFieldUpdateOperationsInput | string | null
+    docTerminosReferencia?: BoolFieldUpdateOperationsInput | boolean
+    docCamaraComercio?: BoolFieldUpdateOperationsInput | boolean
+    docEstadosFinancieros?: BoolFieldUpdateOperationsInput | boolean
+    docEstadoResultados?: BoolFieldUpdateOperationsInput | boolean
+    docSagrilaft?: BoolFieldUpdateOperationsInput | boolean
+    docComposicionAccionaria?: BoolFieldUpdateOperationsInput | boolean
+    docRut?: BoolFieldUpdateOperationsInput | boolean
+    docCedulaRepresentante?: BoolFieldUpdateOperationsInput | boolean
+    docCertificacionBancaria?: BoolFieldUpdateOperationsInput | boolean
+    docCotizacion?: BoolFieldUpdateOperationsInput | boolean
+    archivoCuadroComparativo?: NullableStringFieldUpdateOperationsInput | string | null
+    archivoCotizacion?: NullableStringFieldUpdateOperationsInput | string | null
+    archivoFormatoSolicitud?: NullableStringFieldUpdateOperationsInput | string | null
+    archivoBEP?: NullableStringFieldUpdateOperationsInput | string | null
+    archivosAnexos?: StringFieldUpdateOperationsInput | string
+    fechaAprobacionDirector?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    responsableContratosTramiteId?: NullableStringFieldUpdateOperationsInput | string | null
+    responsableContratosMinutaId?: NullableStringFieldUpdateOperationsInput | string | null
+    coordinadorControlesId?: NullableStringFieldUpdateOperationsInput | string | null
+    directorControlesId?: NullableStringFieldUpdateOperationsInput | string | null
+    notaContratacion?: NullableStringFieldUpdateOperationsInput | string | null
+    necesitaRevision?: BoolFieldUpdateOperationsInput | boolean
+    numeroContratoAdpro?: NullableStringFieldUpdateOperationsInput | string | null
+    estado?: StringFieldUpdateOperationsInput | string
+    creadoEn?: DateTimeFieldUpdateOperationsInput | Date | string
+    actualizadoEn?: DateTimeFieldUpdateOperationsInput | Date | string
+    solicitante?: UserUpdateOneRequiredWithoutSolicitudesNestedInput
+    tercero?: TerceroUpdateOneWithoutSolicitudesNestedInput
+    cronograma?: CronogramaContratoUpdateOneWithoutSolicitudNestedInput
+    aprobador?: UserUpdateOneWithoutAprobacionesNestedInput
+    historial?: HistorialSolicitudUpdateManyWithoutSolicitudNestedInput
+    otrosis?: SolicitudUpdateManyWithoutSolicitudPadreNestedInput
+  }
+
+  export type SolicitudUncheckedUpdateWithoutSolicitudPadreInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    consecutivo?: StringFieldUpdateOperationsInput | string
+    tipo?: StringFieldUpdateOperationsInput | string
+    fechaSolicitud?: DateTimeFieldUpdateOperationsInput | Date | string
+    solicitanteId?: StringFieldUpdateOperationsInput | string
+    proyectoId?: IntFieldUpdateOperationsInput | number
+    frentesIds?: StringFieldUpdateOperationsInput | string
+    terceroId?: NullableIntFieldUpdateOperationsInput | number | null
+    descripcionActividad?: NullableStringFieldUpdateOperationsInput | string | null
+    plazoEjecucion?: NullableStringFieldUpdateOperationsInput | string | null
+    formaPago?: NullableStringFieldUpdateOperationsInput | string | null
+    valorFinal?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    tipoContrato?: NullableStringFieldUpdateOperationsInput | string | null
+    asunto?: NullableStringFieldUpdateOperationsInput | string | null
+    creacionTercero?: NullableBoolFieldUpdateOperationsInput | boolean | null
+    contratanteNombre?: NullableStringFieldUpdateOperationsInput | string | null
+    contratanteNit?: NullableStringFieldUpdateOperationsInput | string | null
+    alcance?: NullableStringFieldUpdateOperationsInput | string | null
+    terminosReferencia?: NullableStringFieldUpdateOperationsInput | string | null
+    condicionesEspeciales?: NullableStringFieldUpdateOperationsInput | string | null
+    valorEnLetras?: NullableStringFieldUpdateOperationsInput | string | null
+    docTerminosReferencia?: BoolFieldUpdateOperationsInput | boolean
+    docCamaraComercio?: BoolFieldUpdateOperationsInput | boolean
+    docEstadosFinancieros?: BoolFieldUpdateOperationsInput | boolean
+    docEstadoResultados?: BoolFieldUpdateOperationsInput | boolean
+    docSagrilaft?: BoolFieldUpdateOperationsInput | boolean
+    docComposicionAccionaria?: BoolFieldUpdateOperationsInput | boolean
+    docRut?: BoolFieldUpdateOperationsInput | boolean
+    docCedulaRepresentante?: BoolFieldUpdateOperationsInput | boolean
+    docCertificacionBancaria?: BoolFieldUpdateOperationsInput | boolean
+    docCotizacion?: BoolFieldUpdateOperationsInput | boolean
+    archivoCuadroComparativo?: NullableStringFieldUpdateOperationsInput | string | null
+    archivoCotizacion?: NullableStringFieldUpdateOperationsInput | string | null
+    archivoFormatoSolicitud?: NullableStringFieldUpdateOperationsInput | string | null
+    archivoBEP?: NullableStringFieldUpdateOperationsInput | string | null
+    archivosAnexos?: StringFieldUpdateOperationsInput | string
+    aprobadorId?: NullableStringFieldUpdateOperationsInput | string | null
+    fechaAprobacionDirector?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    responsableContratosTramiteId?: NullableStringFieldUpdateOperationsInput | string | null
+    responsableContratosMinutaId?: NullableStringFieldUpdateOperationsInput | string | null
+    coordinadorControlesId?: NullableStringFieldUpdateOperationsInput | string | null
+    directorControlesId?: NullableStringFieldUpdateOperationsInput | string | null
+    notaContratacion?: NullableStringFieldUpdateOperationsInput | string | null
+    necesitaRevision?: BoolFieldUpdateOperationsInput | boolean
+    numeroContratoAdpro?: NullableStringFieldUpdateOperationsInput | string | null
+    estado?: StringFieldUpdateOperationsInput | string
+    creadoEn?: DateTimeFieldUpdateOperationsInput | Date | string
+    actualizadoEn?: DateTimeFieldUpdateOperationsInput | Date | string
+    cronograma?: CronogramaContratoUncheckedUpdateOneWithoutSolicitudNestedInput
+    historial?: HistorialSolicitudUncheckedUpdateManyWithoutSolicitudNestedInput
+    otrosis?: SolicitudUncheckedUpdateManyWithoutSolicitudPadreNestedInput
+  }
+
+  export type SolicitudUncheckedUpdateManyWithoutSolicitudPadreInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    consecutivo?: StringFieldUpdateOperationsInput | string
+    tipo?: StringFieldUpdateOperationsInput | string
+    fechaSolicitud?: DateTimeFieldUpdateOperationsInput | Date | string
+    solicitanteId?: StringFieldUpdateOperationsInput | string
+    proyectoId?: IntFieldUpdateOperationsInput | number
+    frentesIds?: StringFieldUpdateOperationsInput | string
+    terceroId?: NullableIntFieldUpdateOperationsInput | number | null
+    descripcionActividad?: NullableStringFieldUpdateOperationsInput | string | null
+    plazoEjecucion?: NullableStringFieldUpdateOperationsInput | string | null
+    formaPago?: NullableStringFieldUpdateOperationsInput | string | null
+    valorFinal?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    tipoContrato?: NullableStringFieldUpdateOperationsInput | string | null
+    asunto?: NullableStringFieldUpdateOperationsInput | string | null
+    creacionTercero?: NullableBoolFieldUpdateOperationsInput | boolean | null
+    contratanteNombre?: NullableStringFieldUpdateOperationsInput | string | null
+    contratanteNit?: NullableStringFieldUpdateOperationsInput | string | null
+    alcance?: NullableStringFieldUpdateOperationsInput | string | null
+    terminosReferencia?: NullableStringFieldUpdateOperationsInput | string | null
+    condicionesEspeciales?: NullableStringFieldUpdateOperationsInput | string | null
+    valorEnLetras?: NullableStringFieldUpdateOperationsInput | string | null
+    docTerminosReferencia?: BoolFieldUpdateOperationsInput | boolean
+    docCamaraComercio?: BoolFieldUpdateOperationsInput | boolean
+    docEstadosFinancieros?: BoolFieldUpdateOperationsInput | boolean
+    docEstadoResultados?: BoolFieldUpdateOperationsInput | boolean
+    docSagrilaft?: BoolFieldUpdateOperationsInput | boolean
+    docComposicionAccionaria?: BoolFieldUpdateOperationsInput | boolean
+    docRut?: BoolFieldUpdateOperationsInput | boolean
+    docCedulaRepresentante?: BoolFieldUpdateOperationsInput | boolean
+    docCertificacionBancaria?: BoolFieldUpdateOperationsInput | boolean
+    docCotizacion?: BoolFieldUpdateOperationsInput | boolean
+    archivoCuadroComparativo?: NullableStringFieldUpdateOperationsInput | string | null
+    archivoCotizacion?: NullableStringFieldUpdateOperationsInput | string | null
+    archivoFormatoSolicitud?: NullableStringFieldUpdateOperationsInput | string | null
+    archivoBEP?: NullableStringFieldUpdateOperationsInput | string | null
+    archivosAnexos?: StringFieldUpdateOperationsInput | string
+    aprobadorId?: NullableStringFieldUpdateOperationsInput | string | null
+    fechaAprobacionDirector?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    responsableContratosTramiteId?: NullableStringFieldUpdateOperationsInput | string | null
+    responsableContratosMinutaId?: NullableStringFieldUpdateOperationsInput | string | null
+    coordinadorControlesId?: NullableStringFieldUpdateOperationsInput | string | null
+    directorControlesId?: NullableStringFieldUpdateOperationsInput | string | null
+    notaContratacion?: NullableStringFieldUpdateOperationsInput | string | null
+    necesitaRevision?: BoolFieldUpdateOperationsInput | boolean
+    numeroContratoAdpro?: NullableStringFieldUpdateOperationsInput | string | null
+    estado?: StringFieldUpdateOperationsInput | string
+    creadoEn?: DateTimeFieldUpdateOperationsInput | Date | string
+    actualizadoEn?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type FaseCronogramaCreateManyCronogramaInput = {

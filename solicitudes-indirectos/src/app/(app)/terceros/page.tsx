@@ -6,8 +6,8 @@ import {
   Plus, Search, Users, CheckCircle, Clock,
   Eye, Pencil, RefreshCw, X, ChevronLeft, ChevronRight,
 } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Spinner } from "@/components/ui/spinner";
+import { Button } from "@/shared/ui/button";
+import { Spinner } from "@/shared/ui/spinner";
 import { useSession } from "next-auth/react";
 import { tienePermiso, formatDate } from "@/lib/utils";
 

@@ -35,7 +35,6 @@ export const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
     const autoId = useId();
     const id = idProp ?? autoId;
 
-    // Compute character count for the counter badge
     const currentLength =
       typeof value === "string"
         ? value.length
@@ -45,7 +44,6 @@ export const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
 
     return (
       <div className={`flex flex-col gap-1 w-full ${wrapperClassName}`}>
-        {/* Label row */}
         <div className="flex items-center justify-between">
           {label && (
             <label

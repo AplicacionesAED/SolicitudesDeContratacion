@@ -3,7 +3,7 @@
 import { useState, useEffect, useCallback } from "react";
 import { useSession } from "next-auth/react";
 import { User, Lock, Save } from "lucide-react";
-import { Spinner } from "@/components/ui/spinner";
+import { Spinner } from "@/shared/ui/spinner";
 import { ROL_LABELS } from "@/lib/utils";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
