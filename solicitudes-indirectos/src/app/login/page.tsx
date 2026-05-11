@@ -5,14 +5,6 @@ import { signIn } from "next-auth/react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Spinner } from "@/components/ui/spinner";
 
-const TEST_USERS = [
-  { label: "Solicitante",          email: "smercado@baiak.com",    password: "Abc123!" },
-  { label: "Director de Proyecto", email: "crodriguez@baiak.com",  password: "Abc123!" },
-  { label: "Contratos",            email: "amorales@baiak.com",    password: "Abc123!" },
-  { label: "Coord. Controles",     email: "ljimenez@baiak.com",    password: "Abc123!" },
-  { label: "Director Controles",   email: "msuarez@baiak.com",     password: "Abc123!" },
-  { label: "Admin",                email: "admin@baiak.com",       password: "Admin123!" },
-];
 
 function LoginForm() {
   const router = useRouter();
@@ -108,29 +100,6 @@ function LoginForm() {
         </button>
       </form>
 
-      {/* Test users quick-access */}
-      <div className="mt-6 border-t border-gray-100 pt-5">
-        <p className="text-xs font-semibold text-gray-400 uppercase tracking-wide mb-3">
-          Usuarios de prueba
-        </p>
-        <div className="space-y-1.5">
-          {TEST_USERS.map((u) => (
-            <button
-              key={u.email}
-              type="button"
-              onClick={() => { setEmail(u.email); setPassword(u.password); }}
-              className="w-full flex items-center justify-between rounded-lg px-3 py-2 text-left hover:bg-gray-50 transition-colors group"
-            >
-              <span className="text-xs font-medium text-gray-700 group-hover:text-blue-700">
-                {u.label}
-              </span>
-              <span className="text-xs text-gray-400 font-mono group-hover:text-blue-500">
-                {u.email}
-              </span>
-            </button>
-          ))}
-        </div>
-      </div>
     </div>
   );
 }
