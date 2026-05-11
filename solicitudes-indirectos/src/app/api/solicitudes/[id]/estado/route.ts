@@ -171,7 +171,6 @@ export async function POST(
         "plazoEjecucion",
         "formaPago",
         "valorFinal",
-        "tipoContrato",
       ] as const;
       for (const field of requiredFields) {
         if (!solicitud[field]) {
@@ -180,6 +179,12 @@ export async function POST(
             { status: 400 }
           );
         }
+      }
+      if (solicitud.tipo === "CONTRATO" && !solicitud.tipoContrato) {
+        return Response.json(
+          { error: "El campo tipoContrato es obligatorio para enviar un contrato" },
+          { status: 400 }
+        );
       }
       const frentesArr: number[] = JSON.parse(solicitud.frentesIds || "[]");
       if (frentesArr.length === 0) {
@@ -307,6 +312,19 @@ export async function POST(
           nota: nota ?? null,
         },
       });
+
+      // Si se completa un OTROSI_TIEMPO_CANTIDAD, actualizar valorFinal del padre
+      if (
+        estadoDestino === "COMPLETADA" &&
+        solicitud.tipo === "OTROSI_TIEMPO_CANTIDAD" &&
+        solicitud.solicitudPadreId != null &&
+        sol.valorFinal != null
+      ) {
+        await tx.solicitud.update({
+          where: { id: solicitud.solicitudPadreId },
+          data: { valorFinal: sol.valorFinal },
+        });
+      }
 
       return sol;
     });
