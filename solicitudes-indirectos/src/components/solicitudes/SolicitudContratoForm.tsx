@@ -347,9 +347,12 @@ export function SolicitudContratoForm({
     const allActividades = cronograma.tieneFases
       ? cronograma.fases.flatMap((f) => f.actividades)
       : cronograma.actividades;
-    const hasActivity = allActividades.some((a) => a.descripcion.trim().length > 0);
-    if (!hasActivity) {
+    if (!allActividades.some((a) => a.descripcion.trim().length > 0)) {
       setCronogramaError("Debes registrar al menos una actividad en el cronograma.");
+      return false;
+    }
+    if (!allActividades.every((a) => a.descripcion.trim().length > 0)) {
+      setCronogramaError("Todas las actividades del cronograma deben tener una descripción.");
       return false;
     }
     setCronogramaError("");
