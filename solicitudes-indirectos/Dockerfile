@@ -33,7 +33,7 @@ COPY --from=builder /app/node_modules/tsx ./node_modules/tsx
 COPY --from=builder /app/node_modules/.bin/tsx ./node_modules/.bin/tsx
 
 COPY --from=builder /app/prisma ./prisma
-COPY --from=builder /app/prisma.config.ts ./prisma.config.ts
+COPY --from=builder /app/prisma/prisma.config.mjs ./prisma/prisma.config.mjs
 COPY --from=builder /app/src/generated ./src/generated
 
 RUN mkdir -p /app/data
