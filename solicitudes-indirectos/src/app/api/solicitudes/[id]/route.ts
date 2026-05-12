@@ -207,31 +207,40 @@ export async function DELETE(
       return Response.json({ error: "No autenticado" }, { status: 401 });
     }
 
+    const userRoles: string[] = session.user.roles ?? [session.user.rol];
+    if (!userRoles.includes("ADMIN")) {
+      return Response.json({ error: "Solo el administrador puede eliminar solicitudes" }, { status: 403 });
+    }
+
     const { id } = await params;
     const numId = parseInt(id, 10);
     if (isNaN(numId)) {
       return Response.json({ error: "ID inválido" }, { status: 400 });
     }
 
-    const solicitud = await prisma.solicitud.findUnique({ where: { id: numId } });
+    const solicitud = await prisma.solicitud.findUnique({
+      where: { id: numId },
+      select: { id: true, otrosis: { select: { id: true } } },
+    });
     if (!solicitud) {
       return Response.json({ error: "Solicitud no encontrada" }, { status: 404 });
     }
 
-    // Roles permitidos para eliminar: ADMIN y CONTRATOS
-    const userRoles: string[] = session.user.roles ?? [session.user.rol];
-    const funcionalidadesAdicionales: string[] = session.user.funcionalidadesAdicionales ?? [];
-    
-    const isAdmin = userRoles.includes("ADMIN");
-    const puedeRevisar = tienePermiso(userRoles, funcionalidadesAdicionales, "revisar_contratos");
+    const otrosiIds = solicitud.otrosis.map((o) => o.id);
+    const allIds = [...otrosiIds, numId];
 
-    if (!isAdmin && !puedeRevisar) {
-      return Response.json({ error: "No autorizado para eliminar solicitudes" }, { status: 403 });
-    }
+    // Delete in dependency order: historial → cronograma → solicitudes
+    await prisma.$transaction([
+      prisma.historialSolicitud.deleteMany({ where: { solicitudId: { in: allIds } } }),
+      prisma.cronogramaContrato.deleteMany({ where: { solicitudId: { in: allIds } } }),
+      // Delete otrosís first (they reference the parent via solicitudPadreId)
+      ...(otrosiIds.length > 0
+        ? [prisma.solicitud.deleteMany({ where: { id: { in: otrosiIds } } })]
+        : []),
+      prisma.solicitud.delete({ where: { id: numId } }),
+    ]);
 
-    await prisma.solicitud.delete({ where: { id: numId } });
-
-    return Response.json({ message: "Solicitud eliminada correctamente" }, { status: 200 });
+    return Response.json({ message: "Solicitud eliminada correctamente" });
   } catch (error) {
     console.error("DELETE /api/solicitudes/[id] error:", error);
     return Response.json({ error: "Error interno del servidor" }, { status: 500 });

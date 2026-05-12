@@ -220,6 +220,7 @@ export default async function SolicitudDetallePage({ params }: PageProps) {
           aprobadorId: solicitud.aprobadorId,
           consecutivo: solicitud.consecutivo,
           archivosAnexos: solicitud.archivosAnexos,
+          tieneOtrosis: solicitud.otrosis.length > 0,
         }}
         userSession={session}
       />

@@ -13,6 +13,7 @@ import {
   Upload,
   FileCheck,
   PenLine,
+  Trash2,
 } from "lucide-react";
 import Link from "next/link";
 import { Button } from "@/shared/ui/button";
@@ -35,6 +36,7 @@ interface SolicitudActionsProps {
     aprobadorId?: string | null;
     consecutivo: string;
     archivosAnexos?: string | null;
+    tieneOtrosis?: boolean;
   };
   userSession: {
     user: {
@@ -76,6 +78,7 @@ export function SolicitudActions({ solicitud, userSession }: SolicitudActionsPro
     | "adpro"
     | "aprobar_final"
     | "reenviar"
+    | "eliminar"
     | null
   >(null);
   const [nota, setNota] = useState("");
@@ -87,6 +90,7 @@ export function SolicitudActions({ solicitud, userSession }: SolicitudActionsPro
   const userId = userSession?.user?.id;
   const rol = userSession?.user?.rol;
   const userRoles: string[] = userSession?.user?.roles ?? (rol ? [rol] : []);
+  const isAdmin = userRoles.includes("ADMIN");
 
   // ── Visibility rules ────────────────────────────────────────────────────────
 
@@ -140,7 +144,8 @@ export function SolicitudActions({ solicitud, userSession }: SolicitudActionsPro
     canRegistrarAdpro ||
     canAprobarFinal ||
     canReenviar ||
-    canEdit;
+    canEdit ||
+    isAdmin;
 
   if (!hasAnyAction) return null;
 
@@ -171,6 +176,27 @@ export function SolicitudActions({ solicitud, userSession }: SolicitudActionsPro
       setNotaContratos("");
       setAdproNum("");
       router.refresh();
+    } catch {
+      addToast("Error de conexión", "error");
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  // ── Delete ──────────────────────────────────────────────────────────────────
+
+  async function handleEliminar() {
+    setLoading(true);
+    try {
+      const res = await fetch(`/api/solicitudes/${solicitud.id}`, { method: "DELETE" });
+      const data = await res.json();
+      if (!res.ok) {
+        addToast(data.error ?? "Error al eliminar la solicitud", "error");
+        return;
+      }
+      addToast("Solicitud eliminada correctamente", "success");
+      setModalOpen(false);
+      router.push("/solicitudes");
     } catch {
       addToast("Error de conexión", "error");
     } finally {
@@ -280,6 +306,8 @@ export function SolicitudActions({ solicitud, userSession }: SolicitudActionsPro
       await executeAction("APROBAR_FINAL");
     } else if (modalType === "reenviar") {
       await executeAction("REENVIAR");
+    } else if (modalType === "eliminar") {
+      await handleEliminar();
     }
   }
 
@@ -294,6 +322,7 @@ export function SolicitudActions({ solicitud, userSession }: SolicitudActionsPro
       case "adpro": return "Registrar Número Adpro";
       case "aprobar_final": return "Aprobación definitiva";
       case "reenviar": return "Reenviar solicitud";
+      case "eliminar": return "Eliminar solicitud";
       default: return "";
     }
   }
@@ -464,6 +493,17 @@ export function SolicitudActions({ solicitud, userSession }: SolicitudActionsPro
               Editar Solicitud
             </Link>
           )}
+
+          {isAdmin && (
+            <Button
+              variant="danger"
+              onClick={() => openModal("eliminar")}
+              disabled={loading}
+            >
+              <Trash2 size={15} />
+              Eliminar
+            </Button>
+          )}
         </div>
       </div>
 
@@ -620,6 +660,26 @@ export function SolicitudActions({ solicitud, userSession }: SolicitudActionsPro
             </p>
           )}
 
+          {/* Eliminar */}
+          {modalType === "eliminar" && (
+            <div className="space-y-3">
+              <p className="text-sm text-gray-600">
+                Estás a punto de eliminar permanentemente la solicitud{" "}
+                <strong className="font-mono">{solicitud.consecutivo}</strong>.
+                Esta acción no se puede deshacer.
+              </p>
+              {solicitud.tieneOtrosis && (
+                <div className="rounded-lg bg-red-50 border border-red-200 px-4 py-3">
+                  <p className="text-sm font-semibold text-red-700">
+                    Esta solicitud tiene otrosís vinculados
+                  </p>
+                  <p className="text-xs text-red-600 mt-1">
+                    Todos los otrosís asociados también serán eliminados permanentemente.
+                  </p>
+                </div>
+              )}
+            </div>
+          )}
 
           {/* Footer buttons */}
           <div className="flex justify-end gap-3 pt-2 border-t border-gray-100">
@@ -631,7 +691,7 @@ export function SolicitudActions({ solicitud, userSession }: SolicitudActionsPro
               Cancelar
             </Button>
             <Button
-              variant={modalType === "devolver" ? "danger" : "primary"}
+              variant={modalType === "devolver" || modalType === "eliminar" ? "danger" : "primary"}
               onClick={handleModalConfirm}
               loading={loading}
             >
@@ -642,6 +702,7 @@ export function SolicitudActions({ solicitud, userSession }: SolicitudActionsPro
               {modalType === "adpro" && "Registrar"}
               {modalType === "aprobar_final" && "Aprobar Definitivamente"}
               {modalType === "reenviar" && "Reenviar"}
+              {modalType === "eliminar" && "Eliminar permanentemente"}
             </Button>
           </div>
         </div>
