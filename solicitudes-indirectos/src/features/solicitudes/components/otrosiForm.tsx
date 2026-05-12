@@ -101,6 +101,7 @@ export function OtrosiForm({ tipo }: OtrosiFormProps) {
   }, []);
 
   const filtered = solicitudes.filter((s) => {
+    if (s.tipo === "ORDEN_SERVICIO") return false;
     const q = search.toLowerCase();
     return (
       s.consecutivo.toLowerCase().includes(q) ||
@@ -306,7 +307,7 @@ export function OtrosiForm({ tipo }: OtrosiFormProps) {
             </div>
           ) : filtered.length === 0 ? (
             <p className="text-sm text-gray-400 italic text-center py-10">
-              No hay contratos completados
+              No hay contratos completados disponibles
               {search ? " que coincidan con la búsqueda" : ""}.
             </p>
           ) : (
