@@ -56,7 +56,10 @@ async function upsertCronograma(
       return Response.json({ error: "ID inválido" }, { status: 400 });
     }
 
-    const solicitud = await prisma.solicitud.findUnique({ where: { id: numId } });
+    const solicitud = await prisma.solicitud.findUnique({
+      where: { id: numId },
+      include: { solicitudPadre: true },
+    });
     if (!solicitud) {
       return Response.json({ error: "Solicitud no encontrada" }, { status: 404 });
     }
@@ -99,8 +102,14 @@ async function upsertCronograma(
       );
     }
 
-    // Validate: fechaInicio must be >= 13 business days from now
-    const minStart = getMinStartDate();
+    // Validate: fechaInicio must be >= N business days from now
+    // If it's an Otrosí, we look at the parent type.
+    const effectiveTipo = solicitud.tipo.startsWith("OTROSI_")
+      ? (solicitud.solicitudPadre?.tipo ?? solicitud.tipo)
+      : solicitud.tipo;
+
+    const minDays = effectiveTipo === "ORDEN_SERVICIO" ? 2 : 13;
+    const minStart = getMinStartDate(minDays);
     // Normalize to start of day for comparison
     const minStartDay = new Date(minStart);
     minStartDay.setHours(0, 0, 0, 0);
@@ -110,7 +119,7 @@ async function upsertCronograma(
     if (inicioDay < minStartDay) {
       return Response.json(
         {
-          error: `La fecha de inicio debe ser al menos 13 días hábiles desde hoy (mínimo: ${minStart.toISOString().split("T")[0]})`,
+          error: `La fecha de inicio debe ser al menos ${minDays} días hábiles desde hoy (mínimo: ${minStart.toISOString().split("T")[0]})`,
         },
         { status: 400 }
       );

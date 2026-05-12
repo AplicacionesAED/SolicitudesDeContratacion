@@ -38,6 +38,7 @@ export interface CronogramaData {
 interface CronogramaBuilderProps {
   value: CronogramaData;
   onChange: (data: CronogramaData) => void;
+  minDays?: number;
 }
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
@@ -166,15 +167,15 @@ function ActividadesTable({
 
 // ─── Main Component ───────────────────────────────────────────────────────────
 
-export function CronogramaBuilder({ value, onChange }: CronogramaBuilderProps) {
-  const minStartDate = toInputDate(getMinStartDate());
+export function CronogramaBuilder({ value, onChange, minDays = 13 }: CronogramaBuilderProps) {
+  const minStartDate = toInputDate(getMinStartDate(minDays));
   const minStartDisplay = formatDisplayDate(minStartDate);
 
   const totalDays = calcDuration(value.fechaInicio, value.fechaFin);
 
   const fechaInicioError =
     value.fechaInicio && value.fechaInicio < minStartDate
-      ? `La fecha de inicio debe ser mínimo el ${minStartDisplay}, considerando 13 días hábiles desde hoy.`
+      ? `La fecha de inicio debe ser mínimo el ${minStartDisplay}, considerando ${minDays} días hábiles desde hoy.`
       : "";
 
   const fechaFinError =
@@ -222,7 +223,7 @@ export function CronogramaBuilder({ value, onChange }: CronogramaBuilderProps) {
           {!fechaInicioError && (
             <p className="mt-1 flex items-center gap-1 text-xs text-gray-500">
               <CalendarDays size={11} />
-              Mínimo: {minStartDisplay} (13 días hábiles desde hoy)
+              Mínimo: {minStartDisplay} ({minDays} días hábiles desde hoy)
             </p>
           )}
         </div>

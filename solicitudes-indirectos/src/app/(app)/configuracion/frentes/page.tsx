@@ -450,10 +450,10 @@ export default function FrentesPage() {
                       <div key={grupo.etapa ?? "sin-etapa"}>
                         {/* Subtítulo de etapa */}
                         <div className="px-5 pt-5 pb-2 flex items-center gap-3">
-                          <span className="text-sm font-bold text-purple-600">
+                          <span className="text-sm font-bold text-blue-600">
                             {grupo.etapa !== null ? `Etapa ${grupo.etapa}` : "Sin etapa"}
                           </span>
-                          <div className="flex-1 h-px bg-purple-100" />
+                          <div className="flex-1 h-px bg-blue-100" />
                         </div>
                         {/* Frentes de este grupo */}
                         <div className="divide-y divide-gray-100">

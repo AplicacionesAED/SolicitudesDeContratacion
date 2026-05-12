@@ -29,6 +29,7 @@ import { formatDate, formatCurrency, numeroALetras } from "@/lib/utils";
 interface Frente {
   id: number;
   nombre: string;
+  etapa?: number | null;
   proyectoId: number;
   proyecto: { id: number; nombre: string; activo: boolean };
   aprobadorConfig?: { id: number; aprobadorId: string; frenteId: number } | null;
@@ -562,25 +563,47 @@ export function SolicitudForm({
             <Controller
               name="frentesIds"
               control={control}
-              render={({ field }) => (
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                  {frentes.map((frente) => {
-                    const checked = field.value?.includes(frente.id) ?? false;
-                    return (
-                      <label key={frente.id} className={`flex items-center gap-2.5 rounded-lg border px-3 py-2 cursor-pointer transition-colors ${checked ? "border-blue-400 bg-blue-50" : "border-gray-200 hover:border-gray-300 bg-white"}`}>
-                        <input type="checkbox" checked={checked} onChange={(e) => {
-                          const next = e.target.checked ? [...(field.value ?? []), frente.id] : (field.value ?? []).filter((id: number) => id !== frente.id);
-                          field.onChange(next);
-                        }} className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500" />
-                        <div>
-                          <p className="text-sm font-medium text-gray-800">{frente.nombre}</p>
-                          <p className="text-xs text-gray-500">{frente.proyecto.nombre}</p>
+              render={({ field }) => {
+                const grupos: { etapa: number | null; frentes: Frente[] }[] = [];
+                const sorted = [...frentes].sort((a, b) => (a.etapa ?? 999) - (b.etapa ?? 999));
+                for (const frente of sorted) {
+                  const etapa = frente.etapa ?? null;
+                  const grupo = grupos.find((g) => g.etapa === etapa);
+                  if (grupo) grupo.frentes.push(frente);
+                  else grupos.push({ etapa, frentes: [frente] });
+                }
+                return (
+                  <div className="space-y-3">
+                    {grupos.map((grupo) => (
+                      <div key={grupo.etapa ?? "sin-etapa"}>
+                        <div className="flex items-center gap-2 mb-2">
+                          <span className="text-xs font-semibold text-blue-600">
+                            {grupo.etapa !== null ? `Etapa ${grupo.etapa}` : "Sin etapa"}
+                          </span>
+                          <div className="flex-1 h-px bg-blue-100" />
                         </div>
-                      </label>
-                    );
-                  })}
-                </div>
-              )}
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                          {grupo.frentes.map((frente) => {
+                            const checked = field.value?.includes(frente.id) ?? false;
+                            return (
+                              <label key={frente.id} className={`flex items-center gap-2.5 rounded-lg border px-3 py-2 cursor-pointer transition-colors ${checked ? "border-blue-400 bg-blue-50" : "border-gray-200 hover:border-gray-300 bg-white"}`}>
+                                <input type="checkbox" checked={checked} onChange={(e) => {
+                                  const next = e.target.checked ? [...(field.value ?? []), frente.id] : (field.value ?? []).filter((id: number) => id !== frente.id);
+                                  field.onChange(next);
+                                }} className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500" />
+                                <div>
+                                  <p className="text-sm font-medium text-gray-800">{frente.nombre}</p>
+                                  <p className="text-xs text-gray-500">{frente.proyecto.nombre}</p>
+                                </div>
+                              </label>
+                            );
+                          })}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                );
+              }}
             />
           )}
           {errors.frentesIds && <p className="text-xs text-red-500 mt-1">{errors.frentesIds.message}</p>}
@@ -789,7 +812,11 @@ export function SolicitudForm({
       </Section>
 
       <Section title="Cronograma" collapsible defaultOpen={true}>
-        <CronogramaBuilder value={cronograma} onChange={(data) => { setCronograma(data); setCronogramaError(""); }} />
+        <CronogramaBuilder
+          value={cronograma}
+          onChange={(data) => { setCronograma(data); setCronogramaError(""); }}
+          minDays={tipoSolicitud === "ORDEN_SERVICIO" ? 2 : 13}
+        />
         {cronogramaError && (
           <div className="flex items-center gap-2 mt-2 text-xs text-red-600">
             <AlertCircle size={13} className="shrink-0" />

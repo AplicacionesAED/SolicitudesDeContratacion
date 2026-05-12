@@ -121,7 +121,7 @@ export function countBusinessDays(start: Date, end: Date): number {
   return count;
 }
 
-/** Fecha mínima para iniciar un contrato: 13 días hábiles desde hoy */
-export function getMinStartDate(): Date {
-  return addBusinessDays(new Date(), 13);
+/** Fecha mínima para iniciar: N días hábiles desde hoy */
+export function getMinStartDate(days: number = 13): Date {
+  return addBusinessDays(new Date(), days);
 }

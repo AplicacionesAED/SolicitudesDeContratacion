@@ -454,6 +454,7 @@ export function OtrosiForm({ tipo }: OtrosiFormProps) {
             setCronograma(data);
             setCronogramaError("");
           }}
+          minDays={selectedParent?.tipo === "ORDEN_SERVICIO" ? 2 : 13}
         />
         {cronogramaError && (
           <p className="text-xs text-red-600 mt-2">{cronogramaError}</p>
