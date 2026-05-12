@@ -4,7 +4,7 @@ import { prisma } from "@/lib/prisma";
 import { buildConsecutivo, abbreviate, normalizeFrenteName, tienePermiso } from "@/lib/utils";
 import { notificarNuevaSolicitud } from "@/lib/notifications";
 
-const ROLES_VER_TODAS: string[] = ["CONTRATOS", "CONTROLES", "DIRECTOR_CONTROLES", "ADMIN"];
+const ROLES_VER_TODAS: string[] = ["CONTRATOS", "CONTROLES", "DIRECTOR_CONTROLES", "DIRECTOR_TECNICO", "ADMIN"];
 
 export async function GET(request: Request) {
   try {
@@ -167,6 +167,13 @@ export async function POST(request: Request) {
     }
 
     const body = await request.json();
+
+    if (body.tipoContrato === "DISENO" && !tienePermiso(userRoles, funcionalidadesAdicionales, "crear_solicitudes_diseno")) {
+      return Response.json(
+        { error: "No tienes permiso para crear solicitudes de diseño." },
+        { status: 403 }
+      );
+    }
     const {
       tipo,
       proyectoId,
@@ -187,7 +194,9 @@ export async function POST(request: Request) {
       contratanteNit,
       archivoCuadroComparativo,
       archivoCotizacion,
-      archivoBEP,
+      archivoGeneradorGastos,
+      archivoEvaluacionInicial,
+      archivoPreBEP,
       solicitudPadreId,
     } = body;
 
@@ -202,6 +211,15 @@ export async function POST(request: Request) {
 
       const parent = await prisma.solicitud.findUnique({
         where: { id: Number(solicitudPadreId) },
+        include: {
+          cronograma: { select: { fechaFin: true } },
+          otrosis: {
+            where: { estado: "COMPLETADA" },
+            select: { creadoEn: true, cronograma: { select: { fechaFin: true } } },
+            orderBy: { creadoEn: "desc" },
+            take: 1,
+          },
+        },
       });
 
       if (!parent) {
@@ -228,6 +246,22 @@ export async function POST(request: Request) {
           { error: `Ya existe un otrosí activo para este contrato (${activeOtrosi.consecutivo}). Debe completarse antes de crear uno nuevo.` },
           { status: 400 }
         );
+      }
+
+      // Fecha efectiva de fin: otrosí completado más reciente, o cronograma del padre
+      const effectiveFechaFin = parent.otrosis[0]?.cronograma?.fechaFin ?? parent.cronograma?.fechaFin;
+      if (effectiveFechaFin) {
+        const todayBogota = new Date(new Date().toLocaleString("en-US", { timeZone: "America/Bogota" }));
+        todayBogota.setHours(0, 0, 0, 0);
+        const fechaFinBogota = new Date(new Date(effectiveFechaFin).toLocaleString("en-US", { timeZone: "America/Bogota" }));
+        fechaFinBogota.setHours(0, 0, 0, 0);
+        if (todayBogota >= fechaFinBogota) {
+          const fechaStr = fechaFinBogota.toLocaleDateString("es-CO", { day: "2-digit", month: "long", year: "numeric" });
+          return Response.json(
+            { error: `No se puede crear el otrosí. El contrato venció el ${fechaStr}.` },
+            { status: 400 }
+          );
+        }
       }
 
       if (!tipo || !["OTROSI_TIEMPO", "OTROSI_TIEMPO_CANTIDAD"].includes(tipo)) {
@@ -424,7 +458,9 @@ export async function POST(request: Request) {
           contratanteNit: contratanteNit ?? "901237628-1",
           archivoCuadroComparativo: archivoCuadroComparativo ?? null,
           archivoCotizacion: archivoCotizacion ?? null,
-          archivoBEP: archivoBEP ?? null,
+          archivoGeneradorGastos: archivoGeneradorGastos ?? null,
+          archivoEvaluacionInicial: archivoEvaluacionInicial ?? null,
+          archivoPreBEP: archivoPreBEP ?? null,
         },
         include: {
           solicitante: { select: { id: true, nombre: true, cargo: true } },

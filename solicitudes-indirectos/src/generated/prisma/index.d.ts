@@ -10568,6 +10568,14 @@ export namespace Prisma {
     nit: string | null
     tipoContrato: string | null
     confidencialidad: boolean | null
+    representanteLegal: string | null
+    cedulaRepresentante: string | null
+    correoFirma: string | null
+    direccionRepresentante: string | null
+    telefonoRepresentante: string | null
+    nombreContacto: string | null
+    telefonoContacto: string | null
+    correoContacto: string | null
     fechaVencimientoSagrilaft: Date | null
     dd_identificacionContraparte: boolean | null
     dd_consultaListasRestrictivas: boolean | null
@@ -10584,6 +10592,14 @@ export namespace Prisma {
     nit: string | null
     tipoContrato: string | null
     confidencialidad: boolean | null
+    representanteLegal: string | null
+    cedulaRepresentante: string | null
+    correoFirma: string | null
+    direccionRepresentante: string | null
+    telefonoRepresentante: string | null
+    nombreContacto: string | null
+    telefonoContacto: string | null
+    correoContacto: string | null
     fechaVencimientoSagrilaft: Date | null
     dd_identificacionContraparte: boolean | null
     dd_consultaListasRestrictivas: boolean | null
@@ -10600,6 +10616,14 @@ export namespace Prisma {
     nit: number
     tipoContrato: number
     confidencialidad: number
+    representanteLegal: number
+    cedulaRepresentante: number
+    correoFirma: number
+    direccionRepresentante: number
+    telefonoRepresentante: number
+    nombreContacto: number
+    telefonoContacto: number
+    correoContacto: number
     fechaVencimientoSagrilaft: number
     dd_identificacionContraparte: number
     dd_consultaListasRestrictivas: number
@@ -10626,6 +10650,14 @@ export namespace Prisma {
     nit?: true
     tipoContrato?: true
     confidencialidad?: true
+    representanteLegal?: true
+    cedulaRepresentante?: true
+    correoFirma?: true
+    direccionRepresentante?: true
+    telefonoRepresentante?: true
+    nombreContacto?: true
+    telefonoContacto?: true
+    correoContacto?: true
     fechaVencimientoSagrilaft?: true
     dd_identificacionContraparte?: true
     dd_consultaListasRestrictivas?: true
@@ -10642,6 +10674,14 @@ export namespace Prisma {
     nit?: true
     tipoContrato?: true
     confidencialidad?: true
+    representanteLegal?: true
+    cedulaRepresentante?: true
+    correoFirma?: true
+    direccionRepresentante?: true
+    telefonoRepresentante?: true
+    nombreContacto?: true
+    telefonoContacto?: true
+    correoContacto?: true
     fechaVencimientoSagrilaft?: true
     dd_identificacionContraparte?: true
     dd_consultaListasRestrictivas?: true
@@ -10658,6 +10698,14 @@ export namespace Prisma {
     nit?: true
     tipoContrato?: true
     confidencialidad?: true
+    representanteLegal?: true
+    cedulaRepresentante?: true
+    correoFirma?: true
+    direccionRepresentante?: true
+    telefonoRepresentante?: true
+    nombreContacto?: true
+    telefonoContacto?: true
+    correoContacto?: true
     fechaVencimientoSagrilaft?: true
     dd_identificacionContraparte?: true
     dd_consultaListasRestrictivas?: true
@@ -10761,6 +10809,14 @@ export namespace Prisma {
     nit: string
     tipoContrato: string
     confidencialidad: boolean
+    representanteLegal: string | null
+    cedulaRepresentante: string | null
+    correoFirma: string | null
+    direccionRepresentante: string | null
+    telefonoRepresentante: string | null
+    nombreContacto: string | null
+    telefonoContacto: string | null
+    correoContacto: string | null
     fechaVencimientoSagrilaft: Date | null
     dd_identificacionContraparte: boolean
     dd_consultaListasRestrictivas: boolean
@@ -10796,6 +10852,14 @@ export namespace Prisma {
     nit?: boolean
     tipoContrato?: boolean
     confidencialidad?: boolean
+    representanteLegal?: boolean
+    cedulaRepresentante?: boolean
+    correoFirma?: boolean
+    direccionRepresentante?: boolean
+    telefonoRepresentante?: boolean
+    nombreContacto?: boolean
+    telefonoContacto?: boolean
+    correoContacto?: boolean
     fechaVencimientoSagrilaft?: boolean
     dd_identificacionContraparte?: boolean
     dd_consultaListasRestrictivas?: boolean
@@ -10814,6 +10878,14 @@ export namespace Prisma {
     nit?: boolean
     tipoContrato?: boolean
     confidencialidad?: boolean
+    representanteLegal?: boolean
+    cedulaRepresentante?: boolean
+    correoFirma?: boolean
+    direccionRepresentante?: boolean
+    telefonoRepresentante?: boolean
+    nombreContacto?: boolean
+    telefonoContacto?: boolean
+    correoContacto?: boolean
     fechaVencimientoSagrilaft?: boolean
     dd_identificacionContraparte?: boolean
     dd_consultaListasRestrictivas?: boolean
@@ -10842,6 +10914,14 @@ export namespace Prisma {
       nit: string
       tipoContrato: string
       confidencialidad: boolean
+      representanteLegal: string | null
+      cedulaRepresentante: string | null
+      correoFirma: string | null
+      direccionRepresentante: string | null
+      telefonoRepresentante: string | null
+      nombreContacto: string | null
+      telefonoContacto: string | null
+      correoContacto: string | null
       fechaVencimientoSagrilaft: Date | null
       dd_identificacionContraparte: boolean
       dd_consultaListasRestrictivas: boolean
@@ -11276,6 +11356,14 @@ export namespace Prisma {
     readonly nit: FieldRef<"Tercero", 'String'>
     readonly tipoContrato: FieldRef<"Tercero", 'String'>
     readonly confidencialidad: FieldRef<"Tercero", 'Boolean'>
+    readonly representanteLegal: FieldRef<"Tercero", 'String'>
+    readonly cedulaRepresentante: FieldRef<"Tercero", 'String'>
+    readonly correoFirma: FieldRef<"Tercero", 'String'>
+    readonly direccionRepresentante: FieldRef<"Tercero", 'String'>
+    readonly telefonoRepresentante: FieldRef<"Tercero", 'String'>
+    readonly nombreContacto: FieldRef<"Tercero", 'String'>
+    readonly telefonoContacto: FieldRef<"Tercero", 'String'>
+    readonly correoContacto: FieldRef<"Tercero", 'String'>
     readonly fechaVencimientoSagrilaft: FieldRef<"Tercero", 'DateTime'>
     readonly dd_identificacionContraparte: FieldRef<"Tercero", 'Boolean'>
     readonly dd_consultaListasRestrictivas: FieldRef<"Tercero", 'Boolean'>
@@ -11699,7 +11787,9 @@ export namespace Prisma {
     archivoCuadroComparativo: string | null
     archivoCotizacion: string | null
     archivoFormatoSolicitud: string | null
-    archivoBEP: string | null
+    archivoPreBEP: string | null
+    archivoGeneradorGastos: string | null
+    archivoEvaluacionInicial: string | null
     archivosAnexos: string | null
     aprobadorId: string | null
     fechaAprobacionDirector: Date | null
@@ -11751,7 +11841,9 @@ export namespace Prisma {
     archivoCuadroComparativo: string | null
     archivoCotizacion: string | null
     archivoFormatoSolicitud: string | null
-    archivoBEP: string | null
+    archivoPreBEP: string | null
+    archivoGeneradorGastos: string | null
+    archivoEvaluacionInicial: string | null
     archivosAnexos: string | null
     aprobadorId: string | null
     fechaAprobacionDirector: Date | null
@@ -11803,7 +11895,9 @@ export namespace Prisma {
     archivoCuadroComparativo: number
     archivoCotizacion: number
     archivoFormatoSolicitud: number
-    archivoBEP: number
+    archivoPreBEP: number
+    archivoGeneradorGastos: number
+    archivoEvaluacionInicial: number
     archivosAnexos: number
     aprobadorId: number
     fechaAprobacionDirector: number
@@ -11873,7 +11967,9 @@ export namespace Prisma {
     archivoCuadroComparativo?: true
     archivoCotizacion?: true
     archivoFormatoSolicitud?: true
-    archivoBEP?: true
+    archivoPreBEP?: true
+    archivoGeneradorGastos?: true
+    archivoEvaluacionInicial?: true
     archivosAnexos?: true
     aprobadorId?: true
     fechaAprobacionDirector?: true
@@ -11925,7 +12021,9 @@ export namespace Prisma {
     archivoCuadroComparativo?: true
     archivoCotizacion?: true
     archivoFormatoSolicitud?: true
-    archivoBEP?: true
+    archivoPreBEP?: true
+    archivoGeneradorGastos?: true
+    archivoEvaluacionInicial?: true
     archivosAnexos?: true
     aprobadorId?: true
     fechaAprobacionDirector?: true
@@ -11977,7 +12075,9 @@ export namespace Prisma {
     archivoCuadroComparativo?: true
     archivoCotizacion?: true
     archivoFormatoSolicitud?: true
-    archivoBEP?: true
+    archivoPreBEP?: true
+    archivoGeneradorGastos?: true
+    archivoEvaluacionInicial?: true
     archivosAnexos?: true
     aprobadorId?: true
     fechaAprobacionDirector?: true
@@ -12116,7 +12216,9 @@ export namespace Prisma {
     archivoCuadroComparativo: string | null
     archivoCotizacion: string | null
     archivoFormatoSolicitud: string | null
-    archivoBEP: string | null
+    archivoPreBEP: string | null
+    archivoGeneradorGastos: string | null
+    archivoEvaluacionInicial: string | null
     archivosAnexos: string
     aprobadorId: string | null
     fechaAprobacionDirector: Date | null
@@ -12187,7 +12289,9 @@ export namespace Prisma {
     archivoCuadroComparativo?: boolean
     archivoCotizacion?: boolean
     archivoFormatoSolicitud?: boolean
-    archivoBEP?: boolean
+    archivoPreBEP?: boolean
+    archivoGeneradorGastos?: boolean
+    archivoEvaluacionInicial?: boolean
     archivosAnexos?: boolean
     aprobadorId?: boolean
     fechaAprobacionDirector?: boolean
@@ -12247,7 +12351,9 @@ export namespace Prisma {
     archivoCuadroComparativo?: boolean
     archivoCotizacion?: boolean
     archivoFormatoSolicitud?: boolean
-    archivoBEP?: boolean
+    archivoPreBEP?: boolean
+    archivoGeneradorGastos?: boolean
+    archivoEvaluacionInicial?: boolean
     archivosAnexos?: boolean
     aprobadorId?: boolean
     fechaAprobacionDirector?: boolean
@@ -12323,7 +12429,9 @@ export namespace Prisma {
       archivoCuadroComparativo: string | null
       archivoCotizacion: string | null
       archivoFormatoSolicitud: string | null
-      archivoBEP: string | null
+      archivoPreBEP: string | null
+      archivoGeneradorGastos: string | null
+      archivoEvaluacionInicial: string | null
       archivosAnexos: string
       aprobadorId: string | null
       fechaAprobacionDirector: Date | null
@@ -12805,7 +12913,9 @@ export namespace Prisma {
     readonly archivoCuadroComparativo: FieldRef<"Solicitud", 'String'>
     readonly archivoCotizacion: FieldRef<"Solicitud", 'String'>
     readonly archivoFormatoSolicitud: FieldRef<"Solicitud", 'String'>
-    readonly archivoBEP: FieldRef<"Solicitud", 'String'>
+    readonly archivoPreBEP: FieldRef<"Solicitud", 'String'>
+    readonly archivoGeneradorGastos: FieldRef<"Solicitud", 'String'>
+    readonly archivoEvaluacionInicial: FieldRef<"Solicitud", 'String'>
     readonly archivosAnexos: FieldRef<"Solicitud", 'String'>
     readonly aprobadorId: FieldRef<"Solicitud", 'String'>
     readonly fechaAprobacionDirector: FieldRef<"Solicitud", 'DateTime'>
@@ -19409,6 +19519,14 @@ export namespace Prisma {
     nit: 'nit',
     tipoContrato: 'tipoContrato',
     confidencialidad: 'confidencialidad',
+    representanteLegal: 'representanteLegal',
+    cedulaRepresentante: 'cedulaRepresentante',
+    correoFirma: 'correoFirma',
+    direccionRepresentante: 'direccionRepresentante',
+    telefonoRepresentante: 'telefonoRepresentante',
+    nombreContacto: 'nombreContacto',
+    telefonoContacto: 'telefonoContacto',
+    correoContacto: 'correoContacto',
     fechaVencimientoSagrilaft: 'fechaVencimientoSagrilaft',
     dd_identificacionContraparte: 'dd_identificacionContraparte',
     dd_consultaListasRestrictivas: 'dd_consultaListasRestrictivas',
@@ -19457,7 +19575,9 @@ export namespace Prisma {
     archivoCuadroComparativo: 'archivoCuadroComparativo',
     archivoCotizacion: 'archivoCotizacion',
     archivoFormatoSolicitud: 'archivoFormatoSolicitud',
-    archivoBEP: 'archivoBEP',
+    archivoPreBEP: 'archivoPreBEP',
+    archivoGeneradorGastos: 'archivoGeneradorGastos',
+    archivoEvaluacionInicial: 'archivoEvaluacionInicial',
     archivosAnexos: 'archivosAnexos',
     aprobadorId: 'aprobadorId',
     fechaAprobacionDirector: 'fechaAprobacionDirector',
@@ -20193,6 +20313,14 @@ export namespace Prisma {
     nit?: StringFilter<"Tercero"> | string
     tipoContrato?: StringFilter<"Tercero"> | string
     confidencialidad?: BoolFilter<"Tercero"> | boolean
+    representanteLegal?: StringNullableFilter<"Tercero"> | string | null
+    cedulaRepresentante?: StringNullableFilter<"Tercero"> | string | null
+    correoFirma?: StringNullableFilter<"Tercero"> | string | null
+    direccionRepresentante?: StringNullableFilter<"Tercero"> | string | null
+    telefonoRepresentante?: StringNullableFilter<"Tercero"> | string | null
+    nombreContacto?: StringNullableFilter<"Tercero"> | string | null
+    telefonoContacto?: StringNullableFilter<"Tercero"> | string | null
+    correoContacto?: StringNullableFilter<"Tercero"> | string | null
     fechaVencimientoSagrilaft?: DateTimeNullableFilter<"Tercero"> | Date | string | null
     dd_identificacionContraparte?: BoolFilter<"Tercero"> | boolean
     dd_consultaListasRestrictivas?: BoolFilter<"Tercero"> | boolean
@@ -20210,6 +20338,14 @@ export namespace Prisma {
     nit?: SortOrder
     tipoContrato?: SortOrder
     confidencialidad?: SortOrder
+    representanteLegal?: SortOrderInput | SortOrder
+    cedulaRepresentante?: SortOrderInput | SortOrder
+    correoFirma?: SortOrderInput | SortOrder
+    direccionRepresentante?: SortOrderInput | SortOrder
+    telefonoRepresentante?: SortOrderInput | SortOrder
+    nombreContacto?: SortOrderInput | SortOrder
+    telefonoContacto?: SortOrderInput | SortOrder
+    correoContacto?: SortOrderInput | SortOrder
     fechaVencimientoSagrilaft?: SortOrderInput | SortOrder
     dd_identificacionContraparte?: SortOrder
     dd_consultaListasRestrictivas?: SortOrder
@@ -20230,6 +20366,14 @@ export namespace Prisma {
     nit?: StringFilter<"Tercero"> | string
     tipoContrato?: StringFilter<"Tercero"> | string
     confidencialidad?: BoolFilter<"Tercero"> | boolean
+    representanteLegal?: StringNullableFilter<"Tercero"> | string | null
+    cedulaRepresentante?: StringNullableFilter<"Tercero"> | string | null
+    correoFirma?: StringNullableFilter<"Tercero"> | string | null
+    direccionRepresentante?: StringNullableFilter<"Tercero"> | string | null
+    telefonoRepresentante?: StringNullableFilter<"Tercero"> | string | null
+    nombreContacto?: StringNullableFilter<"Tercero"> | string | null
+    telefonoContacto?: StringNullableFilter<"Tercero"> | string | null
+    correoContacto?: StringNullableFilter<"Tercero"> | string | null
     fechaVencimientoSagrilaft?: DateTimeNullableFilter<"Tercero"> | Date | string | null
     dd_identificacionContraparte?: BoolFilter<"Tercero"> | boolean
     dd_consultaListasRestrictivas?: BoolFilter<"Tercero"> | boolean
@@ -20247,6 +20391,14 @@ export namespace Prisma {
     nit?: SortOrder
     tipoContrato?: SortOrder
     confidencialidad?: SortOrder
+    representanteLegal?: SortOrderInput | SortOrder
+    cedulaRepresentante?: SortOrderInput | SortOrder
+    correoFirma?: SortOrderInput | SortOrder
+    direccionRepresentante?: SortOrderInput | SortOrder
+    telefonoRepresentante?: SortOrderInput | SortOrder
+    nombreContacto?: SortOrderInput | SortOrder
+    telefonoContacto?: SortOrderInput | SortOrder
+    correoContacto?: SortOrderInput | SortOrder
     fechaVencimientoSagrilaft?: SortOrderInput | SortOrder
     dd_identificacionContraparte?: SortOrder
     dd_consultaListasRestrictivas?: SortOrder
@@ -20271,6 +20423,14 @@ export namespace Prisma {
     nit?: StringWithAggregatesFilter<"Tercero"> | string
     tipoContrato?: StringWithAggregatesFilter<"Tercero"> | string
     confidencialidad?: BoolWithAggregatesFilter<"Tercero"> | boolean
+    representanteLegal?: StringNullableWithAggregatesFilter<"Tercero"> | string | null
+    cedulaRepresentante?: StringNullableWithAggregatesFilter<"Tercero"> | string | null
+    correoFirma?: StringNullableWithAggregatesFilter<"Tercero"> | string | null
+    direccionRepresentante?: StringNullableWithAggregatesFilter<"Tercero"> | string | null
+    telefonoRepresentante?: StringNullableWithAggregatesFilter<"Tercero"> | string | null
+    nombreContacto?: StringNullableWithAggregatesFilter<"Tercero"> | string | null
+    telefonoContacto?: StringNullableWithAggregatesFilter<"Tercero"> | string | null
+    correoContacto?: StringNullableWithAggregatesFilter<"Tercero"> | string | null
     fechaVencimientoSagrilaft?: DateTimeNullableWithAggregatesFilter<"Tercero"> | Date | string | null
     dd_identificacionContraparte?: BoolWithAggregatesFilter<"Tercero"> | boolean
     dd_consultaListasRestrictivas?: BoolWithAggregatesFilter<"Tercero"> | boolean
@@ -20319,7 +20479,9 @@ export namespace Prisma {
     archivoCuadroComparativo?: StringNullableFilter<"Solicitud"> | string | null
     archivoCotizacion?: StringNullableFilter<"Solicitud"> | string | null
     archivoFormatoSolicitud?: StringNullableFilter<"Solicitud"> | string | null
-    archivoBEP?: StringNullableFilter<"Solicitud"> | string | null
+    archivoPreBEP?: StringNullableFilter<"Solicitud"> | string | null
+    archivoGeneradorGastos?: StringNullableFilter<"Solicitud"> | string | null
+    archivoEvaluacionInicial?: StringNullableFilter<"Solicitud"> | string | null
     archivosAnexos?: StringFilter<"Solicitud"> | string
     aprobadorId?: StringNullableFilter<"Solicitud"> | string | null
     fechaAprobacionDirector?: DateTimeNullableFilter<"Solicitud"> | Date | string | null
@@ -20378,7 +20540,9 @@ export namespace Prisma {
     archivoCuadroComparativo?: SortOrderInput | SortOrder
     archivoCotizacion?: SortOrderInput | SortOrder
     archivoFormatoSolicitud?: SortOrderInput | SortOrder
-    archivoBEP?: SortOrderInput | SortOrder
+    archivoPreBEP?: SortOrderInput | SortOrder
+    archivoGeneradorGastos?: SortOrderInput | SortOrder
+    archivoEvaluacionInicial?: SortOrderInput | SortOrder
     archivosAnexos?: SortOrder
     aprobadorId?: SortOrderInput | SortOrder
     fechaAprobacionDirector?: SortOrderInput | SortOrder
@@ -20440,7 +20604,9 @@ export namespace Prisma {
     archivoCuadroComparativo?: StringNullableFilter<"Solicitud"> | string | null
     archivoCotizacion?: StringNullableFilter<"Solicitud"> | string | null
     archivoFormatoSolicitud?: StringNullableFilter<"Solicitud"> | string | null
-    archivoBEP?: StringNullableFilter<"Solicitud"> | string | null
+    archivoPreBEP?: StringNullableFilter<"Solicitud"> | string | null
+    archivoGeneradorGastos?: StringNullableFilter<"Solicitud"> | string | null
+    archivoEvaluacionInicial?: StringNullableFilter<"Solicitud"> | string | null
     archivosAnexos?: StringFilter<"Solicitud"> | string
     aprobadorId?: StringNullableFilter<"Solicitud"> | string | null
     fechaAprobacionDirector?: DateTimeNullableFilter<"Solicitud"> | Date | string | null
@@ -20499,7 +20665,9 @@ export namespace Prisma {
     archivoCuadroComparativo?: SortOrderInput | SortOrder
     archivoCotizacion?: SortOrderInput | SortOrder
     archivoFormatoSolicitud?: SortOrderInput | SortOrder
-    archivoBEP?: SortOrderInput | SortOrder
+    archivoPreBEP?: SortOrderInput | SortOrder
+    archivoGeneradorGastos?: SortOrderInput | SortOrder
+    archivoEvaluacionInicial?: SortOrderInput | SortOrder
     archivosAnexos?: SortOrder
     aprobadorId?: SortOrderInput | SortOrder
     fechaAprobacionDirector?: SortOrderInput | SortOrder
@@ -20559,7 +20727,9 @@ export namespace Prisma {
     archivoCuadroComparativo?: StringNullableWithAggregatesFilter<"Solicitud"> | string | null
     archivoCotizacion?: StringNullableWithAggregatesFilter<"Solicitud"> | string | null
     archivoFormatoSolicitud?: StringNullableWithAggregatesFilter<"Solicitud"> | string | null
-    archivoBEP?: StringNullableWithAggregatesFilter<"Solicitud"> | string | null
+    archivoPreBEP?: StringNullableWithAggregatesFilter<"Solicitud"> | string | null
+    archivoGeneradorGastos?: StringNullableWithAggregatesFilter<"Solicitud"> | string | null
+    archivoEvaluacionInicial?: StringNullableWithAggregatesFilter<"Solicitud"> | string | null
     archivosAnexos?: StringWithAggregatesFilter<"Solicitud"> | string
     aprobadorId?: StringNullableWithAggregatesFilter<"Solicitud"> | string | null
     fechaAprobacionDirector?: DateTimeNullableWithAggregatesFilter<"Solicitud"> | Date | string | null
@@ -21504,6 +21674,14 @@ export namespace Prisma {
     nit: string
     tipoContrato: string
     confidencialidad?: boolean
+    representanteLegal?: string | null
+    cedulaRepresentante?: string | null
+    correoFirma?: string | null
+    direccionRepresentante?: string | null
+    telefonoRepresentante?: string | null
+    nombreContacto?: string | null
+    telefonoContacto?: string | null
+    correoContacto?: string | null
     fechaVencimientoSagrilaft?: Date | string | null
     dd_identificacionContraparte?: boolean
     dd_consultaListasRestrictivas?: boolean
@@ -21521,6 +21699,14 @@ export namespace Prisma {
     nit: string
     tipoContrato: string
     confidencialidad?: boolean
+    representanteLegal?: string | null
+    cedulaRepresentante?: string | null
+    correoFirma?: string | null
+    direccionRepresentante?: string | null
+    telefonoRepresentante?: string | null
+    nombreContacto?: string | null
+    telefonoContacto?: string | null
+    correoContacto?: string | null
     fechaVencimientoSagrilaft?: Date | string | null
     dd_identificacionContraparte?: boolean
     dd_consultaListasRestrictivas?: boolean
@@ -21537,6 +21723,14 @@ export namespace Prisma {
     nit?: StringFieldUpdateOperationsInput | string
     tipoContrato?: StringFieldUpdateOperationsInput | string
     confidencialidad?: BoolFieldUpdateOperationsInput | boolean
+    representanteLegal?: NullableStringFieldUpdateOperationsInput | string | null
+    cedulaRepresentante?: NullableStringFieldUpdateOperationsInput | string | null
+    correoFirma?: NullableStringFieldUpdateOperationsInput | string | null
+    direccionRepresentante?: NullableStringFieldUpdateOperationsInput | string | null
+    telefonoRepresentante?: NullableStringFieldUpdateOperationsInput | string | null
+    nombreContacto?: NullableStringFieldUpdateOperationsInput | string | null
+    telefonoContacto?: NullableStringFieldUpdateOperationsInput | string | null
+    correoContacto?: NullableStringFieldUpdateOperationsInput | string | null
     fechaVencimientoSagrilaft?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     dd_identificacionContraparte?: BoolFieldUpdateOperationsInput | boolean
     dd_consultaListasRestrictivas?: BoolFieldUpdateOperationsInput | boolean
@@ -21554,6 +21748,14 @@ export namespace Prisma {
     nit?: StringFieldUpdateOperationsInput | string
     tipoContrato?: StringFieldUpdateOperationsInput | string
     confidencialidad?: BoolFieldUpdateOperationsInput | boolean
+    representanteLegal?: NullableStringFieldUpdateOperationsInput | string | null
+    cedulaRepresentante?: NullableStringFieldUpdateOperationsInput | string | null
+    correoFirma?: NullableStringFieldUpdateOperationsInput | string | null
+    direccionRepresentante?: NullableStringFieldUpdateOperationsInput | string | null
+    telefonoRepresentante?: NullableStringFieldUpdateOperationsInput | string | null
+    nombreContacto?: NullableStringFieldUpdateOperationsInput | string | null
+    telefonoContacto?: NullableStringFieldUpdateOperationsInput | string | null
+    correoContacto?: NullableStringFieldUpdateOperationsInput | string | null
     fechaVencimientoSagrilaft?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     dd_identificacionContraparte?: BoolFieldUpdateOperationsInput | boolean
     dd_consultaListasRestrictivas?: BoolFieldUpdateOperationsInput | boolean
@@ -21571,6 +21773,14 @@ export namespace Prisma {
     nit: string
     tipoContrato: string
     confidencialidad?: boolean
+    representanteLegal?: string | null
+    cedulaRepresentante?: string | null
+    correoFirma?: string | null
+    direccionRepresentante?: string | null
+    telefonoRepresentante?: string | null
+    nombreContacto?: string | null
+    telefonoContacto?: string | null
+    correoContacto?: string | null
     fechaVencimientoSagrilaft?: Date | string | null
     dd_identificacionContraparte?: boolean
     dd_consultaListasRestrictivas?: boolean
@@ -21586,6 +21796,14 @@ export namespace Prisma {
     nit?: StringFieldUpdateOperationsInput | string
     tipoContrato?: StringFieldUpdateOperationsInput | string
     confidencialidad?: BoolFieldUpdateOperationsInput | boolean
+    representanteLegal?: NullableStringFieldUpdateOperationsInput | string | null
+    cedulaRepresentante?: NullableStringFieldUpdateOperationsInput | string | null
+    correoFirma?: NullableStringFieldUpdateOperationsInput | string | null
+    direccionRepresentante?: NullableStringFieldUpdateOperationsInput | string | null
+    telefonoRepresentante?: NullableStringFieldUpdateOperationsInput | string | null
+    nombreContacto?: NullableStringFieldUpdateOperationsInput | string | null
+    telefonoContacto?: NullableStringFieldUpdateOperationsInput | string | null
+    correoContacto?: NullableStringFieldUpdateOperationsInput | string | null
     fechaVencimientoSagrilaft?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     dd_identificacionContraparte?: BoolFieldUpdateOperationsInput | boolean
     dd_consultaListasRestrictivas?: BoolFieldUpdateOperationsInput | boolean
@@ -21602,6 +21820,14 @@ export namespace Prisma {
     nit?: StringFieldUpdateOperationsInput | string
     tipoContrato?: StringFieldUpdateOperationsInput | string
     confidencialidad?: BoolFieldUpdateOperationsInput | boolean
+    representanteLegal?: NullableStringFieldUpdateOperationsInput | string | null
+    cedulaRepresentante?: NullableStringFieldUpdateOperationsInput | string | null
+    correoFirma?: NullableStringFieldUpdateOperationsInput | string | null
+    direccionRepresentante?: NullableStringFieldUpdateOperationsInput | string | null
+    telefonoRepresentante?: NullableStringFieldUpdateOperationsInput | string | null
+    nombreContacto?: NullableStringFieldUpdateOperationsInput | string | null
+    telefonoContacto?: NullableStringFieldUpdateOperationsInput | string | null
+    correoContacto?: NullableStringFieldUpdateOperationsInput | string | null
     fechaVencimientoSagrilaft?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     dd_identificacionContraparte?: BoolFieldUpdateOperationsInput | boolean
     dd_consultaListasRestrictivas?: BoolFieldUpdateOperationsInput | boolean
@@ -21644,7 +21870,9 @@ export namespace Prisma {
     archivoCuadroComparativo?: string | null
     archivoCotizacion?: string | null
     archivoFormatoSolicitud?: string | null
-    archivoBEP?: string | null
+    archivoPreBEP?: string | null
+    archivoGeneradorGastos?: string | null
+    archivoEvaluacionInicial?: string | null
     archivosAnexos?: string
     fechaAprobacionDirector?: Date | string | null
     responsableContratosTramiteId?: string | null
@@ -21701,7 +21929,9 @@ export namespace Prisma {
     archivoCuadroComparativo?: string | null
     archivoCotizacion?: string | null
     archivoFormatoSolicitud?: string | null
-    archivoBEP?: string | null
+    archivoPreBEP?: string | null
+    archivoGeneradorGastos?: string | null
+    archivoEvaluacionInicial?: string | null
     archivosAnexos?: string
     aprobadorId?: string | null
     fechaAprobacionDirector?: Date | string | null
@@ -21753,7 +21983,9 @@ export namespace Prisma {
     archivoCuadroComparativo?: NullableStringFieldUpdateOperationsInput | string | null
     archivoCotizacion?: NullableStringFieldUpdateOperationsInput | string | null
     archivoFormatoSolicitud?: NullableStringFieldUpdateOperationsInput | string | null
-    archivoBEP?: NullableStringFieldUpdateOperationsInput | string | null
+    archivoPreBEP?: NullableStringFieldUpdateOperationsInput | string | null
+    archivoGeneradorGastos?: NullableStringFieldUpdateOperationsInput | string | null
+    archivoEvaluacionInicial?: NullableStringFieldUpdateOperationsInput | string | null
     archivosAnexos?: StringFieldUpdateOperationsInput | string
     fechaAprobacionDirector?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     responsableContratosTramiteId?: NullableStringFieldUpdateOperationsInput | string | null
@@ -21810,7 +22042,9 @@ export namespace Prisma {
     archivoCuadroComparativo?: NullableStringFieldUpdateOperationsInput | string | null
     archivoCotizacion?: NullableStringFieldUpdateOperationsInput | string | null
     archivoFormatoSolicitud?: NullableStringFieldUpdateOperationsInput | string | null
-    archivoBEP?: NullableStringFieldUpdateOperationsInput | string | null
+    archivoPreBEP?: NullableStringFieldUpdateOperationsInput | string | null
+    archivoGeneradorGastos?: NullableStringFieldUpdateOperationsInput | string | null
+    archivoEvaluacionInicial?: NullableStringFieldUpdateOperationsInput | string | null
     archivosAnexos?: StringFieldUpdateOperationsInput | string
     aprobadorId?: NullableStringFieldUpdateOperationsInput | string | null
     fechaAprobacionDirector?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -21865,7 +22099,9 @@ export namespace Prisma {
     archivoCuadroComparativo?: string | null
     archivoCotizacion?: string | null
     archivoFormatoSolicitud?: string | null
-    archivoBEP?: string | null
+    archivoPreBEP?: string | null
+    archivoGeneradorGastos?: string | null
+    archivoEvaluacionInicial?: string | null
     archivosAnexos?: string
     aprobadorId?: string | null
     fechaAprobacionDirector?: Date | string | null
@@ -21914,7 +22150,9 @@ export namespace Prisma {
     archivoCuadroComparativo?: NullableStringFieldUpdateOperationsInput | string | null
     archivoCotizacion?: NullableStringFieldUpdateOperationsInput | string | null
     archivoFormatoSolicitud?: NullableStringFieldUpdateOperationsInput | string | null
-    archivoBEP?: NullableStringFieldUpdateOperationsInput | string | null
+    archivoPreBEP?: NullableStringFieldUpdateOperationsInput | string | null
+    archivoGeneradorGastos?: NullableStringFieldUpdateOperationsInput | string | null
+    archivoEvaluacionInicial?: NullableStringFieldUpdateOperationsInput | string | null
     archivosAnexos?: StringFieldUpdateOperationsInput | string
     fechaAprobacionDirector?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     responsableContratosTramiteId?: NullableStringFieldUpdateOperationsInput | string | null
@@ -21964,7 +22202,9 @@ export namespace Prisma {
     archivoCuadroComparativo?: NullableStringFieldUpdateOperationsInput | string | null
     archivoCotizacion?: NullableStringFieldUpdateOperationsInput | string | null
     archivoFormatoSolicitud?: NullableStringFieldUpdateOperationsInput | string | null
-    archivoBEP?: NullableStringFieldUpdateOperationsInput | string | null
+    archivoPreBEP?: NullableStringFieldUpdateOperationsInput | string | null
+    archivoGeneradorGastos?: NullableStringFieldUpdateOperationsInput | string | null
+    archivoEvaluacionInicial?: NullableStringFieldUpdateOperationsInput | string | null
     archivosAnexos?: StringFieldUpdateOperationsInput | string
     aprobadorId?: NullableStringFieldUpdateOperationsInput | string | null
     fechaAprobacionDirector?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -22909,6 +23149,14 @@ export namespace Prisma {
     nit?: SortOrder
     tipoContrato?: SortOrder
     confidencialidad?: SortOrder
+    representanteLegal?: SortOrder
+    cedulaRepresentante?: SortOrder
+    correoFirma?: SortOrder
+    direccionRepresentante?: SortOrder
+    telefonoRepresentante?: SortOrder
+    nombreContacto?: SortOrder
+    telefonoContacto?: SortOrder
+    correoContacto?: SortOrder
     fechaVencimientoSagrilaft?: SortOrder
     dd_identificacionContraparte?: SortOrder
     dd_consultaListasRestrictivas?: SortOrder
@@ -22929,6 +23177,14 @@ export namespace Prisma {
     nit?: SortOrder
     tipoContrato?: SortOrder
     confidencialidad?: SortOrder
+    representanteLegal?: SortOrder
+    cedulaRepresentante?: SortOrder
+    correoFirma?: SortOrder
+    direccionRepresentante?: SortOrder
+    telefonoRepresentante?: SortOrder
+    nombreContacto?: SortOrder
+    telefonoContacto?: SortOrder
+    correoContacto?: SortOrder
     fechaVencimientoSagrilaft?: SortOrder
     dd_identificacionContraparte?: SortOrder
     dd_consultaListasRestrictivas?: SortOrder
@@ -22945,6 +23201,14 @@ export namespace Prisma {
     nit?: SortOrder
     tipoContrato?: SortOrder
     confidencialidad?: SortOrder
+    representanteLegal?: SortOrder
+    cedulaRepresentante?: SortOrder
+    correoFirma?: SortOrder
+    direccionRepresentante?: SortOrder
+    telefonoRepresentante?: SortOrder
+    nombreContacto?: SortOrder
+    telefonoContacto?: SortOrder
+    correoContacto?: SortOrder
     fechaVencimientoSagrilaft?: SortOrder
     dd_identificacionContraparte?: SortOrder
     dd_consultaListasRestrictivas?: SortOrder
@@ -23030,7 +23294,9 @@ export namespace Prisma {
     archivoCuadroComparativo?: SortOrder
     archivoCotizacion?: SortOrder
     archivoFormatoSolicitud?: SortOrder
-    archivoBEP?: SortOrder
+    archivoPreBEP?: SortOrder
+    archivoGeneradorGastos?: SortOrder
+    archivoEvaluacionInicial?: SortOrder
     archivosAnexos?: SortOrder
     aprobadorId?: SortOrder
     fechaAprobacionDirector?: SortOrder
@@ -23090,7 +23356,9 @@ export namespace Prisma {
     archivoCuadroComparativo?: SortOrder
     archivoCotizacion?: SortOrder
     archivoFormatoSolicitud?: SortOrder
-    archivoBEP?: SortOrder
+    archivoPreBEP?: SortOrder
+    archivoGeneradorGastos?: SortOrder
+    archivoEvaluacionInicial?: SortOrder
     archivosAnexos?: SortOrder
     aprobadorId?: SortOrder
     fechaAprobacionDirector?: SortOrder
@@ -23142,7 +23410,9 @@ export namespace Prisma {
     archivoCuadroComparativo?: SortOrder
     archivoCotizacion?: SortOrder
     archivoFormatoSolicitud?: SortOrder
-    archivoBEP?: SortOrder
+    archivoPreBEP?: SortOrder
+    archivoGeneradorGastos?: SortOrder
+    archivoEvaluacionInicial?: SortOrder
     archivosAnexos?: SortOrder
     aprobadorId?: SortOrder
     fechaAprobacionDirector?: SortOrder
@@ -24984,7 +25254,9 @@ export namespace Prisma {
     archivoCuadroComparativo?: string | null
     archivoCotizacion?: string | null
     archivoFormatoSolicitud?: string | null
-    archivoBEP?: string | null
+    archivoPreBEP?: string | null
+    archivoGeneradorGastos?: string | null
+    archivoEvaluacionInicial?: string | null
     archivosAnexos?: string
     fechaAprobacionDirector?: Date | string | null
     responsableContratosTramiteId?: string | null
@@ -25039,7 +25311,9 @@ export namespace Prisma {
     archivoCuadroComparativo?: string | null
     archivoCotizacion?: string | null
     archivoFormatoSolicitud?: string | null
-    archivoBEP?: string | null
+    archivoPreBEP?: string | null
+    archivoGeneradorGastos?: string | null
+    archivoEvaluacionInicial?: string | null
     archivosAnexos?: string
     aprobadorId?: string | null
     fechaAprobacionDirector?: Date | string | null
@@ -25101,7 +25375,9 @@ export namespace Prisma {
     archivoCuadroComparativo?: string | null
     archivoCotizacion?: string | null
     archivoFormatoSolicitud?: string | null
-    archivoBEP?: string | null
+    archivoPreBEP?: string | null
+    archivoGeneradorGastos?: string | null
+    archivoEvaluacionInicial?: string | null
     archivosAnexos?: string
     fechaAprobacionDirector?: Date | string | null
     responsableContratosTramiteId?: string | null
@@ -25157,7 +25433,9 @@ export namespace Prisma {
     archivoCuadroComparativo?: string | null
     archivoCotizacion?: string | null
     archivoFormatoSolicitud?: string | null
-    archivoBEP?: string | null
+    archivoPreBEP?: string | null
+    archivoGeneradorGastos?: string | null
+    archivoEvaluacionInicial?: string | null
     archivosAnexos?: string
     fechaAprobacionDirector?: Date | string | null
     responsableContratosTramiteId?: string | null
@@ -25370,7 +25648,9 @@ export namespace Prisma {
     archivoCuadroComparativo?: StringNullableFilter<"Solicitud"> | string | null
     archivoCotizacion?: StringNullableFilter<"Solicitud"> | string | null
     archivoFormatoSolicitud?: StringNullableFilter<"Solicitud"> | string | null
-    archivoBEP?: StringNullableFilter<"Solicitud"> | string | null
+    archivoPreBEP?: StringNullableFilter<"Solicitud"> | string | null
+    archivoGeneradorGastos?: StringNullableFilter<"Solicitud"> | string | null
+    archivoEvaluacionInicial?: StringNullableFilter<"Solicitud"> | string | null
     archivosAnexos?: StringFilter<"Solicitud"> | string
     aprobadorId?: StringNullableFilter<"Solicitud"> | string | null
     fechaAprobacionDirector?: DateTimeNullableFilter<"Solicitud"> | Date | string | null
@@ -25893,7 +26173,9 @@ export namespace Prisma {
     archivoCuadroComparativo?: string | null
     archivoCotizacion?: string | null
     archivoFormatoSolicitud?: string | null
-    archivoBEP?: string | null
+    archivoPreBEP?: string | null
+    archivoGeneradorGastos?: string | null
+    archivoEvaluacionInicial?: string | null
     archivosAnexos?: string
     fechaAprobacionDirector?: Date | string | null
     responsableContratosTramiteId?: string | null
@@ -25948,7 +26230,9 @@ export namespace Prisma {
     archivoCuadroComparativo?: string | null
     archivoCotizacion?: string | null
     archivoFormatoSolicitud?: string | null
-    archivoBEP?: string | null
+    archivoPreBEP?: string | null
+    archivoGeneradorGastos?: string | null
+    archivoEvaluacionInicial?: string | null
     archivosAnexos?: string
     aprobadorId?: string | null
     fechaAprobacionDirector?: Date | string | null
@@ -26050,6 +26334,14 @@ export namespace Prisma {
     nit: string
     tipoContrato: string
     confidencialidad?: boolean
+    representanteLegal?: string | null
+    cedulaRepresentante?: string | null
+    correoFirma?: string | null
+    direccionRepresentante?: string | null
+    telefonoRepresentante?: string | null
+    nombreContacto?: string | null
+    telefonoContacto?: string | null
+    correoContacto?: string | null
     fechaVencimientoSagrilaft?: Date | string | null
     dd_identificacionContraparte?: boolean
     dd_consultaListasRestrictivas?: boolean
@@ -26066,6 +26358,14 @@ export namespace Prisma {
     nit: string
     tipoContrato: string
     confidencialidad?: boolean
+    representanteLegal?: string | null
+    cedulaRepresentante?: string | null
+    correoFirma?: string | null
+    direccionRepresentante?: string | null
+    telefonoRepresentante?: string | null
+    nombreContacto?: string | null
+    telefonoContacto?: string | null
+    correoContacto?: string | null
     fechaVencimientoSagrilaft?: Date | string | null
     dd_identificacionContraparte?: boolean
     dd_consultaListasRestrictivas?: boolean
@@ -26213,7 +26513,9 @@ export namespace Prisma {
     archivoCuadroComparativo?: string | null
     archivoCotizacion?: string | null
     archivoFormatoSolicitud?: string | null
-    archivoBEP?: string | null
+    archivoPreBEP?: string | null
+    archivoGeneradorGastos?: string | null
+    archivoEvaluacionInicial?: string | null
     archivosAnexos?: string
     fechaAprobacionDirector?: Date | string | null
     responsableContratosTramiteId?: string | null
@@ -26269,7 +26571,9 @@ export namespace Prisma {
     archivoCuadroComparativo?: string | null
     archivoCotizacion?: string | null
     archivoFormatoSolicitud?: string | null
-    archivoBEP?: string | null
+    archivoPreBEP?: string | null
+    archivoGeneradorGastos?: string | null
+    archivoEvaluacionInicial?: string | null
     archivosAnexos?: string
     aprobadorId?: string | null
     fechaAprobacionDirector?: Date | string | null
@@ -26325,7 +26629,9 @@ export namespace Prisma {
     archivoCuadroComparativo?: string | null
     archivoCotizacion?: string | null
     archivoFormatoSolicitud?: string | null
-    archivoBEP?: string | null
+    archivoPreBEP?: string | null
+    archivoGeneradorGastos?: string | null
+    archivoEvaluacionInicial?: string | null
     archivosAnexos?: string
     fechaAprobacionDirector?: Date | string | null
     responsableContratosTramiteId?: string | null
@@ -26381,7 +26687,9 @@ export namespace Prisma {
     archivoCuadroComparativo?: string | null
     archivoCotizacion?: string | null
     archivoFormatoSolicitud?: string | null
-    archivoBEP?: string | null
+    archivoPreBEP?: string | null
+    archivoGeneradorGastos?: string | null
+    archivoEvaluacionInicial?: string | null
     archivosAnexos?: string
     aprobadorId?: string | null
     fechaAprobacionDirector?: Date | string | null
@@ -26483,6 +26791,14 @@ export namespace Prisma {
     nit?: StringFieldUpdateOperationsInput | string
     tipoContrato?: StringFieldUpdateOperationsInput | string
     confidencialidad?: BoolFieldUpdateOperationsInput | boolean
+    representanteLegal?: NullableStringFieldUpdateOperationsInput | string | null
+    cedulaRepresentante?: NullableStringFieldUpdateOperationsInput | string | null
+    correoFirma?: NullableStringFieldUpdateOperationsInput | string | null
+    direccionRepresentante?: NullableStringFieldUpdateOperationsInput | string | null
+    telefonoRepresentante?: NullableStringFieldUpdateOperationsInput | string | null
+    nombreContacto?: NullableStringFieldUpdateOperationsInput | string | null
+    telefonoContacto?: NullableStringFieldUpdateOperationsInput | string | null
+    correoContacto?: NullableStringFieldUpdateOperationsInput | string | null
     fechaVencimientoSagrilaft?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     dd_identificacionContraparte?: BoolFieldUpdateOperationsInput | boolean
     dd_consultaListasRestrictivas?: BoolFieldUpdateOperationsInput | boolean
@@ -26499,6 +26815,14 @@ export namespace Prisma {
     nit?: StringFieldUpdateOperationsInput | string
     tipoContrato?: StringFieldUpdateOperationsInput | string
     confidencialidad?: BoolFieldUpdateOperationsInput | boolean
+    representanteLegal?: NullableStringFieldUpdateOperationsInput | string | null
+    cedulaRepresentante?: NullableStringFieldUpdateOperationsInput | string | null
+    correoFirma?: NullableStringFieldUpdateOperationsInput | string | null
+    direccionRepresentante?: NullableStringFieldUpdateOperationsInput | string | null
+    telefonoRepresentante?: NullableStringFieldUpdateOperationsInput | string | null
+    nombreContacto?: NullableStringFieldUpdateOperationsInput | string | null
+    telefonoContacto?: NullableStringFieldUpdateOperationsInput | string | null
+    correoContacto?: NullableStringFieldUpdateOperationsInput | string | null
     fechaVencimientoSagrilaft?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     dd_identificacionContraparte?: BoolFieldUpdateOperationsInput | boolean
     dd_consultaListasRestrictivas?: BoolFieldUpdateOperationsInput | boolean
@@ -26655,7 +26979,9 @@ export namespace Prisma {
     archivoCuadroComparativo?: NullableStringFieldUpdateOperationsInput | string | null
     archivoCotizacion?: NullableStringFieldUpdateOperationsInput | string | null
     archivoFormatoSolicitud?: NullableStringFieldUpdateOperationsInput | string | null
-    archivoBEP?: NullableStringFieldUpdateOperationsInput | string | null
+    archivoPreBEP?: NullableStringFieldUpdateOperationsInput | string | null
+    archivoGeneradorGastos?: NullableStringFieldUpdateOperationsInput | string | null
+    archivoEvaluacionInicial?: NullableStringFieldUpdateOperationsInput | string | null
     archivosAnexos?: StringFieldUpdateOperationsInput | string
     fechaAprobacionDirector?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     responsableContratosTramiteId?: NullableStringFieldUpdateOperationsInput | string | null
@@ -26711,7 +27037,9 @@ export namespace Prisma {
     archivoCuadroComparativo?: NullableStringFieldUpdateOperationsInput | string | null
     archivoCotizacion?: NullableStringFieldUpdateOperationsInput | string | null
     archivoFormatoSolicitud?: NullableStringFieldUpdateOperationsInput | string | null
-    archivoBEP?: NullableStringFieldUpdateOperationsInput | string | null
+    archivoPreBEP?: NullableStringFieldUpdateOperationsInput | string | null
+    archivoGeneradorGastos?: NullableStringFieldUpdateOperationsInput | string | null
+    archivoEvaluacionInicial?: NullableStringFieldUpdateOperationsInput | string | null
     archivosAnexos?: StringFieldUpdateOperationsInput | string
     aprobadorId?: NullableStringFieldUpdateOperationsInput | string | null
     fechaAprobacionDirector?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -26778,7 +27106,9 @@ export namespace Prisma {
     archivoCuadroComparativo?: string | null
     archivoCotizacion?: string | null
     archivoFormatoSolicitud?: string | null
-    archivoBEP?: string | null
+    archivoPreBEP?: string | null
+    archivoGeneradorGastos?: string | null
+    archivoEvaluacionInicial?: string | null
     archivosAnexos?: string
     fechaAprobacionDirector?: Date | string | null
     responsableContratosTramiteId?: string | null
@@ -26834,7 +27164,9 @@ export namespace Prisma {
     archivoCuadroComparativo?: string | null
     archivoCotizacion?: string | null
     archivoFormatoSolicitud?: string | null
-    archivoBEP?: string | null
+    archivoPreBEP?: string | null
+    archivoGeneradorGastos?: string | null
+    archivoEvaluacionInicial?: string | null
     archivosAnexos?: string
     aprobadorId?: string | null
     fechaAprobacionDirector?: Date | string | null
@@ -26952,7 +27284,9 @@ export namespace Prisma {
     archivoCuadroComparativo?: NullableStringFieldUpdateOperationsInput | string | null
     archivoCotizacion?: NullableStringFieldUpdateOperationsInput | string | null
     archivoFormatoSolicitud?: NullableStringFieldUpdateOperationsInput | string | null
-    archivoBEP?: NullableStringFieldUpdateOperationsInput | string | null
+    archivoPreBEP?: NullableStringFieldUpdateOperationsInput | string | null
+    archivoGeneradorGastos?: NullableStringFieldUpdateOperationsInput | string | null
+    archivoEvaluacionInicial?: NullableStringFieldUpdateOperationsInput | string | null
     archivosAnexos?: StringFieldUpdateOperationsInput | string
     fechaAprobacionDirector?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     responsableContratosTramiteId?: NullableStringFieldUpdateOperationsInput | string | null
@@ -27008,7 +27342,9 @@ export namespace Prisma {
     archivoCuadroComparativo?: NullableStringFieldUpdateOperationsInput | string | null
     archivoCotizacion?: NullableStringFieldUpdateOperationsInput | string | null
     archivoFormatoSolicitud?: NullableStringFieldUpdateOperationsInput | string | null
-    archivoBEP?: NullableStringFieldUpdateOperationsInput | string | null
+    archivoPreBEP?: NullableStringFieldUpdateOperationsInput | string | null
+    archivoGeneradorGastos?: NullableStringFieldUpdateOperationsInput | string | null
+    archivoEvaluacionInicial?: NullableStringFieldUpdateOperationsInput | string | null
     archivosAnexos?: StringFieldUpdateOperationsInput | string
     aprobadorId?: NullableStringFieldUpdateOperationsInput | string | null
     fechaAprobacionDirector?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -27116,7 +27452,9 @@ export namespace Prisma {
     archivoCuadroComparativo?: string | null
     archivoCotizacion?: string | null
     archivoFormatoSolicitud?: string | null
-    archivoBEP?: string | null
+    archivoPreBEP?: string | null
+    archivoGeneradorGastos?: string | null
+    archivoEvaluacionInicial?: string | null
     archivosAnexos?: string
     fechaAprobacionDirector?: Date | string | null
     responsableContratosTramiteId?: string | null
@@ -27172,7 +27510,9 @@ export namespace Prisma {
     archivoCuadroComparativo?: string | null
     archivoCotizacion?: string | null
     archivoFormatoSolicitud?: string | null
-    archivoBEP?: string | null
+    archivoPreBEP?: string | null
+    archivoGeneradorGastos?: string | null
+    archivoEvaluacionInicial?: string | null
     archivosAnexos?: string
     aprobadorId?: string | null
     fechaAprobacionDirector?: Date | string | null
@@ -27293,7 +27633,9 @@ export namespace Prisma {
     archivoCuadroComparativo?: NullableStringFieldUpdateOperationsInput | string | null
     archivoCotizacion?: NullableStringFieldUpdateOperationsInput | string | null
     archivoFormatoSolicitud?: NullableStringFieldUpdateOperationsInput | string | null
-    archivoBEP?: NullableStringFieldUpdateOperationsInput | string | null
+    archivoPreBEP?: NullableStringFieldUpdateOperationsInput | string | null
+    archivoGeneradorGastos?: NullableStringFieldUpdateOperationsInput | string | null
+    archivoEvaluacionInicial?: NullableStringFieldUpdateOperationsInput | string | null
     archivosAnexos?: StringFieldUpdateOperationsInput | string
     fechaAprobacionDirector?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     responsableContratosTramiteId?: NullableStringFieldUpdateOperationsInput | string | null
@@ -27349,7 +27691,9 @@ export namespace Prisma {
     archivoCuadroComparativo?: NullableStringFieldUpdateOperationsInput | string | null
     archivoCotizacion?: NullableStringFieldUpdateOperationsInput | string | null
     archivoFormatoSolicitud?: NullableStringFieldUpdateOperationsInput | string | null
-    archivoBEP?: NullableStringFieldUpdateOperationsInput | string | null
+    archivoPreBEP?: NullableStringFieldUpdateOperationsInput | string | null
+    archivoGeneradorGastos?: NullableStringFieldUpdateOperationsInput | string | null
+    archivoEvaluacionInicial?: NullableStringFieldUpdateOperationsInput | string | null
     archivosAnexos?: StringFieldUpdateOperationsInput | string
     aprobadorId?: NullableStringFieldUpdateOperationsInput | string | null
     fechaAprobacionDirector?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -27788,7 +28132,9 @@ export namespace Prisma {
     archivoCuadroComparativo?: string | null
     archivoCotizacion?: string | null
     archivoFormatoSolicitud?: string | null
-    archivoBEP?: string | null
+    archivoPreBEP?: string | null
+    archivoGeneradorGastos?: string | null
+    archivoEvaluacionInicial?: string | null
     archivosAnexos?: string
     aprobadorId?: string | null
     fechaAprobacionDirector?: Date | string | null
@@ -27840,7 +28186,9 @@ export namespace Prisma {
     archivoCuadroComparativo?: string | null
     archivoCotizacion?: string | null
     archivoFormatoSolicitud?: string | null
-    archivoBEP?: string | null
+    archivoPreBEP?: string | null
+    archivoGeneradorGastos?: string | null
+    archivoEvaluacionInicial?: string | null
     archivosAnexos?: string
     fechaAprobacionDirector?: Date | string | null
     responsableContratosTramiteId?: string | null
@@ -27969,7 +28317,9 @@ export namespace Prisma {
     archivoCuadroComparativo?: NullableStringFieldUpdateOperationsInput | string | null
     archivoCotizacion?: NullableStringFieldUpdateOperationsInput | string | null
     archivoFormatoSolicitud?: NullableStringFieldUpdateOperationsInput | string | null
-    archivoBEP?: NullableStringFieldUpdateOperationsInput | string | null
+    archivoPreBEP?: NullableStringFieldUpdateOperationsInput | string | null
+    archivoGeneradorGastos?: NullableStringFieldUpdateOperationsInput | string | null
+    archivoEvaluacionInicial?: NullableStringFieldUpdateOperationsInput | string | null
     archivosAnexos?: StringFieldUpdateOperationsInput | string
     fechaAprobacionDirector?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     responsableContratosTramiteId?: NullableStringFieldUpdateOperationsInput | string | null
@@ -28024,7 +28374,9 @@ export namespace Prisma {
     archivoCuadroComparativo?: NullableStringFieldUpdateOperationsInput | string | null
     archivoCotizacion?: NullableStringFieldUpdateOperationsInput | string | null
     archivoFormatoSolicitud?: NullableStringFieldUpdateOperationsInput | string | null
-    archivoBEP?: NullableStringFieldUpdateOperationsInput | string | null
+    archivoPreBEP?: NullableStringFieldUpdateOperationsInput | string | null
+    archivoGeneradorGastos?: NullableStringFieldUpdateOperationsInput | string | null
+    archivoEvaluacionInicial?: NullableStringFieldUpdateOperationsInput | string | null
     archivosAnexos?: StringFieldUpdateOperationsInput | string
     aprobadorId?: NullableStringFieldUpdateOperationsInput | string | null
     fechaAprobacionDirector?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -28078,7 +28430,9 @@ export namespace Prisma {
     archivoCuadroComparativo?: NullableStringFieldUpdateOperationsInput | string | null
     archivoCotizacion?: NullableStringFieldUpdateOperationsInput | string | null
     archivoFormatoSolicitud?: NullableStringFieldUpdateOperationsInput | string | null
-    archivoBEP?: NullableStringFieldUpdateOperationsInput | string | null
+    archivoPreBEP?: NullableStringFieldUpdateOperationsInput | string | null
+    archivoGeneradorGastos?: NullableStringFieldUpdateOperationsInput | string | null
+    archivoEvaluacionInicial?: NullableStringFieldUpdateOperationsInput | string | null
     archivosAnexos?: StringFieldUpdateOperationsInput | string
     aprobadorId?: NullableStringFieldUpdateOperationsInput | string | null
     fechaAprobacionDirector?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -28127,7 +28481,9 @@ export namespace Prisma {
     archivoCuadroComparativo?: NullableStringFieldUpdateOperationsInput | string | null
     archivoCotizacion?: NullableStringFieldUpdateOperationsInput | string | null
     archivoFormatoSolicitud?: NullableStringFieldUpdateOperationsInput | string | null
-    archivoBEP?: NullableStringFieldUpdateOperationsInput | string | null
+    archivoPreBEP?: NullableStringFieldUpdateOperationsInput | string | null
+    archivoGeneradorGastos?: NullableStringFieldUpdateOperationsInput | string | null
+    archivoEvaluacionInicial?: NullableStringFieldUpdateOperationsInput | string | null
     archivosAnexos?: StringFieldUpdateOperationsInput | string
     fechaAprobacionDirector?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     responsableContratosTramiteId?: NullableStringFieldUpdateOperationsInput | string | null
@@ -28183,7 +28539,9 @@ export namespace Prisma {
     archivoCuadroComparativo?: NullableStringFieldUpdateOperationsInput | string | null
     archivoCotizacion?: NullableStringFieldUpdateOperationsInput | string | null
     archivoFormatoSolicitud?: NullableStringFieldUpdateOperationsInput | string | null
-    archivoBEP?: NullableStringFieldUpdateOperationsInput | string | null
+    archivoPreBEP?: NullableStringFieldUpdateOperationsInput | string | null
+    archivoGeneradorGastos?: NullableStringFieldUpdateOperationsInput | string | null
+    archivoEvaluacionInicial?: NullableStringFieldUpdateOperationsInput | string | null
     archivosAnexos?: StringFieldUpdateOperationsInput | string
     fechaAprobacionDirector?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     responsableContratosTramiteId?: NullableStringFieldUpdateOperationsInput | string | null
@@ -28237,7 +28595,9 @@ export namespace Prisma {
     archivoCuadroComparativo?: NullableStringFieldUpdateOperationsInput | string | null
     archivoCotizacion?: NullableStringFieldUpdateOperationsInput | string | null
     archivoFormatoSolicitud?: NullableStringFieldUpdateOperationsInput | string | null
-    archivoBEP?: NullableStringFieldUpdateOperationsInput | string | null
+    archivoPreBEP?: NullableStringFieldUpdateOperationsInput | string | null
+    archivoGeneradorGastos?: NullableStringFieldUpdateOperationsInput | string | null
+    archivoEvaluacionInicial?: NullableStringFieldUpdateOperationsInput | string | null
     archivosAnexos?: StringFieldUpdateOperationsInput | string
     fechaAprobacionDirector?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     responsableContratosTramiteId?: NullableStringFieldUpdateOperationsInput | string | null
@@ -28391,7 +28751,9 @@ export namespace Prisma {
     archivoCuadroComparativo?: string | null
     archivoCotizacion?: string | null
     archivoFormatoSolicitud?: string | null
-    archivoBEP?: string | null
+    archivoPreBEP?: string | null
+    archivoGeneradorGastos?: string | null
+    archivoEvaluacionInicial?: string | null
     archivosAnexos?: string
     aprobadorId?: string | null
     fechaAprobacionDirector?: Date | string | null
@@ -28440,7 +28802,9 @@ export namespace Prisma {
     archivoCuadroComparativo?: NullableStringFieldUpdateOperationsInput | string | null
     archivoCotizacion?: NullableStringFieldUpdateOperationsInput | string | null
     archivoFormatoSolicitud?: NullableStringFieldUpdateOperationsInput | string | null
-    archivoBEP?: NullableStringFieldUpdateOperationsInput | string | null
+    archivoPreBEP?: NullableStringFieldUpdateOperationsInput | string | null
+    archivoGeneradorGastos?: NullableStringFieldUpdateOperationsInput | string | null
+    archivoEvaluacionInicial?: NullableStringFieldUpdateOperationsInput | string | null
     archivosAnexos?: StringFieldUpdateOperationsInput | string
     fechaAprobacionDirector?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     responsableContratosTramiteId?: NullableStringFieldUpdateOperationsInput | string | null
@@ -28495,7 +28859,9 @@ export namespace Prisma {
     archivoCuadroComparativo?: NullableStringFieldUpdateOperationsInput | string | null
     archivoCotizacion?: NullableStringFieldUpdateOperationsInput | string | null
     archivoFormatoSolicitud?: NullableStringFieldUpdateOperationsInput | string | null
-    archivoBEP?: NullableStringFieldUpdateOperationsInput | string | null
+    archivoPreBEP?: NullableStringFieldUpdateOperationsInput | string | null
+    archivoGeneradorGastos?: NullableStringFieldUpdateOperationsInput | string | null
+    archivoEvaluacionInicial?: NullableStringFieldUpdateOperationsInput | string | null
     archivosAnexos?: StringFieldUpdateOperationsInput | string
     aprobadorId?: NullableStringFieldUpdateOperationsInput | string | null
     fechaAprobacionDirector?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -28549,7 +28915,9 @@ export namespace Prisma {
     archivoCuadroComparativo?: NullableStringFieldUpdateOperationsInput | string | null
     archivoCotizacion?: NullableStringFieldUpdateOperationsInput | string | null
     archivoFormatoSolicitud?: NullableStringFieldUpdateOperationsInput | string | null
-    archivoBEP?: NullableStringFieldUpdateOperationsInput | string | null
+    archivoPreBEP?: NullableStringFieldUpdateOperationsInput | string | null
+    archivoGeneradorGastos?: NullableStringFieldUpdateOperationsInput | string | null
+    archivoEvaluacionInicial?: NullableStringFieldUpdateOperationsInput | string | null
     archivosAnexos?: StringFieldUpdateOperationsInput | string
     aprobadorId?: NullableStringFieldUpdateOperationsInput | string | null
     fechaAprobacionDirector?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -28609,7 +28977,9 @@ export namespace Prisma {
     archivoCuadroComparativo?: string | null
     archivoCotizacion?: string | null
     archivoFormatoSolicitud?: string | null
-    archivoBEP?: string | null
+    archivoPreBEP?: string | null
+    archivoGeneradorGastos?: string | null
+    archivoEvaluacionInicial?: string | null
     archivosAnexos?: string
     aprobadorId?: string | null
     fechaAprobacionDirector?: Date | string | null
@@ -28680,7 +29050,9 @@ export namespace Prisma {
     archivoCuadroComparativo?: NullableStringFieldUpdateOperationsInput | string | null
     archivoCotizacion?: NullableStringFieldUpdateOperationsInput | string | null
     archivoFormatoSolicitud?: NullableStringFieldUpdateOperationsInput | string | null
-    archivoBEP?: NullableStringFieldUpdateOperationsInput | string | null
+    archivoPreBEP?: NullableStringFieldUpdateOperationsInput | string | null
+    archivoGeneradorGastos?: NullableStringFieldUpdateOperationsInput | string | null
+    archivoEvaluacionInicial?: NullableStringFieldUpdateOperationsInput | string | null
     archivosAnexos?: StringFieldUpdateOperationsInput | string
     fechaAprobacionDirector?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     responsableContratosTramiteId?: NullableStringFieldUpdateOperationsInput | string | null
@@ -28736,7 +29108,9 @@ export namespace Prisma {
     archivoCuadroComparativo?: NullableStringFieldUpdateOperationsInput | string | null
     archivoCotizacion?: NullableStringFieldUpdateOperationsInput | string | null
     archivoFormatoSolicitud?: NullableStringFieldUpdateOperationsInput | string | null
-    archivoBEP?: NullableStringFieldUpdateOperationsInput | string | null
+    archivoPreBEP?: NullableStringFieldUpdateOperationsInput | string | null
+    archivoGeneradorGastos?: NullableStringFieldUpdateOperationsInput | string | null
+    archivoEvaluacionInicial?: NullableStringFieldUpdateOperationsInput | string | null
     archivosAnexos?: StringFieldUpdateOperationsInput | string
     aprobadorId?: NullableStringFieldUpdateOperationsInput | string | null
     fechaAprobacionDirector?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -28790,7 +29164,9 @@ export namespace Prisma {
     archivoCuadroComparativo?: NullableStringFieldUpdateOperationsInput | string | null
     archivoCotizacion?: NullableStringFieldUpdateOperationsInput | string | null
     archivoFormatoSolicitud?: NullableStringFieldUpdateOperationsInput | string | null
-    archivoBEP?: NullableStringFieldUpdateOperationsInput | string | null
+    archivoPreBEP?: NullableStringFieldUpdateOperationsInput | string | null
+    archivoGeneradorGastos?: NullableStringFieldUpdateOperationsInput | string | null
+    archivoEvaluacionInicial?: NullableStringFieldUpdateOperationsInput | string | null
     archivosAnexos?: StringFieldUpdateOperationsInput | string
     aprobadorId?: NullableStringFieldUpdateOperationsInput | string | null
     fechaAprobacionDirector?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null

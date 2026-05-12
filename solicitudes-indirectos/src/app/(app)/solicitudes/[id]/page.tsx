@@ -156,8 +156,10 @@ export default async function SolicitudDetallePage({ params }: PageProps) {
   const archivos = [
     { label: "Cuadro Comparativo", path: solicitud.archivoCuadroComparativo },
     { label: "Cotización", path: solicitud.archivoCotizacion },
+    { label: "Generador de Gastos", path: solicitud.archivoGeneradorGastos },
+    { label: "Evaluación Inicial", path: solicitud.archivoEvaluacionInicial },
     { label: "Formato de Solicitud", path: solicitud.archivoFormatoSolicitud },
-    { label: "BEP", path: solicitud.archivoBEP },
+    { label: "PreBEP", path: solicitud.archivoPreBEP },
   ].filter((a) => a.path);
 
   const anexos: { url: string; nombre: string }[] = (() => {
@@ -371,7 +373,7 @@ export default async function SolicitudDetallePage({ params }: PageProps) {
         {solicitud.descripcionActividad && (
           <div className="mt-4 pt-4 border-t border-gray-100">
             <p className="text-xs text-gray-400 font-medium uppercase tracking-wide mb-1">
-              Descripción de Actividad
+              Objeto
             </p>
             <p className="text-sm text-gray-700 whitespace-pre-wrap leading-relaxed">
               {solicitud.descripcionActividad}

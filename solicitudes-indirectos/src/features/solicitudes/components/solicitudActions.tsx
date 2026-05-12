@@ -49,6 +49,7 @@ interface SolicitudActionsProps {
 
 type AccionEstado =
   | "ENVIAR"
+  | "APROBAR_DIRECTOR_TECNICO"
   | "APROBAR_DIRECTOR"
   | "DEVOLVER"
   | "REVISAR"
@@ -72,6 +73,8 @@ export function SolicitudActions({ solicitud, userSession }: SolicitudActionsPro
   const [modalOpen, setModalOpen] = useState(false);
   const [modalType, setModalType] = useState<
     | "enviar"
+    | "aprobar_tecnico"
+    | "devolver_tecnico"
     | "aprobar"
     | "devolver"
     | "contratos"
@@ -96,8 +99,16 @@ export function SolicitudActions({ solicitud, userSession }: SolicitudActionsPro
 
   const canEnviar =
     estado === "BORRADOR" &&
-    (userRoles.includes("SOLICITANTE") || userRoles.includes("DIRECTOR_PROYECTO")) &&
+    (userRoles.includes("SOLICITANTE") || userRoles.includes("TECNICA") || userRoles.includes("DIRECTOR_PROYECTO")) &&
     solicitanteId === userId;
+
+  const canAprobarDirectorTecnico =
+    estado === "PENDIENTE_DIRECTOR_TECNICO" &&
+    userRoles.includes("DIRECTOR_TECNICO");
+
+  const canDevolverTecnico =
+    estado === "PENDIENTE_DIRECTOR_TECNICO" &&
+    userRoles.includes("DIRECTOR_TECNICO");
 
   const canAprobarDirector =
     estado === "ENVIADA" &&
@@ -127,7 +138,7 @@ export function SolicitudActions({ solicitud, userSession }: SolicitudActionsPro
 
   const canReenviar =
     (estado === "DEVUELTA" || estado === "EN_REVISION") &&
-    (userRoles.includes("SOLICITANTE") || userRoles.includes("DIRECTOR_PROYECTO")) &&
+    (userRoles.includes("SOLICITANTE") || userRoles.includes("TECNICA") || userRoles.includes("DIRECTOR_PROYECTO")) &&
     solicitanteId === userId;
 
   const canEdit =
@@ -136,6 +147,8 @@ export function SolicitudActions({ solicitud, userSession }: SolicitudActionsPro
 
   const hasAnyAction =
     canEnviar ||
+    canAprobarDirectorTecnico ||
+    canDevolverTecnico ||
     canAprobarDirector ||
     canDevolver ||
     canContratosAction ||
@@ -278,6 +291,14 @@ export function SolicitudActions({ solicitud, userSession }: SolicitudActionsPro
   async function handleModalConfirm() {
     if (modalType === "enviar") {
       await executeAction("ENVIAR");
+    } else if (modalType === "aprobar_tecnico") {
+      await executeAction("APROBAR_DIRECTOR_TECNICO");
+    } else if (modalType === "devolver_tecnico") {
+      if (!nota.trim()) {
+        addToast("La nota es obligatoria para devolver", "error");
+        return;
+      }
+      await executeAction("DEVOLVER", { nota });
     } else if (modalType === "aprobar") {
       await executeAction("APROBAR_DIRECTOR");
     } else if (modalType === "devolver") {
@@ -316,6 +337,8 @@ export function SolicitudActions({ solicitud, userSession }: SolicitudActionsPro
   function getModalTitle() {
     switch (modalType) {
       case "enviar": return "Confirmar envío de solicitud";
+      case "aprobar_tecnico": return "Aprobar — Director Técnico";
+      case "devolver_tecnico": return "Devolver solicitud";
       case "aprobar": return "Aprobar solicitud";
       case "devolver": return "Devolver solicitud";
       case "contratos": return "Revisión de Contratos";
@@ -401,6 +424,28 @@ export function SolicitudActions({ solicitud, userSession }: SolicitudActionsPro
             >
               <Send size={15} />
               Enviar Solicitud
+            </Button>
+          )}
+
+          {canAprobarDirectorTecnico && (
+            <Button
+              variant="primary"
+              onClick={() => openModal("aprobar_tecnico")}
+              disabled={loading}
+            >
+              <CheckCircle size={15} />
+              Aprobar — Director Técnico
+            </Button>
+          )}
+
+          {canDevolverTecnico && (
+            <Button
+              variant="danger"
+              onClick={() => openModal("devolver_tecnico")}
+              disabled={loading}
+            >
+              <RotateCcw size={15} />
+              Devolver
             </Button>
           )}
 
@@ -521,6 +566,39 @@ export function SolicitudActions({ solicitud, userSession }: SolicitudActionsPro
               ¿Confirmas que deseas enviar la solicitud{" "}
               <strong>{solicitud.consecutivo}</strong> para aprobación del director?
             </p>
+          )}
+
+          {/* Aprobar Director Técnico */}
+          {modalType === "aprobar_tecnico" && (
+            <p className="text-sm text-gray-600">
+              ¿Confirmas la aprobación de la solicitud{" "}
+              <strong>{solicitud.consecutivo}</strong> como Director Técnico?
+              Pasará al Director de Proyecto para su aprobación.
+            </p>
+          )}
+
+          {/* Devolver desde Director Técnico */}
+          {modalType === "devolver_tecnico" && (
+            <>
+              <p className="text-sm text-gray-600">
+                Indica el motivo por el que devuelves esta solicitud. El solicitante
+                recibirá esta nota.
+              </p>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Nota <span className="text-red-500">*</span>
+                </label>
+                <textarea
+                  value={nota}
+                  onChange={(e) => setNota(e.target.value)}
+                  rows={4}
+                  placeholder="Escribe el motivo de la devolución..."
+                  className="block w-full rounded-md border border-gray-300 px-3 py-2 text-sm text-gray-900
+                    placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500
+                    focus:border-blue-500 resize-none"
+                />
+              </div>
+            </>
           )}
 
           {/* Aprobar director */}
@@ -691,11 +769,13 @@ export function SolicitudActions({ solicitud, userSession }: SolicitudActionsPro
               Cancelar
             </Button>
             <Button
-              variant={modalType === "devolver" || modalType === "eliminar" ? "danger" : "primary"}
+              variant={modalType === "devolver" || modalType === "devolver_tecnico" || modalType === "eliminar" ? "danger" : "primary"}
               onClick={handleModalConfirm}
               loading={loading}
             >
               {modalType === "enviar" && "Enviar"}
+              {modalType === "aprobar_tecnico" && "Aprobar"}
+              {modalType === "devolver_tecnico" && "Devolver"}
               {modalType === "aprobar" && "Aprobar"}
               {modalType === "devolver" && "Devolver"}
               {modalType === "contratos" && (contratosOpcion === "OK" ? "Confirmar OK" : "Enviar a Revisión")}

@@ -12,6 +12,19 @@ const DD_FIELDS = [
   "dd_senalesAlertaReporte",
 ] as const;
 
+// Campos de contacto editables por cualquier usuario autenticado
+const CONTACT_FIELDS = new Set([
+  "nit",
+  "representanteLegal",
+  "cedulaRepresentante",
+  "correoFirma",
+  "direccionRepresentante",
+  "telefonoRepresentante",
+  "nombreContacto",
+  "telefonoContacto",
+  "correoContacto",
+]);
+
 export async function GET(
   _request: Request,
   { params }: { params: Promise<{ id: string }> }
@@ -65,10 +78,6 @@ export async function PATCH(
     const roles = session.user.roles ?? [];
     const funcionalidadesAdicionales = session.user.funcionalidadesAdicionales ?? [];
 
-    if (!tienePermiso(roles, funcionalidadesAdicionales, "editar_terceros")) {
-      return Response.json({ error: "No tiene permiso para editar terceros" }, { status: 403 });
-    }
-
     const existing = await prisma.tercero.findUnique({ where: { id: numId } });
     if (!existing) {
       return Response.json({ error: "Tercero no encontrado" }, { status: 404 });
@@ -76,22 +85,24 @@ export async function PATCH(
 
     const body = await request.json();
 
-    // Merge incoming dd_ fields with existing to determine new state
-    const merged: Record<string, boolean> = {};
-    for (const field of DD_FIELDS) {
-      merged[field] = field in body ? Boolean(body[field]) : existing[field];
+    // Campos de contacto: cualquier usuario autenticado puede editarlos.
+    // Cualquier otro campo (DD, SAGRILAFT, etc.) requiere permiso completo.
+    const bodyKeys = Object.keys(body);
+    const isContactOnlyUpdate = bodyKeys.length > 0 && bodyKeys.every((k) => CONTACT_FIELDS.has(k));
+
+    if (!isContactOnlyUpdate && !tienePermiso(roles, funcionalidadesAdicionales, "editar_terceros")) {
+      return Response.json({ error: "No tiene permiso para editar terceros" }, { status: 403 });
     }
 
-    const allDdTrue = DD_FIELDS.every((f) => merged[f]);
-    const anyDdFalse = DD_FIELDS.some((f) => !merged[f]);
-
-    // Auto-set debida diligencia approval based on dd_ checks
-    if (allDdTrue) {
-      body.aprobadoDebidaDiligencia = true;
-      body.fechaAprobacion = new Date();
-    } else if (anyDdFalse && ("aprobadoDebidaDiligencia" in body ? body.aprobadoDebidaDiligencia !== false : existing.aprobadoDebidaDiligencia)) {
-      body.aprobadoDebidaDiligencia = false;
-      body.fechaAprobacion = null;
+    // Auto-set debida diligencia approval only when DD fields are being updated
+    const hasDdFields = DD_FIELDS.some((f) => f in body);
+    if (hasDdFields) {
+      const merged: Record<string, boolean> = {};
+      for (const field of DD_FIELDS) {
+        merged[field] = field in body ? Boolean(body[field]) : existing[field];
+      }
+      const allDdTrue = DD_FIELDS.every((f) => merged[f]);
+      body.aprobadoDebidaDiligencia = allDdTrue;
     }
 
     // Prevent direct NIT duplication

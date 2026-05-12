@@ -13,6 +13,7 @@ import {
 } from "@/lib/notifications";
 type AccionEstado =
   | "ENVIAR"
+  | "APROBAR_DIRECTOR_TECNICO"
   | "APROBAR_DIRECTOR"
   | "DEVOLVER"
   | "REVISAR"
@@ -33,13 +34,17 @@ const TRANSICIONES: Record<AccionEstado, TransicionConfig> = {
     estadosOrigen: ["BORRADOR"],
     permisosPermitidos: ["crear_enviar_solicitudes"],
   },
+  APROBAR_DIRECTOR_TECNICO: {
+    estadosOrigen: ["PENDIENTE_DIRECTOR_TECNICO"],
+    permisosPermitidos: ["aprobar_director_tecnico"],
+  },
   APROBAR_DIRECTOR: {
     estadosOrigen: ["ENVIADA"],
     permisosPermitidos: ["aprobar_solicitudes_frente"],
   },
   DEVOLVER: {
-    estadosOrigen: ["ENVIADA", "EN_TRAMITE_CONTRATOS"],
-    permisosPermitidos: ["aprobar_solicitudes_frente", "revisar_contratos"],
+    estadosOrigen: ["PENDIENTE_DIRECTOR_TECNICO", "ENVIADA", "EN_TRAMITE_CONTRATOS"],
+    permisosPermitidos: ["aprobar_director_tecnico", "aprobar_solicitudes_frente", "revisar_contratos"],
   },
   REVISAR: {
     estadosOrigen: ["APROBADA_DIRECTOR", "EN_TRAMITE_CONTRATOS"],
@@ -73,6 +78,7 @@ const TRANSICIONES: Record<AccionEstado, TransicionConfig> = {
 
 const ESTADO_DESTINO: Record<AccionEstado, string> = {
   ENVIAR: "ENVIADA",
+  APROBAR_DIRECTOR_TECNICO: "ENVIADA",
   APROBAR_DIRECTOR: "EN_TRAMITE_CONTRATOS",
   DEVOLVER: "DEVUELTA",
   REVISAR: "EN_REVISION",
@@ -142,7 +148,7 @@ export async function POST(
     const solicitud = await prisma.solicitud.findUnique({
       where: { id: numId },
       include: {
-        solicitante: { select: { id: true, nombre: true } },
+        solicitante: { select: { id: true, nombre: true, roles: true } },
         aprobador: { select: { id: true, nombre: true } },
       },
     });
@@ -272,7 +278,17 @@ export async function POST(
     }
 
     // ── Build update data ──────────────────────────────────────────────────────
-    const estadoDestino = ESTADO_DESTINO[accion];
+    let estadoDestino = ESTADO_DESTINO[accion];
+
+    // Si el solicitante es Coordinador de Técnica, ENVIAR va a aprobación del Director Técnico primero
+    if (accion === "ENVIAR") {
+      const solicitanteRoles: string[] = (() => {
+        try { return JSON.parse((solicitud.solicitante as any).roles || "[]"); } catch { return []; }
+      })();
+      if (solicitanteRoles.includes("TECNICA")) {
+        estadoDestino = "PENDIENTE_DIRECTOR_TECNICO";
+      }
+    }
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const updateData: any = { estado: estadoDestino };
 
@@ -331,13 +347,27 @@ export async function POST(
 
     // ── Send notifications (outside transaction) ───────────────────────────────
     try {
-      if (accion === "ENVIAR" && solicitud.aprobadorId) {
-        await notificarNuevaSolicitud(
-          numId,
-          solicitud.solicitante.nombre,
-          solicitud.consecutivo,
-          solicitud.aprobadorId
-        );
+      if (accion === "ENVIAR") {
+        if (estadoDestino === "PENDIENTE_DIRECTOR_TECNICO") {
+          // Notificar a todos los usuarios con rol DIRECTOR_TECNICO
+          const directoresTecnicos = await prisma.user.findMany({
+            where: { activo: true },
+            select: { id: true, roles: true },
+          });
+          for (const dt of directoresTecnicos) {
+            const roles: string[] = (() => { try { return JSON.parse(dt.roles || "[]"); } catch { return []; } })();
+            if (roles.includes("DIRECTOR_TECNICO")) {
+              await notificarNuevaSolicitud(numId, solicitud.solicitante.nombre, solicitud.consecutivo, dt.id);
+            }
+          }
+        } else if (solicitud.aprobadorId) {
+          await notificarNuevaSolicitud(numId, solicitud.solicitante.nombre, solicitud.consecutivo, solicitud.aprobadorId);
+        }
+      }
+
+      if (accion === "APROBAR_DIRECTOR_TECNICO" && solicitud.aprobadorId) {
+        // Después de aprobar Director Técnico, notificar al Director de Proyecto asignado
+        await notificarNuevaSolicitud(numId, solicitud.solicitante.nombre, solicitud.consecutivo, solicitud.aprobadorId);
       }
 
       if (accion === "APROBAR_DIRECTOR") {

@@ -53,36 +53,14 @@ const EMPTY_FORM: FormData = {
 
 // Todas las funcionalidades disponibles: slug => { nombre, rolPorDefecto }
 const TODAS_LAS_FUNCIONALIDADES: Record<string, { nombre: string; rolPorDefecto: string | null }> = {
-  // SOLICITANTE
   crear_enviar_solicitudes: { nombre: "Crear y enviar solicitudes", rolPorDefecto: "SOLICITANTE" },
-  reenviar_solicitudes: { nombre: "Reenviar solicitudes devueltas", rolPorDefecto: "SOLICITANTE" },
-  ver_solicitudes_propias: { nombre: "Ver solicitudes propias", rolPorDefecto: "SOLICITANTE" },
   crear_otrosi: { nombre: "Crear otrosís de contratos completados", rolPorDefecto: "SOLICITANTE" },
-
-  // DIRECTOR_PROYECTO (incluye SOLICITANTE)
+  crear_solicitudes_diseno: { nombre: "Crear solicitudes de diseño", rolPorDefecto: "TECNICA" },
+  aprobar_director_tecnico: { nombre: "Aprobar solicitudes de Coordinador Técnico", rolPorDefecto: "DIRECTOR_TECNICO" },
   aprobar_solicitudes_frente: { nombre: "Aprobar solicitudes del frente", rolPorDefecto: "DIRECTOR_PROYECTO" },
-  devolver_solicitudes: { nombre: "Devolver solicitudes", rolPorDefecto: "DIRECTOR_PROYECTO" },
-  ver_solicitudes_frentes: { nombre: "Ver solicitudes de sus frentes", rolPorDefecto: "DIRECTOR_PROYECTO" },
-
-  // CONTRATOS
-  ver_todas_solicitudes: { nombre: "Ver todas las solicitudes", rolPorDefecto: "CONTRATOS" },
-  revisar_contratos: { nombre: "Revisar en contratos", rolPorDefecto: "CONTRATOS" },
-  tramitar_solicitudes: { nombre: "Tramitar solicitudes", rolPorDefecto: "CONTRATOS" },
-  crear_minutas: { nombre: "Crear minutas", rolPorDefecto: "CONTRATOS" },
-  pasar_controles: { nombre: "Pasar a controles", rolPorDefecto: "CONTRATOS" },
-
-  // CONTROLES
+  revisar_contratos: { nombre: "Gestionar contratos (tramitar, minutas, controles)", rolPorDefecto: "CONTRATOS" },
   registrar_adpro: { nombre: "Registrar en ADPRO", rolPorDefecto: "CONTROLES" },
-  revisar_contratos_polizas: { nombre: "Revisar contratos y pólizas", rolPorDefecto: "CONTROLES" },
-
-  // DIRECTOR_CONTROLES
   aprobacion_final: { nombre: "Aprobación final de solicitudes", rolPorDefecto: "DIRECTOR_CONTROLES" },
-
-  // ADMIN
-  acceso_total: { nombre: "Acceso total al sistema", rolPorDefecto: "ADMIN" },
-  gestionar_usuarios: { nombre: "Gestionar usuarios y roles", rolPorDefecto: "ADMIN" },
-  configurar_frentes: { nombre: "Configurar frentes y proyectos", rolPorDefecto: "ADMIN" },
-  asignar_aprobadores: { nombre: "Asignar aprobadores", rolPorDefecto: "ADMIN" },
   crear_terceros: { nombre: "Crear y gestionar terceros", rolPorDefecto: "ADMIN" },
 };
 
@@ -302,7 +280,7 @@ export default function UsuariosPage() {
   }
 
   const needsFrente =
-    form.roles.includes("SOLICITANTE") || form.roles.includes("DIRECTOR_PROYECTO");
+    form.roles.includes("SOLICITANTE") || form.roles.includes("TECNICA") || form.roles.includes("DIRECTOR_PROYECTO");
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();

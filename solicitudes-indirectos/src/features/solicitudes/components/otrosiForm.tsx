@@ -128,14 +128,32 @@ export function OtrosiForm({ tipo }: OtrosiFormProps) {
         return;
       }
 
-      setSelectedParent(data);
-
       // Find the "vigente" (current) baseline: most recent completed Otrosí, or the parent itself
       const completedOtrosis = (data.otrosis || [])
         .filter((o) => o.estado === "COMPLETADA")
         .sort((a, b) => new Date(b.creadoEn).getTime() - new Date(a.creadoEn).getTime());
 
       const baseline = completedOtrosis.length > 0 ? completedOtrosis[0] : data;
+
+      // Block if the contract has already ended (must be at least 1 day before fechaFin)
+      const effectiveFechaFin = baseline.cronograma?.fechaFin;
+      if (effectiveFechaFin) {
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+        const fechaFin = new Date(effectiveFechaFin);
+        fechaFin.setHours(0, 0, 0, 0);
+        if (today >= fechaFin) {
+          const fechaStr = fechaFin.toLocaleDateString("es-CO", { day: "2-digit", month: "long", year: "numeric" });
+          addToast(
+            `No se puede crear el otrosí. El contrato venció el ${fechaStr}.`,
+            "error"
+          );
+          setLoadingDetail(false);
+          return;
+        }
+      }
+
+      setSelectedParent(data);
 
       // Pre-fill cronograma from baseline if it exists
       if (baseline.cronograma) {

@@ -22,7 +22,7 @@ import { Input } from "@/shared/ui/input";
 import { Textarea } from "@/shared/ui/textarea";
 import { Spinner } from "@/shared/ui/spinner";
 import { CronogramaBuilder, type CronogramaData } from "@/features/solicitudes/components/cronogramaBuilder";
-import { formatDate, formatCurrency, numeroALetras } from "@/lib/utils";
+import { formatDate, formatCurrency, numeroALetras, tienePermiso } from "@/lib/utils";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -235,6 +235,10 @@ export function SolicitudForm({
   const { data: session } = useSession();
   const router = useRouter();
 
+  const userRoles: string[] = session?.user?.roles ?? [];
+  const userFuncionalidades: string[] = session?.user?.funcionalidadesAdicionales ?? [];
+  const puedeCrearDiseno = tienePermiso(userRoles, userFuncionalidades, "crear_solicitudes_diseno");
+
   const [frentes, setFreentes] = useState<Frente[]>([]);
   const [terceros, setTerceros] = useState<Tercero[]>([]);
   const [terceroSearch, setTerceroSearch] = useState("");
@@ -243,7 +247,9 @@ export function SolicitudForm({
 
   const [archivoCuadroComparativo, setArchivoCuadroComparativo] = useState(initialData?.archivoCuadroComparativo || "");
   const [archivoCotizacion, setArchivoCotizacion] = useState(initialData?.archivoCotizacion || "");
-  const [archivoBEP, setArchivoBEP] = useState(initialData?.archivoBEP || "");
+  const [archivoPreBEP, setArchivoPreBEP] = useState(initialData?.archivoPreBEP || "");
+  const [archivoGeneradorGastos, setArchivoGeneradorGastos] = useState(initialData?.archivoGeneradorGastos || "");
+  const [archivoEvaluacionInicial, setArchivoEvaluacionInicial] = useState(initialData?.archivoEvaluacionInicial || "");
   const [fileErrors, setFileErrors] = useState<Record<string, string>>({});
 
   const [cronograma, setCronograma] = useState<CronogramaData>(initialCronograma || defaultCronograma);
@@ -253,6 +259,9 @@ export function SolicitudForm({
   const [cronogramaError, setCronogramaError] = useState("");
   const [valorEnLetras, setValorEnLetras] = useState("");
   const [selectedTercero, setSelectedTercero] = useState<Tercero | null>(null);
+  const [editingTercero, setEditingTercero] = useState(false);
+  const [savingTercero, setSavingTercero] = useState(false);
+  const [terceroEditForm, setTerceroEditForm] = useState<Partial<Tercero>>({});
 
   const {
     register,
@@ -366,8 +375,10 @@ export function SolicitudForm({
     const errs: Record<string, string> = {};
     if (!archivoCuadroComparativo) errs.cuadroComparativo = "El cuadro comparativo es obligatorio";
     if (!archivoCotizacion) errs.cotizacion = "La cotización es obligatoria";
-    if (watchTipoContrato === "DISENO" && !archivoBEP) {
-      errs.bep = "El BEP es obligatorio para contratos de diseño";
+    if (watchTipoContrato === "DISENO") {
+      if (!archivoGeneradorGastos) errs.generadorGastos = "El generador de gastos es obligatorio";
+      if (!archivoEvaluacionInicial) errs.evaluacionInicial = "La evaluación inicial es obligatoria";
+      if (!archivoPreBEP) errs.preBep = "El PreBEP es obligatorio para contratos de diseño";
     }
     setFileErrors(errs);
     return Object.keys(errs).length === 0;
@@ -396,7 +407,9 @@ export function SolicitudForm({
       valorEnLetras,
       archivoCuadroComparativo,
       archivoCotizacion,
-      archivoBEP: archivoBEP || null,
+      archivoGeneradorGastos,
+      archivoEvaluacionInicial,
+      archivoPreBEP: archivoPreBEP || null,
     };
   }
 
@@ -495,6 +508,26 @@ export function SolicitudForm({
       setSubmitError(err instanceof Error ? err.message : "Error desconocido");
     } finally {
       setSending(false);
+    }
+  }
+
+  async function saveTerceroContacto() {
+    if (!selectedTercero) return;
+    setSavingTercero(true);
+    try {
+      const res = await fetch(`/api/terceros/${selectedTercero.id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(terceroEditForm),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error ?? "Error al guardar");
+      setSelectedTercero({ ...selectedTercero, ...terceroEditForm });
+      setEditingTercero(false);
+    } catch (err: any) {
+      alert(err.message ?? "Error al guardar los datos del contratista");
+    } finally {
+      setSavingTercero(false);
     }
   }
 
@@ -678,7 +711,7 @@ export function SolicitudForm({
               control={control}
               render={({ field }) => (
                 <div className="flex gap-4">
-                  {(["OBRA", "DISENO"] as const).map((opt) => (
+                  {(["OBRA", ...(puedeCrearDiseno ? ["DISENO"] : [])] as const).map((opt) => (
                     <label key={opt} className={`flex items-center gap-2 rounded-lg border px-4 py-2.5 cursor-pointer transition-colors ${field.value === opt ? "border-blue-400 bg-blue-50 text-blue-800" : "border-gray-200 hover:border-gray-300 text-gray-700"}`}>
                       <input type="radio" checked={field.value === opt} onChange={() => field.onChange(opt)} className="h-4 w-4 border-gray-300 text-blue-600 focus:ring-blue-500" />
                       <span className="text-sm font-medium">{opt === "OBRA" ? "Otros Servicios" : "Diseño"}</span>
@@ -689,14 +722,14 @@ export function SolicitudForm({
             />
             {watchTipoContrato === "DISENO" && (
               <div className="mt-2 flex items-start gap-2 text-xs text-blue-700 bg-blue-50 border border-blue-200 rounded-lg px-3 py-2">
-                <Info size={13} className="mt-0.5 shrink-0" /> Los contratos de diseño requieren adjuntar el archivo BEP.
+                <Info size={13} className="mt-0.5 shrink-0" /> Los contratos de diseño requieren adjuntar el archivo PreBEP.
               </div>
             )}
             {errors.tipoContrato && <p className="text-xs text-red-500 mt-1">{errors.tipoContrato.message}</p>}
           </div>
         )}
 
-        <Textarea label="Descripción de la Actividad" required placeholder="Describa en detalle las actividades a contratar (mínimo 50 caracteres)…" showCount rows={4} {...register("descripcionActividad")} error={errors.descripcionActividad?.message} />
+        <Textarea label="Objeto" required placeholder="Describa en detalle las actividades a contratar (mínimo 50 caracteres)…" showCount rows={4} {...register("descripcionActividad")} error={errors.descripcionActividad?.message} />
         <Input label="Plazo de Ejecución" required placeholder="Ej: 25 días calendario a partir del anticipo" {...register("plazoEjecucion")} error={errors.plazoEjecucion?.message} />
         <Textarea label="Forma de Pago" required placeholder="Ej: 50% anticipo al inicio, 50% a la entrega final" rows={3} {...register("formaPago")} error={errors.formaPago?.message} />
       </Section>
@@ -705,18 +738,22 @@ export function SolicitudForm({
         <FileField label="Cuadro Comparativo" required accept=".xlsx,.xls" value={archivoCuadroComparativo} onChange={setArchivoCuadroComparativo} error={fileErrors.cuadroComparativo} />
         <FileField label="Cotización" required accept=".pdf" value={archivoCotizacion} onChange={setArchivoCotizacion} error={fileErrors.cotizacion} />
         {watchTipoContrato === "DISENO" && (
-          <FileField label="BEP (Bases de Especificaciones del Proyecto)" required accept=".pdf" value={archivoBEP} onChange={setArchivoBEP} error={fileErrors.bep} />
+          <>
+            <FileField label="Generador de Gastos" required accept=".pdf" value={archivoGeneradorGastos} onChange={setArchivoGeneradorGastos} error={fileErrors.generadorGastos} />
+            <FileField label="Evaluación Inicial" required accept=".pdf" value={archivoEvaluacionInicial} onChange={setArchivoEvaluacionInicial} error={fileErrors.evaluacionInicial} />
+            <FileField label="PreBEP (Plan Preliminar de Ejecución BIM)" required accept=".pdf" value={archivoPreBEP} onChange={setArchivoPreBEP} error={fileErrors.preBep} />
+          </>
         )}
       </Section>
 
-      <Section title="Sección 3 — Valor Final">
+      <Section title="Sección 3 — Valor Final a Contratar con IVA Incluido">
         <div className="space-y-3">
           <Controller
             name="valorFinal"
             control={control}
             render={({ field }) => (
               <div>
-                <label className="text-sm font-medium text-gray-700 block mb-1">Valor del Contrato (COP) <span className="text-red-500">*</span></label>
+                <label className="text-sm font-medium text-gray-700 block mb-1">Valor final a contratar con IVA incluido (COP) <span className="text-red-500">*</span></label>
                 <div className="relative">
                   <span className="absolute inset-y-0 left-3 flex items-center text-sm text-gray-500 font-medium pointer-events-none">$</span>
                   <input type="number" min={0} step={1} placeholder="0" value={field.value ?? ""} onChange={(e) => field.onChange(e.target.value === "" ? undefined : Number(e.target.value))} className={`block w-full rounded-md border pl-7 pr-3 py-2 text-sm text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${errors.valorFinal ? "border-red-400 focus:ring-red-400" : "border-gray-300 hover:border-gray-400"}`} />
@@ -773,29 +810,89 @@ export function SolicitudForm({
           </div>
           {selectedTercero && (
             <div className="rounded-lg bg-gray-50 border border-gray-200 p-4 space-y-3">
-              <p className="text-sm font-semibold text-gray-700">Datos del Contratista</p>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-2 text-sm">
-                {[
-                  ["Razón Social", selectedTercero.razonSocial],
-                  ["NIT", selectedTercero.nit],
-                  ["Representante Legal", selectedTercero.representanteLegal],
-                  ["Cédula Representante", selectedTercero.cedulaRepresentante],
-                  ["Correo de Firma", selectedTercero.correoFirma],
-                  ["Dirección Representante", selectedTercero.direccionRepresentante],
-                  ["Teléfono Representante", selectedTercero.telefonoRepresentante],
-                  ...(selectedTercero.nombreContacto ? [["Nombre Contacto", selectedTercero.nombreContacto]] : []),
-                  ...(selectedTercero.telefonoContacto ? [["Teléfono Contacto", selectedTercero.telefonoContacto]] : []),
-                  ...(selectedTercero.correoContacto ? [["Correo Contacto", selectedTercero.correoContacto]] : []),
-                ].map(([k, v]) => (
-                  <div key={k}><span className="text-xs text-gray-500">{k}: </span><span className="text-gray-800">{v}</span></div>
-                ))}
+              <div className="flex items-center justify-between">
+                <p className="text-sm font-semibold text-gray-700">Datos del Contratista</p>
+                {!editingTercero && (
+                  <button
+                    type="button"
+                    onClick={() => { setTerceroEditForm({ nit: selectedTercero.nit, representanteLegal: selectedTercero.representanteLegal, cedulaRepresentante: selectedTercero.cedulaRepresentante, correoFirma: selectedTercero.correoFirma, direccionRepresentante: selectedTercero.direccionRepresentante, telefonoRepresentante: selectedTercero.telefonoRepresentante, nombreContacto: selectedTercero.nombreContacto ?? "", telefonoContacto: selectedTercero.telefonoContacto ?? "", correoContacto: selectedTercero.correoContacto ?? "" }); setEditingTercero(true); }}
+                    className="text-xs text-blue-600 hover:text-blue-800 font-medium"
+                  >
+                    Editar datos
+                  </button>
+                )}
               </div>
+
+              {editingTercero ? (
+                <div className="space-y-3">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    {([
+                      ["nit", "NIT"],
+                      ["representanteLegal", "Representante Legal"],
+                      ["cedulaRepresentante", "Cédula Representante"],
+                      ["correoFirma", "Correo de Firma"],
+                      ["direccionRepresentante", "Dirección Representante"],
+                      ["telefonoRepresentante", "Teléfono Representante"],
+                      ["nombreContacto", "Nombre Contacto"],
+                      ["telefonoContacto", "Teléfono Contacto"],
+                      ["correoContacto", "Correo Contacto"],
+                    ] as [keyof Tercero, string][]).map(([field, label]) => (
+                      <div key={field}>
+                        <label className="block text-xs text-gray-500 mb-0.5">{label}</label>
+                        <input
+                          type="text"
+                          value={(terceroEditForm[field] as string) ?? ""}
+                          onChange={(e) => setTerceroEditForm((prev) => ({ ...prev, [field]: e.target.value }))}
+                          className="w-full rounded-md border border-gray-300 px-2.5 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        />
+                      </div>
+                    ))}
+                  </div>
+                  <div className="flex gap-2 pt-1">
+                    <button
+                      type="button"
+                      onClick={saveTerceroContacto}
+                      disabled={savingTercero}
+                      className="px-3 py-1.5 rounded-md bg-blue-600 text-white text-xs font-medium hover:bg-blue-700 disabled:opacity-50"
+                    >
+                      {savingTercero ? "Guardando…" : "Guardar"}
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setEditingTercero(false)}
+                      className="px-3 py-1.5 rounded-md border border-gray-300 text-gray-700 text-xs font-medium hover:bg-gray-50"
+                    >
+                      Cancelar
+                    </button>
+                  </div>
+                </div>
+              ) : (
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-2 text-sm">
+                  {[
+                    ["Razón Social", selectedTercero.razonSocial],
+                    ["NIT", selectedTercero.nit],
+                    ["Representante Legal", selectedTercero.representanteLegal],
+                    ["Cédula Representante", selectedTercero.cedulaRepresentante],
+                    ["Correo de Firma", selectedTercero.correoFirma],
+                    ["Dirección Representante", selectedTercero.direccionRepresentante],
+                    ["Teléfono Representante", selectedTercero.telefonoRepresentante],
+                    ...(selectedTercero.nombreContacto ? [["Nombre Contacto", selectedTercero.nombreContacto]] : []),
+                    ...(selectedTercero.telefonoContacto ? [["Teléfono Contacto", selectedTercero.telefonoContacto]] : []),
+                    ...(selectedTercero.correoContacto ? [["Correo Contacto", selectedTercero.correoContacto]] : []),
+                  ].map(([k, v]) => (
+                    <div key={k}>
+                      <span className="text-xs text-gray-500">{k}: </span>
+                      <span className={v ? "text-gray-800" : "text-gray-400 italic"}>{v || "Sin información"}</span>
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
           )}
           <div>
             <p className="text-xs font-medium text-gray-500 uppercase tracking-wide mb-1">Objeto</p>
             <p className="text-sm text-gray-800 bg-gray-50 border border-gray-200 rounded-lg px-3 py-2 min-h-[3rem]">
-              {watchDescripcion || <span className="text-gray-400 italic">Se completará con la descripción de actividad.</span>}
+              {watchDescripcion || <span className="text-gray-400 italic">Se completará con el objeto.</span>}
             </p>
           </div>
           <Textarea label="Alcance" placeholder="Describa el alcance del contrato…" rows={3} {...register("alcance")} error={errors.alcance?.message} />

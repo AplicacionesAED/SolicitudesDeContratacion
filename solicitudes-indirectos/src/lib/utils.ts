@@ -179,6 +179,7 @@ export function numeroALetras(valor: number): string {
 
 export const ESTADO_LABELS: Record<string, string> = {
   BORRADOR: "Borrador",
+  PENDIENTE_DIRECTOR_TECNICO: "Pendiente Director Técnico",
   ENVIADA: "Enviada",
   APROBADA_DIRECTOR: "Aprobada por Director",
   EN_REVISION: "En Revisión",
@@ -193,6 +194,7 @@ export const ESTADO_LABELS: Record<string, string> = {
 
 export const ESTADO_COLORS: Record<string, string> = {
   BORRADOR: "bg-gray-100 text-gray-700",
+  PENDIENTE_DIRECTOR_TECNICO: "bg-violet-100 text-violet-700",
   ENVIADA: "bg-blue-100 text-blue-700",
   APROBADA_DIRECTOR: "bg-indigo-100 text-indigo-700",
   EN_REVISION: "bg-yellow-100 text-yellow-700",
@@ -219,6 +221,7 @@ export const TIPO_SOLICITUD_LABELS: Record<string, string> = {
 
 export const ACCION_LABELS: Record<string, string> = {
   ENVIAR: "Solicitud enviada para aprobación",
+  APROBAR_DIRECTOR_TECNICO: "Aprobada por Director Técnico",
   APROBAR_DIRECTOR: "Aprobada por Director de Proyecto",
   DEVOLVER: "Devuelta al solicitante",
   REVISAR: "Enviada a revisión por el solicitante",
@@ -233,6 +236,7 @@ export const ACCION_LABELS: Record<string, string> = {
 // Color del indicador según el tipo de acción
 export const ACCION_COLOR: Record<string, string> = {
   ENVIAR: "bg-blue-400",
+  APROBAR_DIRECTOR_TECNICO: "bg-green-500",
   APROBAR_DIRECTOR: "bg-green-500",
   DEVOLVER: "bg-red-400",
   REVISAR: "bg-yellow-400",
@@ -247,6 +251,7 @@ export const ACCION_COLOR: Record<string, string> = {
 // Estado al que queda la solicitud después de cada acción
 export const ACCION_ESTADO_DESTINO: Record<string, string> = {
   ENVIAR: "ENVIADA",
+  APROBAR_DIRECTOR_TECNICO: "ENVIADA",
   APROBAR_DIRECTOR: "EN_TRAMITE_CONTRATOS",
   DEVOLVER: "DEVUELTA",
   REVISAR: "EN_REVISION",
@@ -260,6 +265,8 @@ export const ACCION_ESTADO_DESTINO: Record<string, string> = {
 
 export const ROL_LABELS: Record<string, string> = {
   SOLICITANTE: "Solicitante",
+  TECNICA: "Coordinador de Técnica",
+  DIRECTOR_TECNICO: "Director Técnico",
   DIRECTOR_PROYECTO: "Director de Proyecto",
   CONTRATOS: "Contratos",
   CONTROLES: "Coordinador Controles",
@@ -271,42 +278,30 @@ export const ROL_LABELS: Record<string, string> = {
 export const FUNCIONALIDADES_POR_ROL: Record<string, string[]> = {
   SOLICITANTE: [
     "crear_enviar_solicitudes",
-    "reenviar_solicitudes",
-    "ver_solicitudes_propias",
     "crear_otrosi",
+  ],
+  TECNICA: [
+    "crear_enviar_solicitudes",
+    "crear_otrosi",
+    "crear_solicitudes_diseno",
   ],
   DIRECTOR_PROYECTO: [
     "crear_enviar_solicitudes",
-    "reenviar_solicitudes",
-    "ver_solicitudes_propias",
     "aprobar_solicitudes_frente",
-    "devolver_solicitudes",
-    "ver_solicitudes_frentes",
   ],
   CONTRATOS: [
-    "ver_todas_solicitudes",
-    "devolver_solicitudes",
     "revisar_contratos",
-    "tramitar_solicitudes",
-    "crear_minutas",
-    "pasar_controles",
   ],
   CONTROLES: [
-    "ver_todas_solicitudes",
     "registrar_adpro",
-    "revisar_contratos_polizas",
+  ],
+  DIRECTOR_TECNICO: [
+    "aprobar_director_tecnico",
   ],
   DIRECTOR_CONTROLES: [
-    "ver_todas_solicitudes",
     "aprobacion_final",
-    "revisar_contratos_polizas",
   ],
   ADMIN: [
-    "acceso_total",
-    "gestionar_usuarios",
-    "configurar_frentes",
-    "asignar_aprobadores",
-    "ver_todas_solicitudes",
     "crear_terceros",
   ],
 };

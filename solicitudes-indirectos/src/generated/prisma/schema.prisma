@@ -120,7 +120,17 @@ model Tercero {
   razonSocial      String  @unique
   nit              String
   tipoContrato     String
-  confidencialidad Boolean @default(false) // ← NUEVO
+  confidencialidad Boolean @default(false)
+
+  // Datos de contacto — editables manualmente, no se sobreescriben por la sincronización Excel
+  representanteLegal     String?
+  cedulaRepresentante    String?
+  correoFirma            String?
+  direccionRepresentante String?
+  telefonoRepresentante  String?
+  nombreContacto         String?
+  telefonoContacto       String?
+  correoContacto         String?
 
   fechaVencimientoSagrilaft DateTime?
 
@@ -181,7 +191,9 @@ model Solicitud {
   archivoCuadroComparativo String?
   archivoCotizacion        String?
   archivoFormatoSolicitud  String?
-  archivoBEP               String?
+  archivoPreBEP            String?
+  archivoGeneradorGastos   String?
+  archivoEvaluacionInicial String?
   archivosAnexos           String  @default("[]")
 
   cronograma CronogramaContrato?

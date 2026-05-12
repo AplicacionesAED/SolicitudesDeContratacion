@@ -21,7 +21,10 @@
       "Bash(findstr \"prisma\")",
       "Bash(Select-String \"prisma\")",
       "Bash(python3 -c \"import sys,json; d=json.load\\(sys.stdin\\); print\\(json.dumps\\(d.get\\('scripts',{}\\), indent=2\\)\\)\")",
-      "Bash(git mv *)"
+      "Bash(git mv *)",
+      "Bash(npm run *)",
+      "Bash(xargs grep -l \"Excel\\\\|bulk\\\\|import.*tercero\")",
+      "Bash(xargs grep -l \"xlsx\\\\|exceljs\\\\|XLSX\")"
     ],
     "additionalDirectories": [
       "C:\\SOLICITUD INDIRECTOS\\solicitudes-indirectos\\src\\app\\api\\solicitudes\\[id]",
