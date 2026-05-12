@@ -27,6 +27,7 @@ interface SolicitudRow {
   valorFinal?: number | string | null;
   fechaSolicitud: string;
   tercero?: { razonSocial: string; nit: string } | null;
+  activeOtrosi?: { consecutivo: string } | null;
 }
 
 interface CronogramaDetalle {
@@ -48,6 +49,7 @@ interface SolicitudDetalle extends SolicitudRow {
   cronograma?: CronogramaDetalle | null;
   otrosis?: {
     id: number;
+    consecutivo: string;
     estado: string;
     creadoEn: string;
     valorFinal?: number | string | null;
@@ -113,6 +115,18 @@ export function OtrosiForm({ tipo }: OtrosiFormProps) {
       const res = await fetch(`/api/solicitudes/${row.id}`);
       if (!res.ok) throw new Error("Error al cargar detalle");
       const data: SolicitudDetalle = await res.json();
+
+      // Block if there is an active Otrosí
+      const activeOtrosi = (data.otrosis || []).find(o => o.estado !== "COMPLETADA");
+      if (activeOtrosi) {
+        addToast(
+          `Este contrato ya tiene un otrosí activo (${activeOtrosi.consecutivo}). Debe completarse antes de crear uno nuevo.`,
+          "error"
+        );
+        setLoadingDetail(false);
+        return;
+      }
+
       setSelectedParent(data);
 
       // Find the "vigente" (current) baseline: most recent completed Otrosí, or the parent itself
@@ -301,12 +315,23 @@ export function OtrosiForm({ tipo }: OtrosiFormProps) {
                 <li
                   key={s.id}
                   onClick={() => handleSelectParent(s)}
-                  className="flex items-center justify-between px-4 py-3 cursor-pointer hover:bg-blue-50 transition-colors"
+                  className={`flex items-center justify-between px-4 py-3 cursor-pointer transition-colors ${
+                    s.activeOtrosi
+                      ? "bg-gray-50 opacity-60 hover:bg-gray-100"
+                      : "hover:bg-blue-50"
+                  }`}
                 >
                   <div className="min-w-0">
-                    <p className="text-sm font-mono font-semibold text-blue-600">
-                      {s.consecutivo}
-                    </p>
+                    <div className="flex items-center gap-2">
+                      <p className="text-sm font-mono font-semibold text-blue-600">
+                        {s.consecutivo}
+                      </p>
+                      {s.activeOtrosi && (
+                        <span className="inline-flex items-center rounded-full bg-yellow-100 text-yellow-700 border border-yellow-200 text-[10px] font-semibold px-2 py-0.5">
+                          Otrosí en trámite: {s.activeOtrosi.consecutivo}
+                        </span>
+                      )}
+                    </div>
                     <p className="text-xs text-gray-500 truncate">
                       {s.tercero?.razonSocial ?? "—"}
                     </p>

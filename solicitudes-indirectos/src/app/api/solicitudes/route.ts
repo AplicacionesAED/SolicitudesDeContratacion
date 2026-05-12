@@ -127,7 +127,22 @@ export async function GET(request: Request) {
       });
     }
 
-    return Response.json(solicitudes);
+    // Fetch active Otrosís for these parent solicitudes to inform the UI
+    const parentIds = solicitudes.map((s) => s.id);
+    const activeOtrosis = await prisma.solicitud.findMany({
+      where: {
+        solicitudPadreId: { in: parentIds },
+        estado: { not: "COMPLETADA" },
+      },
+      select: { solicitudPadreId: true, consecutivo: true },
+    });
+
+    const result = solicitudes.map((s) => ({
+      ...s,
+      activeOtrosi: activeOtrosis.find((ao) => ao.solicitudPadreId === s.id) || null,
+    }));
+
+    return Response.json(result);
   } catch (error) {
     console.error("GET /api/solicitudes error:", error);
     return Response.json({ error: "Error interno del servidor" }, { status: 500 });
@@ -198,6 +213,23 @@ export async function POST(request: Request) {
           { status: 400 }
         );
       }
+
+      // Check for existing active Otrosís
+      const activeOtrosi = await prisma.solicitud.findFirst({
+        where: {
+          solicitudPadreId: parent.id,
+          estado: { not: "COMPLETADA" },
+        },
+        select: { consecutivo: true },
+      });
+
+      if (activeOtrosi) {
+        return Response.json(
+          { error: `Ya existe un otrosí activo para este contrato (${activeOtrosi.consecutivo}). Debe completarse antes de crear uno nuevo.` },
+          { status: 400 }
+        );
+      }
+
       if (!tipo || !["OTROSI_TIEMPO", "OTROSI_TIEMPO_CANTIDAD"].includes(tipo)) {
         return Response.json({ error: "Tipo inválido para otrosí" }, { status: 400 });
       }

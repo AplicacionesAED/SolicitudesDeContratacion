@@ -146,12 +146,25 @@ function cientos(n: number): string {
 export function numeroALetras(valor: number): string {
   if (valor === 0) return "CERO PESOS M/CTE";
   const entero = Math.floor(valor);
-  const millones = Math.floor(entero / 1_000_000);
+  const totalMillones = Math.floor(entero / 1_000_000);
   const miles = Math.floor((entero % 1_000_000) / 1_000);
   const resto = entero % 1_000;
   let resultado = "";
-  if (millones > 0) {
-    resultado += (millones === 1 ? "UN MILLÓN" : cientos(millones) + " MILLONES");
+  if (totalMillones > 0) {
+    if (totalMillones === 1) {
+      resultado += "UN MILLÓN";
+    } else {
+      const milesDeMillones = Math.floor(totalMillones / 1_000);
+      const restoMillones = totalMillones % 1_000;
+      let parteMillones = "";
+      if (milesDeMillones > 0) {
+        parteMillones += milesDeMillones === 1 ? "MIL" : cientos(milesDeMillones) + " MIL";
+      }
+      if (restoMillones > 0) {
+        parteMillones += (parteMillones ? " " : "") + cientos(restoMillones);
+      }
+      resultado += parteMillones + " MILLONES";
+    }
   }
   if (miles > 0) {
     resultado += (resultado ? " " : "") + (miles === 1 ? "MIL" : cientos(miles) + " MIL");
