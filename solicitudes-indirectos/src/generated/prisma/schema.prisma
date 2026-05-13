@@ -60,6 +60,7 @@ model User {
   image                      String?
   funcionalidadesAdicionales String    @default("[]") // JSON array of additional permissions
   microsoftId                String?   @unique
+  microsoftEmail             String?
 
   accounts         Account[]
   sessions         Session[]

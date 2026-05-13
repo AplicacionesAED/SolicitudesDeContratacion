@@ -19,6 +19,7 @@ interface UserProfile {
   activo: boolean;
   creadoEn: string;
   hasMicrosoftLinked: boolean;
+  microsoftEmail: string | null;
   frentesAsignados?: {
     frenteId: number;
     frente: { nombre: string; proyecto: { nombre: string } };
@@ -93,8 +94,14 @@ export default function PerfilPage() {
     const linked = searchParams.get("ms_linked");
     const msError = searchParams.get("ms_error");
 
-    if (linked === "true") {
-      setMsMessage({ type: "success", text: "Cuenta de Microsoft vinculada correctamente. Ya puedes iniciar sesión con Outlook." });
+    if (linked && linked !== "") {
+      const emailLinked = linked !== "true" ? decodeURIComponent(linked) : null;
+      setMsMessage({
+        type: "success",
+        text: emailLinked
+          ? `Cuenta de Microsoft vinculada: ${emailLinked}. Ya puedes iniciar sesión con Outlook.`
+          : "Cuenta de Microsoft vinculada correctamente. Ya puedes iniciar sesión con Outlook.",
+      });
       fetchProfile();
       router.replace("/perfil");
     } else if (msError) {
@@ -315,7 +322,10 @@ export default function PerfilPage() {
               <MicrosoftLogo />
               <div>
                 <p className="text-sm font-medium text-gray-900">Cuenta vinculada</p>
-                <p className="text-xs text-gray-500">
+                {profile?.microsoftEmail && (
+                  <p className="text-xs font-mono text-gray-700 mt-0.5">{profile.microsoftEmail}</p>
+                )}
+                <p className="text-xs text-gray-500 mt-0.5">
                   Puedes iniciar sesión con Microsoft desde la página de inicio de sesión.
                 </p>
               </div>

@@ -67,6 +67,8 @@ export const authOptions: NextAuthOptions = {
           if (linkIntent) {
             cookieStore.delete("ms_link_intent");
 
+            const msEmail = (profile?.email as string | undefined)?.toLowerCase() ?? null;
+
             const alreadyLinked = await prisma.user.findFirst({
               where: { microsoftId, NOT: { id: linkIntent } },
               select: { id: true },
@@ -77,10 +79,10 @@ export const authOptions: NextAuthOptions = {
 
             await prisma.user.update({
               where: { id: linkIntent },
-              data: { microsoftId },
+              data: { microsoftId, microsoftEmail: msEmail },
             });
 
-            return "/perfil?ms_linked=true";
+            return `/perfil?ms_linked=${encodeURIComponent(msEmail ?? "true")}`;
           }
         } catch {
           // cookies() not available in this context — continue with normal login

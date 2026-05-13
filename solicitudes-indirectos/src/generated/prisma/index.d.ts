@@ -5356,6 +5356,7 @@ export namespace Prisma {
     image: string | null
     funcionalidadesAdicionales: string | null
     microsoftId: string | null
+    microsoftEmail: string | null
     creadoEn: Date | null
     actualizadoEn: Date | null
   }
@@ -5374,6 +5375,7 @@ export namespace Prisma {
     image: string | null
     funcionalidadesAdicionales: string | null
     microsoftId: string | null
+    microsoftEmail: string | null
     creadoEn: Date | null
     actualizadoEn: Date | null
   }
@@ -5392,6 +5394,7 @@ export namespace Prisma {
     image: number
     funcionalidadesAdicionales: number
     microsoftId: number
+    microsoftEmail: number
     creadoEn: number
     actualizadoEn: number
     _all: number
@@ -5412,6 +5415,7 @@ export namespace Prisma {
     image?: true
     funcionalidadesAdicionales?: true
     microsoftId?: true
+    microsoftEmail?: true
     creadoEn?: true
     actualizadoEn?: true
   }
@@ -5430,6 +5434,7 @@ export namespace Prisma {
     image?: true
     funcionalidadesAdicionales?: true
     microsoftId?: true
+    microsoftEmail?: true
     creadoEn?: true
     actualizadoEn?: true
   }
@@ -5448,6 +5453,7 @@ export namespace Prisma {
     image?: true
     funcionalidadesAdicionales?: true
     microsoftId?: true
+    microsoftEmail?: true
     creadoEn?: true
     actualizadoEn?: true
     _all?: true
@@ -5539,6 +5545,7 @@ export namespace Prisma {
     image: string | null
     funcionalidadesAdicionales: string
     microsoftId: string | null
+    microsoftEmail: string | null
     creadoEn: Date
     actualizadoEn: Date
     _count: UserCountAggregateOutputType | null
@@ -5574,6 +5581,7 @@ export namespace Prisma {
     image?: boolean
     funcionalidadesAdicionales?: boolean
     microsoftId?: boolean
+    microsoftEmail?: boolean
     creadoEn?: boolean
     actualizadoEn?: boolean
     accounts?: boolean | User$accountsArgs<ExtArgs>
@@ -5600,6 +5608,7 @@ export namespace Prisma {
     image?: boolean
     funcionalidadesAdicionales?: boolean
     microsoftId?: boolean
+    microsoftEmail?: boolean
     creadoEn?: boolean
     actualizadoEn?: boolean
   }
@@ -5642,6 +5651,7 @@ export namespace Prisma {
       image: string | null
       funcionalidadesAdicionales: string
       microsoftId: string | null
+      microsoftEmail: string | null
       creadoEn: Date
       actualizadoEn: Date
     }, ExtArgs["result"]["user"]>
@@ -6090,6 +6100,7 @@ export namespace Prisma {
     readonly image: FieldRef<"User", 'String'>
     readonly funcionalidadesAdicionales: FieldRef<"User", 'String'>
     readonly microsoftId: FieldRef<"User", 'String'>
+    readonly microsoftEmail: FieldRef<"User", 'String'>
     readonly creadoEn: FieldRef<"User", 'DateTime'>
     readonly actualizadoEn: FieldRef<"User", 'DateTime'>
   }
@@ -19477,6 +19488,7 @@ export namespace Prisma {
     image: 'image',
     funcionalidadesAdicionales: 'funcionalidadesAdicionales',
     microsoftId: 'microsoftId',
+    microsoftEmail: 'microsoftEmail',
     creadoEn: 'creadoEn',
     actualizadoEn: 'actualizadoEn'
   };
@@ -19992,6 +20004,7 @@ export namespace Prisma {
     image?: StringNullableFilter<"User"> | string | null
     funcionalidadesAdicionales?: StringFilter<"User"> | string
     microsoftId?: StringNullableFilter<"User"> | string | null
+    microsoftEmail?: StringNullableFilter<"User"> | string | null
     creadoEn?: DateTimeFilter<"User"> | Date | string
     actualizadoEn?: DateTimeFilter<"User"> | Date | string
     accounts?: AccountListRelationFilter
@@ -20017,6 +20030,7 @@ export namespace Prisma {
     image?: SortOrderInput | SortOrder
     funcionalidadesAdicionales?: SortOrder
     microsoftId?: SortOrderInput | SortOrder
+    microsoftEmail?: SortOrderInput | SortOrder
     creadoEn?: SortOrder
     actualizadoEn?: SortOrder
     accounts?: AccountOrderByRelationAggregateInput
@@ -20045,6 +20059,7 @@ export namespace Prisma {
     activo?: BoolFilter<"User"> | boolean
     image?: StringNullableFilter<"User"> | string | null
     funcionalidadesAdicionales?: StringFilter<"User"> | string
+    microsoftEmail?: StringNullableFilter<"User"> | string | null
     creadoEn?: DateTimeFilter<"User"> | Date | string
     actualizadoEn?: DateTimeFilter<"User"> | Date | string
     accounts?: AccountListRelationFilter
@@ -20070,6 +20085,7 @@ export namespace Prisma {
     image?: SortOrderInput | SortOrder
     funcionalidadesAdicionales?: SortOrder
     microsoftId?: SortOrderInput | SortOrder
+    microsoftEmail?: SortOrderInput | SortOrder
     creadoEn?: SortOrder
     actualizadoEn?: SortOrder
     _count?: UserCountOrderByAggregateInput
@@ -20094,6 +20110,7 @@ export namespace Prisma {
     image?: StringNullableWithAggregatesFilter<"User"> | string | null
     funcionalidadesAdicionales?: StringWithAggregatesFilter<"User"> | string
     microsoftId?: StringNullableWithAggregatesFilter<"User"> | string | null
+    microsoftEmail?: StringNullableWithAggregatesFilter<"User"> | string | null
     creadoEn?: DateTimeWithAggregatesFilter<"User"> | Date | string
     actualizadoEn?: DateTimeWithAggregatesFilter<"User"> | Date | string
   }
@@ -21350,6 +21367,7 @@ export namespace Prisma {
     image?: string | null
     funcionalidadesAdicionales?: string
     microsoftId?: string | null
+    microsoftEmail?: string | null
     creadoEn?: Date | string
     actualizadoEn?: Date | string
     accounts?: AccountCreateNestedManyWithoutUserInput
@@ -21375,6 +21393,7 @@ export namespace Prisma {
     image?: string | null
     funcionalidadesAdicionales?: string
     microsoftId?: string | null
+    microsoftEmail?: string | null
     creadoEn?: Date | string
     actualizadoEn?: Date | string
     accounts?: AccountUncheckedCreateNestedManyWithoutUserInput
@@ -21400,6 +21419,7 @@ export namespace Prisma {
     image?: NullableStringFieldUpdateOperationsInput | string | null
     funcionalidadesAdicionales?: StringFieldUpdateOperationsInput | string
     microsoftId?: NullableStringFieldUpdateOperationsInput | string | null
+    microsoftEmail?: NullableStringFieldUpdateOperationsInput | string | null
     creadoEn?: DateTimeFieldUpdateOperationsInput | Date | string
     actualizadoEn?: DateTimeFieldUpdateOperationsInput | Date | string
     accounts?: AccountUpdateManyWithoutUserNestedInput
@@ -21425,6 +21445,7 @@ export namespace Prisma {
     image?: NullableStringFieldUpdateOperationsInput | string | null
     funcionalidadesAdicionales?: StringFieldUpdateOperationsInput | string
     microsoftId?: NullableStringFieldUpdateOperationsInput | string | null
+    microsoftEmail?: NullableStringFieldUpdateOperationsInput | string | null
     creadoEn?: DateTimeFieldUpdateOperationsInput | Date | string
     actualizadoEn?: DateTimeFieldUpdateOperationsInput | Date | string
     accounts?: AccountUncheckedUpdateManyWithoutUserNestedInput
@@ -21450,6 +21471,7 @@ export namespace Prisma {
     image?: string | null
     funcionalidadesAdicionales?: string
     microsoftId?: string | null
+    microsoftEmail?: string | null
     creadoEn?: Date | string
     actualizadoEn?: Date | string
   }
@@ -21468,6 +21490,7 @@ export namespace Prisma {
     image?: NullableStringFieldUpdateOperationsInput | string | null
     funcionalidadesAdicionales?: StringFieldUpdateOperationsInput | string
     microsoftId?: NullableStringFieldUpdateOperationsInput | string | null
+    microsoftEmail?: NullableStringFieldUpdateOperationsInput | string | null
     creadoEn?: DateTimeFieldUpdateOperationsInput | Date | string
     actualizadoEn?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -21486,6 +21509,7 @@ export namespace Prisma {
     image?: NullableStringFieldUpdateOperationsInput | string | null
     funcionalidadesAdicionales?: StringFieldUpdateOperationsInput | string
     microsoftId?: NullableStringFieldUpdateOperationsInput | string | null
+    microsoftEmail?: NullableStringFieldUpdateOperationsInput | string | null
     creadoEn?: DateTimeFieldUpdateOperationsInput | Date | string
     actualizadoEn?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -22926,6 +22950,7 @@ export namespace Prisma {
     image?: SortOrder
     funcionalidadesAdicionales?: SortOrder
     microsoftId?: SortOrder
+    microsoftEmail?: SortOrder
     creadoEn?: SortOrder
     actualizadoEn?: SortOrder
   }
@@ -22944,6 +22969,7 @@ export namespace Prisma {
     image?: SortOrder
     funcionalidadesAdicionales?: SortOrder
     microsoftId?: SortOrder
+    microsoftEmail?: SortOrder
     creadoEn?: SortOrder
     actualizadoEn?: SortOrder
   }
@@ -22962,6 +22988,7 @@ export namespace Prisma {
     image?: SortOrder
     funcionalidadesAdicionales?: SortOrder
     microsoftId?: SortOrder
+    microsoftEmail?: SortOrder
     creadoEn?: SortOrder
     actualizadoEn?: SortOrder
   }
@@ -24987,6 +25014,7 @@ export namespace Prisma {
     image?: string | null
     funcionalidadesAdicionales?: string
     microsoftId?: string | null
+    microsoftEmail?: string | null
     creadoEn?: Date | string
     actualizadoEn?: Date | string
     sessions?: SessionCreateNestedManyWithoutUserInput
@@ -25011,6 +25039,7 @@ export namespace Prisma {
     image?: string | null
     funcionalidadesAdicionales?: string
     microsoftId?: string | null
+    microsoftEmail?: string | null
     creadoEn?: Date | string
     actualizadoEn?: Date | string
     sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
@@ -25051,6 +25080,7 @@ export namespace Prisma {
     image?: NullableStringFieldUpdateOperationsInput | string | null
     funcionalidadesAdicionales?: StringFieldUpdateOperationsInput | string
     microsoftId?: NullableStringFieldUpdateOperationsInput | string | null
+    microsoftEmail?: NullableStringFieldUpdateOperationsInput | string | null
     creadoEn?: DateTimeFieldUpdateOperationsInput | Date | string
     actualizadoEn?: DateTimeFieldUpdateOperationsInput | Date | string
     sessions?: SessionUpdateManyWithoutUserNestedInput
@@ -25075,6 +25105,7 @@ export namespace Prisma {
     image?: NullableStringFieldUpdateOperationsInput | string | null
     funcionalidadesAdicionales?: StringFieldUpdateOperationsInput | string
     microsoftId?: NullableStringFieldUpdateOperationsInput | string | null
+    microsoftEmail?: NullableStringFieldUpdateOperationsInput | string | null
     creadoEn?: DateTimeFieldUpdateOperationsInput | Date | string
     actualizadoEn?: DateTimeFieldUpdateOperationsInput | Date | string
     sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
@@ -25099,6 +25130,7 @@ export namespace Prisma {
     image?: string | null
     funcionalidadesAdicionales?: string
     microsoftId?: string | null
+    microsoftEmail?: string | null
     creadoEn?: Date | string
     actualizadoEn?: Date | string
     accounts?: AccountCreateNestedManyWithoutUserInput
@@ -25123,6 +25155,7 @@ export namespace Prisma {
     image?: string | null
     funcionalidadesAdicionales?: string
     microsoftId?: string | null
+    microsoftEmail?: string | null
     creadoEn?: Date | string
     actualizadoEn?: Date | string
     accounts?: AccountUncheckedCreateNestedManyWithoutUserInput
@@ -25163,6 +25196,7 @@ export namespace Prisma {
     image?: NullableStringFieldUpdateOperationsInput | string | null
     funcionalidadesAdicionales?: StringFieldUpdateOperationsInput | string
     microsoftId?: NullableStringFieldUpdateOperationsInput | string | null
+    microsoftEmail?: NullableStringFieldUpdateOperationsInput | string | null
     creadoEn?: DateTimeFieldUpdateOperationsInput | Date | string
     actualizadoEn?: DateTimeFieldUpdateOperationsInput | Date | string
     accounts?: AccountUpdateManyWithoutUserNestedInput
@@ -25187,6 +25221,7 @@ export namespace Prisma {
     image?: NullableStringFieldUpdateOperationsInput | string | null
     funcionalidadesAdicionales?: StringFieldUpdateOperationsInput | string
     microsoftId?: NullableStringFieldUpdateOperationsInput | string | null
+    microsoftEmail?: NullableStringFieldUpdateOperationsInput | string | null
     creadoEn?: DateTimeFieldUpdateOperationsInput | Date | string
     actualizadoEn?: DateTimeFieldUpdateOperationsInput | Date | string
     accounts?: AccountUncheckedUpdateManyWithoutUserNestedInput
@@ -25990,6 +26025,7 @@ export namespace Prisma {
     image?: string | null
     funcionalidadesAdicionales?: string
     microsoftId?: string | null
+    microsoftEmail?: string | null
     creadoEn?: Date | string
     actualizadoEn?: Date | string
     accounts?: AccountCreateNestedManyWithoutUserInput
@@ -26014,6 +26050,7 @@ export namespace Prisma {
     image?: string | null
     funcionalidadesAdicionales?: string
     microsoftId?: string | null
+    microsoftEmail?: string | null
     creadoEn?: Date | string
     actualizadoEn?: Date | string
     accounts?: AccountUncheckedCreateNestedManyWithoutUserInput
@@ -26074,6 +26111,7 @@ export namespace Prisma {
     image?: NullableStringFieldUpdateOperationsInput | string | null
     funcionalidadesAdicionales?: StringFieldUpdateOperationsInput | string
     microsoftId?: NullableStringFieldUpdateOperationsInput | string | null
+    microsoftEmail?: NullableStringFieldUpdateOperationsInput | string | null
     creadoEn?: DateTimeFieldUpdateOperationsInput | Date | string
     actualizadoEn?: DateTimeFieldUpdateOperationsInput | Date | string
     accounts?: AccountUpdateManyWithoutUserNestedInput
@@ -26098,6 +26136,7 @@ export namespace Prisma {
     image?: NullableStringFieldUpdateOperationsInput | string | null
     funcionalidadesAdicionales?: StringFieldUpdateOperationsInput | string
     microsoftId?: NullableStringFieldUpdateOperationsInput | string | null
+    microsoftEmail?: NullableStringFieldUpdateOperationsInput | string | null
     creadoEn?: DateTimeFieldUpdateOperationsInput | Date | string
     actualizadoEn?: DateTimeFieldUpdateOperationsInput | Date | string
     accounts?: AccountUncheckedUpdateManyWithoutUserNestedInput
@@ -26331,6 +26370,7 @@ export namespace Prisma {
     image?: string | null
     funcionalidadesAdicionales?: string
     microsoftId?: string | null
+    microsoftEmail?: string | null
     creadoEn?: Date | string
     actualizadoEn?: Date | string
     accounts?: AccountCreateNestedManyWithoutUserInput
@@ -26355,6 +26395,7 @@ export namespace Prisma {
     image?: string | null
     funcionalidadesAdicionales?: string
     microsoftId?: string | null
+    microsoftEmail?: string | null
     creadoEn?: Date | string
     actualizadoEn?: Date | string
     accounts?: AccountUncheckedCreateNestedManyWithoutUserInput
@@ -26460,6 +26501,7 @@ export namespace Prisma {
     image?: string | null
     funcionalidadesAdicionales?: string
     microsoftId?: string | null
+    microsoftEmail?: string | null
     creadoEn?: Date | string
     actualizadoEn?: Date | string
     accounts?: AccountCreateNestedManyWithoutUserInput
@@ -26484,6 +26526,7 @@ export namespace Prisma {
     image?: string | null
     funcionalidadesAdicionales?: string
     microsoftId?: string | null
+    microsoftEmail?: string | null
     creadoEn?: Date | string
     actualizadoEn?: Date | string
     accounts?: AccountUncheckedCreateNestedManyWithoutUserInput
@@ -26786,6 +26829,7 @@ export namespace Prisma {
     image?: NullableStringFieldUpdateOperationsInput | string | null
     funcionalidadesAdicionales?: StringFieldUpdateOperationsInput | string
     microsoftId?: NullableStringFieldUpdateOperationsInput | string | null
+    microsoftEmail?: NullableStringFieldUpdateOperationsInput | string | null
     creadoEn?: DateTimeFieldUpdateOperationsInput | Date | string
     actualizadoEn?: DateTimeFieldUpdateOperationsInput | Date | string
     accounts?: AccountUpdateManyWithoutUserNestedInput
@@ -26810,6 +26854,7 @@ export namespace Prisma {
     image?: NullableStringFieldUpdateOperationsInput | string | null
     funcionalidadesAdicionales?: StringFieldUpdateOperationsInput | string
     microsoftId?: NullableStringFieldUpdateOperationsInput | string | null
+    microsoftEmail?: NullableStringFieldUpdateOperationsInput | string | null
     creadoEn?: DateTimeFieldUpdateOperationsInput | Date | string
     actualizadoEn?: DateTimeFieldUpdateOperationsInput | Date | string
     accounts?: AccountUncheckedUpdateManyWithoutUserNestedInput
@@ -26933,6 +26978,7 @@ export namespace Prisma {
     image?: NullableStringFieldUpdateOperationsInput | string | null
     funcionalidadesAdicionales?: StringFieldUpdateOperationsInput | string
     microsoftId?: NullableStringFieldUpdateOperationsInput | string | null
+    microsoftEmail?: NullableStringFieldUpdateOperationsInput | string | null
     creadoEn?: DateTimeFieldUpdateOperationsInput | Date | string
     actualizadoEn?: DateTimeFieldUpdateOperationsInput | Date | string
     accounts?: AccountUpdateManyWithoutUserNestedInput
@@ -26957,6 +27003,7 @@ export namespace Prisma {
     image?: NullableStringFieldUpdateOperationsInput | string | null
     funcionalidadesAdicionales?: StringFieldUpdateOperationsInput | string
     microsoftId?: NullableStringFieldUpdateOperationsInput | string | null
+    microsoftEmail?: NullableStringFieldUpdateOperationsInput | string | null
     creadoEn?: DateTimeFieldUpdateOperationsInput | Date | string
     actualizadoEn?: DateTimeFieldUpdateOperationsInput | Date | string
     accounts?: AccountUncheckedUpdateManyWithoutUserNestedInput
@@ -27251,6 +27298,7 @@ export namespace Prisma {
     image?: string | null
     funcionalidadesAdicionales?: string
     microsoftId?: string | null
+    microsoftEmail?: string | null
     creadoEn?: Date | string
     actualizadoEn?: Date | string
     accounts?: AccountCreateNestedManyWithoutUserInput
@@ -27275,6 +27323,7 @@ export namespace Prisma {
     image?: string | null
     funcionalidadesAdicionales?: string
     microsoftId?: string | null
+    microsoftEmail?: string | null
     creadoEn?: Date | string
     actualizadoEn?: Date | string
     accounts?: AccountUncheckedCreateNestedManyWithoutUserInput
@@ -27437,6 +27486,7 @@ export namespace Prisma {
     image?: NullableStringFieldUpdateOperationsInput | string | null
     funcionalidadesAdicionales?: StringFieldUpdateOperationsInput | string
     microsoftId?: NullableStringFieldUpdateOperationsInput | string | null
+    microsoftEmail?: NullableStringFieldUpdateOperationsInput | string | null
     creadoEn?: DateTimeFieldUpdateOperationsInput | Date | string
     actualizadoEn?: DateTimeFieldUpdateOperationsInput | Date | string
     accounts?: AccountUpdateManyWithoutUserNestedInput
@@ -27461,6 +27511,7 @@ export namespace Prisma {
     image?: NullableStringFieldUpdateOperationsInput | string | null
     funcionalidadesAdicionales?: StringFieldUpdateOperationsInput | string
     microsoftId?: NullableStringFieldUpdateOperationsInput | string | null
+    microsoftEmail?: NullableStringFieldUpdateOperationsInput | string | null
     creadoEn?: DateTimeFieldUpdateOperationsInput | Date | string
     actualizadoEn?: DateTimeFieldUpdateOperationsInput | Date | string
     accounts?: AccountUncheckedUpdateManyWithoutUserNestedInput
@@ -28035,6 +28086,7 @@ export namespace Prisma {
     image?: string | null
     funcionalidadesAdicionales?: string
     microsoftId?: string | null
+    microsoftEmail?: string | null
     creadoEn?: Date | string
     actualizadoEn?: Date | string
     accounts?: AccountCreateNestedManyWithoutUserInput
@@ -28059,6 +28111,7 @@ export namespace Prisma {
     image?: string | null
     funcionalidadesAdicionales?: string
     microsoftId?: string | null
+    microsoftEmail?: string | null
     creadoEn?: Date | string
     actualizadoEn?: Date | string
     accounts?: AccountUncheckedCreateNestedManyWithoutUserInput
@@ -28099,6 +28152,7 @@ export namespace Prisma {
     image?: NullableStringFieldUpdateOperationsInput | string | null
     funcionalidadesAdicionales?: StringFieldUpdateOperationsInput | string
     microsoftId?: NullableStringFieldUpdateOperationsInput | string | null
+    microsoftEmail?: NullableStringFieldUpdateOperationsInput | string | null
     creadoEn?: DateTimeFieldUpdateOperationsInput | Date | string
     actualizadoEn?: DateTimeFieldUpdateOperationsInput | Date | string
     accounts?: AccountUpdateManyWithoutUserNestedInput
@@ -28123,6 +28177,7 @@ export namespace Prisma {
     image?: NullableStringFieldUpdateOperationsInput | string | null
     funcionalidadesAdicionales?: StringFieldUpdateOperationsInput | string
     microsoftId?: NullableStringFieldUpdateOperationsInput | string | null
+    microsoftEmail?: NullableStringFieldUpdateOperationsInput | string | null
     creadoEn?: DateTimeFieldUpdateOperationsInput | Date | string
     actualizadoEn?: DateTimeFieldUpdateOperationsInput | Date | string
     accounts?: AccountUncheckedUpdateManyWithoutUserNestedInput
