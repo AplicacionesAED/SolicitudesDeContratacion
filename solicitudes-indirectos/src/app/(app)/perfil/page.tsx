@@ -2,7 +2,8 @@
 
 import { useState, useEffect, useCallback } from "react";
 import { useSession } from "next-auth/react";
-import { User, Lock, Save } from "lucide-react";
+import { useSearchParams, useRouter } from "next/navigation";
+import { User, Lock, Save, Link2, LinkIcon, Unlink } from "lucide-react";
 import { Spinner } from "@/shared/ui/spinner";
 import { ROL_LABELS } from "@/lib/utils";
 
@@ -17,16 +18,28 @@ interface UserProfile {
   rol: string;
   activo: boolean;
   creadoEn: string;
+  hasMicrosoftLinked: boolean;
   frentesAsignados?: {
     frenteId: number;
     frente: { nombre: string; proyecto: { nombre: string } };
   }[];
 }
 
+const MicrosoftLogo = () => (
+  <svg width="16" height="16" viewBox="0 0 21 21" xmlns="http://www.w3.org/2000/svg" className="shrink-0">
+    <rect x="0"  y="0"  width="10" height="10" fill="#F25022" />
+    <rect x="11" y="0"  width="10" height="10" fill="#7FBA00" />
+    <rect x="0"  y="11" width="10" height="10" fill="#00A4EF" />
+    <rect x="11" y="11" width="10" height="10" fill="#FFB900" />
+  </svg>
+);
+
 // ─── Page ─────────────────────────────────────────────────────────────────────
 
 export default function PerfilPage() {
   const { data: session, update: updateSession } = useSession();
+  const searchParams = useSearchParams();
+  const router = useRouter();
 
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [loading, setLoading] = useState(true);
@@ -47,6 +60,11 @@ export default function PerfilPage() {
   const [savingPassword, setSavingPassword] = useState(false);
   const [passwordSuccess, setPasswordSuccess] = useState(false);
   const [passwordError, setPasswordError] = useState<string | null>(null);
+
+  // Microsoft link
+  const [msLinking, setMsLinking] = useState(false);
+  const [msUnlinking, setMsUnlinking] = useState(false);
+  const [msMessage, setMsMessage] = useState<{ type: "success" | "error"; text: string } | null>(null);
 
   const fetchProfile = useCallback(async () => {
     setLoading(true);
@@ -70,6 +88,21 @@ export default function PerfilPage() {
     fetchProfile();
   }, [fetchProfile]);
 
+  // Handle callback params from Microsoft OAuth
+  useEffect(() => {
+    const linked = searchParams.get("ms_linked");
+    const msError = searchParams.get("ms_error");
+
+    if (linked === "true") {
+      setMsMessage({ type: "success", text: "Cuenta de Microsoft vinculada correctamente. Ya puedes iniciar sesión con Outlook." });
+      fetchProfile();
+      router.replace("/perfil");
+    } else if (msError) {
+      setMsMessage({ type: "error", text: decodeURIComponent(msError) });
+      router.replace("/perfil");
+    }
+  }, [searchParams, fetchProfile, router]);
+
   async function handleProfileSave(e: React.FormEvent) {
     e.preventDefault();
     setProfileError(null);
@@ -92,7 +125,6 @@ export default function PerfilPage() {
       const updated: UserProfile = await res.json();
       setProfile(updated);
       setProfileSuccess(true);
-      // Update session name
       await updateSession({ name: updated.nombre });
       setTimeout(() => setProfileSuccess(false), 3000);
     } catch (e) {
@@ -136,6 +168,29 @@ export default function PerfilPage() {
       setPasswordError(e instanceof Error ? e.message : "Error desconocido");
     } finally {
       setSavingPassword(false);
+    }
+  }
+
+  function handleLinkMicrosoft() {
+    setMsLinking(true);
+    window.location.href = "/api/auth/microsoft/initiate";
+  }
+
+  async function handleUnlinkMicrosoft() {
+    setMsMessage(null);
+    setMsUnlinking(true);
+    try {
+      const res = await fetch("/api/auth/microsoft/unlink", { method: "POST" });
+      if (!res.ok) {
+        const data = await res.json();
+        throw new Error(data.error ?? "Error al desvincular");
+      }
+      setMsMessage({ type: "success", text: "Cuenta de Microsoft desvinculada." });
+      fetchProfile();
+    } catch (e) {
+      setMsMessage({ type: "error", text: e instanceof Error ? e.message : "Error al desvincular" });
+    } finally {
+      setMsUnlinking(false);
     }
   }
 
@@ -221,6 +276,75 @@ export default function PerfilPage() {
           </div>
         </div>
       )}
+
+      {/* Microsoft account link */}
+      <div className="bg-white border border-gray-200 rounded-xl p-5">
+        <div className="flex items-center gap-2 mb-4">
+          <Link2 size={16} className="text-gray-500" />
+          <h3 className="text-sm font-semibold text-gray-900">
+            Cuenta de Microsoft (Outlook)
+          </h3>
+        </div>
+
+        {msMessage && (
+          <div
+            className={`rounded-lg px-4 py-3 text-sm mb-4 ${
+              msMessage.type === "success"
+                ? "bg-green-50 border border-green-200 text-green-700"
+                : "bg-red-50 border border-red-200 text-red-700"
+            }`}
+          >
+            {msMessage.text}
+          </div>
+        )}
+
+        {profile?.hasMicrosoftLinked ? (
+          <div className="flex items-center justify-between gap-4">
+            <div className="flex items-center gap-3">
+              <MicrosoftLogo />
+              <div>
+                <p className="text-sm font-medium text-gray-900">Cuenta vinculada</p>
+                <p className="text-xs text-gray-500">
+                  Puedes iniciar sesión con Microsoft desde la página de inicio de sesión.
+                </p>
+              </div>
+              <span className="inline-flex items-center rounded-full bg-green-100 px-2.5 py-0.5 text-xs font-medium text-green-700">
+                Activa
+              </span>
+            </div>
+            <button
+              type="button"
+              onClick={handleUnlinkMicrosoft}
+              disabled={msUnlinking}
+              className="inline-flex items-center gap-2 rounded-lg border border-red-200 bg-red-50 px-3 py-1.5 text-xs font-medium text-red-700 hover:bg-red-100 disabled:opacity-50 transition-colors shrink-0"
+            >
+              {msUnlinking ? <Spinner size="sm" /> : <Unlink size={13} />}
+              Desvincular
+            </button>
+          </div>
+        ) : (
+          <div className="flex items-center justify-between gap-4">
+            <div className="flex items-center gap-3">
+              <MicrosoftLogo />
+              <div>
+                <p className="text-sm font-medium text-gray-900">Sin cuenta vinculada</p>
+                <p className="text-xs text-gray-500">
+                  Vincula tu Outlook para iniciar sesión con Microsoft.
+                </p>
+              </div>
+            </div>
+            <button
+              type="button"
+              onClick={handleLinkMicrosoft}
+              disabled={msLinking}
+              className="inline-flex items-center gap-2 rounded-lg border border-gray-300 bg-white px-3 py-1.5 text-xs font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50 transition-colors shrink-0"
+            >
+              {msLinking ? <Spinner size="sm" /> : <LinkIcon size={13} />}
+              {msLinking ? "Redirigiendo…" : "Vincular Outlook"}
+            </button>
+          </div>
+        )}
+      </div>
 
       {/* Edit profile */}
       <div className="bg-white border border-gray-200 rounded-xl p-5">

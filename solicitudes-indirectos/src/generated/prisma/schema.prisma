@@ -59,6 +59,7 @@ model User {
   activo                     Boolean   @default(true)
   image                      String?
   funcionalidadesAdicionales String    @default("[]") // JSON array of additional permissions
+  microsoftId                String?   @unique
 
   accounts         Account[]
   sessions         Session[]

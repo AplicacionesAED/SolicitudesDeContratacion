@@ -1,67 +1,123 @@
 import NextAuth, { type NextAuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
-import { PrismaAdapter } from "@auth/prisma-adapter";
+import AzureADProvider from "next-auth/providers/azure-ad";
 import bcrypt from "bcryptjs";
 import { prisma } from "@/lib/prisma";
-// Roles stored as JSON string array in DB
 
 export const authOptions: NextAuthOptions = {
-  adapter: PrismaAdapter(prisma) as any,
   session: { strategy: "jwt" },
   pages: {
     signIn: "/login",
   },
   providers: [
+    AzureADProvider({
+      clientId: process.env.AZURE_CLIENT_ID!,
+      clientSecret: process.env.AZURE_CLIENT_SECRET!,
+      tenantId: process.env.AZURE_TENANT_ID ?? "common",
+      profile(profile) {
+        return {
+          id: profile.sub, // Microsoft Object ID — stable and unique
+          name: profile.name,
+          email: profile.email,
+        };
+      },
+    }),
     CredentialsProvider({
       name: "credentials",
       credentials: {
         email: { label: "Email", type: "email" },
         password: { label: "Contraseña", type: "password" },
       },
-  async authorize(credentials) {
-    if (!credentials?.email || !credentials?.password) return null;
+      async authorize(credentials) {
+        if (!credentials?.email || !credentials?.password) return null;
 
-    const user = await prisma.user.findUnique({
-      where: { email: credentials.email },
-    });
+        const user = await prisma.user.findUnique({
+          where: { email: credentials.email },
+        });
 
-    if (!user) {
-      console.log("Usuario no encontrado:", credentials.email);
-      return null;
-    }
+        if (!user) return null;
 
-    console.log("Usuario encontrado:", user.email, "Hash:", user.password);
+        const isValid = await bcrypt.compare(credentials.password, user.password!);
+        if (!isValid) return null;
+        if (!user.activo) return null;
 
-    const isValid = await bcrypt.compare(credentials.password, user.password!);
-    console.log("Resultado bcrypt.compare:", isValid);
-
-    if (!isValid) {
-      console.log("Contraseña inválida para", credentials.email);
-      return null;
-    }
-
-    if (!user.activo) {
-      console.log("Usuario inactivo:", credentials.email);
-      return null;
-    }
-
-    return {
-      id: user.id,
-      email: user.email,
-      name: user.nombre,
-      rol: user.rol,
-      roles: JSON.parse(user.roles || '["SOLICITANTE"]'),
-      funcionalidadesAdicionales: JSON.parse(user.funcionalidadesAdicionales || '[]'),
-    };
-  },
-
-
+        return {
+          id: user.id,
+          email: user.email,
+          name: user.nombre,
+          rol: user.rol,
+          roles: JSON.parse(user.roles || '["SOLICITANTE"]'),
+          funcionalidadesAdicionales: JSON.parse(user.funcionalidadesAdicionales || '[]'),
+        };
+      },
     }),
   ],
   callbacks: {
-    async jwt({ token, user }) {
+    async signIn({ account, profile }) {
+      if (account?.provider === "azure-ad") {
+        const microsoftId = profile?.sub as string | undefined;
+        if (!microsoftId) return false;
+
+        const dbUser = await prisma.user.findFirst({
+          where: { microsoftId },
+          select: { activo: true },
+        });
+
+        if (!dbUser) {
+          // User exists with same email but hasn't linked yet
+          const emailUser = profile?.email
+            ? await prisma.user.findUnique({
+                where: { email: (profile.email as string).toLowerCase() },
+                select: { id: true },
+              })
+            : null;
+          if (emailUser) {
+            return "/login?error=OAuthNotLinked";
+          }
+          return "/login?error=OAuthAccountNotFound";
+        }
+
+        if (!dbUser.activo) return "/login?error=OAuthAccountInactive";
+        return true;
+      }
+      return true;
+    },
+
+    async jwt({ token, user, account }) {
+      if (account?.provider === "azure-ad" && user) {
+        // OAuth sign-in: map Microsoft user to DB user via microsoftId
+        const dbUser = await prisma.user.findFirst({
+          where: { microsoftId: user.id },
+          select: {
+            id: true,
+            roles: true,
+            rol: true,
+            cargo: true,
+            telefono: true,
+            activo: true,
+            funcionalidadesAdicionales: true,
+          },
+        });
+        if (dbUser && dbUser.activo) {
+          token.id = dbUser.id;
+          let parsedRoles: string[];
+          try { parsedRoles = JSON.parse(dbUser.roles || '["SOLICITANTE"]'); }
+          catch { parsedRoles = [dbUser.rol ?? "SOLICITANTE"]; }
+          token.roles = parsedRoles;
+          token.rol = parsedRoles[0] ?? "SOLICITANTE";
+          token.cargo = dbUser.cargo ?? undefined;
+          token.telefono = dbUser.telefono ?? undefined;
+          try {
+            token.funcionalidadesAdicionales = JSON.parse(dbUser.funcionalidadesAdicionales || "[]");
+          } catch {
+            token.funcionalidadesAdicionales = [];
+          }
+        }
+        return token;
+      }
+
       if (user) {
-        // Initial sign-in
+        // Credentials sign-in
         token.id = user.id;
         token.roles = (user as any).roles ?? ["SOLICITANTE"];
         token.rol = ((user as any).roles ?? ["SOLICITANTE"])[0];
@@ -95,6 +151,7 @@ export const authOptions: NextAuthOptions = {
       }
       return token;
     },
+
     async session({ session, token }) {
       if (token && session.user) {
         session.user.id = token.id as string;

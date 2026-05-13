@@ -24,7 +24,8 @@
       "Bash(git mv *)",
       "Bash(npm run *)",
       "Bash(xargs grep -l \"Excel\\\\|bulk\\\\|import.*tercero\")",
-      "Bash(xargs grep -l \"xlsx\\\\|exceljs\\\\|XLSX\")"
+      "Bash(xargs grep -l \"xlsx\\\\|exceljs\\\\|XLSX\")",
+      "Bash(node -e \"const p = require\\('./package.json'\\); console.log\\('next-auth:', p.dependencies['next-auth']\\); console.log\\('next:', p.dependencies['next']\\);\")"
     ],
     "additionalDirectories": [
       "C:\\SOLICITUD INDIRECTOS\\solicitudes-indirectos\\src\\app\\api\\solicitudes\\[id]",

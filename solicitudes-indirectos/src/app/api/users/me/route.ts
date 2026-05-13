@@ -24,6 +24,7 @@ export async function GET(_request: Request) {
         activo: true,
         creadoEn: true,
         actualizadoEn: true,
+        microsoftId: true,
         frentesAsignados: {
           include: {
             frente: {
@@ -38,7 +39,8 @@ export async function GET(_request: Request) {
       return Response.json({ error: "Usuario no encontrado" }, { status: 404 });
     }
 
-    return Response.json(user);
+    const { microsoftId, ...rest } = user;
+    return Response.json({ ...rest, hasMicrosoftLinked: !!microsoftId });
   } catch (error) {
     console.error("GET /api/users/me error:", error);
     return Response.json({ error: "Error interno del servidor" }, { status: 500 });
