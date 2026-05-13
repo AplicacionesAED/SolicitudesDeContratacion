@@ -1,6 +1,6 @@
 "use client";
 
-import { Suspense, useState, useEffect, type FormEvent } from "react";
+import { Suspense, useState, type FormEvent } from "react";
 import { signIn } from "next-auth/react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Spinner } from "@/shared/ui/spinner";
@@ -29,21 +29,11 @@ function LoginForm() {
   const callbackUrl = searchParams.get("callbackUrl") ?? "/dashboard";
   const oauthError = searchParams.get("error");
 
-  const [email, setEmail]         = useState("");
-  const [password, setPassword]   = useState("");
-  const [error, setError]         = useState<string | null>(null);
-  const [loading, setLoading]     = useState(false);
+  const [email, setEmail]       = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError]       = useState<string | null>(null);
+  const [loading, setLoading]   = useState(false);
   const [msLoading, setMsLoading] = useState(false);
-  const [oauthErrorMsg, setOauthErrorMsg] = useState<string | null>(
-    oauthError ? (OAUTH_ERROR_MESSAGES[oauthError] ?? "Error al iniciar sesión con Microsoft.") : null
-  );
-
-  useEffect(() => {
-    if (oauthError) {
-      router.replace("/login");
-    }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -75,7 +65,28 @@ function LoginForm() {
     await signIn("azure-ad", { callbackUrl });
   }
 
-  const displayError = error ?? oauthErrorMsg;
+  if (oauthError) {
+    const oauthErrorText = OAUTH_ERROR_MESSAGES[oauthError] ?? "Error al iniciar sesión con Microsoft.";
+    return (
+      <div className="bg-white rounded-2xl border border-gray-200 shadow-sm px-8 py-8 flex flex-col items-center gap-5">
+        <div
+          role="alert"
+          className="flex items-start gap-2 rounded-lg bg-red-50 border border-red-200 px-4 py-3 w-full text-sm text-red-700"
+        >
+          <span className="font-semibold shrink-0">✕</span>
+          <span>{oauthErrorText}</span>
+        </div>
+        <a
+          href="/login"
+          className="flex w-full items-center justify-center gap-2 rounded-lg bg-blue-600 px-4 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-blue-700"
+        >
+          Volver al inicio de sesión
+        </a>
+      </div>
+    );
+  }
+
+  const displayError = error;
 
   return (
     <div className="bg-white rounded-2xl border border-gray-200 shadow-sm px-8 py-8">
