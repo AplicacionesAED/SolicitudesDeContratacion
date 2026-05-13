@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
-import { useSession } from "next-auth/react";
+import { useSession, signIn } from "next-auth/react";
 import { useSearchParams, useRouter } from "next/navigation";
 import { User, Lock, Save, Link2, LinkIcon, Unlink } from "lucide-react";
 import { Spinner } from "@/shared/ui/spinner";
@@ -171,9 +171,20 @@ export default function PerfilPage() {
     }
   }
 
-  function handleLinkMicrosoft() {
+  async function handleLinkMicrosoft() {
     setMsLinking(true);
-    window.location.href = "/api/auth/microsoft/initiate";
+    try {
+      const res = await fetch("/api/auth/microsoft/set-link-intent", { method: "POST" });
+      if (!res.ok) {
+        setMsMessage({ type: "error", text: "Error al iniciar la vinculación. Intenta de nuevo." });
+        setMsLinking(false);
+        return;
+      }
+      await signIn("azure-ad", { callbackUrl: "/perfil?ms_linked=true" });
+    } catch {
+      setMsMessage({ type: "error", text: "Error de conexión. Intenta de nuevo." });
+      setMsLinking(false);
+    }
   }
 
   async function handleUnlinkMicrosoft() {

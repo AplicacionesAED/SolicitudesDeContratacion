@@ -58,22 +58,48 @@ export const authOptions: NextAuthOptions = {
         const microsoftId = profile?.sub as string | undefined;
         if (!microsoftId) return false;
 
+        // Check if this is an account-linking request (from profile page)
+        try {
+          const { cookies } = await import("next/headers");
+          const cookieStore = await cookies();
+          const linkIntent = cookieStore.get("ms_link_intent")?.value;
+
+          if (linkIntent) {
+            cookieStore.delete("ms_link_intent");
+
+            const alreadyLinked = await prisma.user.findFirst({
+              where: { microsoftId, NOT: { id: linkIntent } },
+              select: { id: true },
+            });
+            if (alreadyLinked) {
+              return `/perfil?ms_error=${encodeURIComponent("Esta cuenta de Microsoft ya está vinculada a otro usuario.")}`;
+            }
+
+            await prisma.user.update({
+              where: { id: linkIntent },
+              data: { microsoftId },
+            });
+
+            return "/perfil?ms_linked=true";
+          }
+        } catch {
+          // cookies() not available in this context — continue with normal login
+        }
+
+        // Normal login: verify microsoftId is linked to a user
         const dbUser = await prisma.user.findFirst({
           where: { microsoftId },
           select: { activo: true },
         });
 
         if (!dbUser) {
-          // User exists with same email but hasn't linked yet
           const emailUser = profile?.email
             ? await prisma.user.findUnique({
                 where: { email: (profile.email as string).toLowerCase() },
                 select: { id: true },
               })
             : null;
-          if (emailUser) {
-            return "/login?error=OAuthNotLinked";
-          }
+          if (emailUser) return "/login?error=OAuthNotLinked";
           return "/login?error=OAuthAccountNotFound";
         }
 
