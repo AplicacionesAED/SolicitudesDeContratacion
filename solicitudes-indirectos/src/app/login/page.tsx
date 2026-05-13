@@ -1,6 +1,6 @@
 "use client";
 
-import { Suspense, useState, type FormEvent } from "react";
+import { Suspense, useState, useEffect, type FormEvent } from "react";
 import { signIn } from "next-auth/react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Spinner } from "@/shared/ui/spinner";
@@ -29,11 +29,21 @@ function LoginForm() {
   const callbackUrl = searchParams.get("callbackUrl") ?? "/dashboard";
   const oauthError = searchParams.get("error");
 
-  const [email, setEmail]       = useState("");
-  const [password, setPassword] = useState("");
-  const [error, setError]       = useState<string | null>(null);
-  const [loading, setLoading]   = useState(false);
+  const [email, setEmail]         = useState("");
+  const [password, setPassword]   = useState("");
+  const [error, setError]         = useState<string | null>(null);
+  const [loading, setLoading]     = useState(false);
   const [msLoading, setMsLoading] = useState(false);
+  const [oauthErrorMsg, setOauthErrorMsg] = useState<string | null>(
+    oauthError ? (OAUTH_ERROR_MESSAGES[oauthError] ?? "Error al iniciar sesión con Microsoft.") : null
+  );
+
+  useEffect(() => {
+    if (oauthError) {
+      router.replace("/login");
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -65,9 +75,7 @@ function LoginForm() {
     await signIn("azure-ad", { callbackUrl });
   }
 
-  const displayError =
-    error ??
-    (oauthError ? (OAUTH_ERROR_MESSAGES[oauthError] ?? "Error al iniciar sesión con Microsoft.") : null);
+  const displayError = error ?? oauthErrorMsg;
 
   return (
     <div className="bg-white rounded-2xl border border-gray-200 shadow-sm px-8 py-8">
