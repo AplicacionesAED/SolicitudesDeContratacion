@@ -347,7 +347,10 @@ export function SolicitudForm({
       .map((f) => f.nombre)
       .join(", ");
     const terceroName = selectedTercero?.razonSocial ?? "";
-    const desc = watchDescripcion?.slice(0, 80) ?? "";
+    const raw = watchDescripcion ?? "";
+    const limit = 80;
+    const truncated = raw.length <= limit ? raw : raw.slice(0, raw.lastIndexOf(" ", limit) || limit);
+    const desc = raw.length > limit ? `${truncated}...` : truncated;
     if (frenteNames || terceroName || desc) {
       const prefijo = tipoSolicitud === "ORDEN_SERVICIO" ? "ORDEN DE SERVICIO" : "CONTRATO";
       const autoAsunto = `[${prefijo}] – ${frenteNames || "Frente(s)"} – ${terceroName || "Contratista"} – ${desc}`;
