@@ -15,6 +15,8 @@ import {
   Paperclip,
   Layers,
   GitMerge,
+  Link2,
+  ExternalLink,
 } from "lucide-react";
 import { SolicitudBadge } from "@/features/solicitudes/components/solicitudBadge";
 import { SolicitudActions } from "@/features/solicitudes/components/solicitudActions";
@@ -30,6 +32,7 @@ import {
   formatCurrency,
   formatDate,
   formatDateTime,
+  numeroALetras,
 } from "@/lib/utils";
 import { prisma } from "@/lib/prisma";
 
@@ -354,7 +357,14 @@ export default async function SolicitudDetallePage({ params }: PageProps) {
           {solicitud.valorFinal != null && (
             <InfoRow
               label="Valor Final"
-              value={formatCurrency(solicitud.valorFinal)}
+              value={
+                <span className="flex flex-col gap-0.5">
+                  <span>{formatCurrency(solicitud.valorFinal)}</span>
+                  <span className="text-xs text-gray-500 italic">
+                    {numeroALetras(solicitud.valorFinal)}
+                  </span>
+                </span>
+              }
               icon={DollarSign}
             />
           )}
@@ -445,25 +455,39 @@ export default async function SolicitudDetallePage({ params }: PageProps) {
             ))}
             {anexos.length > 0 && (
               <>
-                {(archivos.length > 0) && (
+                {archivos.length > 0 && (
                   <li className="pt-2 border-t border-gray-100">
                     <p className="text-xs text-gray-400 font-medium uppercase tracking-wide">Anexos de la solicitud</p>
                   </li>
                 )}
-                {anexos.map((a, i) => (
-                  <li key={i} className="flex items-center gap-3">
-                    <Paperclip size={14} className="text-gray-400 shrink-0" />
-                    <span className="text-sm font-medium text-gray-700 truncate">{a.nombre}</span>
-                    <a
-                      href={a.url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="text-xs text-blue-600 hover:underline ml-auto shrink-0"
-                    >
-                      Descargar
-                    </a>
-                  </li>
-                ))}
+                {anexos.map((a, i) => {
+                  const platform = (() => {
+                    if (/sharepoint\.com|1drv\.ms|onedrive\.live\.com/i.test(a.url))
+                      return { label: "SharePoint", chipClass: "bg-blue-50 border-blue-200 text-blue-800" };
+                    if (/drive\.google\.com|docs\.google\.com/i.test(a.url))
+                      return { label: "Google Drive", chipClass: "bg-green-50 border-green-200 text-green-800" };
+                    if (/dropbox\.com/i.test(a.url))
+                      return { label: "Dropbox", chipClass: "bg-gray-50 border-gray-200 text-gray-700" };
+                    return { label: "Enlace", chipClass: "bg-gray-50 border-gray-200 text-gray-700" };
+                  })();
+                  return (
+                    <li key={i}>
+                      <a
+                        href={a.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className={`flex items-center gap-3 rounded-lg border px-3 py-2 hover:opacity-80 transition-opacity ${platform.chipClass}`}
+                      >
+                        <Link2 size={14} className="shrink-0" />
+                        <div className="flex-1 min-w-0">
+                          <span className="text-sm font-semibold block truncate">{a.nombre}</span>
+                          <span className="text-[11px] opacity-60">{platform.label}</span>
+                        </div>
+                        <ExternalLink size={13} className="shrink-0 opacity-50" />
+                      </a>
+                    </li>
+                  );
+                })}
               </>
             )}
           </ul>

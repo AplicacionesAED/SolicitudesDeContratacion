@@ -10,10 +10,10 @@ import {
   Hash,
   ThumbsUp,
   ChevronRight,
-  Upload,
-  FileCheck,
+  Link2,
   PenLine,
   Trash2,
+  ExternalLink,
 } from "lucide-react";
 import Link from "next/link";
 import { Button } from "@/shared/ui/button";
@@ -66,7 +66,11 @@ export function SolicitudActions({ solicitud, userSession }: SolicitudActionsPro
   const { addToast } = useToast();
 
   const [loading, setLoading] = useState(false);
-  const [uploadingAnexo, setUploadingAnexo] = useState(false);
+  const [urlInput, setUrlInput] = useState("");
+  const [nombreInput, setNombreInput] = useState("");
+  const [urlError, setUrlError] = useState("");
+  const [nombreError, setNombreError] = useState("");
+  const [savingAnexo, setSavingAnexo] = useState(false);
   const [anexos, setAnexos] = useState<Anexo[]>(() => {
     try { return JSON.parse(solicitud.archivosAnexos || "[]"); } catch { return []; }
   });
@@ -217,27 +221,29 @@ export function SolicitudActions({ solicitud, userSession }: SolicitudActionsPro
     }
   }
 
-  // ── Anexos upload ────────────────────────────────────────────────────────────
+  // ── Anexos por URL ───────────────────────────────────────────────────────────
 
-  async function handleAnexoUpload(e: React.ChangeEvent<HTMLInputElement>) {
-    const files = Array.from(e.target.files ?? []);
-    if (files.length === 0) return;
-    setUploadingAnexo(true);
+  function detectPlatform(url: string): { label: string; chipClass: string } {
+    if (/sharepoint\.com|1drv\.ms|onedrive\.live\.com/i.test(url))
+      return { label: "SharePoint", chipClass: "bg-blue-50 border-blue-200 text-blue-800" };
+    if (/drive\.google\.com|docs\.google\.com/i.test(url))
+      return { label: "Google Drive", chipClass: "bg-green-50 border-green-200 text-green-800" };
+    if (/dropbox\.com/i.test(url))
+      return { label: "Dropbox", chipClass: "bg-gray-50 border-gray-200 text-gray-700" };
+    return { label: "Enlace", chipClass: "bg-gray-50 border-gray-200 text-gray-700" };
+  }
+
+  async function handleAddUrl() {
+    let valid = true;
+    if (!nombreInput.trim()) { setNombreError("El nombre es obligatorio"); valid = false; } else setNombreError("");
+    if (!urlInput.trim()) { setUrlError("La URL es obligatoria"); valid = false; }
+    else if (!/^https?:\/\/.+/i.test(urlInput.trim())) { setUrlError("Debe ser una URL válida (https://...)"); valid = false; }
+    else setUrlError("");
+    if (!valid) return;
+
+    setSavingAnexo(true);
     try {
-      const newAnexos: Anexo[] = [];
-      for (const file of files) {
-        const fd = new FormData();
-        fd.append("file", file);
-        const uploadRes = await fetch("/api/upload", { method: "POST", body: fd });
-        if (!uploadRes.ok) {
-          const d = await uploadRes.json();
-          throw new Error(d.error ?? "Error al subir archivo");
-        }
-        const { url, nombre } = await uploadRes.json();
-        newAnexos.push({ url, nombre: nombre ?? file.name });
-      }
-
-      const updatedAnexos = [...anexos, ...newAnexos];
+      const updatedAnexos = [...anexos, { url: urlInput.trim(), nombre: nombreInput.trim() }];
       const patchRes = await fetch(`/api/solicitudes/${solicitud.id}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
@@ -245,16 +251,17 @@ export function SolicitudActions({ solicitud, userSession }: SolicitudActionsPro
       });
       if (!patchRes.ok) {
         const d = await patchRes.json();
-        throw new Error(d.error ?? "Error al guardar los archivos");
+        throw new Error(d.error ?? "Error al guardar el enlace");
       }
       setAnexos(updatedAnexos);
-      addToast(`${newAnexos.length === 1 ? "Archivo adjuntado" : `${newAnexos.length} archivos adjuntados`} correctamente`, "success");
+      setUrlInput("");
+      setNombreInput("");
+      addToast("Enlace agregado correctamente", "success");
       router.refresh();
     } catch (err) {
-      addToast(err instanceof Error ? err.message : "Error al subir archivo", "error");
+      addToast(err instanceof Error ? err.message : "Error al guardar el enlace", "error");
     } finally {
-      setUploadingAnexo(false);
-      e.target.value = "";
+      setSavingAnexo(false);
     }
   }
 
@@ -352,7 +359,7 @@ export function SolicitudActions({ solicitud, userSession }: SolicitudActionsPro
 
   return (
     <>
-      {/* Anexos upload — CREACION_MINUTA / CONTRATOS */}
+      {/* Anexos por URL — CREACION_MINUTA / CONTRATOS */}
       {showAnexosUpload && (
         <div className="bg-white border border-gray-200 rounded-xl p-5">
           <h3 className="text-sm font-semibold text-gray-900 mb-1">
@@ -360,55 +367,73 @@ export function SolicitudActions({ solicitud, userSession }: SolicitudActionsPro
             <span className="ml-1.5 text-xs font-normal text-red-500">* al menos 1 requerido</span>
           </h3>
           <p className="text-xs text-gray-500 mb-4">
-            Adjunte los documentos necesarios antes de continuar al paso siguiente. Puede adjuntar varios archivos.
+            Agregue los enlaces a los documentos (OneDrive, SharePoint, Google Drive, etc.)
           </p>
 
-          {/* Uploaded files list */}
+          {/* Chips de enlaces */}
           {anexos.length > 0 && (
-            <ul className="mb-3 space-y-2">
-              {anexos.map((a, idx) => (
-                <li key={idx} className="flex items-center gap-3 rounded-lg bg-green-50 border border-green-200 px-3 py-2">
-                  <FileCheck size={15} className="text-green-600 shrink-0" />
-                  <a
-                    href={a.url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="flex-1 min-w-0 text-xs font-medium text-green-800 hover:underline truncate"
-                  >
-                    {a.nombre}
-                  </a>
-                  <button
-                    type="button"
-                    onClick={() => removeAnexo(idx)}
-                    className="text-xs text-red-500 hover:text-red-700 shrink-0 px-1"
-                    title="Eliminar"
-                  >
-                    ✕
-                  </button>
-                </li>
-              ))}
-            </ul>
+            <div className="flex flex-wrap gap-2 mb-4">
+              {anexos.map((a, idx) => {
+                const { label, chipClass } = detectPlatform(a.url);
+                return (
+                  <div key={idx} className={`inline-flex items-center gap-2 border rounded-full px-3 py-1.5 ${chipClass}`}>
+                    <Link2 size={13} className="shrink-0" />
+                    <div className="min-w-0">
+                      <span className="text-xs font-semibold block leading-tight truncate max-w-[160px]">{a.nombre}</span>
+                      <span className="text-[10px] opacity-60 leading-tight">{label}</span>
+                    </div>
+                    <a href={a.url} target="_blank" rel="noopener noreferrer" className="shrink-0 opacity-60 hover:opacity-100" title="Abrir enlace">
+                      <ExternalLink size={12} />
+                    </a>
+                    <button
+                      type="button"
+                      onClick={() => removeAnexo(idx)}
+                      className="shrink-0 opacity-40 hover:opacity-80 hover:text-red-600 ml-0.5"
+                      title="Eliminar"
+                    >
+                      ✕
+                    </button>
+                  </div>
+                );
+              })}
+            </div>
           )}
 
-          {/* Upload zone */}
-          <label className={`flex flex-col items-center justify-center gap-2 rounded-lg border-2 border-dashed px-6 py-6 cursor-pointer transition-colors ${uploadingAnexo ? "border-blue-200 bg-blue-50" : "border-gray-300 hover:border-blue-400 hover:bg-blue-50"}`}>
-            {uploadingAnexo ? (
-              <Spinner size="sm" />
-            ) : (
-              <Upload size={20} className="text-gray-400" />
-            )}
-            <span className="text-sm font-medium text-gray-600">
-              {uploadingAnexo ? "Subiendo…" : anexos.length > 0 ? "Agregar más documentos" : "Seleccionar documentos"}
-            </span>
-            <span className="text-xs text-gray-400">Cualquier tipo de archivo — máx. 20MB c/u</span>
-            <input
-              type="file"
-              multiple
-              className="sr-only"
-              onChange={handleAnexoUpload}
-              disabled={uploadingAnexo}
-            />
-          </label>
+          {/* Formulario agregar URL */}
+          <div className="rounded-lg border-2 border-dashed border-blue-200 bg-blue-50 p-4">
+            <p className="text-xs font-semibold text-blue-700 mb-3">Agregar enlace</p>
+            <div className="flex flex-col gap-2">
+              <div>
+                <input
+                  type="text"
+                  value={nombreInput}
+                  onChange={e => { setNombreInput(e.target.value); setNombreError(""); }}
+                  placeholder="Nombre del documento *"
+                  className="w-full rounded-md border border-blue-200 bg-white px-3 py-2 text-xs focus:outline-none focus:ring-1 focus:ring-blue-400"
+                />
+                {nombreError && <p className="text-[11px] text-red-500 mt-0.5">{nombreError}</p>}
+              </div>
+              <div>
+                <input
+                  type="url"
+                  value={urlInput}
+                  onChange={e => { setUrlInput(e.target.value); setUrlError(""); }}
+                  placeholder="https://empresa.sharepoint.com/... *"
+                  className="w-full rounded-md border border-blue-200 bg-white px-3 py-2 text-xs focus:outline-none focus:ring-1 focus:ring-blue-400"
+                />
+                {urlError && <p className="text-[11px] text-red-500 mt-0.5">{urlError}</p>}
+              </div>
+              <Button
+                onClick={handleAddUrl}
+                disabled={savingAnexo}
+                variant="secondary"
+                className="w-full justify-center"
+              >
+                {savingAnexo ? <Spinner size="sm" /> : <Link2 size={14} />}
+                {savingAnexo ? "Guardando…" : "Agregar enlace"}
+              </Button>
+            </div>
+          </div>
         </div>
       )}
 
