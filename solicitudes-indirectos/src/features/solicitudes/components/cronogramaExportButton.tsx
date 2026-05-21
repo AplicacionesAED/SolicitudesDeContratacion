@@ -45,7 +45,7 @@ function esc(s: string): string {
 
 // ─── HTML template ────────────────────────────────────────────────────────────
 
-function buildHtml(p: CronogramaExportProps): string {
+function buildHtml(p: CronogramaExportProps, origin: string): string {
   const fiStr = formatDate(p.fechaInicio);
   const ffStr = formatDate(p.fechaFin);
   const frenteStr = p.frentes.length ? p.frentes.join(", ") : "—";
@@ -59,7 +59,6 @@ function buildHtml(p: CronogramaExportProps): string {
         <td class="td-desc">${esc(a.descripcion)}</td>
         <td class="td-date">${esc(formatDate(a.fechaInicio))}</td>
         <td class="td-date">${esc(formatDate(a.fechaFin))}</td>
-        <td class="td-resp">${esc(a.responsable ?? "—")}</td>
       </tr>`
       )
       .join("");
@@ -127,7 +126,7 @@ function buildHtml(p: CronogramaExportProps): string {
       color: #64748b;
       margin-top: 5px;
     }
-    .logo { font-size: 36px; font-weight: 900; color: #00b5a0; letter-spacing: 4px; font-style: italic; line-height: 1; text-align: right; }
+    .logo { max-height: 48px; width: auto; display: block; margin-left: auto; }
     .logo-sub { font-size: 8px; color: #94a3b8; letter-spacing: 2px; text-transform: uppercase; margin-top: 3px; text-align: right; }
 
     /* ── Body ── */
@@ -232,7 +231,7 @@ function buildHtml(p: CronogramaExportProps): string {
       <div class="hdr-consecutivo">${esc(p.consecutivo)}</div>
     </div>
     <div>
-      <div class="logo">aed</div>
+      <img class="logo" src="${origin}/aed-logo%20degrade%201.png" alt="AED" />
       <div class="logo-sub">Constructores</div>
     </div>
   </div>
@@ -265,7 +264,6 @@ function buildHtml(p: CronogramaExportProps): string {
           <th>Descripción de la Actividad</th>
           <th class="center">Fecha Inicio</th>
           <th class="center">Fecha Fin</th>
-          <th>Responsable</th>
         </tr>
       </thead>
       <tbody>
@@ -295,7 +293,7 @@ export function CronogramaExportButton(props: CronogramaExportProps) {
     setLoading(true);
 
     try {
-      const html = buildHtml(props);
+      const html = buildHtml(props, window.location.origin);
       const blob = new Blob([html], { type: "text/html;charset=utf-8" });
       const url = URL.createObjectURL(blob);
 

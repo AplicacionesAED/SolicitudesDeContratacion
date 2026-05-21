@@ -42,7 +42,7 @@ function addDays(date: Date, days: number): Date {
 
 // ─── HTML template ────────────────────────────────────────────────────────────
 
-function buildHtml(p: ResumenLicitacionProps): string {
+function buildHtml(p: ResumenLicitacionProps, origin: string): string {
   const fi = toDate(p.fechaInicioContrato);
   const ff = toDate(p.fechaFinContrato);
   // Liquidation: 45 calendar days after end date (standard AED practice)
@@ -98,7 +98,7 @@ function buildHtml(p: ResumenLicitacionProps): string {
       color: #64748b;
       margin-top: 6px;
     }
-    .logo { font-size: 40px; font-weight: 900; color: #00b5a0; letter-spacing: 4px; font-style: italic; line-height: 1; text-align: right; }
+    .logo { max-height: 48px; width: auto; display: block; margin-left: auto; }
     .logo-sub { font-size: 8px; color: #94a3b8; letter-spacing: 2px; text-transform: uppercase; margin-top: 4px; text-align: right; }
 
     /* ── Content ── */
@@ -166,7 +166,7 @@ function buildHtml(p: ResumenLicitacionProps): string {
       <div class="hdr-consecutivo">${esc(p.consecutivo)}</div>
     </div>
     <div>
-      <div class="logo">aed</div>
+      <img class="logo" src="${origin}/aed-logo%20degrade%201.png" alt="AED" />
       <div class="logo-sub">Constructores</div>
     </div>
   </div>
@@ -233,7 +233,7 @@ export function ResumenLicitacionButton(props: ResumenLicitacionProps) {
     setLoading(true);
 
     try {
-      const html = buildHtml(props);
+      const html = buildHtml(props, window.location.origin);
       const blob = new Blob([html], { type: "text/html;charset=utf-8" });
       const url = URL.createObjectURL(blob);
 
