@@ -51,7 +51,10 @@
       "Bash(sqlite3 dev.db \"SELECT id, nombre, email, roles FROM User WHERE email=''smercado@baiak.com'';\")",
       "Bash(npm install *)",
       "Bash(Remove-Item \"c:\\\\Users\\\\Gabriel\\\\Desktop\\\\Solicitudes-Indirectos\\\\nuevo-proyecto\\\\backend\\\\src\\\\routes\\\\me.js\" -Force)",
-      "Bash(Remove-Item \"c:\\\\Users\\\\Gabriel\\\\Desktop\\\\Solicitudes-Indirectos\\\\nuevo-proyecto\\\\backend\\\\src\\\\routes\" -Force)"
+      "Bash(Remove-Item \"c:\\\\Users\\\\Gabriel\\\\Desktop\\\\Solicitudes-Indirectos\\\\nuevo-proyecto\\\\backend\\\\src\\\\routes\" -Force)",
+      "Bash(node -e \"const p=require\\('./package.json'\\); const deps={...p.dependencies,...p.devDependencies}; const keys=Object.keys\\(deps\\).filter\\(k=>/\\(pdf|canvas|html2|jspdf|print|docx|xlsx|exceljs\\)/i.test\\(k\\)\\); console.log\\(JSON.stringify\\(keys,null,2\\)\\)\")",
+      "Bash(node -e \"const p=require\\('./package.json'\\); console.log\\(JSON.stringify\\({deps: Object.keys\\({...p.dependencies,...p.devDependencies}\\)},null,2\\)\\)\")",
+      "Bash(dir \"c:\\\\Users\\\\Gabriel\\\\Desktop\\\\Proyectos AED\\\\Solicitudes-Indirectos\\\\solicitudes-indirectos\" /b)"
     ]
   }
 }
