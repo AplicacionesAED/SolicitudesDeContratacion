@@ -281,7 +281,7 @@ export function SolicitudForm({
       formaPago: initialData?.formaPago || "",
       valorFinal: initialData?.valorFinal ? Number(initialData.valorFinal) : undefined,
       asunto: initialData?.asunto || "",
-      contratanteNombre: initialData?.contratanteNombre || "AED CONSTRUCTORES S.A.S",
+      contratanteNombre: initialData?.contratanteNombre || "PROMOTORA BARLOVENTO DEL MAR S.A.S",
       contratanteNit: initialData?.contratanteNit || "901237628-1",
       alcance: initialData?.alcance || "",
       terminosReferencia: initialData?.terminosReferencia || "",
@@ -379,8 +379,6 @@ export function SolicitudForm({
     if (!archivoCuadroComparativo) errs.cuadroComparativo = "El cuadro comparativo es obligatorio";
     if (!archivoCotizacion) errs.cotizacion = "La cotización es obligatoria";
     if (watchTipoContrato === "DISENO") {
-      if (!archivoGeneradorGastos) errs.generadorGastos = "El generador de gastos es obligatorio";
-      if (!archivoEvaluacionInicial) errs.evaluacionInicial = "La evaluación inicial es obligatoria";
       if (!archivoPreBEP) errs.preBep = "El PreBEP es obligatorio para contratos de diseño";
     }
     setFileErrors(errs);
@@ -742,8 +740,6 @@ export function SolicitudForm({
         <FileField label="Cotización" required accept=".pdf" value={archivoCotizacion} onChange={setArchivoCotizacion} error={fileErrors.cotizacion} />
         {watchTipoContrato === "DISENO" && (
           <>
-            <FileField label="Generador de Gastos" required accept=".pdf" value={archivoGeneradorGastos} onChange={setArchivoGeneradorGastos} error={fileErrors.generadorGastos} />
-            <FileField label="Evaluación Inicial" required accept=".pdf" value={archivoEvaluacionInicial} onChange={setArchivoEvaluacionInicial} error={fileErrors.evaluacionInicial} />
             <FileField label="PreBEP (Plan Preliminar de Ejecución BIM)" required accept=".pdf" value={archivoPreBEP} onChange={setArchivoPreBEP} error={fileErrors.preBep} />
           </>
         )}
@@ -808,8 +804,18 @@ export function SolicitudForm({
             </div>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <Input label="Contratante — Nombre" {...register("contratanteNombre")} error={errors.contratanteNombre?.message} />
-            <Input label="Contratante — NIT" {...register("contratanteNit")} error={errors.contratanteNit?.message} />
+            <div className="space-y-1">
+              <label className="text-sm font-medium text-gray-700">Contratante — Nombre</label>
+              <div className="flex items-center px-3 py-2 rounded-lg border border-gray-200 bg-gray-50 text-sm text-gray-600 select-none">
+                PROMOTORA BARLOVENTO DEL MAR S.A.S
+              </div>
+            </div>
+            <div className="space-y-1">
+              <label className="text-sm font-medium text-gray-700">Contratante — NIT</label>
+              <div className="flex items-center px-3 py-2 rounded-lg border border-gray-200 bg-gray-50 text-sm text-gray-600 select-none">
+                901307871
+              </div>
+            </div>
           </div>
           {selectedTercero && (
             <div className="rounded-lg bg-gray-50 border border-gray-200 p-4 space-y-3">

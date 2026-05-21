@@ -8,30 +8,17 @@ import {
   Star,
   RotateCcw,
   Eye,
+  UserCheck,
+  Minus,
 } from "lucide-react";
-import { ESTADO_LABELS } from "@/lib/utils";
-import { formatDate } from "@/lib/utils";
-
-// ─── Workflow definition ──────────────────────────────────────────────────────
-
-const WORKFLOW_STEPS = [
-  { estado: "ENVIADA",              icon: Send,           label: "Enviada" },
-  { estado: "APROBADA_DIRECTOR",    icon: CheckCircle,    label: "Aprobada por Director" },
-  { estado: "EN_TRAMITE_CONTRATOS", icon: FileText,       label: "En Trámite Contratos" },
-  { estado: "CREACION_MINUTA",      icon: PenLine,        label: "Creación de Minuta" },
-  { estado: "EN_CONTROLES",         icon: ClipboardCheck, label: "Agregar Minuta" },
-  { estado: "APROBACION_FINAL",     icon: ThumbsUp,       label: "Aprobación Final" },
-  { estado: "COMPLETADA",           icon: Star,           label: "Completada" },
-] as const;
-
-const SIDE_STATES = ["DEVUELTA", "EN_REVISION", "BORRADOR"] as const;
+import { ESTADO_LABELS, formatDate } from "@/lib/utils";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
 interface HistorialEntry {
   accion: string;
   fecha: string | Date;
-  estado?: string;
+  usuario?: { nombre: string };
 }
 
 interface EstadoTimelineProps {
@@ -39,28 +26,78 @@ interface EstadoTimelineProps {
   historial?: HistorialEntry[];
 }
 
-// ─── Helper: find date when a state was reached ───────────────────────────────
+// ─── Workflow definition ──────────────────────────────────────────────────────
 
-function getEstadoDate(
-  estado: string,
-  historial: HistorialEntry[]
-): string | null {
-  const accionMap: Record<string, string> = {
-    ENVIADA: "ENVIAR",
-    APROBADA_DIRECTOR: "APROBAR_DIRECTOR",
-    EN_TRAMITE_CONTRATOS: "APROBAR_DIRECTOR",
-    EN_REVISION: "REVISAR",
-    CREACION_MINUTA: "TRAMITAR_OK",
-    EN_CONTROLES: "AVANZAR_CONTRATOS",
-    APROBACION_FINAL: "REGISTRAR_ADPRO",
-    COMPLETADA: "APROBAR_FINAL",
-    DEVUELTA: "DEVOLVER",
-  };
-  const targetAccion = accionMap[estado];
-  if (!targetAccion) return null;
-  const entry = historial.find((h) => h.accion === targetAccion);
-  return entry ? formatDate(entry.fecha) : null;
+interface StepDef {
+  label: string;
+  icon: React.ElementType;
+  optional?: boolean;
+  /** Acción en el historial que marca este paso como completado. null = derivado del estado. */
+  completionAction: string | null;
+  /** Estados en los que este paso está "en curso". */
+  activeStates: string[];
+  /** Si es true, al reenviar la solicitud este paso se evalúa sólo en el ciclo actual. */
+  resettable?: boolean;
 }
+
+const WORKFLOW_STEPS: StepDef[] = [
+  {
+    label: "Solicitud Enviada",
+    icon: Send,
+    completionAction: "ENVIAR",
+    activeStates: [],
+  },
+  {
+    label: "Director Técnico",
+    icon: UserCheck,
+    optional: true,
+    completionAction: "APROBAR_DIRECTOR_TECNICO",
+    activeStates: ["PENDIENTE_DIRECTOR_TECNICO"],
+  },
+  {
+    label: "Director de Proyecto",
+    icon: CheckCircle,
+    completionAction: "APROBAR_DIRECTOR",
+    activeStates: ["ENVIADA"],
+    resettable: true,
+  },
+  {
+    label: "Trámite Contratos",
+    icon: FileText,
+    completionAction: "TRAMITAR_OK",
+    activeStates: ["EN_TRAMITE_CONTRATOS", "APROBADA_DIRECTOR"],
+    resettable: true,
+  },
+  {
+    label: "Creación de Minuta",
+    icon: PenLine,
+    completionAction: "AVANZAR_CONTRATOS",
+    activeStates: ["CREACION_MINUTA"],
+    resettable: true,
+  },
+  {
+    label: "N° Adpro / Controles",
+    icon: ClipboardCheck,
+    completionAction: "REGISTRAR_ADPRO",
+    activeStates: ["EN_CONTROLES"],
+    resettable: true,
+  },
+  {
+    label: "Aprobación Final",
+    icon: ThumbsUp,
+    completionAction: "APROBAR_FINAL",
+    activeStates: ["APROBACION_FINAL"],
+    resettable: true,
+  },
+  {
+    label: "Completada",
+    icon: Star,
+    completionAction: null,
+    activeStates: ["COMPLETADA"],
+  },
+];
+
+const SIDE_STATES = ["DEVUELTA", "EN_REVISION", "BORRADOR"];
 
 // ─── Component ────────────────────────────────────────────────────────────────
 
@@ -68,10 +105,7 @@ export function EstadoTimeline({
   estadoActual,
   historial = [],
 }: EstadoTimelineProps) {
-  const currentIndex = WORKFLOW_STEPS.findIndex(
-    (s) => s.estado === estadoActual
-  );
-  const isSideState = (SIDE_STATES as readonly string[]).includes(estadoActual);
+  const isSideState = SIDE_STATES.includes(estadoActual);
 
   return (
     <div className="bg-white border border-gray-200 rounded-xl p-5">
@@ -110,52 +144,81 @@ export function EstadoTimeline({
         />
 
         <ol className="relative flex justify-between">
-          {WORKFLOW_STEPS.map((step, index) => {
-            const Icon = step.icon;
-            const isCompleted = currentIndex > index;
-            const isCurrent = currentIndex === index && !isSideState;
-            const isCompletadaStep = step.estado === "COMPLETADA";
-            const date = getEstadoDate(step.estado, historial);
+          {(() => {
+            // Index of the last ENVIAR or REENVIAR = start of current cycle
+            const lastCycleStartIdx = historial.reduce(
+              (best, h, i) =>
+                h.accion === "ENVIAR" || h.accion === "REENVIAR" ? i : best,
+              -1
+            );
 
-            const circleClass = isCompleted
+            return WORKFLOW_STEPS.map((step) => {
+            const Icon = step.icon;
+
+            // For resettable steps, only look at historial after the last send/resend
+            const searchSlice =
+              step.resettable && lastCycleStartIdx >= 0
+                ? historial.slice(lastCycleStartIdx + 1)
+                : historial;
+
+            // Find the historial entry that marks this step as completed
+            const histEntry = step.completionAction
+              ? searchSlice.find((h) => h.accion === step.completionAction)
+              : null;
+
+            // Steps without completionAction (Completada) derive completion from estado
+            const isCompleted =
+              step.completionAction === null
+                ? step.activeStates.includes(estadoActual)
+                : !!histEntry;
+
+            const isCurrent =
+              !isCompleted && step.activeStates.includes(estadoActual);
+
+            // Optional step not involved in this solicitud's workflow
+            const isSkipped = !!step.optional && !isCompleted && !isCurrent;
+
+            const isCompletadaStep = step.activeStates.includes("COMPLETADA");
+
+            const circleClass = isSkipped
+              ? "bg-gray-100 border-gray-200 text-gray-300"
+              : isCompleted
               ? isCompletadaStep
                 ? "bg-green-600 border-green-600 text-white"
                 : "bg-blue-600 border-blue-600 text-white"
               : isCurrent
-              ? isCompletadaStep
-                ? "bg-green-600 border-green-600 text-white"
-                : "bg-white border-blue-600 text-blue-600"
+              ? "bg-white border-blue-600 text-blue-600"
               : "bg-white border-gray-300 text-gray-400";
 
-            const labelClass = isCurrent
-              ? isCompletadaStep
-                ? "font-semibold text-green-700"
-                : "font-semibold text-blue-700"
+            const labelClass = isSkipped
+              ? "text-gray-300"
+              : isCurrent
+              ? "font-semibold text-blue-700"
               : isCompleted
               ? isCompletadaStep
                 ? "font-medium text-green-700"
                 : "font-medium text-gray-700"
               : "text-gray-400";
 
+            const date = histEntry ? formatDate(histEntry.fecha) : null;
+            const userName = histEntry?.usuario?.nombre ?? null;
+
             return (
               <li
-                key={step.estado}
-                className="flex flex-col items-center gap-1.5 flex-1"
+                key={step.label}
+                className="flex flex-col items-center gap-1 flex-1"
               >
                 {/* Circle */}
                 <div
-                  className={`
-                    relative z-10 flex h-10 w-10 items-center justify-center rounded-full border-2 shrink-0
-                    transition-colors ${circleClass}
-                  `}
+                  className={`relative z-10 flex h-10 w-10 items-center justify-center rounded-full border-2 shrink-0 transition-colors ${circleClass}`}
                   aria-current={isCurrent ? "step" : undefined}
                 >
-                  <Icon size={16} />
+                  {isSkipped ? <Minus size={14} /> : <Icon size={16} />}
                 </div>
 
                 {/* Label */}
                 <span
-                  className={`text-center text-xs leading-tight max-w-[72px] ${labelClass}`}
+                  className={`text-center text-xs leading-tight max-w-18 ${labelClass}`}
                 >
                   {step.label}
                 </span>
@@ -166,9 +229,17 @@ export function EstadoTimeline({
                     {date}
                   </span>
                 )}
+
+                {/* User who executed this step */}
+                {userName && (
+                  <span className="text-[10px] text-gray-500 text-center leading-tight font-medium max-w-18 truncate">
+                    {userName}
+                  </span>
+                )}
               </li>
             );
-          })}
+          });
+          })()}
         </ol>
       </div>
     </div>

@@ -186,7 +186,7 @@ export const ESTADO_LABELS: Record<string, string> = {
   EN_TRAMITE_CONTRATOS: "En Trámite Contratos",
   CREACION_MINUTA: "Creación de Minuta",
   ENVIO_CONTRATO_POLIZAS: "Envío Contrato y Pólizas",
-  EN_CONTROLES: "Agregar Minuta",
+  EN_CONTROLES: "En Controles",
   APROBACION_FINAL: "Aprobación Final",
   COMPLETADA: "Completada",
   DEVUELTA: "Devuelta",

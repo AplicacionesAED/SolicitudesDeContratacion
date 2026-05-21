@@ -21,6 +21,8 @@ import {
 import { SolicitudBadge } from "@/features/solicitudes/components/solicitudBadge";
 import { SolicitudActions } from "@/features/solicitudes/components/solicitudActions";
 import { EstadoTimeline } from "@/features/solicitudes/components/estadoTimeline";
+import { ResumenLicitacionButton } from "@/features/solicitudes/components/resumenLicitacionButton";
+import { CronogramaExportButton } from "@/features/solicitudes/components/cronogramaExportButton";
 import { CronogramasSection } from "@/features/solicitudes/components/cronogramasSection";
 import {
   TIPO_SOLICITUD_LABELS,
@@ -229,6 +231,82 @@ export default async function SolicitudDetallePage({ params }: PageProps) {
         }}
         userSession={session}
       />
+
+      {/* Documentos del proceso — CREACION_MINUTA, CONTRATOS / ADMIN only */}
+      {solicitud.estado === "CREACION_MINUTA" &&
+        (session?.user?.roles?.includes("CONTRATOS") ||
+          session?.user?.roles?.includes("ADMIN")) && (
+          <div className="bg-white border border-gray-200 rounded-xl p-5">
+            <h3 className="text-sm font-semibold text-gray-900 mb-1">
+              Documentos del proceso
+            </h3>
+            <p className="text-xs text-gray-500 mb-4">
+              Genera y descarga los documentos del expediente. Se abren en el
+              diálogo de impresión — elige &quot;Guardar como PDF&quot;.
+            </p>
+            <div className="flex flex-wrap gap-3">
+              <ResumenLicitacionButton
+                consecutivo={solicitud.consecutivo}
+                terceroNombre={solicitud.tercero?.razonSocial ?? null}
+                valorFinal={solicitud.valorFinal}
+                formaPago={solicitud.formaPago}
+                descripcionActividad={solicitud.descripcionActividad}
+                fechaInicioContrato={
+                  solicitud.cronograma?.fechaInicio
+                    ? new Date(solicitud.cronograma.fechaInicio).toISOString()
+                    : null
+                }
+                fechaFinContrato={
+                  solicitud.cronograma?.fechaFin
+                    ? new Date(solicitud.cronograma.fechaFin).toISOString()
+                    : null
+                }
+                etapas={solicitud.etapasUnicas}
+                frentes={solicitud.frentesNombres}
+              />
+              {solicitud.cronograma && (
+                <CronogramaExportButton
+                  consecutivo={solicitud.consecutivo}
+                  terceroNombre={solicitud.tercero?.razonSocial ?? null}
+                  proyectoNombre={solicitud.proyectoNombre}
+                  frentes={solicitud.frentesNombres}
+                  fechaInicio={new Date(solicitud.cronograma.fechaInicio).toISOString()}
+                  fechaFin={new Date(solicitud.cronograma.fechaFin).toISOString()}
+                  tieneFases={solicitud.cronograma.tieneFases}
+                  fases={solicitud.cronograma.fases.map((f: {
+                    numeroFase: number;
+                    nombreFase: string;
+                    fechaInicio: Date | string;
+                    fechaFin: Date | string;
+                    actividades: { descripcion: string; fechaInicio: Date | string; fechaFin: Date | string; responsable?: string | null }[];
+                  }) => ({
+                    numeroFase: f.numeroFase,
+                    nombreFase: f.nombreFase,
+                    fechaInicio: new Date(f.fechaInicio).toISOString(),
+                    fechaFin: new Date(f.fechaFin).toISOString(),
+                    actividades: f.actividades.map((a) => ({
+                      descripcion: a.descripcion,
+                      fechaInicio: new Date(a.fechaInicio).toISOString(),
+                      fechaFin: new Date(a.fechaFin).toISOString(),
+                      responsable: a.responsable ?? null,
+                    })),
+                  }))}
+                  actividades={solicitud.cronograma.actividades.map((a: {
+                    descripcion: string;
+                    fechaInicio: Date | string;
+                    fechaFin: Date | string;
+                    responsable?: string | null;
+                  }) => ({
+                    descripcion: a.descripcion,
+                    fechaInicio: new Date(a.fechaInicio).toISOString(),
+                    fechaFin: new Date(a.fechaFin).toISOString(),
+                    responsable: a.responsable ?? null,
+                  }))}
+                />
+              )}
+            </div>
+          </div>
+        )}
 
       {/* Info grid */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
