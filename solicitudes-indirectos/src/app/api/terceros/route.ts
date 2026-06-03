@@ -23,6 +23,7 @@ export async function GET(request: Request) {
     const terceros = await prisma.tercero.findMany({
       where,
       orderBy: { razonSocial: "asc" },
+      include: { especialidades: { select: { id: true, nombre: true } } },
     });
 
     return Response.json(terceros);
@@ -55,6 +56,7 @@ export async function POST(request: Request) {
     const nit: string = body.nit?.trim();
     const tipoContrato: string = body.tipoContrato;
     const confidencialidad: boolean = body.confidencialidad ?? false;
+    const especialidadIds: number[] = Array.isArray(body.especialidadIds) ? body.especialidadIds : [];
 
     // Validación básica
     if (!razonSocial || !nit || !tipoContrato) {
@@ -95,7 +97,11 @@ export async function POST(request: Request) {
         nit,
         tipoContrato,
         confidencialidad,
+        ...(especialidadIds.length > 0
+          ? { especialidades: { connect: especialidadIds.map((id) => ({ id })) } }
+          : {}),
       },
+      include: { especialidades: { select: { id: true, nombre: true } } },
     });
 
     return Response.json(tercero, { status: 201 });
