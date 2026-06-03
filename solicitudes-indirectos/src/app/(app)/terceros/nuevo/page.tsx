@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
@@ -29,6 +29,11 @@ interface FormErrors {
   [key: string]: string;
 }
 
+interface Especialidad {
+  id: number;
+  nombre: string;
+}
+
 const TIPO_CONTRATO_OPTIONS = [
   { value: "OBRA", label: "Otros Servicios" },
   { value: "DISENO", label: "Diseño" },
@@ -46,6 +51,20 @@ export default function NuevoTerceroPage() {
 
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState<FormErrors>({});
+  const [especialidadIds, setEspecialidadIds] = useState<number[]>([]);
+  const [catalogo, setCatalogo] = useState<Especialidad[]>([]);
+
+  useEffect(() => {
+    fetch("/api/especialidades", { cache: "no-store" })
+      .then((res) => (res.ok ? res.json() : []))
+      .then((data) => setCatalogo(Array.isArray(data) ? data : []));
+  }, []);
+
+  function toggleEspecialidad(id: number) {
+    setEspecialidadIds((prev) =>
+      prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]
+    );
+  }
 
   const [form, setForm] = useState<FormData>({
     razonSocial: "",
@@ -114,6 +133,7 @@ export default function NuevoTerceroPage() {
           nombreContacto: form.nombreContacto || undefined,
           telefonoContacto: form.telefonoContacto || undefined,
           correoContacto: form.correoContacto || undefined,
+          especialidadIds,
         }),
       });
 
@@ -285,6 +305,27 @@ export default function NuevoTerceroPage() {
             />
           </div>
         </div>
+
+        {/* Especialidades */}
+        {catalogo.length > 0 && (
+          <div className="bg-white border border-gray-200 rounded-xl p-5 space-y-3">
+            <h2 className="text-sm font-semibold text-gray-900">Especialidades</h2>
+            <p className="text-xs text-gray-500">Selecciona las especialidades que aplican a este tercero (opcional).</p>
+            <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+              {catalogo.map((e) => (
+                <label key={e.id} className="flex items-center gap-2 cursor-pointer hover:bg-gray-50 rounded px-2 py-1.5">
+                  <input
+                    type="checkbox"
+                    checked={especialidadIds.includes(e.id)}
+                    onChange={() => toggleEspecialidad(e.id)}
+                    className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                  />
+                  <span className="text-sm text-gray-700">{e.nombre}</span>
+                </label>
+              ))}
+            </div>
+          </div>
+        )}
 
         {/* Submit */}
         <div className="flex items-center justify-end gap-3">
