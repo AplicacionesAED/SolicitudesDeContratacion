@@ -4,7 +4,7 @@ import { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
 import {
   Plus, Search, Users, CheckCircle, Clock,
-  Eye, Pencil, RefreshCw, X, ChevronLeft, ChevronRight,
+  Eye, Pencil, RefreshCw, X, ChevronLeft, ChevronRight, BookOpen,
 } from "lucide-react";
 import { Button } from "@/shared/ui/button";
 import { Spinner } from "@/shared/ui/spinner";
@@ -49,6 +49,7 @@ export default function TercerosPage() {
 
   const canCreate = tienePermiso(roles, funcionalidadesAdicionales, "crear_terceros");
   const canEdit = canCreate || roles.includes("CONTRATOS"); // Se mantiene acceso a Contratos o quien pueda crear
+  const canManageEspecialidades = tienePermiso(roles, funcionalidadesAdicionales, "gestionar_especialidades");
 
   const [terceros, setTerceros] = useState<Tercero[]>([]);
   const [loading, setLoading] = useState(true);
@@ -161,6 +162,14 @@ export default function TercerosPage() {
             <RefreshCw size={15} className={syncing ? "animate-spin" : ""} />
             {syncing ? "Sincronizando..." : "Sincronizar SharePoint"}
           </Button>
+          {canManageEspecialidades && (
+            <Link href="/terceros/especialidades">
+              <Button variant="secondary">
+                <BookOpen size={15} />
+                Especialidades
+              </Button>
+            </Link>
+          )}
           {canCreate && (
             <Link href="/terceros/nuevo">
               <Button>
