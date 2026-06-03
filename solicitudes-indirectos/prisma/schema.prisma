@@ -147,6 +147,16 @@ model Tercero {
   solicitudes Solicitud[]
 }
 
+// ─── Especialidades ──────────────────────────────────────────────────────────
+
+model Especialidad {
+  id            Int      @id @default(autoincrement())
+  nombre        String   @unique
+  descripcion   String?
+  creadoEn      DateTime @default(now())
+  actualizadoEn DateTime @updatedAt
+}
+
 // ─── Solicitudes ─────────────────────────────────────────────────────────────
 
 model Solicitud {
