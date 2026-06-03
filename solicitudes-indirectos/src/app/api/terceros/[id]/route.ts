@@ -23,6 +23,7 @@ const CONTACT_FIELDS = new Set([
   "nombreContacto",
   "telefonoContacto",
   "correoContacto",
+  "especialidadIds",
 ]);
 
 export async function GET(
@@ -44,6 +45,7 @@ export async function GET(
     const tercero = await prisma.tercero.findUnique({
       where: { id: numId },
       include: {
+        especialidades: { select: { id: true, nombre: true } },
         _count: { select: { solicitudes: true } },
       },
     });
@@ -94,30 +96,39 @@ export async function PATCH(
       return Response.json({ error: "No tiene permiso para editar terceros" }, { status: 403 });
     }
 
+    // Extraer especialidadIds antes de construir el data object (es una relación, no un campo escalar)
+    const { especialidadIds, ...scalarBody } = body;
+
     // Auto-set debida diligencia approval only when DD fields are being updated
-    const hasDdFields = DD_FIELDS.some((f) => f in body);
+    const hasDdFields = DD_FIELDS.some((f) => f in scalarBody);
     if (hasDdFields) {
       const merged: Record<string, boolean> = {};
       for (const field of DD_FIELDS) {
-        merged[field] = field in body ? Boolean(body[field]) : existing[field];
+        merged[field] = field in scalarBody ? Boolean(scalarBody[field]) : existing[field];
       }
       const allDdTrue = DD_FIELDS.every((f) => merged[f]);
-      body.aprobadoDebidaDiligencia = allDdTrue;
+      scalarBody.aprobadoDebidaDiligencia = allDdTrue;
     }
 
     // Prevent direct NIT duplication
-    if (body.nit && body.nit !== existing.nit) {
+    if (scalarBody.nit && scalarBody.nit !== existing.nit) {
       const dup = await prisma.tercero.findFirst({
-        where: { nit: body.nit },
+        where: { nit: scalarBody.nit },
       });
       if (dup) {
         return Response.json({ error: "Ya existe un tercero con ese NIT" }, { status: 409 });
       }
     }
 
+    const updateData: Record<string, unknown> = { ...scalarBody };
+    if (Array.isArray(especialidadIds)) {
+      updateData.especialidades = { set: especialidadIds.map((id: number) => ({ id })) };
+    }
+
     const updated = await prisma.tercero.update({
       where: { id: numId },
-      data: body,
+      data: updateData,
+      include: { especialidades: { select: { id: true, nombre: true } } },
     });
 
     return Response.json(updated);
