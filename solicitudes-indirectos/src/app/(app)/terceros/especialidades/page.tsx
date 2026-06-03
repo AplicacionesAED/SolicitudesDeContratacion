@@ -1,8 +1,8 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { useSession } from "next-auth/react";
-import { Plus, Pencil, Trash2, BookOpen, X, CheckCircle } from "lucide-react";
+import { Plus, Pencil, Trash2, BookOpen, X, CheckCircle, Upload } from "lucide-react";
 import { Button } from "@/shared/ui/button";
 import { Spinner } from "@/shared/ui/spinner";
 import { tienePermiso } from "@/lib/utils";
@@ -34,6 +34,13 @@ export default function EspecialidadesPage() {
   const [especialidades, setEspecialidades] = useState<Especialidad[]>([]);
   const [loading, setLoading] = useState(true);
   const [toasts, setToasts] = useState<Toast[]>([]);
+
+  // Importar Excel
+  const importInputRef = useRef<HTMLInputElement>(null);
+  const [importModal, setImportModal] = useState(false);
+  const [importNombres, setImportNombres] = useState<string[]>([]);
+  const [importLoading, setImportLoading] = useState(false);
+  const [importError, setImportError] = useState<string | null>(null);
 
   // Modal crear
   const [createModal, setCreateModal] = useState(false);
@@ -181,6 +188,64 @@ export default function EspecialidadesPage() {
     }
   }
 
+  // ── Importar Excel ────────────────────────────────────────────────────────────
+
+  async function handleImportFile(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    e.target.value = "";
+    setImportError(null);
+
+    try {
+      const { read, utils } = await import("xlsx");
+      const buffer = await file.arrayBuffer();
+      const wb = read(buffer, { type: "array" });
+      const ws = wb.Sheets[wb.SheetNames[0]];
+      const rows: unknown[][] = utils.sheet_to_json(ws, { header: 1, defval: "" });
+
+      const nombres: string[] = [];
+      for (const row of rows) {
+        const val = String(row[0] ?? "").trim();
+        if (val) nombres.push(val);
+      }
+
+      if (nombres.length === 0) {
+        setImportError("No se encontraron nombres en la primera columna del archivo.");
+        setImportModal(true);
+        return;
+      }
+
+      setImportNombres(nombres);
+      setImportModal(true);
+    } catch {
+      setImportError("No se pudo leer el archivo. Asegúrate de que sea un Excel válido (.xlsx o .xls).");
+      setImportModal(true);
+    }
+  }
+
+  async function handleImportConfirm() {
+    setImportLoading(true);
+    try {
+      const res = await fetch("/api/especialidades/import", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ nombres: importNombres }),
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        setImportError(data.error ?? "Error al importar");
+        return;
+      }
+      setImportModal(false);
+      addToast("success", `${data.created} especialidad(es) importada(s)${data.skipped > 0 ? `, ${data.skipped} omitida(s) por duplicado` : ""}.`);
+      await fetchEspecialidades();
+    } catch {
+      setImportError("No se pudo conectar con el servidor");
+    } finally {
+      setImportLoading(false);
+    }
+  }
+
   // ── Render ────────────────────────────────────────────────────────────────────
 
   return (
@@ -209,10 +274,23 @@ export default function EspecialidadesPage() {
           <p className="text-sm text-gray-500 mt-0.5">Catálogo de especialidades de terceros</p>
         </div>
         {canManage && (
-          <Button onClick={openCreate}>
-            <Plus size={16} />
-            Nueva Especialidad
-          </Button>
+          <div className="flex items-center gap-2">
+            <input
+              ref={importInputRef}
+              type="file"
+              accept=".xlsx,.xls"
+              onChange={handleImportFile}
+              className="sr-only"
+            />
+            <Button variant="secondary" onClick={() => importInputRef.current?.click()}>
+              <Upload size={16} />
+              Importar Excel
+            </Button>
+            <Button onClick={openCreate}>
+              <Plus size={16} />
+              Nueva Especialidad
+            </Button>
+          </div>
         )}
       </div>
 
@@ -374,6 +452,46 @@ export default function EspecialidadesPage() {
               <Button onClick={handleEdit} disabled={editLoading}>
                 {editLoading ? "Guardando..." : "Guardar"}
               </Button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Modal Importar */}
+      {importModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
+          <div className="bg-white rounded-xl shadow-xl w-full max-w-md mx-4 p-6">
+            <div className="flex items-center justify-between mb-5">
+              <h2 className="text-base font-semibold text-gray-900">Importar Especialidades</h2>
+              <button onClick={() => setImportModal(false)} className="text-gray-400 hover:text-gray-600">
+                <X size={18} />
+              </button>
+            </div>
+
+            {importError ? (
+              <p className="text-sm text-red-600 bg-red-50 rounded-md px-3 py-2">{importError}</p>
+            ) : (
+              <>
+                <p className="text-sm text-gray-600 mb-3">
+                  Se encontraron <span className="font-semibold text-gray-900">{importNombres.length}</span> especialidad(es) para importar. Las que ya existen serán omitidas.
+                </p>
+                <ul className="max-h-52 overflow-y-auto divide-y divide-gray-100 border border-gray-200 rounded-lg text-sm">
+                  {importNombres.map((n, i) => (
+                    <li key={i} className="px-3 py-2 text-gray-800">{n}</li>
+                  ))}
+                </ul>
+              </>
+            )}
+
+            <div className="flex justify-end gap-2 mt-6">
+              <Button variant="secondary" onClick={() => setImportModal(false)} disabled={importLoading}>
+                Cancelar
+              </Button>
+              {!importError && (
+                <Button onClick={handleImportConfirm} disabled={importLoading}>
+                  {importLoading ? "Importando..." : "Confirmar Importación"}
+                </Button>
+              )}
             </div>
           </div>
         </div>

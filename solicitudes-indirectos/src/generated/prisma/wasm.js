@@ -219,6 +219,14 @@ exports.Prisma.TerceroScalarFieldEnum = {
   aprobadoDebidaDiligencia: 'aprobadoDebidaDiligencia'
 };
 
+exports.Prisma.EspecialidadScalarFieldEnum = {
+  id: 'id',
+  nombre: 'nombre',
+  descripcion: 'descripcion',
+  creadoEn: 'creadoEn',
+  actualizadoEn: 'actualizadoEn'
+};
+
 exports.Prisma.SolicitudScalarFieldEnum = {
   id: 'id',
   consecutivo: 'consecutivo',
@@ -352,6 +360,7 @@ exports.Prisma.ModelName = {
   FrenteUsuario: 'FrenteUsuario',
   AprobadorFrente: 'AprobadorFrente',
   Tercero: 'Tercero',
+  Especialidad: 'Especialidad',
   Solicitud: 'Solicitud',
   HistorialSolicitud: 'HistorialSolicitud',
   CronogramaContrato: 'CronogramaContrato',

@@ -144,7 +144,20 @@ model Tercero {
   dd_senalesAlertaReporte       Boolean @default(false)
   aprobadoDebidaDiligencia      Boolean @default(false)
 
-  solicitudes Solicitud[]
+  solicitudes    Solicitud[]
+  especialidades Especialidad[] @relation("TerceroEspecialidades")
+}
+
+// ─── Especialidades ──────────────────────────────────────────────────────────
+
+model Especialidad {
+  id            Int      @id @default(autoincrement())
+  nombre        String   @unique
+  descripcion   String?
+  creadoEn      DateTime @default(now())
+  actualizadoEn DateTime @updatedAt
+
+  terceros Tercero[] @relation("TerceroEspecialidades")
 }
 
 // ─── Solicitudes ─────────────────────────────────────────────────────────────

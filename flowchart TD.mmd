@@ -1,0 +1,30 @@
+flowchart TD
+    A([Quiero vincular un Tercero a una Solicitud])
+
+    A --> B{"El Tercero existe en el sistema?"}
+
+    B -->|No| C["No se puede crear aqui\n Los terceros se cargan desde\nun Excel externo.\nContactar al area responsable\npara incluirlo en el proceso."]
+
+    B -->|Si| D{"Tiene los datos obligatorios completos?"}
+
+    D -->|Faltan datos| E["Completar en el software:\n- Representante Legal\n- Cedula del RL\n- Correo para Firma\n- Direccion\n- Telefono"]
+    E --> F
+
+    D -->|Completo| F{"Debida Diligencia aprobada?"}
+
+    F -->|"No aprobada\n(no aparece en el dropdown)"|  G["Completar las 6 verificaciones:\n1. Identificacion de la contraparte\n2. Consulta en listas restrictivas\n3. Verificacion PEP\n4. Conocimiento del negocio\n5. Monitoreo y actualizacion\n6. Senales de alerta y reporte\nSe aprueba automaticamente\nal marcar las 6"]
+    G --> H
+
+    F -->|Aprobada| H{"SAGRILAFT vigente?"}
+
+    H -->|"Vencido o sin fecha"| I["Registrar o renovar\nfechaVencimientoSagrilaft\nInformativo - no bloquea el flujo"]
+    I --> Z
+
+    H -->|Vigente| Z
+
+    Z(["Tercero disponible para crear solicitudes"])
+
+    style C fill:#fef2f2,color:#991b1b,stroke:#fca5a5
+    style G fill:#fffbeb,color:#92400e,stroke:#fcd34d
+    style I fill:#eff6ff,color:#1e40af,stroke:#93c5fd
+    style Z fill:#f0fdf4,color:#166534,stroke:#86efac

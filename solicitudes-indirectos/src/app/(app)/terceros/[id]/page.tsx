@@ -13,6 +13,7 @@ import {
   CreditCard,
   FileText,
   Tag,
+  X,
 } from "lucide-react";
 import { Spinner } from "@/shared/ui/spinner";
 import { Button } from "@/shared/ui/button";
@@ -107,6 +108,8 @@ export default function TerceroDetallePage() {
   const [loadingCatalogo, setLoadingCatalogo] = useState(false);
   const [selectedIds, setSelectedIds] = useState<number[]>([]);
   const [savingEsp, setSavingEsp] = useState(false);
+  const [espSearch, setEspSearch] = useState("");
+  const [espDropdownOpen, setEspDropdownOpen] = useState(false);
 
   const fetchData = useCallback(async () => {
     setLoading(true);
@@ -144,13 +147,9 @@ export default function TerceroDetallePage() {
       setLoadingCatalogo(false);
     }
     setSelectedIds(tercero?.especialidades.map((e) => e.id) ?? []);
+    setEspSearch("");
+    setEspDropdownOpen(false);
     setEditingEsp(true);
-  }
-
-  function toggleId(espId: number) {
-    setSelectedIds((prev) =>
-      prev.includes(espId) ? prev.filter((x) => x !== espId) : [...prev, espId]
-    );
   }
 
   async function saveEsp() {
@@ -315,19 +314,88 @@ export default function TerceroDetallePage() {
                 </a>.
               </p>
             ) : (
-              <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
-                {catalogo.map((e) => (
-                  <label key={e.id} className="flex items-center gap-2 cursor-pointer hover:bg-gray-50 rounded px-2 py-1.5">
-                    <input
-                      type="checkbox"
-                      checked={selectedIds.includes(e.id)}
-                      onChange={() => toggleId(e.id)}
-                      className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
-                    />
-                    <span className="text-sm text-gray-700">{e.nombre}</span>
-                  </label>
-                ))}
-              </div>
+              <>
+                {/* Chips seleccionadas */}
+                {selectedIds.length > 0 && (
+                  <div className="flex flex-wrap gap-1.5">
+                    {selectedIds.map((id) => {
+                      const esp = catalogo.find((e) => e.id === id);
+                      if (!esp) return null;
+                      return (
+                        <span key={id} className="inline-flex items-center gap-1 rounded-full bg-blue-50 border border-blue-200 px-2.5 py-0.5 text-xs text-blue-800">
+                          {esp.nombre}
+                          <button
+                            type="button"
+                            onClick={() => setSelectedIds((prev) => prev.filter((x) => x !== id))}
+                            className="text-blue-400 hover:text-blue-700"
+                          >
+                            <X size={10} />
+                          </button>
+                        </span>
+                      );
+                    })}
+                  </div>
+                )}
+                {/* Input búsqueda */}
+                <div className="relative">
+                  <input
+                    type="text"
+                    value={espSearch}
+                    onChange={(e) => { setEspSearch(e.target.value); setEspDropdownOpen(true); }}
+                    onFocus={() => setEspDropdownOpen(true)}
+                    onBlur={() => setTimeout(() => setEspDropdownOpen(false), 150)}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter") {
+                        e.preventDefault();
+                        const match = catalogo.find(
+                          (esp) =>
+                            !selectedIds.includes(esp.id) &&
+                            esp.nombre.toLowerCase().includes(espSearch.toLowerCase())
+                        );
+                        if (match) {
+                          setSelectedIds((prev) => [...prev, match.id]);
+                          setEspSearch("");
+                          setEspDropdownOpen(false);
+                        }
+                      }
+                    }}
+                    placeholder="Buscar especialidad y presionar Enter…"
+                    className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  />
+                  {espDropdownOpen && espSearch.length > 0 && (
+                    <div className="absolute z-30 mt-1 w-full bg-white border border-gray-200 rounded-lg shadow-lg max-h-44 overflow-y-auto">
+                      {catalogo.filter(
+                        (e) =>
+                          !selectedIds.includes(e.id) &&
+                          e.nombre.toLowerCase().includes(espSearch.toLowerCase())
+                      ).length === 0 ? (
+                        <p className="px-3 py-2 text-sm text-gray-400 italic">Sin resultados</p>
+                      ) : (
+                        catalogo
+                          .filter(
+                            (e) =>
+                              !selectedIds.includes(e.id) &&
+                              e.nombre.toLowerCase().includes(espSearch.toLowerCase())
+                          )
+                          .map((e) => (
+                            <button
+                              key={e.id}
+                              type="button"
+                              onMouseDown={() => {
+                                setSelectedIds((prev) => [...prev, e.id]);
+                                setEspSearch("");
+                                setEspDropdownOpen(false);
+                              }}
+                              className="flex w-full items-center px-3 py-2 text-sm text-gray-800 hover:bg-blue-50 text-left"
+                            >
+                              {e.nombre}
+                            </button>
+                          ))
+                      )}
+                    </div>
+                  )}
+                </div>
+              </>
             )}
             <div className="flex items-center gap-2 pt-1">
               <Button onClick={saveEsp} disabled={savingEsp}>

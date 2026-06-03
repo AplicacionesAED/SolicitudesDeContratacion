@@ -59,6 +59,11 @@ export type AprobadorFrente = $Result.DefaultSelection<Prisma.$AprobadorFrentePa
  */
 export type Tercero = $Result.DefaultSelection<Prisma.$TerceroPayload>
 /**
+ * Model Especialidad
+ * 
+ */
+export type Especialidad = $Result.DefaultSelection<Prisma.$EspecialidadPayload>
+/**
  * Model Solicitud
  * 
  */
@@ -305,6 +310,16 @@ export class PrismaClient<
     * ```
     */
   get tercero(): Prisma.TerceroDelegate<ExtArgs>;
+
+  /**
+   * `prisma.especialidad`: Exposes CRUD operations for the **Especialidad** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more Especialidads
+    * const especialidads = await prisma.especialidad.findMany()
+    * ```
+    */
+  get especialidad(): Prisma.EspecialidadDelegate<ExtArgs>;
 
   /**
    * `prisma.solicitud`: Exposes CRUD operations for the **Solicitud** model.
@@ -861,6 +876,7 @@ export namespace Prisma {
     FrenteUsuario: 'FrenteUsuario',
     AprobadorFrente: 'AprobadorFrente',
     Tercero: 'Tercero',
+    Especialidad: 'Especialidad',
     Solicitud: 'Solicitud',
     HistorialSolicitud: 'HistorialSolicitud',
     CronogramaContrato: 'CronogramaContrato',
@@ -884,7 +900,7 @@ export namespace Prisma {
 
   export type TypeMap<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     meta: {
-      modelProps: 'account' | 'session' | 'verificationToken' | 'user' | 'proyecto' | 'frente' | 'frenteUsuario' | 'aprobadorFrente' | 'tercero' | 'solicitud' | 'historialSolicitud' | 'cronogramaContrato' | 'faseCronograma' | 'actividadCronograma' | 'notificacion' | 'contadorConsecutivo'
+      modelProps: 'account' | 'session' | 'verificationToken' | 'user' | 'proyecto' | 'frente' | 'frenteUsuario' | 'aprobadorFrente' | 'tercero' | 'especialidad' | 'solicitud' | 'historialSolicitud' | 'cronogramaContrato' | 'faseCronograma' | 'actividadCronograma' | 'notificacion' | 'contadorConsecutivo'
       txIsolationLevel: Prisma.TransactionIsolationLevel
     },
     model: {
@@ -1515,6 +1531,76 @@ export namespace Prisma {
           count: {
             args: Prisma.TerceroCountArgs<ExtArgs>,
             result: $Utils.Optional<TerceroCountAggregateOutputType> | number
+          }
+        }
+      }
+      Especialidad: {
+        payload: Prisma.$EspecialidadPayload<ExtArgs>
+        fields: Prisma.EspecialidadFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.EspecialidadFindUniqueArgs<ExtArgs>,
+            result: $Utils.PayloadToResult<Prisma.$EspecialidadPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.EspecialidadFindUniqueOrThrowArgs<ExtArgs>,
+            result: $Utils.PayloadToResult<Prisma.$EspecialidadPayload>
+          }
+          findFirst: {
+            args: Prisma.EspecialidadFindFirstArgs<ExtArgs>,
+            result: $Utils.PayloadToResult<Prisma.$EspecialidadPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.EspecialidadFindFirstOrThrowArgs<ExtArgs>,
+            result: $Utils.PayloadToResult<Prisma.$EspecialidadPayload>
+          }
+          findMany: {
+            args: Prisma.EspecialidadFindManyArgs<ExtArgs>,
+            result: $Utils.PayloadToResult<Prisma.$EspecialidadPayload>[]
+          }
+          create: {
+            args: Prisma.EspecialidadCreateArgs<ExtArgs>,
+            result: $Utils.PayloadToResult<Prisma.$EspecialidadPayload>
+          }
+          createMany: {
+            args: Prisma.EspecialidadCreateManyArgs<ExtArgs>,
+            result: Prisma.BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.EspecialidadCreateManyAndReturnArgs<ExtArgs>,
+            result: $Utils.PayloadToResult<Prisma.$EspecialidadPayload>[]
+          }
+          delete: {
+            args: Prisma.EspecialidadDeleteArgs<ExtArgs>,
+            result: $Utils.PayloadToResult<Prisma.$EspecialidadPayload>
+          }
+          update: {
+            args: Prisma.EspecialidadUpdateArgs<ExtArgs>,
+            result: $Utils.PayloadToResult<Prisma.$EspecialidadPayload>
+          }
+          deleteMany: {
+            args: Prisma.EspecialidadDeleteManyArgs<ExtArgs>,
+            result: Prisma.BatchPayload
+          }
+          updateMany: {
+            args: Prisma.EspecialidadUpdateManyArgs<ExtArgs>,
+            result: Prisma.BatchPayload
+          }
+          upsert: {
+            args: Prisma.EspecialidadUpsertArgs<ExtArgs>,
+            result: $Utils.PayloadToResult<Prisma.$EspecialidadPayload>
+          }
+          aggregate: {
+            args: Prisma.EspecialidadAggregateArgs<ExtArgs>,
+            result: $Utils.Optional<AggregateEspecialidad>
+          }
+          groupBy: {
+            args: Prisma.EspecialidadGroupByArgs<ExtArgs>,
+            result: $Utils.Optional<EspecialidadGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.EspecialidadCountArgs<ExtArgs>,
+            result: $Utils.Optional<EspecialidadCountAggregateOutputType> | number
           }
         }
       }
@@ -2316,10 +2402,12 @@ export namespace Prisma {
 
   export type TerceroCountOutputType = {
     solicitudes: number
+    especialidades: number
   }
 
   export type TerceroCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     solicitudes?: boolean | TerceroCountOutputTypeCountSolicitudesArgs
+    especialidades?: boolean | TerceroCountOutputTypeCountEspecialidadesArgs
   }
 
   // Custom InputTypes
@@ -2338,6 +2426,44 @@ export namespace Prisma {
    */
   export type TerceroCountOutputTypeCountSolicitudesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: SolicitudWhereInput
+  }
+
+  /**
+   * TerceroCountOutputType without action
+   */
+  export type TerceroCountOutputTypeCountEspecialidadesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: EspecialidadWhereInput
+  }
+
+
+  /**
+   * Count Type EspecialidadCountOutputType
+   */
+
+  export type EspecialidadCountOutputType = {
+    terceros: number
+  }
+
+  export type EspecialidadCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    terceros?: boolean | EspecialidadCountOutputTypeCountTercerosArgs
+  }
+
+  // Custom InputTypes
+  /**
+   * EspecialidadCountOutputType without action
+   */
+  export type EspecialidadCountOutputTypeDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the EspecialidadCountOutputType
+     */
+    select?: EspecialidadCountOutputTypeSelect<ExtArgs> | null
+  }
+
+  /**
+   * EspecialidadCountOutputType without action
+   */
+  export type EspecialidadCountOutputTypeCountTercerosArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: TerceroWhereInput
   }
 
 
@@ -10891,6 +11017,7 @@ export namespace Prisma {
     dd_senalesAlertaReporte?: boolean
     aprobadoDebidaDiligencia?: boolean
     solicitudes?: boolean | Tercero$solicitudesArgs<ExtArgs>
+    especialidades?: boolean | Tercero$especialidadesArgs<ExtArgs>
     _count?: boolean | TerceroCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["tercero"]>
 
@@ -10921,6 +11048,7 @@ export namespace Prisma {
 
   export type TerceroInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     solicitudes?: boolean | Tercero$solicitudesArgs<ExtArgs>
+    especialidades?: boolean | Tercero$especialidadesArgs<ExtArgs>
     _count?: boolean | TerceroCountOutputTypeDefaultArgs<ExtArgs>
   }
 
@@ -10929,6 +11057,7 @@ export namespace Prisma {
     name: "Tercero"
     objects: {
       solicitudes: Prisma.$SolicitudPayload<ExtArgs>[]
+      especialidades: Prisma.$EspecialidadPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: number
@@ -11345,6 +11474,8 @@ export namespace Prisma {
 
     solicitudes<T extends Tercero$solicitudesArgs<ExtArgs> = {}>(args?: Subset<T, Tercero$solicitudesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$SolicitudPayload<ExtArgs>, T, 'findMany'> | Null>;
 
+    especialidades<T extends Tercero$especialidadesArgs<ExtArgs> = {}>(args?: Subset<T, Tercero$especialidadesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$EspecialidadPayload<ExtArgs>, T, 'findMany'> | Null>;
+
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -11732,6 +11863,26 @@ export namespace Prisma {
   }
 
   /**
+   * Tercero.especialidades
+   */
+  export type Tercero$especialidadesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Especialidad
+     */
+    select?: EspecialidadSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: EspecialidadInclude<ExtArgs> | null
+    where?: EspecialidadWhereInput
+    orderBy?: EspecialidadOrderByWithRelationInput | EspecialidadOrderByWithRelationInput[]
+    cursor?: EspecialidadWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: EspecialidadScalarFieldEnum | EspecialidadScalarFieldEnum[]
+  }
+
+  /**
    * Tercero without action
    */
   export type TerceroDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -11743,6 +11894,1012 @@ export namespace Prisma {
      * Choose, which related nodes to fetch as well
      */
     include?: TerceroInclude<ExtArgs> | null
+  }
+
+
+  /**
+   * Model Especialidad
+   */
+
+  export type AggregateEspecialidad = {
+    _count: EspecialidadCountAggregateOutputType | null
+    _avg: EspecialidadAvgAggregateOutputType | null
+    _sum: EspecialidadSumAggregateOutputType | null
+    _min: EspecialidadMinAggregateOutputType | null
+    _max: EspecialidadMaxAggregateOutputType | null
+  }
+
+  export type EspecialidadAvgAggregateOutputType = {
+    id: number | null
+  }
+
+  export type EspecialidadSumAggregateOutputType = {
+    id: number | null
+  }
+
+  export type EspecialidadMinAggregateOutputType = {
+    id: number | null
+    nombre: string | null
+    descripcion: string | null
+    creadoEn: Date | null
+    actualizadoEn: Date | null
+  }
+
+  export type EspecialidadMaxAggregateOutputType = {
+    id: number | null
+    nombre: string | null
+    descripcion: string | null
+    creadoEn: Date | null
+    actualizadoEn: Date | null
+  }
+
+  export type EspecialidadCountAggregateOutputType = {
+    id: number
+    nombre: number
+    descripcion: number
+    creadoEn: number
+    actualizadoEn: number
+    _all: number
+  }
+
+
+  export type EspecialidadAvgAggregateInputType = {
+    id?: true
+  }
+
+  export type EspecialidadSumAggregateInputType = {
+    id?: true
+  }
+
+  export type EspecialidadMinAggregateInputType = {
+    id?: true
+    nombre?: true
+    descripcion?: true
+    creadoEn?: true
+    actualizadoEn?: true
+  }
+
+  export type EspecialidadMaxAggregateInputType = {
+    id?: true
+    nombre?: true
+    descripcion?: true
+    creadoEn?: true
+    actualizadoEn?: true
+  }
+
+  export type EspecialidadCountAggregateInputType = {
+    id?: true
+    nombre?: true
+    descripcion?: true
+    creadoEn?: true
+    actualizadoEn?: true
+    _all?: true
+  }
+
+  export type EspecialidadAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which Especialidad to aggregate.
+     */
+    where?: EspecialidadWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Especialidads to fetch.
+     */
+    orderBy?: EspecialidadOrderByWithRelationInput | EspecialidadOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: EspecialidadWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Especialidads from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Especialidads.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned Especialidads
+    **/
+    _count?: true | EspecialidadCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to average
+    **/
+    _avg?: EspecialidadAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: EspecialidadSumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: EspecialidadMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: EspecialidadMaxAggregateInputType
+  }
+
+  export type GetEspecialidadAggregateType<T extends EspecialidadAggregateArgs> = {
+        [P in keyof T & keyof AggregateEspecialidad]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateEspecialidad[P]>
+      : GetScalarType<T[P], AggregateEspecialidad[P]>
+  }
+
+
+
+
+  export type EspecialidadGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: EspecialidadWhereInput
+    orderBy?: EspecialidadOrderByWithAggregationInput | EspecialidadOrderByWithAggregationInput[]
+    by: EspecialidadScalarFieldEnum[] | EspecialidadScalarFieldEnum
+    having?: EspecialidadScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: EspecialidadCountAggregateInputType | true
+    _avg?: EspecialidadAvgAggregateInputType
+    _sum?: EspecialidadSumAggregateInputType
+    _min?: EspecialidadMinAggregateInputType
+    _max?: EspecialidadMaxAggregateInputType
+  }
+
+  export type EspecialidadGroupByOutputType = {
+    id: number
+    nombre: string
+    descripcion: string | null
+    creadoEn: Date
+    actualizadoEn: Date
+    _count: EspecialidadCountAggregateOutputType | null
+    _avg: EspecialidadAvgAggregateOutputType | null
+    _sum: EspecialidadSumAggregateOutputType | null
+    _min: EspecialidadMinAggregateOutputType | null
+    _max: EspecialidadMaxAggregateOutputType | null
+  }
+
+  type GetEspecialidadGroupByPayload<T extends EspecialidadGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<EspecialidadGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof EspecialidadGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], EspecialidadGroupByOutputType[P]>
+            : GetScalarType<T[P], EspecialidadGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type EspecialidadSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    nombre?: boolean
+    descripcion?: boolean
+    creadoEn?: boolean
+    actualizadoEn?: boolean
+    terceros?: boolean | Especialidad$tercerosArgs<ExtArgs>
+    _count?: boolean | EspecialidadCountOutputTypeDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["especialidad"]>
+
+  export type EspecialidadSelectScalar = {
+    id?: boolean
+    nombre?: boolean
+    descripcion?: boolean
+    creadoEn?: boolean
+    actualizadoEn?: boolean
+  }
+
+
+  export type EspecialidadInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    terceros?: boolean | Especialidad$tercerosArgs<ExtArgs>
+    _count?: boolean | EspecialidadCountOutputTypeDefaultArgs<ExtArgs>
+  }
+
+
+  export type $EspecialidadPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "Especialidad"
+    objects: {
+      terceros: Prisma.$TerceroPayload<ExtArgs>[]
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: number
+      nombre: string
+      descripcion: string | null
+      creadoEn: Date
+      actualizadoEn: Date
+    }, ExtArgs["result"]["especialidad"]>
+    composites: {}
+  }
+
+
+  type EspecialidadGetPayload<S extends boolean | null | undefined | EspecialidadDefaultArgs> = $Result.GetResult<Prisma.$EspecialidadPayload, S>
+
+  type EspecialidadCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = 
+    Omit<EspecialidadFindManyArgs, 'select' | 'include' | 'distinct'> & {
+      select?: EspecialidadCountAggregateInputType | true
+    }
+
+  export interface EspecialidadDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['Especialidad'], meta: { name: 'Especialidad' } }
+    /**
+     * Find zero or one Especialidad that matches the filter.
+     * @param {EspecialidadFindUniqueArgs} args - Arguments to find a Especialidad
+     * @example
+     * // Get one Especialidad
+     * const especialidad = await prisma.especialidad.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+    **/
+    findUnique<T extends EspecialidadFindUniqueArgs<ExtArgs>>(
+      args: SelectSubset<T, EspecialidadFindUniqueArgs<ExtArgs>>
+    ): Prisma__EspecialidadClient<$Result.GetResult<Prisma.$EspecialidadPayload<ExtArgs>, T, 'findUnique'> | null, null, ExtArgs>
+
+    /**
+     * Find one Especialidad that matches the filter or throw an error with `error.code='P2025'` 
+     * if no matches were found.
+     * @param {EspecialidadFindUniqueOrThrowArgs} args - Arguments to find a Especialidad
+     * @example
+     * // Get one Especialidad
+     * const especialidad = await prisma.especialidad.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+    **/
+    findUniqueOrThrow<T extends EspecialidadFindUniqueOrThrowArgs<ExtArgs>>(
+      args?: SelectSubset<T, EspecialidadFindUniqueOrThrowArgs<ExtArgs>>
+    ): Prisma__EspecialidadClient<$Result.GetResult<Prisma.$EspecialidadPayload<ExtArgs>, T, 'findUniqueOrThrow'>, never, ExtArgs>
+
+    /**
+     * Find the first Especialidad that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {EspecialidadFindFirstArgs} args - Arguments to find a Especialidad
+     * @example
+     * // Get one Especialidad
+     * const especialidad = await prisma.especialidad.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+    **/
+    findFirst<T extends EspecialidadFindFirstArgs<ExtArgs>>(
+      args?: SelectSubset<T, EspecialidadFindFirstArgs<ExtArgs>>
+    ): Prisma__EspecialidadClient<$Result.GetResult<Prisma.$EspecialidadPayload<ExtArgs>, T, 'findFirst'> | null, null, ExtArgs>
+
+    /**
+     * Find the first Especialidad that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {EspecialidadFindFirstOrThrowArgs} args - Arguments to find a Especialidad
+     * @example
+     * // Get one Especialidad
+     * const especialidad = await prisma.especialidad.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+    **/
+    findFirstOrThrow<T extends EspecialidadFindFirstOrThrowArgs<ExtArgs>>(
+      args?: SelectSubset<T, EspecialidadFindFirstOrThrowArgs<ExtArgs>>
+    ): Prisma__EspecialidadClient<$Result.GetResult<Prisma.$EspecialidadPayload<ExtArgs>, T, 'findFirstOrThrow'>, never, ExtArgs>
+
+    /**
+     * Find zero or more Especialidads that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {EspecialidadFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all Especialidads
+     * const especialidads = await prisma.especialidad.findMany()
+     * 
+     * // Get first 10 Especialidads
+     * const especialidads = await prisma.especialidad.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const especialidadWithIdOnly = await prisma.especialidad.findMany({ select: { id: true } })
+     * 
+    **/
+    findMany<T extends EspecialidadFindManyArgs<ExtArgs>>(
+      args?: SelectSubset<T, EspecialidadFindManyArgs<ExtArgs>>
+    ): Prisma.PrismaPromise<$Result.GetResult<Prisma.$EspecialidadPayload<ExtArgs>, T, 'findMany'>>
+
+    /**
+     * Create a Especialidad.
+     * @param {EspecialidadCreateArgs} args - Arguments to create a Especialidad.
+     * @example
+     * // Create one Especialidad
+     * const Especialidad = await prisma.especialidad.create({
+     *   data: {
+     *     // ... data to create a Especialidad
+     *   }
+     * })
+     * 
+    **/
+    create<T extends EspecialidadCreateArgs<ExtArgs>>(
+      args: SelectSubset<T, EspecialidadCreateArgs<ExtArgs>>
+    ): Prisma__EspecialidadClient<$Result.GetResult<Prisma.$EspecialidadPayload<ExtArgs>, T, 'create'>, never, ExtArgs>
+
+    /**
+     * Create many Especialidads.
+     * @param {EspecialidadCreateManyArgs} args - Arguments to create many Especialidads.
+     * @example
+     * // Create many Especialidads
+     * const especialidad = await prisma.especialidad.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+    **/
+    createMany<T extends EspecialidadCreateManyArgs<ExtArgs>>(
+      args?: SelectSubset<T, EspecialidadCreateManyArgs<ExtArgs>>
+    ): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many Especialidads and returns the data saved in the database.
+     * @param {EspecialidadCreateManyAndReturnArgs} args - Arguments to create many Especialidads.
+     * @example
+     * // Create many Especialidads
+     * const especialidad = await prisma.especialidad.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many Especialidads and only return the `id`
+     * const especialidadWithIdOnly = await prisma.especialidad.createManyAndReturn({ 
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+    **/
+    createManyAndReturn<T extends EspecialidadCreateManyAndReturnArgs<ExtArgs>>(
+      args?: SelectSubset<T, EspecialidadCreateManyAndReturnArgs<ExtArgs>>
+    ): Prisma.PrismaPromise<$Result.GetResult<Prisma.$EspecialidadPayload<ExtArgs>, T, 'createManyAndReturn'>>
+
+    /**
+     * Delete a Especialidad.
+     * @param {EspecialidadDeleteArgs} args - Arguments to delete one Especialidad.
+     * @example
+     * // Delete one Especialidad
+     * const Especialidad = await prisma.especialidad.delete({
+     *   where: {
+     *     // ... filter to delete one Especialidad
+     *   }
+     * })
+     * 
+    **/
+    delete<T extends EspecialidadDeleteArgs<ExtArgs>>(
+      args: SelectSubset<T, EspecialidadDeleteArgs<ExtArgs>>
+    ): Prisma__EspecialidadClient<$Result.GetResult<Prisma.$EspecialidadPayload<ExtArgs>, T, 'delete'>, never, ExtArgs>
+
+    /**
+     * Update one Especialidad.
+     * @param {EspecialidadUpdateArgs} args - Arguments to update one Especialidad.
+     * @example
+     * // Update one Especialidad
+     * const especialidad = await prisma.especialidad.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+    **/
+    update<T extends EspecialidadUpdateArgs<ExtArgs>>(
+      args: SelectSubset<T, EspecialidadUpdateArgs<ExtArgs>>
+    ): Prisma__EspecialidadClient<$Result.GetResult<Prisma.$EspecialidadPayload<ExtArgs>, T, 'update'>, never, ExtArgs>
+
+    /**
+     * Delete zero or more Especialidads.
+     * @param {EspecialidadDeleteManyArgs} args - Arguments to filter Especialidads to delete.
+     * @example
+     * // Delete a few Especialidads
+     * const { count } = await prisma.especialidad.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+    **/
+    deleteMany<T extends EspecialidadDeleteManyArgs<ExtArgs>>(
+      args?: SelectSubset<T, EspecialidadDeleteManyArgs<ExtArgs>>
+    ): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more Especialidads.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {EspecialidadUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many Especialidads
+     * const especialidad = await prisma.especialidad.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+    **/
+    updateMany<T extends EspecialidadUpdateManyArgs<ExtArgs>>(
+      args: SelectSubset<T, EspecialidadUpdateManyArgs<ExtArgs>>
+    ): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create or update one Especialidad.
+     * @param {EspecialidadUpsertArgs} args - Arguments to update or create a Especialidad.
+     * @example
+     * // Update or create a Especialidad
+     * const especialidad = await prisma.especialidad.upsert({
+     *   create: {
+     *     // ... data to create a Especialidad
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the Especialidad we want to update
+     *   }
+     * })
+    **/
+    upsert<T extends EspecialidadUpsertArgs<ExtArgs>>(
+      args: SelectSubset<T, EspecialidadUpsertArgs<ExtArgs>>
+    ): Prisma__EspecialidadClient<$Result.GetResult<Prisma.$EspecialidadPayload<ExtArgs>, T, 'upsert'>, never, ExtArgs>
+
+    /**
+     * Count the number of Especialidads.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {EspecialidadCountArgs} args - Arguments to filter Especialidads to count.
+     * @example
+     * // Count the number of Especialidads
+     * const count = await prisma.especialidad.count({
+     *   where: {
+     *     // ... the filter for the Especialidads we want to count
+     *   }
+     * })
+    **/
+    count<T extends EspecialidadCountArgs>(
+      args?: Subset<T, EspecialidadCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], EspecialidadCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a Especialidad.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {EspecialidadAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends EspecialidadAggregateArgs>(args: Subset<T, EspecialidadAggregateArgs>): Prisma.PrismaPromise<GetEspecialidadAggregateType<T>>
+
+    /**
+     * Group by Especialidad.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {EspecialidadGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends EspecialidadGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: EspecialidadGroupByArgs['orderBy'] }
+        : { orderBy?: EspecialidadGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, EspecialidadGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetEspecialidadGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the Especialidad model
+   */
+  readonly fields: EspecialidadFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for Especialidad.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__EspecialidadClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: 'PrismaPromise';
+
+    terceros<T extends Especialidad$tercerosArgs<ExtArgs> = {}>(args?: Subset<T, Especialidad$tercerosArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$TerceroPayload<ExtArgs>, T, 'findMany'> | Null>;
+
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>;
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>;
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>;
+  }
+
+
+
+  /**
+   * Fields of the Especialidad model
+   */ 
+  interface EspecialidadFieldRefs {
+    readonly id: FieldRef<"Especialidad", 'Int'>
+    readonly nombre: FieldRef<"Especialidad", 'String'>
+    readonly descripcion: FieldRef<"Especialidad", 'String'>
+    readonly creadoEn: FieldRef<"Especialidad", 'DateTime'>
+    readonly actualizadoEn: FieldRef<"Especialidad", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * Especialidad findUnique
+   */
+  export type EspecialidadFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Especialidad
+     */
+    select?: EspecialidadSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: EspecialidadInclude<ExtArgs> | null
+    /**
+     * Filter, which Especialidad to fetch.
+     */
+    where: EspecialidadWhereUniqueInput
+  }
+
+  /**
+   * Especialidad findUniqueOrThrow
+   */
+  export type EspecialidadFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Especialidad
+     */
+    select?: EspecialidadSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: EspecialidadInclude<ExtArgs> | null
+    /**
+     * Filter, which Especialidad to fetch.
+     */
+    where: EspecialidadWhereUniqueInput
+  }
+
+  /**
+   * Especialidad findFirst
+   */
+  export type EspecialidadFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Especialidad
+     */
+    select?: EspecialidadSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: EspecialidadInclude<ExtArgs> | null
+    /**
+     * Filter, which Especialidad to fetch.
+     */
+    where?: EspecialidadWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Especialidads to fetch.
+     */
+    orderBy?: EspecialidadOrderByWithRelationInput | EspecialidadOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for Especialidads.
+     */
+    cursor?: EspecialidadWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Especialidads from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Especialidads.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of Especialidads.
+     */
+    distinct?: EspecialidadScalarFieldEnum | EspecialidadScalarFieldEnum[]
+  }
+
+  /**
+   * Especialidad findFirstOrThrow
+   */
+  export type EspecialidadFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Especialidad
+     */
+    select?: EspecialidadSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: EspecialidadInclude<ExtArgs> | null
+    /**
+     * Filter, which Especialidad to fetch.
+     */
+    where?: EspecialidadWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Especialidads to fetch.
+     */
+    orderBy?: EspecialidadOrderByWithRelationInput | EspecialidadOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for Especialidads.
+     */
+    cursor?: EspecialidadWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Especialidads from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Especialidads.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of Especialidads.
+     */
+    distinct?: EspecialidadScalarFieldEnum | EspecialidadScalarFieldEnum[]
+  }
+
+  /**
+   * Especialidad findMany
+   */
+  export type EspecialidadFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Especialidad
+     */
+    select?: EspecialidadSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: EspecialidadInclude<ExtArgs> | null
+    /**
+     * Filter, which Especialidads to fetch.
+     */
+    where?: EspecialidadWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Especialidads to fetch.
+     */
+    orderBy?: EspecialidadOrderByWithRelationInput | EspecialidadOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing Especialidads.
+     */
+    cursor?: EspecialidadWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Especialidads from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Especialidads.
+     */
+    skip?: number
+    distinct?: EspecialidadScalarFieldEnum | EspecialidadScalarFieldEnum[]
+  }
+
+  /**
+   * Especialidad create
+   */
+  export type EspecialidadCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Especialidad
+     */
+    select?: EspecialidadSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: EspecialidadInclude<ExtArgs> | null
+    /**
+     * The data needed to create a Especialidad.
+     */
+    data: XOR<EspecialidadCreateInput, EspecialidadUncheckedCreateInput>
+  }
+
+  /**
+   * Especialidad createMany
+   */
+  export type EspecialidadCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many Especialidads.
+     */
+    data: EspecialidadCreateManyInput | EspecialidadCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * Especialidad createManyAndReturn
+   */
+  export type EspecialidadCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Especialidad
+     */
+    select?: EspecialidadSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: EspecialidadInclude<ExtArgs> | null
+    /**
+     * The data used to create many Especialidads.
+     */
+    data: EspecialidadCreateManyInput | EspecialidadCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * Especialidad update
+   */
+  export type EspecialidadUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Especialidad
+     */
+    select?: EspecialidadSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: EspecialidadInclude<ExtArgs> | null
+    /**
+     * The data needed to update a Especialidad.
+     */
+    data: XOR<EspecialidadUpdateInput, EspecialidadUncheckedUpdateInput>
+    /**
+     * Choose, which Especialidad to update.
+     */
+    where: EspecialidadWhereUniqueInput
+  }
+
+  /**
+   * Especialidad updateMany
+   */
+  export type EspecialidadUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update Especialidads.
+     */
+    data: XOR<EspecialidadUpdateManyMutationInput, EspecialidadUncheckedUpdateManyInput>
+    /**
+     * Filter which Especialidads to update
+     */
+    where?: EspecialidadWhereInput
+  }
+
+  /**
+   * Especialidad upsert
+   */
+  export type EspecialidadUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Especialidad
+     */
+    select?: EspecialidadSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: EspecialidadInclude<ExtArgs> | null
+    /**
+     * The filter to search for the Especialidad to update in case it exists.
+     */
+    where: EspecialidadWhereUniqueInput
+    /**
+     * In case the Especialidad found by the `where` argument doesn't exist, create a new Especialidad with this data.
+     */
+    create: XOR<EspecialidadCreateInput, EspecialidadUncheckedCreateInput>
+    /**
+     * In case the Especialidad was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<EspecialidadUpdateInput, EspecialidadUncheckedUpdateInput>
+  }
+
+  /**
+   * Especialidad delete
+   */
+  export type EspecialidadDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Especialidad
+     */
+    select?: EspecialidadSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: EspecialidadInclude<ExtArgs> | null
+    /**
+     * Filter which Especialidad to delete.
+     */
+    where: EspecialidadWhereUniqueInput
+  }
+
+  /**
+   * Especialidad deleteMany
+   */
+  export type EspecialidadDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which Especialidads to delete
+     */
+    where?: EspecialidadWhereInput
+  }
+
+  /**
+   * Especialidad.terceros
+   */
+  export type Especialidad$tercerosArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Tercero
+     */
+    select?: TerceroSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TerceroInclude<ExtArgs> | null
+    where?: TerceroWhereInput
+    orderBy?: TerceroOrderByWithRelationInput | TerceroOrderByWithRelationInput[]
+    cursor?: TerceroWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: TerceroScalarFieldEnum | TerceroScalarFieldEnum[]
+  }
+
+  /**
+   * Especialidad without action
+   */
+  export type EspecialidadDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Especialidad
+     */
+    select?: EspecialidadSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: EspecialidadInclude<ExtArgs> | null
   }
 
 
@@ -19564,6 +20721,17 @@ export namespace Prisma {
   export type TerceroScalarFieldEnum = (typeof TerceroScalarFieldEnum)[keyof typeof TerceroScalarFieldEnum]
 
 
+  export const EspecialidadScalarFieldEnum: {
+    id: 'id',
+    nombre: 'nombre',
+    descripcion: 'descripcion',
+    creadoEn: 'creadoEn',
+    actualizadoEn: 'actualizadoEn'
+  };
+
+  export type EspecialidadScalarFieldEnum = (typeof EspecialidadScalarFieldEnum)[keyof typeof EspecialidadScalarFieldEnum]
+
+
   export const SolicitudScalarFieldEnum: {
     id: 'id',
     consecutivo: 'consecutivo',
@@ -20364,6 +21532,7 @@ export namespace Prisma {
     dd_senalesAlertaReporte?: BoolFilter<"Tercero"> | boolean
     aprobadoDebidaDiligencia?: BoolFilter<"Tercero"> | boolean
     solicitudes?: SolicitudListRelationFilter
+    especialidades?: EspecialidadListRelationFilter
   }
 
   export type TerceroOrderByWithRelationInput = {
@@ -20389,6 +21558,7 @@ export namespace Prisma {
     dd_senalesAlertaReporte?: SortOrder
     aprobadoDebidaDiligencia?: SortOrder
     solicitudes?: SolicitudOrderByRelationAggregateInput
+    especialidades?: EspecialidadOrderByRelationAggregateInput
   }
 
   export type TerceroWhereUniqueInput = Prisma.AtLeast<{
@@ -20417,6 +21587,7 @@ export namespace Prisma {
     dd_senalesAlertaReporte?: BoolFilter<"Tercero"> | boolean
     aprobadoDebidaDiligencia?: BoolFilter<"Tercero"> | boolean
     solicitudes?: SolicitudListRelationFilter
+    especialidades?: EspecialidadListRelationFilter
   }, "id" | "razonSocial">
 
   export type TerceroOrderByWithAggregationInput = {
@@ -20473,6 +21644,63 @@ export namespace Prisma {
     dd_monitoreoActualizacion?: BoolWithAggregatesFilter<"Tercero"> | boolean
     dd_senalesAlertaReporte?: BoolWithAggregatesFilter<"Tercero"> | boolean
     aprobadoDebidaDiligencia?: BoolWithAggregatesFilter<"Tercero"> | boolean
+  }
+
+  export type EspecialidadWhereInput = {
+    AND?: EspecialidadWhereInput | EspecialidadWhereInput[]
+    OR?: EspecialidadWhereInput[]
+    NOT?: EspecialidadWhereInput | EspecialidadWhereInput[]
+    id?: IntFilter<"Especialidad"> | number
+    nombre?: StringFilter<"Especialidad"> | string
+    descripcion?: StringNullableFilter<"Especialidad"> | string | null
+    creadoEn?: DateTimeFilter<"Especialidad"> | Date | string
+    actualizadoEn?: DateTimeFilter<"Especialidad"> | Date | string
+    terceros?: TerceroListRelationFilter
+  }
+
+  export type EspecialidadOrderByWithRelationInput = {
+    id?: SortOrder
+    nombre?: SortOrder
+    descripcion?: SortOrderInput | SortOrder
+    creadoEn?: SortOrder
+    actualizadoEn?: SortOrder
+    terceros?: TerceroOrderByRelationAggregateInput
+  }
+
+  export type EspecialidadWhereUniqueInput = Prisma.AtLeast<{
+    id?: number
+    nombre?: string
+    AND?: EspecialidadWhereInput | EspecialidadWhereInput[]
+    OR?: EspecialidadWhereInput[]
+    NOT?: EspecialidadWhereInput | EspecialidadWhereInput[]
+    descripcion?: StringNullableFilter<"Especialidad"> | string | null
+    creadoEn?: DateTimeFilter<"Especialidad"> | Date | string
+    actualizadoEn?: DateTimeFilter<"Especialidad"> | Date | string
+    terceros?: TerceroListRelationFilter
+  }, "id" | "nombre">
+
+  export type EspecialidadOrderByWithAggregationInput = {
+    id?: SortOrder
+    nombre?: SortOrder
+    descripcion?: SortOrderInput | SortOrder
+    creadoEn?: SortOrder
+    actualizadoEn?: SortOrder
+    _count?: EspecialidadCountOrderByAggregateInput
+    _avg?: EspecialidadAvgOrderByAggregateInput
+    _max?: EspecialidadMaxOrderByAggregateInput
+    _min?: EspecialidadMinOrderByAggregateInput
+    _sum?: EspecialidadSumOrderByAggregateInput
+  }
+
+  export type EspecialidadScalarWhereWithAggregatesInput = {
+    AND?: EspecialidadScalarWhereWithAggregatesInput | EspecialidadScalarWhereWithAggregatesInput[]
+    OR?: EspecialidadScalarWhereWithAggregatesInput[]
+    NOT?: EspecialidadScalarWhereWithAggregatesInput | EspecialidadScalarWhereWithAggregatesInput[]
+    id?: IntWithAggregatesFilter<"Especialidad"> | number
+    nombre?: StringWithAggregatesFilter<"Especialidad"> | string
+    descripcion?: StringNullableWithAggregatesFilter<"Especialidad"> | string | null
+    creadoEn?: DateTimeWithAggregatesFilter<"Especialidad"> | Date | string
+    actualizadoEn?: DateTimeWithAggregatesFilter<"Especialidad"> | Date | string
   }
 
   export type SolicitudWhereInput = {
@@ -21739,6 +22967,7 @@ export namespace Prisma {
     dd_senalesAlertaReporte?: boolean
     aprobadoDebidaDiligencia?: boolean
     solicitudes?: SolicitudCreateNestedManyWithoutTerceroInput
+    especialidades?: EspecialidadCreateNestedManyWithoutTercerosInput
   }
 
   export type TerceroUncheckedCreateInput = {
@@ -21764,6 +22993,7 @@ export namespace Prisma {
     dd_senalesAlertaReporte?: boolean
     aprobadoDebidaDiligencia?: boolean
     solicitudes?: SolicitudUncheckedCreateNestedManyWithoutTerceroInput
+    especialidades?: EspecialidadUncheckedCreateNestedManyWithoutTercerosInput
   }
 
   export type TerceroUpdateInput = {
@@ -21788,6 +23018,7 @@ export namespace Prisma {
     dd_senalesAlertaReporte?: BoolFieldUpdateOperationsInput | boolean
     aprobadoDebidaDiligencia?: BoolFieldUpdateOperationsInput | boolean
     solicitudes?: SolicitudUpdateManyWithoutTerceroNestedInput
+    especialidades?: EspecialidadUpdateManyWithoutTercerosNestedInput
   }
 
   export type TerceroUncheckedUpdateInput = {
@@ -21813,6 +23044,7 @@ export namespace Prisma {
     dd_senalesAlertaReporte?: BoolFieldUpdateOperationsInput | boolean
     aprobadoDebidaDiligencia?: BoolFieldUpdateOperationsInput | boolean
     solicitudes?: SolicitudUncheckedUpdateManyWithoutTerceroNestedInput
+    especialidades?: EspecialidadUncheckedUpdateManyWithoutTercerosNestedInput
   }
 
   export type TerceroCreateManyInput = {
@@ -21884,6 +23116,63 @@ export namespace Prisma {
     dd_monitoreoActualizacion?: BoolFieldUpdateOperationsInput | boolean
     dd_senalesAlertaReporte?: BoolFieldUpdateOperationsInput | boolean
     aprobadoDebidaDiligencia?: BoolFieldUpdateOperationsInput | boolean
+  }
+
+  export type EspecialidadCreateInput = {
+    nombre: string
+    descripcion?: string | null
+    creadoEn?: Date | string
+    actualizadoEn?: Date | string
+    terceros?: TerceroCreateNestedManyWithoutEspecialidadesInput
+  }
+
+  export type EspecialidadUncheckedCreateInput = {
+    id?: number
+    nombre: string
+    descripcion?: string | null
+    creadoEn?: Date | string
+    actualizadoEn?: Date | string
+    terceros?: TerceroUncheckedCreateNestedManyWithoutEspecialidadesInput
+  }
+
+  export type EspecialidadUpdateInput = {
+    nombre?: StringFieldUpdateOperationsInput | string
+    descripcion?: NullableStringFieldUpdateOperationsInput | string | null
+    creadoEn?: DateTimeFieldUpdateOperationsInput | Date | string
+    actualizadoEn?: DateTimeFieldUpdateOperationsInput | Date | string
+    terceros?: TerceroUpdateManyWithoutEspecialidadesNestedInput
+  }
+
+  export type EspecialidadUncheckedUpdateInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    nombre?: StringFieldUpdateOperationsInput | string
+    descripcion?: NullableStringFieldUpdateOperationsInput | string | null
+    creadoEn?: DateTimeFieldUpdateOperationsInput | Date | string
+    actualizadoEn?: DateTimeFieldUpdateOperationsInput | Date | string
+    terceros?: TerceroUncheckedUpdateManyWithoutEspecialidadesNestedInput
+  }
+
+  export type EspecialidadCreateManyInput = {
+    id?: number
+    nombre: string
+    descripcion?: string | null
+    creadoEn?: Date | string
+    actualizadoEn?: Date | string
+  }
+
+  export type EspecialidadUpdateManyMutationInput = {
+    nombre?: StringFieldUpdateOperationsInput | string
+    descripcion?: NullableStringFieldUpdateOperationsInput | string | null
+    creadoEn?: DateTimeFieldUpdateOperationsInput | Date | string
+    actualizadoEn?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type EspecialidadUncheckedUpdateManyInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    nombre?: StringFieldUpdateOperationsInput | string
+    descripcion?: NullableStringFieldUpdateOperationsInput | string | null
+    creadoEn?: DateTimeFieldUpdateOperationsInput | Date | string
+    actualizadoEn?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type SolicitudCreateInput = {
@@ -23197,6 +24486,16 @@ export namespace Prisma {
     frenteId?: SortOrder
   }
 
+  export type EspecialidadListRelationFilter = {
+    every?: EspecialidadWhereInput
+    some?: EspecialidadWhereInput
+    none?: EspecialidadWhereInput
+  }
+
+  export type EspecialidadOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
   export type TerceroCountOrderByAggregateInput = {
     id?: SortOrder
     razonSocial?: SortOrder
@@ -23274,6 +24573,48 @@ export namespace Prisma {
   }
 
   export type TerceroSumOrderByAggregateInput = {
+    id?: SortOrder
+  }
+
+  export type TerceroListRelationFilter = {
+    every?: TerceroWhereInput
+    some?: TerceroWhereInput
+    none?: TerceroWhereInput
+  }
+
+  export type TerceroOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type EspecialidadCountOrderByAggregateInput = {
+    id?: SortOrder
+    nombre?: SortOrder
+    descripcion?: SortOrder
+    creadoEn?: SortOrder
+    actualizadoEn?: SortOrder
+  }
+
+  export type EspecialidadAvgOrderByAggregateInput = {
+    id?: SortOrder
+  }
+
+  export type EspecialidadMaxOrderByAggregateInput = {
+    id?: SortOrder
+    nombre?: SortOrder
+    descripcion?: SortOrder
+    creadoEn?: SortOrder
+    actualizadoEn?: SortOrder
+  }
+
+  export type EspecialidadMinOrderByAggregateInput = {
+    id?: SortOrder
+    nombre?: SortOrder
+    descripcion?: SortOrder
+    creadoEn?: SortOrder
+    actualizadoEn?: SortOrder
+  }
+
+  export type EspecialidadSumOrderByAggregateInput = {
     id?: SortOrder
   }
 
@@ -24308,11 +25649,23 @@ export namespace Prisma {
     connect?: SolicitudWhereUniqueInput | SolicitudWhereUniqueInput[]
   }
 
+  export type EspecialidadCreateNestedManyWithoutTercerosInput = {
+    create?: XOR<EspecialidadCreateWithoutTercerosInput, EspecialidadUncheckedCreateWithoutTercerosInput> | EspecialidadCreateWithoutTercerosInput[] | EspecialidadUncheckedCreateWithoutTercerosInput[]
+    connectOrCreate?: EspecialidadCreateOrConnectWithoutTercerosInput | EspecialidadCreateOrConnectWithoutTercerosInput[]
+    connect?: EspecialidadWhereUniqueInput | EspecialidadWhereUniqueInput[]
+  }
+
   export type SolicitudUncheckedCreateNestedManyWithoutTerceroInput = {
     create?: XOR<SolicitudCreateWithoutTerceroInput, SolicitudUncheckedCreateWithoutTerceroInput> | SolicitudCreateWithoutTerceroInput[] | SolicitudUncheckedCreateWithoutTerceroInput[]
     connectOrCreate?: SolicitudCreateOrConnectWithoutTerceroInput | SolicitudCreateOrConnectWithoutTerceroInput[]
     createMany?: SolicitudCreateManyTerceroInputEnvelope
     connect?: SolicitudWhereUniqueInput | SolicitudWhereUniqueInput[]
+  }
+
+  export type EspecialidadUncheckedCreateNestedManyWithoutTercerosInput = {
+    create?: XOR<EspecialidadCreateWithoutTercerosInput, EspecialidadUncheckedCreateWithoutTercerosInput> | EspecialidadCreateWithoutTercerosInput[] | EspecialidadUncheckedCreateWithoutTercerosInput[]
+    connectOrCreate?: EspecialidadCreateOrConnectWithoutTercerosInput | EspecialidadCreateOrConnectWithoutTercerosInput[]
+    connect?: EspecialidadWhereUniqueInput | EspecialidadWhereUniqueInput[]
   }
 
   export type SolicitudUpdateManyWithoutTerceroNestedInput = {
@@ -24329,6 +25682,19 @@ export namespace Prisma {
     deleteMany?: SolicitudScalarWhereInput | SolicitudScalarWhereInput[]
   }
 
+  export type EspecialidadUpdateManyWithoutTercerosNestedInput = {
+    create?: XOR<EspecialidadCreateWithoutTercerosInput, EspecialidadUncheckedCreateWithoutTercerosInput> | EspecialidadCreateWithoutTercerosInput[] | EspecialidadUncheckedCreateWithoutTercerosInput[]
+    connectOrCreate?: EspecialidadCreateOrConnectWithoutTercerosInput | EspecialidadCreateOrConnectWithoutTercerosInput[]
+    upsert?: EspecialidadUpsertWithWhereUniqueWithoutTercerosInput | EspecialidadUpsertWithWhereUniqueWithoutTercerosInput[]
+    set?: EspecialidadWhereUniqueInput | EspecialidadWhereUniqueInput[]
+    disconnect?: EspecialidadWhereUniqueInput | EspecialidadWhereUniqueInput[]
+    delete?: EspecialidadWhereUniqueInput | EspecialidadWhereUniqueInput[]
+    connect?: EspecialidadWhereUniqueInput | EspecialidadWhereUniqueInput[]
+    update?: EspecialidadUpdateWithWhereUniqueWithoutTercerosInput | EspecialidadUpdateWithWhereUniqueWithoutTercerosInput[]
+    updateMany?: EspecialidadUpdateManyWithWhereWithoutTercerosInput | EspecialidadUpdateManyWithWhereWithoutTercerosInput[]
+    deleteMany?: EspecialidadScalarWhereInput | EspecialidadScalarWhereInput[]
+  }
+
   export type SolicitudUncheckedUpdateManyWithoutTerceroNestedInput = {
     create?: XOR<SolicitudCreateWithoutTerceroInput, SolicitudUncheckedCreateWithoutTerceroInput> | SolicitudCreateWithoutTerceroInput[] | SolicitudUncheckedCreateWithoutTerceroInput[]
     connectOrCreate?: SolicitudCreateOrConnectWithoutTerceroInput | SolicitudCreateOrConnectWithoutTerceroInput[]
@@ -24341,6 +25707,57 @@ export namespace Prisma {
     update?: SolicitudUpdateWithWhereUniqueWithoutTerceroInput | SolicitudUpdateWithWhereUniqueWithoutTerceroInput[]
     updateMany?: SolicitudUpdateManyWithWhereWithoutTerceroInput | SolicitudUpdateManyWithWhereWithoutTerceroInput[]
     deleteMany?: SolicitudScalarWhereInput | SolicitudScalarWhereInput[]
+  }
+
+  export type EspecialidadUncheckedUpdateManyWithoutTercerosNestedInput = {
+    create?: XOR<EspecialidadCreateWithoutTercerosInput, EspecialidadUncheckedCreateWithoutTercerosInput> | EspecialidadCreateWithoutTercerosInput[] | EspecialidadUncheckedCreateWithoutTercerosInput[]
+    connectOrCreate?: EspecialidadCreateOrConnectWithoutTercerosInput | EspecialidadCreateOrConnectWithoutTercerosInput[]
+    upsert?: EspecialidadUpsertWithWhereUniqueWithoutTercerosInput | EspecialidadUpsertWithWhereUniqueWithoutTercerosInput[]
+    set?: EspecialidadWhereUniqueInput | EspecialidadWhereUniqueInput[]
+    disconnect?: EspecialidadWhereUniqueInput | EspecialidadWhereUniqueInput[]
+    delete?: EspecialidadWhereUniqueInput | EspecialidadWhereUniqueInput[]
+    connect?: EspecialidadWhereUniqueInput | EspecialidadWhereUniqueInput[]
+    update?: EspecialidadUpdateWithWhereUniqueWithoutTercerosInput | EspecialidadUpdateWithWhereUniqueWithoutTercerosInput[]
+    updateMany?: EspecialidadUpdateManyWithWhereWithoutTercerosInput | EspecialidadUpdateManyWithWhereWithoutTercerosInput[]
+    deleteMany?: EspecialidadScalarWhereInput | EspecialidadScalarWhereInput[]
+  }
+
+  export type TerceroCreateNestedManyWithoutEspecialidadesInput = {
+    create?: XOR<TerceroCreateWithoutEspecialidadesInput, TerceroUncheckedCreateWithoutEspecialidadesInput> | TerceroCreateWithoutEspecialidadesInput[] | TerceroUncheckedCreateWithoutEspecialidadesInput[]
+    connectOrCreate?: TerceroCreateOrConnectWithoutEspecialidadesInput | TerceroCreateOrConnectWithoutEspecialidadesInput[]
+    connect?: TerceroWhereUniqueInput | TerceroWhereUniqueInput[]
+  }
+
+  export type TerceroUncheckedCreateNestedManyWithoutEspecialidadesInput = {
+    create?: XOR<TerceroCreateWithoutEspecialidadesInput, TerceroUncheckedCreateWithoutEspecialidadesInput> | TerceroCreateWithoutEspecialidadesInput[] | TerceroUncheckedCreateWithoutEspecialidadesInput[]
+    connectOrCreate?: TerceroCreateOrConnectWithoutEspecialidadesInput | TerceroCreateOrConnectWithoutEspecialidadesInput[]
+    connect?: TerceroWhereUniqueInput | TerceroWhereUniqueInput[]
+  }
+
+  export type TerceroUpdateManyWithoutEspecialidadesNestedInput = {
+    create?: XOR<TerceroCreateWithoutEspecialidadesInput, TerceroUncheckedCreateWithoutEspecialidadesInput> | TerceroCreateWithoutEspecialidadesInput[] | TerceroUncheckedCreateWithoutEspecialidadesInput[]
+    connectOrCreate?: TerceroCreateOrConnectWithoutEspecialidadesInput | TerceroCreateOrConnectWithoutEspecialidadesInput[]
+    upsert?: TerceroUpsertWithWhereUniqueWithoutEspecialidadesInput | TerceroUpsertWithWhereUniqueWithoutEspecialidadesInput[]
+    set?: TerceroWhereUniqueInput | TerceroWhereUniqueInput[]
+    disconnect?: TerceroWhereUniqueInput | TerceroWhereUniqueInput[]
+    delete?: TerceroWhereUniqueInput | TerceroWhereUniqueInput[]
+    connect?: TerceroWhereUniqueInput | TerceroWhereUniqueInput[]
+    update?: TerceroUpdateWithWhereUniqueWithoutEspecialidadesInput | TerceroUpdateWithWhereUniqueWithoutEspecialidadesInput[]
+    updateMany?: TerceroUpdateManyWithWhereWithoutEspecialidadesInput | TerceroUpdateManyWithWhereWithoutEspecialidadesInput[]
+    deleteMany?: TerceroScalarWhereInput | TerceroScalarWhereInput[]
+  }
+
+  export type TerceroUncheckedUpdateManyWithoutEspecialidadesNestedInput = {
+    create?: XOR<TerceroCreateWithoutEspecialidadesInput, TerceroUncheckedCreateWithoutEspecialidadesInput> | TerceroCreateWithoutEspecialidadesInput[] | TerceroUncheckedCreateWithoutEspecialidadesInput[]
+    connectOrCreate?: TerceroCreateOrConnectWithoutEspecialidadesInput | TerceroCreateOrConnectWithoutEspecialidadesInput[]
+    upsert?: TerceroUpsertWithWhereUniqueWithoutEspecialidadesInput | TerceroUpsertWithWhereUniqueWithoutEspecialidadesInput[]
+    set?: TerceroWhereUniqueInput | TerceroWhereUniqueInput[]
+    disconnect?: TerceroWhereUniqueInput | TerceroWhereUniqueInput[]
+    delete?: TerceroWhereUniqueInput | TerceroWhereUniqueInput[]
+    connect?: TerceroWhereUniqueInput | TerceroWhereUniqueInput[]
+    update?: TerceroUpdateWithWhereUniqueWithoutEspecialidadesInput | TerceroUpdateWithWhereUniqueWithoutEspecialidadesInput[]
+    updateMany?: TerceroUpdateManyWithWhereWithoutEspecialidadesInput | TerceroUpdateManyWithWhereWithoutEspecialidadesInput[]
+    deleteMany?: TerceroScalarWhereInput | TerceroScalarWhereInput[]
   }
 
   export type UserCreateNestedOneWithoutSolicitudesInput = {
@@ -26340,6 +27757,26 @@ export namespace Prisma {
     skipDuplicates?: boolean
   }
 
+  export type EspecialidadCreateWithoutTercerosInput = {
+    nombre: string
+    descripcion?: string | null
+    creadoEn?: Date | string
+    actualizadoEn?: Date | string
+  }
+
+  export type EspecialidadUncheckedCreateWithoutTercerosInput = {
+    id?: number
+    nombre: string
+    descripcion?: string | null
+    creadoEn?: Date | string
+    actualizadoEn?: Date | string
+  }
+
+  export type EspecialidadCreateOrConnectWithoutTercerosInput = {
+    where: EspecialidadWhereUniqueInput
+    create: XOR<EspecialidadCreateWithoutTercerosInput, EspecialidadUncheckedCreateWithoutTercerosInput>
+  }
+
   export type SolicitudUpsertWithWhereUniqueWithoutTerceroInput = {
     where: SolicitudWhereUniqueInput
     update: XOR<SolicitudUpdateWithoutTerceroInput, SolicitudUncheckedUpdateWithoutTerceroInput>
@@ -26354,6 +27791,130 @@ export namespace Prisma {
   export type SolicitudUpdateManyWithWhereWithoutTerceroInput = {
     where: SolicitudScalarWhereInput
     data: XOR<SolicitudUpdateManyMutationInput, SolicitudUncheckedUpdateManyWithoutTerceroInput>
+  }
+
+  export type EspecialidadUpsertWithWhereUniqueWithoutTercerosInput = {
+    where: EspecialidadWhereUniqueInput
+    update: XOR<EspecialidadUpdateWithoutTercerosInput, EspecialidadUncheckedUpdateWithoutTercerosInput>
+    create: XOR<EspecialidadCreateWithoutTercerosInput, EspecialidadUncheckedCreateWithoutTercerosInput>
+  }
+
+  export type EspecialidadUpdateWithWhereUniqueWithoutTercerosInput = {
+    where: EspecialidadWhereUniqueInput
+    data: XOR<EspecialidadUpdateWithoutTercerosInput, EspecialidadUncheckedUpdateWithoutTercerosInput>
+  }
+
+  export type EspecialidadUpdateManyWithWhereWithoutTercerosInput = {
+    where: EspecialidadScalarWhereInput
+    data: XOR<EspecialidadUpdateManyMutationInput, EspecialidadUncheckedUpdateManyWithoutTercerosInput>
+  }
+
+  export type EspecialidadScalarWhereInput = {
+    AND?: EspecialidadScalarWhereInput | EspecialidadScalarWhereInput[]
+    OR?: EspecialidadScalarWhereInput[]
+    NOT?: EspecialidadScalarWhereInput | EspecialidadScalarWhereInput[]
+    id?: IntFilter<"Especialidad"> | number
+    nombre?: StringFilter<"Especialidad"> | string
+    descripcion?: StringNullableFilter<"Especialidad"> | string | null
+    creadoEn?: DateTimeFilter<"Especialidad"> | Date | string
+    actualizadoEn?: DateTimeFilter<"Especialidad"> | Date | string
+  }
+
+  export type TerceroCreateWithoutEspecialidadesInput = {
+    razonSocial: string
+    nit: string
+    tipoContrato: string
+    confidencialidad?: boolean
+    representanteLegal?: string | null
+    cedulaRepresentante?: string | null
+    correoFirma?: string | null
+    direccionRepresentante?: string | null
+    telefonoRepresentante?: string | null
+    nombreContacto?: string | null
+    telefonoContacto?: string | null
+    correoContacto?: string | null
+    fechaVencimientoSagrilaft?: Date | string | null
+    dd_identificacionContraparte?: boolean
+    dd_consultaListasRestrictivas?: boolean
+    dd_verificacionPep?: boolean
+    dd_conocimientoNegocio?: boolean
+    dd_monitoreoActualizacion?: boolean
+    dd_senalesAlertaReporte?: boolean
+    aprobadoDebidaDiligencia?: boolean
+    solicitudes?: SolicitudCreateNestedManyWithoutTerceroInput
+  }
+
+  export type TerceroUncheckedCreateWithoutEspecialidadesInput = {
+    id?: number
+    razonSocial: string
+    nit: string
+    tipoContrato: string
+    confidencialidad?: boolean
+    representanteLegal?: string | null
+    cedulaRepresentante?: string | null
+    correoFirma?: string | null
+    direccionRepresentante?: string | null
+    telefonoRepresentante?: string | null
+    nombreContacto?: string | null
+    telefonoContacto?: string | null
+    correoContacto?: string | null
+    fechaVencimientoSagrilaft?: Date | string | null
+    dd_identificacionContraparte?: boolean
+    dd_consultaListasRestrictivas?: boolean
+    dd_verificacionPep?: boolean
+    dd_conocimientoNegocio?: boolean
+    dd_monitoreoActualizacion?: boolean
+    dd_senalesAlertaReporte?: boolean
+    aprobadoDebidaDiligencia?: boolean
+    solicitudes?: SolicitudUncheckedCreateNestedManyWithoutTerceroInput
+  }
+
+  export type TerceroCreateOrConnectWithoutEspecialidadesInput = {
+    where: TerceroWhereUniqueInput
+    create: XOR<TerceroCreateWithoutEspecialidadesInput, TerceroUncheckedCreateWithoutEspecialidadesInput>
+  }
+
+  export type TerceroUpsertWithWhereUniqueWithoutEspecialidadesInput = {
+    where: TerceroWhereUniqueInput
+    update: XOR<TerceroUpdateWithoutEspecialidadesInput, TerceroUncheckedUpdateWithoutEspecialidadesInput>
+    create: XOR<TerceroCreateWithoutEspecialidadesInput, TerceroUncheckedCreateWithoutEspecialidadesInput>
+  }
+
+  export type TerceroUpdateWithWhereUniqueWithoutEspecialidadesInput = {
+    where: TerceroWhereUniqueInput
+    data: XOR<TerceroUpdateWithoutEspecialidadesInput, TerceroUncheckedUpdateWithoutEspecialidadesInput>
+  }
+
+  export type TerceroUpdateManyWithWhereWithoutEspecialidadesInput = {
+    where: TerceroScalarWhereInput
+    data: XOR<TerceroUpdateManyMutationInput, TerceroUncheckedUpdateManyWithoutEspecialidadesInput>
+  }
+
+  export type TerceroScalarWhereInput = {
+    AND?: TerceroScalarWhereInput | TerceroScalarWhereInput[]
+    OR?: TerceroScalarWhereInput[]
+    NOT?: TerceroScalarWhereInput | TerceroScalarWhereInput[]
+    id?: IntFilter<"Tercero"> | number
+    razonSocial?: StringFilter<"Tercero"> | string
+    nit?: StringFilter<"Tercero"> | string
+    tipoContrato?: StringFilter<"Tercero"> | string
+    confidencialidad?: BoolFilter<"Tercero"> | boolean
+    representanteLegal?: StringNullableFilter<"Tercero"> | string | null
+    cedulaRepresentante?: StringNullableFilter<"Tercero"> | string | null
+    correoFirma?: StringNullableFilter<"Tercero"> | string | null
+    direccionRepresentante?: StringNullableFilter<"Tercero"> | string | null
+    telefonoRepresentante?: StringNullableFilter<"Tercero"> | string | null
+    nombreContacto?: StringNullableFilter<"Tercero"> | string | null
+    telefonoContacto?: StringNullableFilter<"Tercero"> | string | null
+    correoContacto?: StringNullableFilter<"Tercero"> | string | null
+    fechaVencimientoSagrilaft?: DateTimeNullableFilter<"Tercero"> | Date | string | null
+    dd_identificacionContraparte?: BoolFilter<"Tercero"> | boolean
+    dd_consultaListasRestrictivas?: BoolFilter<"Tercero"> | boolean
+    dd_verificacionPep?: BoolFilter<"Tercero"> | boolean
+    dd_conocimientoNegocio?: BoolFilter<"Tercero"> | boolean
+    dd_monitoreoActualizacion?: BoolFilter<"Tercero"> | boolean
+    dd_senalesAlertaReporte?: BoolFilter<"Tercero"> | boolean
+    aprobadoDebidaDiligencia?: BoolFilter<"Tercero"> | boolean
   }
 
   export type UserCreateWithoutSolicitudesInput = {
@@ -26432,6 +27993,7 @@ export namespace Prisma {
     dd_monitoreoActualizacion?: boolean
     dd_senalesAlertaReporte?: boolean
     aprobadoDebidaDiligencia?: boolean
+    especialidades?: EspecialidadCreateNestedManyWithoutTercerosInput
   }
 
   export type TerceroUncheckedCreateWithoutSolicitudesInput = {
@@ -26456,6 +28018,7 @@ export namespace Prisma {
     dd_monitoreoActualizacion?: boolean
     dd_senalesAlertaReporte?: boolean
     aprobadoDebidaDiligencia?: boolean
+    especialidades?: EspecialidadUncheckedCreateNestedManyWithoutTercerosInput
   }
 
   export type TerceroCreateOrConnectWithoutSolicitudesInput = {
@@ -26897,6 +28460,7 @@ export namespace Prisma {
     dd_monitoreoActualizacion?: BoolFieldUpdateOperationsInput | boolean
     dd_senalesAlertaReporte?: BoolFieldUpdateOperationsInput | boolean
     aprobadoDebidaDiligencia?: BoolFieldUpdateOperationsInput | boolean
+    especialidades?: EspecialidadUpdateManyWithoutTercerosNestedInput
   }
 
   export type TerceroUncheckedUpdateWithoutSolicitudesInput = {
@@ -26921,6 +28485,7 @@ export namespace Prisma {
     dd_monitoreoActualizacion?: BoolFieldUpdateOperationsInput | boolean
     dd_senalesAlertaReporte?: BoolFieldUpdateOperationsInput | boolean
     aprobadoDebidaDiligencia?: BoolFieldUpdateOperationsInput | boolean
+    especialidades?: EspecialidadUncheckedUpdateManyWithoutTercerosNestedInput
   }
 
   export type CronogramaContratoUpsertWithoutSolicitudInput = {
@@ -29044,6 +30609,102 @@ export namespace Prisma {
     actualizadoEn?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
+  export type EspecialidadUpdateWithoutTercerosInput = {
+    nombre?: StringFieldUpdateOperationsInput | string
+    descripcion?: NullableStringFieldUpdateOperationsInput | string | null
+    creadoEn?: DateTimeFieldUpdateOperationsInput | Date | string
+    actualizadoEn?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type EspecialidadUncheckedUpdateWithoutTercerosInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    nombre?: StringFieldUpdateOperationsInput | string
+    descripcion?: NullableStringFieldUpdateOperationsInput | string | null
+    creadoEn?: DateTimeFieldUpdateOperationsInput | Date | string
+    actualizadoEn?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type EspecialidadUncheckedUpdateManyWithoutTercerosInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    nombre?: StringFieldUpdateOperationsInput | string
+    descripcion?: NullableStringFieldUpdateOperationsInput | string | null
+    creadoEn?: DateTimeFieldUpdateOperationsInput | Date | string
+    actualizadoEn?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type TerceroUpdateWithoutEspecialidadesInput = {
+    razonSocial?: StringFieldUpdateOperationsInput | string
+    nit?: StringFieldUpdateOperationsInput | string
+    tipoContrato?: StringFieldUpdateOperationsInput | string
+    confidencialidad?: BoolFieldUpdateOperationsInput | boolean
+    representanteLegal?: NullableStringFieldUpdateOperationsInput | string | null
+    cedulaRepresentante?: NullableStringFieldUpdateOperationsInput | string | null
+    correoFirma?: NullableStringFieldUpdateOperationsInput | string | null
+    direccionRepresentante?: NullableStringFieldUpdateOperationsInput | string | null
+    telefonoRepresentante?: NullableStringFieldUpdateOperationsInput | string | null
+    nombreContacto?: NullableStringFieldUpdateOperationsInput | string | null
+    telefonoContacto?: NullableStringFieldUpdateOperationsInput | string | null
+    correoContacto?: NullableStringFieldUpdateOperationsInput | string | null
+    fechaVencimientoSagrilaft?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    dd_identificacionContraparte?: BoolFieldUpdateOperationsInput | boolean
+    dd_consultaListasRestrictivas?: BoolFieldUpdateOperationsInput | boolean
+    dd_verificacionPep?: BoolFieldUpdateOperationsInput | boolean
+    dd_conocimientoNegocio?: BoolFieldUpdateOperationsInput | boolean
+    dd_monitoreoActualizacion?: BoolFieldUpdateOperationsInput | boolean
+    dd_senalesAlertaReporte?: BoolFieldUpdateOperationsInput | boolean
+    aprobadoDebidaDiligencia?: BoolFieldUpdateOperationsInput | boolean
+    solicitudes?: SolicitudUpdateManyWithoutTerceroNestedInput
+  }
+
+  export type TerceroUncheckedUpdateWithoutEspecialidadesInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    razonSocial?: StringFieldUpdateOperationsInput | string
+    nit?: StringFieldUpdateOperationsInput | string
+    tipoContrato?: StringFieldUpdateOperationsInput | string
+    confidencialidad?: BoolFieldUpdateOperationsInput | boolean
+    representanteLegal?: NullableStringFieldUpdateOperationsInput | string | null
+    cedulaRepresentante?: NullableStringFieldUpdateOperationsInput | string | null
+    correoFirma?: NullableStringFieldUpdateOperationsInput | string | null
+    direccionRepresentante?: NullableStringFieldUpdateOperationsInput | string | null
+    telefonoRepresentante?: NullableStringFieldUpdateOperationsInput | string | null
+    nombreContacto?: NullableStringFieldUpdateOperationsInput | string | null
+    telefonoContacto?: NullableStringFieldUpdateOperationsInput | string | null
+    correoContacto?: NullableStringFieldUpdateOperationsInput | string | null
+    fechaVencimientoSagrilaft?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    dd_identificacionContraparte?: BoolFieldUpdateOperationsInput | boolean
+    dd_consultaListasRestrictivas?: BoolFieldUpdateOperationsInput | boolean
+    dd_verificacionPep?: BoolFieldUpdateOperationsInput | boolean
+    dd_conocimientoNegocio?: BoolFieldUpdateOperationsInput | boolean
+    dd_monitoreoActualizacion?: BoolFieldUpdateOperationsInput | boolean
+    dd_senalesAlertaReporte?: BoolFieldUpdateOperationsInput | boolean
+    aprobadoDebidaDiligencia?: BoolFieldUpdateOperationsInput | boolean
+    solicitudes?: SolicitudUncheckedUpdateManyWithoutTerceroNestedInput
+  }
+
+  export type TerceroUncheckedUpdateManyWithoutEspecialidadesInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    razonSocial?: StringFieldUpdateOperationsInput | string
+    nit?: StringFieldUpdateOperationsInput | string
+    tipoContrato?: StringFieldUpdateOperationsInput | string
+    confidencialidad?: BoolFieldUpdateOperationsInput | boolean
+    representanteLegal?: NullableStringFieldUpdateOperationsInput | string | null
+    cedulaRepresentante?: NullableStringFieldUpdateOperationsInput | string | null
+    correoFirma?: NullableStringFieldUpdateOperationsInput | string | null
+    direccionRepresentante?: NullableStringFieldUpdateOperationsInput | string | null
+    telefonoRepresentante?: NullableStringFieldUpdateOperationsInput | string | null
+    nombreContacto?: NullableStringFieldUpdateOperationsInput | string | null
+    telefonoContacto?: NullableStringFieldUpdateOperationsInput | string | null
+    correoContacto?: NullableStringFieldUpdateOperationsInput | string | null
+    fechaVencimientoSagrilaft?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    dd_identificacionContraparte?: BoolFieldUpdateOperationsInput | boolean
+    dd_consultaListasRestrictivas?: BoolFieldUpdateOperationsInput | boolean
+    dd_verificacionPep?: BoolFieldUpdateOperationsInput | boolean
+    dd_conocimientoNegocio?: BoolFieldUpdateOperationsInput | boolean
+    dd_monitoreoActualizacion?: BoolFieldUpdateOperationsInput | boolean
+    dd_senalesAlertaReporte?: BoolFieldUpdateOperationsInput | boolean
+    aprobadoDebidaDiligencia?: BoolFieldUpdateOperationsInput | boolean
+  }
+
   export type HistorialSolicitudCreateManySolicitudInput = {
     id?: number
     usuarioId: string
@@ -29417,6 +31078,10 @@ export namespace Prisma {
      */
     export type TerceroCountOutputTypeArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = TerceroCountOutputTypeDefaultArgs<ExtArgs>
     /**
+     * @deprecated Use EspecialidadCountOutputTypeDefaultArgs instead
+     */
+    export type EspecialidadCountOutputTypeArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = EspecialidadCountOutputTypeDefaultArgs<ExtArgs>
+    /**
      * @deprecated Use SolicitudCountOutputTypeDefaultArgs instead
      */
     export type SolicitudCountOutputTypeArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = SolicitudCountOutputTypeDefaultArgs<ExtArgs>
@@ -29464,6 +31129,10 @@ export namespace Prisma {
      * @deprecated Use TerceroDefaultArgs instead
      */
     export type TerceroArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = TerceroDefaultArgs<ExtArgs>
+    /**
+     * @deprecated Use EspecialidadDefaultArgs instead
+     */
+    export type EspecialidadArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = EspecialidadDefaultArgs<ExtArgs>
     /**
      * @deprecated Use SolicitudDefaultArgs instead
      */

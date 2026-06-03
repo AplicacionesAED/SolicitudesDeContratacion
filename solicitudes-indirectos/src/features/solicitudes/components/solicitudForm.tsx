@@ -263,6 +263,10 @@ export function SolicitudForm({
   const [editingTercero, setEditingTercero] = useState(false);
   const [savingTercero, setSavingTercero] = useState(false);
   const [terceroEditForm, setTerceroEditForm] = useState<Partial<Tercero>>({});
+  const [espCatalogo, setEspCatalogo] = useState<{ id: number; nombre: string }[]>([]);
+  const [editingEspIds, setEditingEspIds] = useState<number[]>([]);
+  const [espSearch, setEspSearch] = useState("");
+  const [espDropdownOpen, setEspDropdownOpen] = useState(false);
 
   const {
     register,
@@ -520,11 +524,19 @@ export function SolicitudForm({
       const res = await fetch(`/api/terceros/${selectedTercero.id}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(terceroEditForm),
+        body: JSON.stringify({ ...terceroEditForm, especialidadIds: editingEspIds }),
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error ?? "Error al guardar");
-      setSelectedTercero({ ...selectedTercero, ...terceroEditForm });
+      const updatedEsps = espCatalogo.filter((e) => editingEspIds.includes(e.id));
+      setSelectedTercero({ ...selectedTercero, ...terceroEditForm, especialidades: updatedEsps });
+      setTerceros((prev) =>
+        prev.map((t) =>
+          t.id === selectedTercero.id
+            ? { ...t, ...terceroEditForm, especialidades: updatedEsps }
+            : t
+        )
+      );
       setEditingTercero(false);
     } catch (err: any) {
       alert(err.message ?? "Error al guardar los datos del contratista");
@@ -839,7 +851,17 @@ export function SolicitudForm({
                 {!editingTercero && (
                   <button
                     type="button"
-                    onClick={() => { setTerceroEditForm({ nit: selectedTercero.nit, representanteLegal: selectedTercero.representanteLegal, cedulaRepresentante: selectedTercero.cedulaRepresentante, correoFirma: selectedTercero.correoFirma, direccionRepresentante: selectedTercero.direccionRepresentante, telefonoRepresentante: selectedTercero.telefonoRepresentante, nombreContacto: selectedTercero.nombreContacto ?? "", telefonoContacto: selectedTercero.telefonoContacto ?? "", correoContacto: selectedTercero.correoContacto ?? "" }); setEditingTercero(true); }}
+                    onClick={async () => {
+                      setTerceroEditForm({ nit: selectedTercero.nit, representanteLegal: selectedTercero.representanteLegal, cedulaRepresentante: selectedTercero.cedulaRepresentante, correoFirma: selectedTercero.correoFirma, direccionRepresentante: selectedTercero.direccionRepresentante, telefonoRepresentante: selectedTercero.telefonoRepresentante, nombreContacto: selectedTercero.nombreContacto ?? "", telefonoContacto: selectedTercero.telefonoContacto ?? "", correoContacto: selectedTercero.correoContacto ?? "" });
+                      setEditingEspIds(selectedTercero.especialidades?.map((e) => e.id) ?? []);
+                      setEspSearch("");
+                      setEspDropdownOpen(false);
+                      if (espCatalogo.length === 0) {
+                        const res = await fetch("/api/especialidades", { cache: "no-store" });
+                        if (res.ok) setEspCatalogo(await res.json());
+                      }
+                      setEditingTercero(true);
+                    }}
                     className="text-xs text-blue-600 hover:text-blue-800 font-medium"
                   >
                     Editar datos
@@ -872,6 +894,91 @@ export function SolicitudForm({
                       </div>
                     ))}
                   </div>
+                  {espCatalogo.length > 0 && (
+                    <div>
+                      <p className="text-xs text-gray-500 mb-1.5 font-medium">Especialidades</p>
+                      {/* Chips de especialidades seleccionadas */}
+                      {editingEspIds.length > 0 && (
+                        <div className="flex flex-wrap gap-1.5 mb-2">
+                          {editingEspIds.map((id) => {
+                            const esp = espCatalogo.find((e) => e.id === id);
+                            if (!esp) return null;
+                            return (
+                              <span key={id} className="inline-flex items-center gap-1 rounded-full bg-blue-50 border border-blue-200 px-2 py-0.5 text-xs text-blue-800">
+                                {esp.nombre}
+                                <button
+                                  type="button"
+                                  onClick={() => setEditingEspIds((prev) => prev.filter((x) => x !== id))}
+                                  className="text-blue-400 hover:text-blue-700"
+                                >
+                                  <X size={10} />
+                                </button>
+                              </span>
+                            );
+                          })}
+                        </div>
+                      )}
+                      {/* Input de búsqueda con dropdown */}
+                      <div className="relative">
+                        <input
+                          type="text"
+                          value={espSearch}
+                          onChange={(e) => { setEspSearch(e.target.value); setEspDropdownOpen(true); }}
+                          onFocus={() => setEspDropdownOpen(true)}
+                          onBlur={() => setTimeout(() => setEspDropdownOpen(false), 150)}
+                          onKeyDown={(e) => {
+                            if (e.key === "Enter") {
+                              e.preventDefault();
+                              const match = espCatalogo.find(
+                                (esp) =>
+                                  !editingEspIds.includes(esp.id) &&
+                                  esp.nombre.toLowerCase().includes(espSearch.toLowerCase())
+                              );
+                              if (match) {
+                                setEditingEspIds((prev) => [...prev, match.id]);
+                                setEspSearch("");
+                                setEspDropdownOpen(false);
+                              }
+                            }
+                          }}
+                          placeholder="Buscar especialidad y presionar Enter…"
+                          className="w-full rounded-md border border-gray-300 px-2.5 py-1.5 text-xs focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        />
+                        {espDropdownOpen && espSearch.length > 0 && (
+                          <div className="absolute z-30 mt-1 w-full bg-white border border-gray-200 rounded-lg shadow-lg max-h-44 overflow-y-auto">
+                            {espCatalogo.filter(
+                              (e) =>
+                                !editingEspIds.includes(e.id) &&
+                                e.nombre.toLowerCase().includes(espSearch.toLowerCase())
+                            ).length === 0 ? (
+                              <p className="px-3 py-2 text-xs text-gray-400 italic">Sin resultados</p>
+                            ) : (
+                              espCatalogo
+                                .filter(
+                                  (e) =>
+                                    !editingEspIds.includes(e.id) &&
+                                    e.nombre.toLowerCase().includes(espSearch.toLowerCase())
+                                )
+                                .map((e) => (
+                                  <button
+                                    key={e.id}
+                                    type="button"
+                                    onMouseDown={() => {
+                                      setEditingEspIds((prev) => [...prev, e.id]);
+                                      setEspSearch("");
+                                      setEspDropdownOpen(false);
+                                    }}
+                                    className="flex w-full items-center px-3 py-2 text-xs text-gray-800 hover:bg-blue-50 text-left"
+                                  >
+                                    {e.nombre}
+                                  </button>
+                                ))
+                            )}
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  )}
                   <div className="flex gap-2 pt-1">
                     <button
                       type="button"
