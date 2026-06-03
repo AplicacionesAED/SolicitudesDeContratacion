@@ -337,64 +337,73 @@ export default function TerceroDetallePage() {
                   </div>
                 )}
                 {/* Input búsqueda */}
-                <div className="relative">
-                  <input
-                    type="text"
-                    value={espSearch}
-                    onChange={(e) => { setEspSearch(e.target.value); setEspDropdownOpen(true); }}
-                    onFocus={() => setEspDropdownOpen(true)}
-                    onBlur={() => setTimeout(() => setEspDropdownOpen(false), 150)}
-                    onKeyDown={(e) => {
-                      if (e.key === "Enter") {
-                        e.preventDefault();
-                        const match = catalogo.find(
-                          (esp) =>
-                            !selectedIds.includes(esp.id) &&
-                            esp.nombre.toLowerCase().includes(espSearch.toLowerCase())
-                        );
-                        if (match) {
-                          setSelectedIds((prev) => [...prev, match.id]);
-                          setEspSearch("");
-                          setEspDropdownOpen(false);
-                        }
-                      }
-                    }}
-                    placeholder="Buscar especialidad y presionar Enter…"
-                    className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  />
-                  {espDropdownOpen && espSearch.length > 0 && (
-                    <div className="absolute z-30 mt-1 w-full bg-white border border-gray-200 rounded-lg shadow-lg max-h-44 overflow-y-auto">
-                      {catalogo.filter(
-                        (e) =>
-                          !selectedIds.includes(e.id) &&
-                          e.nombre.toLowerCase().includes(espSearch.toLowerCase())
-                      ).length === 0 ? (
-                        <p className="px-3 py-2 text-sm text-gray-400 italic">Sin resultados</p>
-                      ) : (
-                        catalogo
-                          .filter(
-                            (e) =>
-                              !selectedIds.includes(e.id) &&
-                              e.nombre.toLowerCase().includes(espSearch.toLowerCase())
-                          )
-                          .map((e) => (
-                            <button
-                              key={e.id}
-                              type="button"
-                              onMouseDown={() => {
-                                setSelectedIds((prev) => [...prev, e.id]);
-                                setEspSearch("");
-                                setEspDropdownOpen(false);
-                              }}
-                              className="flex w-full items-center px-3 py-2 text-sm text-gray-800 hover:bg-blue-50 text-left"
-                            >
-                              {e.nombre}
-                            </button>
-                          ))
-                      )}
+                {selectedIds.length >= 3 ? (
+                  <p className="text-xs text-amber-700 bg-amber-50 border border-amber-200 rounded-md px-3 py-2">
+                    Máximo 3 especialidades
+                  </p>
+                ) : (
+                  <div className="relative">
+                    <div
+                      className={`flex items-center rounded-md border px-3 py-2 bg-white cursor-text ${espDropdownOpen ? "ring-2 ring-blue-500 border-blue-500" : "border-gray-300 hover:border-gray-400"}`}
+                      onClick={() => setEspDropdownOpen(true)}
+                    >
+                      <input
+                        type="text"
+                        value={espSearch}
+                        onChange={(e) => setEspSearch(e.target.value)}
+                        onFocus={() => setEspDropdownOpen(true)}
+                        onBlur={() => setTimeout(() => setEspDropdownOpen(false), 150)}
+                        onKeyDown={(e) => {
+                          if (e.key === "Enter") {
+                            e.preventDefault();
+                            const match = catalogo.find(
+                              (esp) =>
+                                !selectedIds.includes(esp.id) &&
+                                esp.nombre.toLowerCase().includes(espSearch.toLowerCase())
+                            );
+                            if (match) {
+                              setSelectedIds((prev) => [...prev, match.id]);
+                              setEspSearch("");
+                            }
+                          }
+                        }}
+                        placeholder="Seleccionar especialidad…"
+                        className="flex-1 text-sm text-gray-900 placeholder:text-gray-400 outline-none bg-transparent"
+                      />
                     </div>
-                  )}
-                </div>
+                    {espDropdownOpen && (
+                      <div className="absolute z-30 mt-1 w-full bg-white border border-gray-200 rounded-lg shadow-lg max-h-44 overflow-y-auto">
+                        {catalogo.filter(
+                          (e) =>
+                            !selectedIds.includes(e.id) &&
+                            e.nombre.toLowerCase().includes(espSearch.toLowerCase())
+                        ).length === 0 ? (
+                          <p className="px-3 py-2 text-sm text-gray-400 italic">Sin resultados</p>
+                        ) : (
+                          catalogo
+                            .filter(
+                              (e) =>
+                                !selectedIds.includes(e.id) &&
+                                e.nombre.toLowerCase().includes(espSearch.toLowerCase())
+                            )
+                            .map((e) => (
+                              <button
+                                key={e.id}
+                                type="button"
+                                onMouseDown={() => {
+                                  setSelectedIds((prev) => [...prev, e.id]);
+                                  setEspSearch("");
+                                }}
+                                className="flex w-full items-center px-3 py-2 text-sm text-gray-800 hover:bg-blue-50 text-left"
+                              >
+                                {e.nombre}
+                              </button>
+                            ))
+                        )}
+                      </div>
+                    )}
+                  </div>
+                )}
               </>
             )}
             <div className="flex items-center gap-2 pt-1">

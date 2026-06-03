@@ -688,7 +688,7 @@ export function SolicitudForm({
                               {sagrilaftBadge(selected.fechaVencimientoSagrilaft)}
                             </span>
                             {selected.especialidades && selected.especialidades.length > 0 && (
-                              <span className="block text-xs text-gray-400 pl-1 truncate">
+                              <span className="block text-xs text-gray-600 pl-1 truncate">
                                 {selected.especialidades.map((e) => `· ${e.nombre}`).join("  ")}
                               </span>
                             )}
@@ -712,7 +712,7 @@ export function SolicitudForm({
                               <span className="flex-1 min-w-0">
                                 <span className="block font-medium text-gray-900">{t.razonSocial}</span>
                                 {t.especialidades && t.especialidades.length > 0 && (
-                                  <span className="block text-xs text-gray-400 mt-0.5 pl-1">
+                                  <span className="block text-xs text-gray-600 mt-0.5 pl-1">
                                     {t.especialidades.map((e) => `· ${e.nombre}`).join("  ")}
                                   </span>
                                 )}
@@ -919,32 +919,41 @@ export function SolicitudForm({
                         </div>
                       )}
                       {/* Input de búsqueda con dropdown */}
+                      {editingEspIds.length >= 3 ? (
+                        <p className="text-xs text-amber-700 bg-amber-50 border border-amber-200 rounded-md px-2.5 py-1.5">
+                          Máximo 3 especialidades
+                        </p>
+                      ) : (
                       <div className="relative">
-                        <input
-                          type="text"
-                          value={espSearch}
-                          onChange={(e) => { setEspSearch(e.target.value); setEspDropdownOpen(true); }}
-                          onFocus={() => setEspDropdownOpen(true)}
-                          onBlur={() => setTimeout(() => setEspDropdownOpen(false), 150)}
-                          onKeyDown={(e) => {
-                            if (e.key === "Enter") {
-                              e.preventDefault();
-                              const match = espCatalogo.find(
-                                (esp) =>
-                                  !editingEspIds.includes(esp.id) &&
-                                  esp.nombre.toLowerCase().includes(espSearch.toLowerCase())
-                              );
-                              if (match) {
-                                setEditingEspIds((prev) => [...prev, match.id]);
-                                setEspSearch("");
-                                setEspDropdownOpen(false);
+                        <div
+                          className={`flex items-center rounded-md border px-2.5 py-1.5 bg-white cursor-text ${espDropdownOpen ? "ring-2 ring-blue-500 border-blue-500" : "border-gray-300 hover:border-gray-400"}`}
+                          onClick={() => setEspDropdownOpen(true)}
+                        >
+                          <input
+                            type="text"
+                            value={espSearch}
+                            onChange={(e) => setEspSearch(e.target.value)}
+                            onFocus={() => setEspDropdownOpen(true)}
+                            onBlur={() => setTimeout(() => setEspDropdownOpen(false), 150)}
+                            onKeyDown={(e) => {
+                              if (e.key === "Enter") {
+                                e.preventDefault();
+                                const match = espCatalogo.find(
+                                  (esp) =>
+                                    !editingEspIds.includes(esp.id) &&
+                                    esp.nombre.toLowerCase().includes(espSearch.toLowerCase())
+                                );
+                                if (match) {
+                                  setEditingEspIds((prev) => [...prev, match.id]);
+                                  setEspSearch("");
+                                }
                               }
-                            }
-                          }}
-                          placeholder="Buscar especialidad y presionar Enter…"
-                          className="w-full rounded-md border border-gray-300 px-2.5 py-1.5 text-xs focus:outline-none focus:ring-2 focus:ring-blue-500"
-                        />
-                        {espDropdownOpen && espSearch.length > 0 && (
+                            }}
+                            placeholder="Seleccionar especialidad…"
+                            className="flex-1 text-xs text-gray-900 placeholder:text-gray-400 outline-none bg-transparent"
+                          />
+                        </div>
+                        {espDropdownOpen && (
                           <div className="absolute z-30 mt-1 w-full bg-white border border-gray-200 rounded-lg shadow-lg max-h-44 overflow-y-auto">
                             {espCatalogo.filter(
                               (e) =>
@@ -966,7 +975,6 @@ export function SolicitudForm({
                                     onMouseDown={() => {
                                       setEditingEspIds((prev) => [...prev, e.id]);
                                       setEspSearch("");
-                                      setEspDropdownOpen(false);
                                     }}
                                     className="flex w-full items-center px-3 py-2 text-xs text-gray-800 hover:bg-blue-50 text-left"
                                   >
@@ -977,6 +985,7 @@ export function SolicitudForm({
                           </div>
                         )}
                       </div>
+                      )}
                     </div>
                   )}
                   <div className="flex gap-2 pt-1">
