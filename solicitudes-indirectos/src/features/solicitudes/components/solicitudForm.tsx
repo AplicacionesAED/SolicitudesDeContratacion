@@ -52,6 +52,7 @@ interface Tercero {
   aprobadoDebidaDiligencia: boolean;
   confidencialidad: boolean;
   fechaVencimientoSagrilaft?: string | null;
+  especialidades?: { id: number; nombre: string }[];
 }
 
 function sagrilaftBadge(fechaVencimiento?: string | null) {
@@ -669,9 +670,16 @@ export function SolicitudForm({
                     <div className={`flex items-center gap-2 rounded-md border px-3 py-2 bg-white cursor-text ${errors.terceroId ? "border-red-400" : "border-gray-300"} ${open ? "ring-2 ring-blue-500 border-blue-500" : "hover:border-gray-400"}`} onClick={() => !selected && setOpen(true)}>
                       {selected ? (
                         <>
-                          <span className="flex-1 flex items-center gap-2 min-w-0">
-                            <span className="text-sm text-gray-900 font-medium truncate">{selected.razonSocial}</span>
-                            {sagrilaftBadge(selected.fechaVencimientoSagrilaft)}
+                          <span className="flex-1 min-w-0">
+                            <span className="flex items-center gap-2">
+                              <span className="text-sm text-gray-900 font-medium truncate">{selected.razonSocial}</span>
+                              {sagrilaftBadge(selected.fechaVencimientoSagrilaft)}
+                            </span>
+                            {selected.especialidades && selected.especialidades.length > 0 && (
+                              <span className="block text-xs text-gray-400 pl-1 truncate">
+                                {selected.especialidades.map((e) => `· ${e.nombre}`).join("  ")}
+                              </span>
+                            )}
                           </span>
                           <button type="button" onClick={() => { field.onChange(undefined); setTerceroSearch(""); setOpen(true); }} className="shrink-0 text-gray-400 hover:text-gray-600"><X size={14} /></button>
                         </>
@@ -688,8 +696,15 @@ export function SolicitudForm({
                           </div>
                         ) : (
                           filtered.map((t) => (
-                            <button key={t.id} type="button" onClick={() => { field.onChange(t.id); setTerceroSearch(""); setOpen(false); }} className="flex w-full items-center gap-2 px-3 py-2.5 text-sm text-left hover:bg-blue-50 transition-colors">
-                              <span className="flex-1 font-medium text-gray-900">{t.razonSocial}</span>
+                            <button key={t.id} type="button" onClick={() => { field.onChange(t.id); setTerceroSearch(""); setOpen(false); }} className="flex w-full items-start gap-2 px-3 py-2.5 text-sm text-left hover:bg-blue-50 transition-colors">
+                              <span className="flex-1 min-w-0">
+                                <span className="block font-medium text-gray-900">{t.razonSocial}</span>
+                                {t.especialidades && t.especialidades.length > 0 && (
+                                  <span className="block text-xs text-gray-400 mt-0.5 pl-1">
+                                    {t.especialidades.map((e) => `· ${e.nombre}`).join("  ")}
+                                  </span>
+                                )}
+                              </span>
                               {sagrilaftBadge(t.fechaVencimientoSagrilaft)}
                             </button>
                           ))
