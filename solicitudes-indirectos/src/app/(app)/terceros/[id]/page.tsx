@@ -147,9 +147,9 @@ export default function TerceroDetallePage() {
     setEditingEsp(true);
   }
 
-  function toggleId(id: number) {
+  function toggleId(espId: number) {
     setSelectedIds((prev) =>
-      prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]
+      prev.includes(espId) ? prev.filter((x) => x !== espId) : [...prev, espId]
     );
   }
 
