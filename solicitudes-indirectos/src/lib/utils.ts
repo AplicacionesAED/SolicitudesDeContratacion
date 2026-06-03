@@ -303,6 +303,7 @@ export const FUNCIONALIDADES_POR_ROL: Record<string, string[]> = {
   ],
   ADMIN: [
     "crear_terceros",
+    "gestionar_especialidades",
   ],
 };
 

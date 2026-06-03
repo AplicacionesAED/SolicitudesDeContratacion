@@ -62,6 +62,7 @@ const TODAS_LAS_FUNCIONALIDADES: Record<string, { nombre: string; rolPorDefecto:
   registrar_adpro: { nombre: "Registrar en ADPRO", rolPorDefecto: "CONTROLES" },
   aprobacion_final: { nombre: "Aprobación final de solicitudes", rolPorDefecto: "DIRECTOR_CONTROLES" },
   crear_terceros: { nombre: "Crear y gestionar terceros", rolPorDefecto: "ADMIN" },
+  gestionar_especialidades: { nombre: "Gestionar especialidades", rolPorDefecto: "ADMIN" },
 };
 
 // ─── Page ─────────────────────────────────────────────────────────────────────
