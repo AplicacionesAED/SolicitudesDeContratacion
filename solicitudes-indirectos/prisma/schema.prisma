@@ -46,6 +46,17 @@ model VerificationToken {
 
 // ─── Usuarios y Roles ────────────────────────────────────────────────────────
 
+model Rol {
+  slug                String   @id
+  nombre              String
+  descripcion         String?
+  funcionalidades     String   @default("[]")
+  verTodasSolicitudes Boolean  @default(false)
+  protegido           Boolean  @default(false)
+  creadoEn            DateTime @default(now())
+  actualizadoEn       DateTime @updatedAt
+}
+
 model User {
   id            String    @id @default(cuid())
   nombre        String

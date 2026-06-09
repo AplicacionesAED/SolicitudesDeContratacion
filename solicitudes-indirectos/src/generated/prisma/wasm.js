@@ -147,6 +147,17 @@ exports.Prisma.VerificationTokenScalarFieldEnum = {
   expires: 'expires'
 };
 
+exports.Prisma.RolScalarFieldEnum = {
+  slug: 'slug',
+  nombre: 'nombre',
+  descripcion: 'descripcion',
+  funcionalidades: 'funcionalidades',
+  verTodasSolicitudes: 'verTodasSolicitudes',
+  protegido: 'protegido',
+  creadoEn: 'creadoEn',
+  actualizadoEn: 'actualizadoEn'
+};
+
 exports.Prisma.UserScalarFieldEnum = {
   id: 'id',
   nombre: 'nombre',
@@ -354,6 +365,7 @@ exports.Prisma.ModelName = {
   Account: 'Account',
   Session: 'Session',
   VerificationToken: 'VerificationToken',
+  Rol: 'Rol',
   User: 'User',
   Proyecto: 'Proyecto',
   Frente: 'Frente',
