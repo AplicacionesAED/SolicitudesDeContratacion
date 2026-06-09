@@ -1,10 +1,8 @@
-import { PrismaPg } from "@prisma/adapter-pg";
 import { PrismaClient } from "../../src/generated/prisma";
 import * as fs from "fs";
 import * as path from "path";
 
-const adapter = new PrismaPg({ connectionString: process.env.DATABASE_URL! });
-const prisma = new PrismaClient({ adapter } as any);
+const prisma = new PrismaClient();
 
 const ESTADOS = [
   "BORRADOR",

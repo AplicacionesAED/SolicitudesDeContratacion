@@ -40,3 +40,8 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
+# docs generation artifacts
+/manual-usuario.docx
+/scripts/generate-docs/screenshots/
+/scripts/generate-docs/test-data.json
+
