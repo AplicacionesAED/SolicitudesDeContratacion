@@ -2,6 +2,7 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { tienePermiso } from "@/lib/utils";
+import { getRolesFuncionalidades } from "@/lib/roles";
 import {
   notificarNuevaSolicitud,
   notificarAprobadaDirector,
@@ -132,9 +133,9 @@ export async function POST(
     const funcionalidadesAdicionales: string[] = session.user.funcionalidadesAdicionales ?? [];
     const userId = session.user.id;
 
-    // Validate permission
+    const funcionalidadesPorRol = await getRolesFuncionalidades();
     const tieneAlgunPermiso = transicion.permisosPermitidos.some((p) =>
-      tienePermiso(userRoles, funcionalidadesAdicionales, p)
+      tienePermiso(userRoles, funcionalidadesAdicionales, p, funcionalidadesPorRol)
     );
 
     if (!tieneAlgunPermiso) {
