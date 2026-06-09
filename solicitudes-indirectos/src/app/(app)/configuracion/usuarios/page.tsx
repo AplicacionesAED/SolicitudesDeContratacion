@@ -126,6 +126,13 @@ export default function UsuariosPage() {
     fetchData();
   }, [fetchData]);
 
+  useEffect(() => {
+    if (generatedPasswords.length === 0) return;
+    const handler = (e: BeforeUnloadEvent) => { e.preventDefault(); };
+    window.addEventListener("beforeunload", handler);
+    return () => window.removeEventListener("beforeunload", handler);
+  }, [generatedPasswords.length]);
+
   const usuariosFiltrados = users.filter((u) => {
     const q = busqueda.toLowerCase();
     const coincideNombre = !busqueda || u.nombre.toLowerCase().includes(q) || u.email.toLowerCase().includes(q);
@@ -514,7 +521,11 @@ export default function UsuariosPage() {
                 Exportar Excel
               </button>
               <button
-                onClick={() => setGeneratedPasswords([])}
+                onClick={() => {
+                  if (window.confirm("¿Seguro que deseas limpiar las contraseñas generadas? Esta acción no se puede deshacer.")) {
+                    setGeneratedPasswords([]);
+                  }
+                }}
                 className="inline-flex items-center gap-1.5 rounded-lg border border-amber-300 px-3 py-1.5 text-xs font-medium text-amber-700 hover:bg-amber-100 transition-colors"
               >
                 <X size={13} />
@@ -1001,61 +1012,6 @@ export default function UsuariosPage() {
                   className="flex-1 py-2 rounded-lg bg-indigo-600 text-xs font-bold text-white hover:bg-indigo-700 disabled:opacity-50 shadow-md shadow-indigo-100 transition-all"
                 >
                   {saving ? "Guardando..." : "Asignar Frentes"}
-                </button>
-              </div>
-            </div>
-          </div>
-        </>
-      )}
-      {/* Bulk Assign Modal */}
-      {bulkModalOpen && (
-        <>
-          <div className="fixed inset-0 z-[60] bg-black/40 backdrop-blur-sm" onClick={() => setBulkModalOpen(false)} />
-          <div className="fixed inset-0 z-[70] flex items-center justify-center p-4">
-            <div className="bg-white rounded-xl shadow-2xl w-full max-w-md overflow-hidden">
-              <div className="px-6 py-4 border-b border-gray-100 flex items-center justify-between">
-                <h2 className="text-base font-bold text-gray-900">Asignación Masiva de Frentes</h2>
-                <button onClick={() => setBulkModalOpen(false)} className="text-gray-400 hover:text-gray-600 transition-colors"><X size={18} /></button>
-              </div>
-              <div className="p-6 space-y-4">
-                <p className="text-xs text-gray-500 leading-relaxed">
-                  Has seleccionado <strong>{selectedIds.length}</strong> usuarios. 
-                  Selecciona los frentes que deseas asignarles de forma masiva:
-                </p>
-                <div className="max-h-60 overflow-y-auto border border-gray-200 rounded-lg p-1 space-y-1 custom-scrollbar">
-                  {frentes.map((f) => (
-                    <label key={f.id} className="flex items-center gap-3 p-2 hover:bg-gray-50 rounded-md cursor-pointer transition-colors group">
-                      <input
-                        type="checkbox"
-                        checked={bulkFrentesIds.includes(f.id)}
-                        onChange={(e) => {
-                          if (e.target.checked) setBulkFrentesIds(prev => [...prev, f.id]);
-                          else setBulkFrentesIds(prev => prev.filter(id => id !== f.id));
-                        }}
-                        className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
-                      />
-                      <div className="min-w-0">
-                        <p className="text-[11px] font-bold text-gray-800 truncate group-hover:text-blue-600 transition-colors">{f.nombre}</p>
-                        <p className="text-[10px] text-gray-400 truncate uppercase tracking-tighter">{f.proyecto.nombre}</p>
-                      </div>
-                    </label>
-                  ))}
-                </div>
-              </div>
-              <div className="px-6 py-4 bg-gray-50 flex gap-3">
-                <button
-                  onClick={() => setBulkModalOpen(false)}
-                  className="flex-1 py-2.5 rounded-lg border border-gray-200 text-xs font-bold text-gray-600 bg-white hover:bg-gray-50 transition-all"
-                >
-                  Cancelar
-                </button>
-                <button
-                  onClick={handleBulkAssignFrentes}
-                  disabled={saving || bulkFrentesIds.length === 0}
-                  className="flex-1 py-2.5 rounded-lg bg-indigo-600 text-xs font-bold text-white hover:bg-indigo-700 disabled:opacity-50 shadow-md shadow-indigo-200 transition-all flex items-center justify-center gap-2"
-                >
-                  {saving && <Spinner />}
-                  Asignar a {selectedIds.length} usuarios
                 </button>
               </div>
             </div>
