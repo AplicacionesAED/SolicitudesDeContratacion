@@ -10,7 +10,10 @@ export async function POST(request: Request) {
       return Response.json({ error: "No autenticado" }, { status: 401 });
     }
 
-    const userRoles: string[] = session.user.roles ?? [session.user.rol];
+    const userRoles: string[] =
+      session.user.roles && session.user.roles.length > 0
+        ? session.user.roles
+        : [session.user.rol].filter(Boolean) as string[];
     if (!userRoles.includes("ADMIN")) {
       return Response.json({ error: "Solo ADMIN puede resetear contraseñas" }, { status: 403 });
     }
@@ -35,12 +38,17 @@ export async function POST(request: Request) {
       }
     }
 
-    const hashed = await Promise.all(
-      users.map(async ({ id, password }) => ({
-        id,
-        hashed: await bcrypt.hash(password, 12),
-      }))
-    );
+    const existingCount = await prisma.user.count({
+      where: { id: { in: users.map((u) => u.id) } },
+    });
+    if (existingCount !== users.length) {
+      return Response.json({ error: "Uno o más usuarios no existen" }, { status: 400 });
+    }
+
+    const hashed: { id: string; hashed: string }[] = [];
+    for (const { id, password } of users) {
+      hashed.push({ id, hashed: await bcrypt.hash(password, 12) });
+    }
 
     await prisma.$transaction(
       hashed.map(({ id, hashed: pwd }) =>
