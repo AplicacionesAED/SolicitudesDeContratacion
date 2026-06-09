@@ -22,11 +22,30 @@ export async function POST(request: Request) {
       return Response.json({ error: "Se requiere al menos un usuario" }, { status: 400 });
     }
 
-    await Promise.all(
-      users.map(async ({ id, password }) => {
-        const hashed = await bcrypt.hash(password, 12);
-        await prisma.user.update({ where: { id }, data: { password: hashed } });
-      })
+    if (users.length > 100) {
+      return Response.json({ error: "Máximo 100 usuarios por solicitud" }, { status: 400 });
+    }
+
+    for (const { id, password } of users) {
+      if (!id || typeof id !== "string") {
+        return Response.json({ error: "Cada entrada debe tener un id válido" }, { status: 400 });
+      }
+      if (!password || password.length < 8) {
+        return Response.json({ error: "Cada contraseña debe tener al menos 8 caracteres" }, { status: 400 });
+      }
+    }
+
+    const hashed = await Promise.all(
+      users.map(async ({ id, password }) => ({
+        id,
+        hashed: await bcrypt.hash(password, 12),
+      }))
+    );
+
+    await prisma.$transaction(
+      hashed.map(({ id, hashed: pwd }) =>
+        prisma.user.update({ where: { id }, data: { password: pwd } })
+      )
     );
 
     return Response.json({ success: true, count: users.length });
