@@ -2,9 +2,8 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { buildConsecutivo, abbreviate, normalizeFrenteName, tienePermiso } from "@/lib/utils";
+import { getRolesVerTodas } from "@/lib/roles";
 import { notificarNuevaSolicitud } from "@/lib/notifications";
-
-const ROLES_VER_TODAS: string[] = ["CONTRATOS", "CONTROLES", "DIRECTOR_CONTROLES", "DIRECTOR_TECNICO", "ADMIN"];
 
 export async function GET(request: Request) {
   try {
@@ -52,7 +51,8 @@ export async function GET(request: Request) {
     // SOLICITANTE and DIRECTOR_PROYECTO only see their own frentes' solicitudes
     // or solicitudes where they are the solicitante or a responsible party.
     let userFrenteIds: number[] = [];
-    if (!userRoles.some((r) => ROLES_VER_TODAS.includes(r))) {
+    const rolesVerTodas = await getRolesVerTodas();
+    if (!userRoles.some((r) => rolesVerTodas.includes(r))) {
       const userFrente = await prisma.frenteUsuario.findMany({
         where: { userId },
         select: { frenteId: true },
@@ -92,7 +92,7 @@ export async function GET(request: Request) {
     });
 
     // Final granular filtering in-memory
-    if (!userRoles.some((r) => ROLES_VER_TODAS.includes(r))) {
+    if (!userRoles.some((r) => rolesVerTodas.includes(r))) {
       solicitudes = solicitudes.filter((s) => {
         // 1. If I created it or am responsible, I see it (already in DB query, but for safety)
         if (
