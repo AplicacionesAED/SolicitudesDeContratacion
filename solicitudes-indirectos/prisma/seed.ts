@@ -196,6 +196,35 @@ async function main() {
     });
   }
 
+  // ─── Roles ───────────────────────────────────────────────────────────────────
+  const rolesData = [
+    { slug: "SOLICITANTE",        nombre: "Solicitante",            funcionalidades: ["crear_enviar_solicitudes", "crear_otrosi"],                                 verTodasSolicitudes: false, protegido: true },
+    { slug: "TECNICA",            nombre: "Coordinador de Técnica", funcionalidades: ["crear_enviar_solicitudes", "crear_otrosi", "crear_solicitudes_diseno"],      verTodasSolicitudes: false, protegido: true },
+    { slug: "DIRECTOR_TECNICO",   nombre: "Director Técnico",       funcionalidades: ["aprobar_director_tecnico"],                                                  verTodasSolicitudes: false, protegido: true },
+    { slug: "DIRECTOR_PROYECTO",  nombre: "Director de Proyecto",   funcionalidades: ["crear_enviar_solicitudes", "aprobar_solicitudes_frente"],                    verTodasSolicitudes: false, protegido: true },
+    { slug: "CONTRATOS",          nombre: "Contratos",              funcionalidades: ["revisar_contratos"],                                                         verTodasSolicitudes: true,  protegido: true },
+    { slug: "CONTROLES",          nombre: "Coordinador Controles",  funcionalidades: ["registrar_adpro"],                                                           verTodasSolicitudes: true,  protegido: true },
+    { slug: "DIRECTOR_CONTROLES", nombre: "Director de Controles",  funcionalidades: ["aprobacion_final"],                                                          verTodasSolicitudes: true,  protegido: true },
+    { slug: "GERENCIA",           nombre: "Gerencia",               funcionalidades: [],                                                                            verTodasSolicitudes: true,  protegido: true },
+    { slug: "ADMIN",              nombre: "Administrador",          funcionalidades: ["crear_terceros", "gestionar_especialidades"],                                verTodasSolicitudes: true,  protegido: true },
+  ];
+
+  for (const r of rolesData) {
+    await prisma.rol.upsert({
+      where: { slug: r.slug },
+      update: {},
+      create: {
+        slug: r.slug,
+        nombre: r.nombre,
+        funcionalidades: JSON.stringify(r.funcionalidades),
+        verTodasSolicitudes: r.verTodasSolicitudes,
+        protegido: r.protegido,
+      },
+    });
+  }
+
+  console.log("✅ Roles seeded");
+
   console.log("✅ Seed completado");
   console.log("\n📋 Usuarios creados (contraseña: Abc123!):");
   for (const u of usersData) {
