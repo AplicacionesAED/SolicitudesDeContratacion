@@ -2,7 +2,7 @@
 
 import { useSession } from "next-auth/react";
 import Link from "next/link";
-import { Users, MapPin, Settings } from "lucide-react";
+import { Users, MapPin, Settings, Shield } from "lucide-react";
 
 const CARDS = [
   {
@@ -18,6 +18,13 @@ const CARDS = [
     href: "/configuracion/frentes",
     icon: MapPin,
     color: "bg-purple-50 text-purple-600",
+  },
+  {
+    title: "Roles y Permisos",
+    description: "Configura los roles del sistema y las funcionalidades que tiene cada uno.",
+    href: "/configuracion/roles",
+    icon: Shield,
+    color: "bg-green-50 text-green-600",
   },
 ];
 
