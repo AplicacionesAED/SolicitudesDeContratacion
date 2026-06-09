@@ -2,7 +2,9 @@
 
 import { useState, useEffect, useCallback } from "react";
 import { useSession } from "next-auth/react";
-import { Plus, Pencil, UserCheck, UserX, X, Settings, Search, Filter } from "lucide-react";
+import { Plus, Pencil, UserCheck, UserX, X, Settings, Search, Filter, KeyRound, AlertTriangle, FileDown } from "lucide-react";
+import * as XLSX from "xlsx";
+import { generatePassword } from "@/lib/password";
 import { Spinner } from "@/shared/ui/spinner";
 import { ROL_LABELS, FUNCIONALIDADES_POR_ROL } from "@/lib/utils";
 
@@ -92,6 +94,10 @@ export default function UsuariosPage() {
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
   const [bulkModalOpen, setBulkModalOpen] = useState(false);
   const [bulkFrentesIds, setBulkFrentesIds] = useState<number[]>([]);
+  const [generatedPasswords, setGeneratedPasswords] = useState<
+    { nombre: string; email: string; password: string }[]
+  >([]);
+  const [generatingPasswords, setGeneratingPasswords] = useState(false);
 
   const fetchData = useCallback(async () => {
     setLoading(true);
@@ -166,6 +172,57 @@ export default function UsuariosPage() {
     } finally {
       setSaving(false);
     }
+  }
+
+  async function handleGenerarContrasenas() {
+    const targets = users.filter((u) => selectedIds.includes(u.id));
+    if (targets.length === 0) return;
+
+    setGeneratingPasswords(true);
+    try {
+      const pairs = targets.map((u) => ({
+        id: u.id,
+        nombre: u.nombre,
+        email: u.email,
+        password: generatePassword(),
+      }));
+
+      const res = await fetch("/api/users/reset-passwords", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          users: pairs.map(({ id, password }) => ({ id, password })),
+        }),
+      });
+
+      if (!res.ok) {
+        const data = await res.json();
+        throw new Error(data.error ?? "Error al resetear contraseñas");
+      }
+
+      setGeneratedPasswords(
+        pairs.map(({ nombre, email, password }) => ({ nombre, email, password }))
+      );
+      setSelectedIds([]);
+    } catch (err) {
+      alert(err instanceof Error ? err.message : "Error desconocido");
+    } finally {
+      setGeneratingPasswords(false);
+    }
+  }
+
+  function exportarContrasenas() {
+    const wb = XLSX.utils.book_new();
+    const ws = XLSX.utils.json_to_sheet(
+      generatedPasswords.map((p) => ({
+        Nombre: p.nombre,
+        Email: p.email,
+        "Contraseña Temporal": p.password,
+      }))
+    );
+    XLSX.utils.book_append_sheet(wb, ws, "Contraseñas");
+    const today = new Date().toISOString().split("T")[0];
+    XLSX.writeFile(wb, `contraseñas-usuarios-${today}.xlsx`);
   }
 
   function openNew() {
@@ -376,6 +433,16 @@ export default function UsuariosPage() {
               className="inline-flex items-center gap-2 rounded-lg bg-indigo-600 px-4 py-2 text-sm font-bold text-white hover:bg-indigo-700 transition-all shadow-lg shadow-indigo-200"
             >
               Asignar Frentes ({selectedIds.length})
+            </button>
+          )}
+          {selectedIds.length > 0 && (
+            <button
+              onClick={handleGenerarContrasenas}
+              disabled={generatingPasswords}
+              className="inline-flex items-center gap-2 rounded-lg bg-emerald-600 px-4 py-2 text-sm font-medium text-white hover:bg-emerald-700 disabled:opacity-50 transition-colors shadow-md shadow-emerald-100"
+            >
+              {generatingPasswords ? <Spinner size="sm" /> : <KeyRound size={16} />}
+              Generar contraseñas ({selectedIds.length})
             </button>
           )}
           <button
