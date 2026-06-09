@@ -263,6 +263,49 @@ export const ACCION_ESTADO_DESTINO: Record<string, string> = {
   REENVIAR: "ENVIADA",
 };
 
+export const FUNCIONALIDADES_DISPONIBLES: Record<string, { nombre: string; descripcion: string }> = {
+  crear_enviar_solicitudes: {
+    nombre: "Crear y enviar solicitudes",
+    descripcion: "Crear nuevas solicitudes y enviarlas al flujo de aprobación",
+  },
+  crear_otrosi: {
+    nombre: "Crear otrosís",
+    descripcion: "Crear otrosís sobre contratos completados",
+  },
+  crear_solicitudes_diseno: {
+    nombre: "Crear solicitudes de diseño",
+    descripcion: "Crear solicitudes de tipo diseño técnico",
+  },
+  aprobar_director_tecnico: {
+    nombre: "Aprobación técnica",
+    descripcion: "Aprobar solicitudes en etapa de Director Técnico",
+  },
+  aprobar_solicitudes_frente: {
+    nombre: "Aprobar solicitudes del frente",
+    descripcion: "Aprobar solicitudes asignadas como Director de Proyecto",
+  },
+  revisar_contratos: {
+    nombre: "Gestionar contratos",
+    descripcion: "Tramitar solicitudes, crear minutas y enviar a controles",
+  },
+  registrar_adpro: {
+    nombre: "Registrar en ADPRO",
+    descripcion: "Registrar el número de contrato en el sistema ADPRO",
+  },
+  aprobacion_final: {
+    nombre: "Aprobación final",
+    descripcion: "Dar aprobación definitiva como Director de Controles",
+  },
+  crear_terceros: {
+    nombre: "Crear y gestionar terceros",
+    descripcion: "Gestionar directorio de terceros y debida diligencia",
+  },
+  gestionar_especialidades: {
+    nombre: "Gestionar especialidades",
+    descripcion: "Crear, editar y eliminar especialidades de terceros",
+  },
+};
+
 export const ROL_LABELS: Record<string, string> = {
   SOLICITANTE: "Solicitante",
   TECNICA: "Coordinador de Técnica",
@@ -271,6 +314,7 @@ export const ROL_LABELS: Record<string, string> = {
   CONTRATOS: "Contratos",
   CONTROLES: "Coordinador Controles",
   DIRECTOR_CONTROLES: "Director de Controles",
+  GERENCIA: "Gerencia",
   ADMIN: "Administrador",
 };
 
@@ -301,6 +345,7 @@ export const FUNCIONALIDADES_POR_ROL: Record<string, string[]> = {
   DIRECTOR_CONTROLES: [
     "aprobacion_final",
   ],
+  GERENCIA: [],
   ADMIN: [
     "crear_terceros",
     "gestionar_especialidades",
@@ -316,18 +361,16 @@ export const FUNCIONALIDADES_POR_ROL: Record<string, string[]> = {
  */
 export function tienePermiso(
   roles: string[],
-  funcionalidadesSeleccionadas: string[],
-  funcionalidad: string
+  funcionalidadesAdicionales: string[],
+  funcionalidad: string,
+  funcionalidadesPorRol: Record<string, string[]> = FUNCIONALIDADES_POR_ROL
 ): boolean {
-  // Si tiene ADMIN, tiene todo
   if (roles.includes("ADMIN")) return true;
-
-  // Verificar si tiene la funcionalidad en su rol base
   const funcionalidadesDelRol = roles.flatMap(
-    (rol) => FUNCIONALIDADES_POR_ROL[rol] || []
+    (rol) => funcionalidadesPorRol[rol] || []
   );
-
-  // Retorna true si está en su rol o en las seleccionadas (esto incluye si se agregaron o desactivaron)
-  return funcionalidadesDelRol.includes(funcionalidad) ||
-    funcionalidadesSeleccionadas.includes(funcionalidad);
+  return (
+    funcionalidadesDelRol.includes(funcionalidad) ||
+    funcionalidadesAdicionales.includes(funcionalidad)
+  );
 }
