@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { useForm, Controller } from "react-hook-form";
@@ -8,7 +8,6 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import {
   ChevronDown,
-  ChevronRight,
   AlertCircle,
   Info,
   FileUp,
@@ -16,6 +15,7 @@ import {
   Save,
   Send,
   X,
+  CheckCircle2,
 } from "lucide-react";
 import { Button } from "@/shared/ui/button";
 import { Input } from "@/shared/ui/input";
@@ -107,34 +107,47 @@ function Section({
   children,
   defaultOpen = true,
   collapsible = false,
+  readOnly = false,
 }: {
   title: string;
   badge?: string;
   children: React.ReactNode;
   defaultOpen?: boolean;
   collapsible?: boolean;
+  readOnly?: boolean;
 }) {
   const [open, setOpen] = useState(defaultOpen);
   return (
-    <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
+    <div className="bg-white rounded-xl border border-gray-200">
       <button
         type="button"
         onClick={() => collapsible && setOpen((p) => !p)}
-        className={`flex w-full items-center justify-between px-5 py-4 text-left ${collapsible ? "cursor-pointer hover:bg-gray-50" : "cursor-default"
-          }`}
+        className={`flex w-full items-center justify-between px-5 py-4 text-left rounded-t-xl transition-colors duration-150 ${readOnly ? "bg-gray-50" : ""} ${collapsible ? "cursor-pointer hover:bg-gray-50" : "cursor-default"}`}
       >
         <div className="flex items-center gap-2.5">
-          <span className="text-sm font-semibold text-gray-900">{title}</span>
+          <span className="text-base font-semibold text-gray-900">{title}</span>
           {badge && (
             <span className="text-xs bg-blue-50 text-blue-700 border border-blue-200 px-2 py-0.5 rounded-full font-medium">
               {badge}
             </span>
           )}
         </div>
-        {collapsible &&
-          (open ? <ChevronDown size={16} className="text-gray-400" /> : <ChevronRight size={16} className="text-gray-400" />)}
+        {collapsible && (
+          <ChevronDown
+            size={16}
+            className={`text-gray-400 transition-transform duration-200 ease-out motion-reduce:transition-none ${open ? "rotate-0" : "-rotate-90"}`}
+          />
+        )}
       </button>
-      {(!collapsible || open) && (
+      {collapsible ? (
+        <div
+          className={`grid transition-[grid-template-rows] duration-200 ease-out motion-reduce:transition-none ${open ? "grid-rows-[1fr]" : "grid-rows-[0fr]"}`}
+        >
+          <div className="min-h-0 overflow-hidden">
+            <div className="px-5 pb-6 pt-4 border-t border-gray-100 space-y-5">{children}</div>
+          </div>
+        </div>
+      ) : (
         <div className="px-5 pb-5 pt-1 border-t border-gray-100 space-y-4">{children}</div>
       )}
     </div>
@@ -160,11 +173,13 @@ function FileField({
 }) {
   const [uploading, setUploading] = useState(false);
   const [fileName, setFileName] = useState<string>("");
+  const [uploadError, setUploadError] = useState<string>("");
 
   async function handleFile(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
     if (!file) return;
     setUploading(true);
+    setUploadError("");
     try {
       const fd = new FormData();
       fd.append("file", file);
@@ -174,7 +189,7 @@ function FileField({
       onChange(data.url);
       setFileName(file.name);
     } catch (err: any) {
-      alert(err instanceof Error ? err.message : "Error al subir archivo");
+      setUploadError(err instanceof Error ? err.message : "Error al subir archivo");
     } finally {
       setUploading(false);
     }
@@ -208,6 +223,7 @@ function FileField({
         </label>
       </div>
       {error && <p className="text-xs text-red-500">{error}</p>}
+      {uploadError && <p className="text-xs text-red-500">{uploadError}</p>}
     </div>
   );
 }
@@ -245,6 +261,10 @@ export function SolicitudForm({
   const [terceroSearch, setTerceroSearch] = useState("");
   const [loadingFreentes, setLoadingFreentes] = useState(true);
   const [loadingTerceros, setLoadingTerceros] = useState(true);
+  const [frentesError, setFrentesError] = useState(false);
+  const [tercerosError, setTercerosError] = useState(false);
+  const [frentesRetry, setFrentesRetry] = useState(0);
+  const [tercerosRetry, setTercerosRetry] = useState(0);
 
   const [archivoCuadroComparativo, setArchivoCuadroComparativo] = useState(initialData?.archivoCuadroComparativo || "");
   const [archivoCotizacion, setArchivoCotizacion] = useState(initialData?.archivoCotizacion || "");
@@ -267,6 +287,35 @@ export function SolicitudForm({
   const [editingEspIds, setEditingEspIds] = useState<number[]>([]);
   const [espSearch, setEspSearch] = useState("");
   const [espDropdownOpen, setEspDropdownOpen] = useState(false);
+  const [terceroSaveError, setTerceroSaveError] = useState("");
+  const [terceroSaved, setTerceroSaved] = useState(false);
+  const [pulsingFrente, setPulsingFrente] = useState<Set<number>>(new Set());
+  const [terceroOpen, setTerceroOpen] = useState(false);
+  const terceroContainerRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!terceroOpen) return;
+    function handleOutside(e: MouseEvent) {
+      if (terceroContainerRef.current && !terceroContainerRef.current.contains(e.target as Node)) {
+        setTerceroOpen(false);
+      }
+    }
+    document.addEventListener("mousedown", handleOutside);
+    return () => document.removeEventListener("mousedown", handleOutside);
+  }, [terceroOpen]);
+
+  const espContainerRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!espDropdownOpen) return;
+    function handleOutside(e: MouseEvent) {
+      if (espContainerRef.current && !espContainerRef.current.contains(e.target as Node)) {
+        setEspDropdownOpen(false);
+      }
+    }
+    document.addEventListener("mousedown", handleOutside);
+    return () => document.removeEventListener("mousedown", handleOutside);
+  }, [espDropdownOpen]);
 
   const {
     register,
@@ -294,9 +343,12 @@ export function SolicitudForm({
     },
   });
 
-  const onInvalid = (errors: any) => {
-    console.error("Form validation errors:", errors);
-    setSubmitError("Hay errores en el formulario. Por favor revise todos los campos.");
+  const onInvalid = (_errors: any) => {
+    setSubmitError("Revisa los campos marcados antes de continuar.");
+    requestAnimationFrame(() => {
+      const firstErr = document.querySelector<HTMLElement>('[aria-invalid="true"]');
+      firstErr?.scrollIntoView({ behavior: "smooth", block: "center" });
+    });
   };
 
   const watchFrentesIds = watch("frentesIds");
@@ -306,6 +358,8 @@ export function SolicitudForm({
   const watchValorFinal = watch("valorFinal");
 
   useEffect(() => {
+    setLoadingFreentes(true);
+    setFrentesError(false);
     fetch("/api/frentes")
       .then((r) => r.json())
       .then((data: Frente[]) => {
@@ -320,17 +374,20 @@ export function SolicitudForm({
           setFreentes(assigned.length > 0 ? assigned : data);
         }
       })
-      .catch(console.error)
+      .catch(() => setFrentesError(true))
       .finally(() => setLoadingFreentes(false));
-  }, [session]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [session, frentesRetry]);
 
   useEffect(() => {
+    setLoadingTerceros(true);
+    setTercerosError(false);
     fetch("/api/terceros?aprobado=true")
       .then((r) => r.json())
       .then(setTerceros)
-      .catch(console.error)
+      .catch(() => setTercerosError(true))
       .finally(() => setLoadingTerceros(false));
-  }, []);
+  }, [tercerosRetry]);
 
   useEffect(() => {
     if (watchValorFinal && watchValorFinal > 0) {
@@ -520,6 +577,7 @@ export function SolicitudForm({
   async function saveTerceroContacto() {
     if (!selectedTercero) return;
     setSavingTercero(true);
+    setTerceroSaveError("");
     try {
       const res = await fetch(`/api/terceros/${selectedTercero.id}`, {
         method: "PATCH",
@@ -537,9 +595,10 @@ export function SolicitudForm({
             : t
         )
       );
-      setEditingTercero(false);
+      setTerceroSaved(true);
+      setTimeout(() => { setEditingTercero(false); setTerceroSaved(false); }, 900);
     } catch (err: any) {
-      alert(err.message ?? "Error al guardar los datos del contratista");
+      setTerceroSaveError(err.message ?? "Error al guardar los datos del contratista");
     } finally {
       setSavingTercero(false);
     }
@@ -548,7 +607,7 @@ export function SolicitudForm({
   const today = formatDate(new Date());
 
   return (
-    <div className="max-w-4xl mx-auto space-y-5 pb-12">
+    <div className="max-w-4xl mx-auto space-y-6 pb-12">
       <div className="flex items-center gap-3">
         <button
           type="button"
@@ -567,44 +626,49 @@ export function SolicitudForm({
       </div>
 
       <div>
-        <h1 className="text-2xl font-bold text-gray-900">
+        <h1 className="text-2xl font-bold text-gray-900 text-balance tracking-tight">
           {isEdit
             ? tipoSolicitud === "ORDEN_SERVICIO" ? "Editar Orden de Servicio" : "Editar Solicitud de Contrato"
             : tipoSolicitud === "ORDEN_SERVICIO" ? "Orden de Servicio" : "Solicitud de Contrato"}
         </h1>
-        <p className="text-sm text-gray-500 mt-0.5">
-          {isEdit ? "Modifica los campos necesarios para actualizar la solicitud." : "Complete todos los campos para generar la solicitud."}
+        <p className="text-sm text-gray-500 mt-2">
+          {isEdit ? "Revisa y actualiza los campos que necesitas cambiar." : "Completa todos los campos. El consecutivo se genera al enviar."}
         </p>
       </div>
 
-      <Section title="Encabezado" badge="Automático">
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+      <Section title="Encabezado" badge="automático" readOnly>
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
           <div>
-            <p className="text-xs font-medium text-gray-500 uppercase tracking-wide mb-1">Fecha de solicitud</p>
-            <p className="text-sm text-gray-900 font-medium">{isEdit ? formatDate(initialData.createdAt) : today}</p>
+            <p className="text-xs font-medium text-gray-500 mb-1 tracking-[0.03em]">Fecha de solicitud</p>
+            <p className="text-sm text-gray-900 font-medium tabular-nums">{isEdit ? formatDate(initialData.createdAt) : today}</p>
           </div>
           <div>
-            <p className="text-xs font-medium text-gray-500 uppercase tracking-wide mb-1">Consecutivo</p>
+            <p className="text-xs font-medium text-gray-500 mb-1 tracking-[0.03em]">Consecutivo</p>
             <p className="text-sm text-gray-900 font-mono font-bold">{isEdit ? initialData.consecutivo : "Se generará al enviar"}</p>
           </div>
           <div>
-            <p className="text-xs font-medium text-gray-500 uppercase tracking-wide mb-1">Solicitante</p>
+            <p className="text-xs font-medium text-gray-500 mb-1 tracking-[0.03em]">Solicitante</p>
             <p className="text-sm text-gray-900 font-medium">{isEdit ? initialData.solicitante?.nombre : session?.user?.name ?? "—"}</p>
             <p className="text-xs text-gray-500">{isEdit ? initialData.solicitante?.cargo : (session?.user as any)?.cargo ?? "—"}</p>
           </div>
         </div>
       </Section>
 
-      <Section title="Sección 1 — Información del Formulario">
+      <Section title="Información del Formulario">
         <div>
           <label className="text-sm font-medium text-gray-700 block mb-1.5">
-            Frente(s) de Trabajo <span className="text-red-500">*</span>
+            Frente(s) de trabajo <span className="text-red-500">*</span>
           </label>
           {loadingFreentes ? (
             <div className="flex items-center gap-2 text-sm text-gray-400"><Spinner size="sm" /> Cargando frentes…</div>
+          ) : frentesError ? (
+            <div className="flex items-center justify-between gap-2 text-sm text-red-700 bg-red-50 border border-red-200 rounded-lg px-3 py-2 [animation:fade-up-in_0.2s_ease-out]">
+              <div className="flex items-center gap-2"><AlertCircle size={14} /> No se pudieron cargar los frentes.</div>
+              <button type="button" onClick={() => setFrentesRetry((p) => p + 1)} className="shrink-0 text-xs font-medium text-red-700 underline">Reintentar</button>
+            </div>
           ) : frentes.length === 0 ? (
-            <div className="flex items-center gap-2 text-sm text-amber-700 bg-amber-50 border border-amber-200 rounded-lg px-3 py-2">
-              <AlertCircle size={14} /> No hay frentes asignados.
+            <div className="flex items-center gap-2 text-sm text-amber-700 bg-amber-50 border border-amber-200 rounded-lg px-3 py-2 [animation:fade-up-in_0.2s_ease-out]">
+              <AlertCircle size={14} /> No tienes frentes asignados. Pide al administrador que te asigne uno.
             </div>
           ) : (
             <Controller
@@ -633,9 +697,13 @@ export function SolicitudForm({
                           {grupo.frentes.map((frente) => {
                             const checked = field.value?.includes(frente.id) ?? false;
                             return (
-                              <label key={frente.id} className={`flex items-center gap-2.5 rounded-lg border px-3 py-2 cursor-pointer transition-colors ${checked ? "border-blue-400 bg-blue-50" : "border-gray-200 hover:border-gray-300 bg-white"}`}>
+                              <label key={frente.id} className={`flex items-center gap-2.5 rounded-lg border px-3 py-2 cursor-pointer transition-colors ${checked ? "border-blue-400 bg-blue-50" : "border-gray-200 hover:border-gray-300 bg-white"}${pulsingFrente.has(frente.id) ? " [animation:check-pop_0.25s_ease-out]" : ""}`}>
                                 <input type="checkbox" checked={checked} onChange={(e) => {
                                   const next = e.target.checked ? [...(field.value ?? []), frente.id] : (field.value ?? []).filter((id: number) => id !== frente.id);
+                                  if (e.target.checked) {
+                                    setPulsingFrente(prev => new Set([...prev, frente.id]));
+                                    setTimeout(() => setPulsingFrente(prev => { const s = new Set(prev); s.delete(frente.id); return s; }), 300);
+                                  }
                                   field.onChange(next);
                                 }} className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500" />
                                 <div>
@@ -657,15 +725,21 @@ export function SolicitudForm({
         </div>
 
         <div>
-          <label className="text-sm font-medium text-gray-700 block mb-1.5">Nombre del Tercero (Contratista) <span className="text-red-500">*</span></label>
+          <label className="text-sm font-medium text-gray-700 block mb-1.5">Contratista <span className="text-red-500">*</span></label>
           {loadingTerceros ? (
             <div className="flex items-center gap-2 text-sm text-gray-400"><Spinner size="sm" /> Cargando contratistas…</div>
+          ) : tercerosError ? (
+            <div className="flex items-center justify-between gap-2 text-sm text-red-700 bg-red-50 border border-red-200 rounded-lg px-3 py-2 [animation:fade-up-in_0.2s_ease-out]">
+              <div className="flex items-center gap-2"><AlertCircle size={14} /> No se pudieron cargar los contratistas.</div>
+              <button type="button" onClick={() => setTercerosRetry((p) => p + 1)} className="shrink-0 text-xs font-medium text-red-700 underline">Reintentar</button>
+            </div>
           ) : (
             <Controller
               name="terceroId"
               control={control}
               render={({ field }) => {
-                const [open, setOpen] = useState(false);
+                const open = terceroOpen;
+                const setOpen = setTerceroOpen;
                 const selected = terceros.find((t) => t.id === field.value) ?? null;
                 const filtered = terceros.filter((t) => {
                   if (!t.aprobadoDebidaDiligencia || !t.confidencialidad) return false;
@@ -678,8 +752,8 @@ export function SolicitudForm({
                   return t.razonSocial.toLowerCase().includes(q);
                 });
                 return (
-                  <div className="relative">
-                    <div className={`flex items-center gap-2 rounded-md border px-3 py-2 bg-white cursor-text ${errors.terceroId ? "border-red-400" : "border-gray-300"} ${open ? "ring-2 ring-blue-500 border-blue-500" : "hover:border-gray-400"}`} onClick={() => !selected && setOpen(true)}>
+                  <div className="relative" ref={terceroContainerRef}>
+                    <div className={`flex items-center gap-2 rounded-lg border px-3 py-2 bg-white cursor-text ${errors.terceroId ? "border-red-400" : "border-gray-300"} ${open ? "ring-2 ring-blue-500 border-blue-500" : "hover:border-gray-400"}`} onClick={() => !selected && setOpen(true)}>
                       {selected ? (
                         <>
                           <span className="flex-1 min-w-0">
@@ -693,18 +767,18 @@ export function SolicitudForm({
                               </span>
                             )}
                           </span>
-                          <button type="button" onClick={() => { field.onChange(undefined); setTerceroSearch(""); setOpen(true); }} className="shrink-0 text-gray-400 hover:text-gray-600"><X size={14} /></button>
+                          <button type="button" aria-label="Quitar selección" onClick={() => { field.onChange(undefined); setTerceroSearch(""); setOpen(true); }} className="shrink-0 text-gray-400 hover:text-gray-600"><X size={14} /></button>
                         </>
                       ) : (
-                        <input autoFocus={open} type="text" value={terceroSearch} onChange={(e) => { setTerceroSearch(e.target.value); setOpen(true); }} onFocus={() => setOpen(true)} placeholder="Buscar por razón social…" className="flex-1 text-sm text-gray-900 placeholder:text-gray-400 outline-none bg-transparent" />
+                        <input autoFocus={open} type="text" value={terceroSearch} onChange={(e) => { setTerceroSearch(e.target.value); setOpen(true); }} onFocus={() => setOpen(true)} placeholder="Buscar por razón social…" className="flex-1 text-sm text-gray-900 placeholder:text-gray-500 outline-none bg-transparent" />
                       )}
                     </div>
                     {open && !selected && (
-                      <div className="absolute z-20 mt-1 w-full bg-white border border-gray-200 rounded-lg shadow-lg max-h-52 overflow-y-auto">
+                      <div className="absolute z-20 mt-1 w-full bg-white border border-gray-200 rounded-lg shadow-lg max-h-52 overflow-y-auto [animation:dropdown-enter_0.22s_cubic-bezier(0.16,1,0.3,1)]">
                         {filtered.length === 0 ? (
                           <div className="flex items-center gap-2 px-3 py-3 text-xs text-amber-700 bg-amber-50">
                             <AlertCircle size={13} className="shrink-0" />
-                            <span>No encontrado. <a href="/terceros" className="underline font-medium">Ir al módulo de Terceros.</a></span>
+                            <span>Sin resultados para esa búsqueda. <a href="/terceros" className="underline font-medium">Registrar contratista</a></span>
                           </div>
                         ) : (
                           filtered.map((t) => (
@@ -733,7 +807,7 @@ export function SolicitudForm({
 
         {tipoSolicitud === "CONTRATO" && (
           <div>
-            <label className="text-sm font-medium text-gray-700 block mb-1.5">Tipo de Contrato <span className="text-red-500">*</span></label>
+            <label className="text-sm font-medium text-gray-700 block mb-1.5">Tipo de contrato <span className="text-red-500">*</span></label>
             <Controller
               name="tipoContrato"
               control={control}
@@ -749,7 +823,7 @@ export function SolicitudForm({
               )}
             />
             {watchTipoContrato === "DISENO" && (
-              <div className="mt-2 flex items-start gap-2 text-xs text-blue-700 bg-blue-50 border border-blue-200 rounded-lg px-3 py-2">
+              <div className="mt-2 flex items-start gap-2 text-xs text-blue-700 bg-blue-50 border border-blue-200 rounded-lg px-3 py-2 [animation:fade-up-in_0.2s_ease-out]">
                 <Info size={13} className="mt-0.5 shrink-0" /> Los contratos de diseño requieren adjuntar el archivo PreBEP.
               </div>
             )}
@@ -758,71 +832,71 @@ export function SolicitudForm({
         )}
 
         <Textarea label="Objeto" required placeholder="Describa en detalle las actividades a contratar (mínimo 50 caracteres)…" showCount rows={4} {...register("descripcionActividad")} error={errors.descripcionActividad?.message} />
-        <Input label="Plazo de Ejecución" required placeholder="Ej: 25 días calendario a partir del anticipo" {...register("plazoEjecucion")} error={errors.plazoEjecucion?.message} />
-        <Textarea label="Forma de Pago" required placeholder="Ej: 50% anticipo al inicio, 50% a la entrega final" rows={3} {...register("formaPago")} error={errors.formaPago?.message} />
+        <Input label="Plazo de ejecución" required placeholder="Ej: 25 días calendario a partir del anticipo" {...register("plazoEjecucion")} error={errors.plazoEjecucion?.message} />
+        <Textarea label="Forma de pago" required placeholder="Ej: 50% anticipo al inicio, 50% a la entrega final" rows={3} {...register("formaPago")} error={errors.formaPago?.message} />
       </Section>
 
-      <Section title="Sección 2 — Documentos a Anexar">
-        <FileField label="Cuadro Comparativo" required accept=".xlsx,.xls" value={archivoCuadroComparativo} onChange={setArchivoCuadroComparativo} error={fileErrors.cuadroComparativo} />
+      <Section title="Documentos Requeridos">
+        <FileField label="Cuadro comparativo" required accept=".xlsx,.xls" value={archivoCuadroComparativo} onChange={setArchivoCuadroComparativo} error={fileErrors.cuadroComparativo} />
         <FileField label="Cotización" required accept=".pdf" value={archivoCotizacion} onChange={setArchivoCotizacion} error={fileErrors.cotizacion} />
         {watchTipoContrato === "DISENO" && (
-          <>
-            <FileField label="PreBEP (Plan Preliminar de Ejecución BIM)" required accept=".pdf" value={archivoPreBEP} onChange={setArchivoPreBEP} error={fileErrors.preBep} />
-          </>
+          <div className="[animation:fade-up-in_0.2s_ease-out]">
+            <FileField label="PreBEP (Plan preliminar de ejecución BIM)" required accept=".pdf" value={archivoPreBEP} onChange={setArchivoPreBEP} error={fileErrors.preBep} />
+          </div>
         )}
       </Section>
 
-      <Section title="Sección 3 — Valor Final a Contratar con IVA Incluido">
+      <Section title="Valor Final (IVA incluido)">
         <div className="space-y-3">
           <Controller
             name="valorFinal"
             control={control}
             render={({ field }) => (
               <div>
-                <label className="text-sm font-medium text-gray-700 block mb-1">Valor final a contratar con IVA incluido (COP) <span className="text-red-500">*</span></label>
+                <label className="text-sm font-medium text-gray-700 block mb-1">Valor total (COP) <span className="text-red-500">*</span></label>
                 <div className="relative">
                   <span className="absolute inset-y-0 left-3 flex items-center text-sm text-gray-500 font-medium pointer-events-none">$</span>
-                  <input type="number" min={0} step={1} placeholder="0" value={field.value ?? ""} onChange={(e) => field.onChange(e.target.value === "" ? undefined : Number(e.target.value))} className={`block w-full rounded-md border pl-7 pr-3 py-2 text-sm text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${errors.valorFinal ? "border-red-400 focus:ring-red-400" : "border-gray-300 hover:border-gray-400"}`} />
+                  <input type="text" inputMode="numeric" placeholder="0" value={field.value ?? ""} onChange={(e) => { const raw = e.target.value.replace(/\D/g, ""); field.onChange(raw === "" ? undefined : Number(raw)); }} className={`block w-full rounded-lg border pl-7 pr-3 py-2 text-sm text-gray-900 tabular-nums placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${errors.valorFinal ? "border-red-400 focus:ring-red-400" : "border-gray-300 hover:border-gray-400"}`} />
                 </div>
-                {field.value && field.value > 0 && <p className="mt-1 text-sm text-gray-500">{formatCurrency(field.value)}</p>}
+                {field.value && field.value > 0 && <p className="mt-1 text-sm text-blue-600 font-medium tabular-nums">{formatCurrency(field.value)}</p>}
                 {errors.valorFinal && <p className="text-xs text-red-500 mt-1">{errors.valorFinal.message}</p>}
               </div>
             )}
           />
           {valorEnLetras && (
-            <div className="rounded-lg bg-gray-50 border border-gray-200 px-4 py-3">
-              <p className="text-xs font-medium text-gray-500 uppercase tracking-wide mb-1">Valor en letras</p>
-              <p className="text-sm text-gray-800 font-medium">{valorEnLetras}</p>
+            <div key={valorEnLetras} className="rounded-lg bg-blue-50 border border-blue-100 px-4 py-3 [animation:fade-up-in_0.4s_ease-out]">
+              <p className="text-xs font-medium text-blue-500 mb-1 tracking-[0.03em]">Valor en letras</p>
+              <p className="text-sm text-blue-900 font-semibold tabular-nums">{valorEnLetras}</p>
             </div>
           )}
         </div>
       </Section>
 
-      <Section title="Sección 4 — Asunto">
-        <Textarea label="Asunto (auto-generado, editable)" required rows={2} {...register("asunto")} error={errors.asunto?.message} />
-        <p className="text-xs text-gray-400 flex items-center gap-1"><Info size={11} /> Se actualiza automáticamente al cambiar el frente, contratista o descripción.</p>
+      <Section title="Asunto">
+        <Textarea label="Asunto" required rows={2} {...register("asunto")} error={errors.asunto?.message} />
+        <p className="text-xs text-gray-500 flex items-center gap-1"><Info size={11} /> Se actualiza al cambiar el frente, contratista o descripción. Puedes editarlo.</p>
       </Section>
 
-      <Section title="Sección 5 — Formato de Solicitud" collapsible badge="*">
-        <div className="space-y-4">
+      <Section title="Formato de Solicitud" collapsible defaultOpen={false} badge="Opcional">
+        <div className="space-y-5">
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
-              <p className="text-xs font-medium text-gray-500 uppercase tracking-wide mb-1">Área / Frente</p>
+              <p className="text-xs font-medium text-gray-500 mb-1 tracking-[0.03em]">Área / frente</p>
               <p className="text-sm text-gray-800">{frentes.filter((f) => watchFrentesIds?.includes(f.id)).map((f) => f.nombre).join(", ") || "—"}</p>
             </div>
             <div>
-              <p className="text-xs font-medium text-gray-500 uppercase tracking-wide mb-1">Solicitante</p>
+              <p className="text-xs font-medium text-gray-500 mb-1 tracking-[0.03em]">Solicitante</p>
               <p className="text-sm text-gray-800">{isEdit ? initialData.solicitante?.nombre : session?.user?.name ?? "—"}</p>
               <p className="text-xs text-gray-500">{isEdit ? initialData.solicitante?.cargo : (session?.user as any)?.cargo ?? "—"}</p>
             </div>
             <div>
-              <p className="text-xs font-medium text-gray-500 uppercase tracking-wide mb-1">Proyecto</p>
+              <p className="text-xs font-medium text-gray-500 mb-1 tracking-[0.03em]">Proyecto</p>
               <p className="text-sm text-gray-800">
                 {Array.from(new Set(frentes.filter(f => watchFrentesIds?.includes(f.id)).map(f => f.proyecto.nombre))).join(", ") || "—"}
               </p>
             </div>
             <div>
-              <p className="text-xs font-medium text-gray-500 uppercase tracking-wide mb-1">Tipo</p>
+              <p className="text-xs font-medium text-gray-500 mb-1 tracking-[0.03em]">Tipo</p>
               <p className="text-sm text-gray-800">
                 {tipoSolicitud === "ORDEN_SERVICIO"
                   ? "Orden de Servicio"
@@ -832,22 +906,22 @@ export function SolicitudForm({
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div className="space-y-1">
-              <label className="text-sm font-medium text-gray-700">Contratante — Nombre</label>
+              <label className="text-sm font-medium text-gray-700">Nombre del contratante</label>
               <div className="flex items-center px-3 py-2 rounded-lg border border-gray-200 bg-gray-50 text-sm text-gray-600 select-none">
                 PROMOTORA BARLOVENTO DEL MAR S.A.S
               </div>
             </div>
             <div className="space-y-1">
-              <label className="text-sm font-medium text-gray-700">Contratante — NIT</label>
+              <label className="text-sm font-medium text-gray-700">NIT del contratante</label>
               <div className="flex items-center px-3 py-2 rounded-lg border border-gray-200 bg-gray-50 text-sm text-gray-600 select-none">
                 901307871
               </div>
             </div>
           </div>
           {selectedTercero && (
-            <div className="rounded-lg bg-gray-50 border border-gray-200 p-4 space-y-3">
+            <div key={selectedTercero.id} className="pt-3 border-t border-blue-100 space-y-3 [animation:fade-up-in_0.32s_cubic-bezier(0.16,1,0.3,1)]">
               <div className="flex items-center justify-between">
-                <p className="text-sm font-semibold text-gray-700">Datos del Contratista</p>
+                <p className="text-sm font-semibold text-gray-700">Datos del contratista</p>
                 {!editingTercero && (
                   <button
                     type="button"
@@ -870,18 +944,18 @@ export function SolicitudForm({
               </div>
 
               {editingTercero ? (
-                <div className="space-y-3">
+                <div className="space-y-3 [animation:fade-up-in_0.18s_ease-out]">
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     {([
                       ["nit", "NIT"],
-                      ["representanteLegal", "Representante Legal"],
-                      ["cedulaRepresentante", "Cédula Representante"],
-                      ["correoFirma", "Correo de Firma"],
-                      ["direccionRepresentante", "Dirección Representante"],
-                      ["telefonoRepresentante", "Teléfono Representante"],
-                      ["nombreContacto", "Nombre Contacto"],
-                      ["telefonoContacto", "Teléfono Contacto"],
-                      ["correoContacto", "Correo Contacto"],
+                      ["representanteLegal", "Representante legal"],
+                      ["cedulaRepresentante", "Cédula representante"],
+                      ["correoFirma", "Correo de firma"],
+                      ["direccionRepresentante", "Dirección representante"],
+                      ["telefonoRepresentante", "Teléfono representante"],
+                      ["nombreContacto", "Nombre contacto"],
+                      ["telefonoContacto", "Teléfono contacto"],
+                      ["correoContacto", "Correo contacto"],
                     ] as [keyof Tercero, string][]).map(([field, label]) => (
                       <div key={field}>
                         <label className="block text-xs text-gray-500 mb-0.5">{label}</label>
@@ -889,7 +963,7 @@ export function SolicitudForm({
                           type="text"
                           value={(terceroEditForm[field] as string) ?? ""}
                           onChange={(e) => setTerceroEditForm((prev) => ({ ...prev, [field]: e.target.value }))}
-                          className="w-full rounded-md border border-gray-300 px-2.5 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                          className="w-full rounded-lg border border-gray-300 px-2.5 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                         />
                       </div>
                     ))}
@@ -908,6 +982,7 @@ export function SolicitudForm({
                                 {esp.nombre}
                                 <button
                                   type="button"
+                                  aria-label={`Quitar ${esp.nombre}`}
                                   onClick={() => setEditingEspIds((prev) => prev.filter((x) => x !== id))}
                                   className="text-blue-400 hover:text-blue-700"
                                 >
@@ -921,12 +996,12 @@ export function SolicitudForm({
                       {/* Input de búsqueda con dropdown */}
                       {editingEspIds.length >= 3 ? (
                         <p className="text-xs text-amber-700 bg-amber-50 border border-amber-200 rounded-md px-2.5 py-1.5">
-                          Máximo 3 especialidades
+                          Solo puedes agregar hasta 3 especialidades por contratista.
                         </p>
                       ) : (
-                      <div className="relative">
+                      <div className="relative" ref={espContainerRef}>
                         <div
-                          className={`flex items-center rounded-md border px-2.5 py-1.5 bg-white cursor-text ${espDropdownOpen ? "ring-2 ring-blue-500 border-blue-500" : "border-gray-300 hover:border-gray-400"}`}
+                          className={`flex items-center rounded-lg border px-2.5 py-1.5 bg-white cursor-text ${espDropdownOpen ? "ring-2 ring-blue-500 border-blue-500" : "border-gray-300 hover:border-gray-400"}`}
                           onClick={() => setEspDropdownOpen(true)}
                         >
                           <input
@@ -934,7 +1009,6 @@ export function SolicitudForm({
                             value={espSearch}
                             onChange={(e) => setEspSearch(e.target.value)}
                             onFocus={() => setEspDropdownOpen(true)}
-                            onBlur={() => setTimeout(() => setEspDropdownOpen(false), 150)}
                             onKeyDown={(e) => {
                               if (e.key === "Enter") {
                                 e.preventDefault();
@@ -950,17 +1024,17 @@ export function SolicitudForm({
                               }
                             }}
                             placeholder="Seleccionar especialidad…"
-                            className="flex-1 text-xs text-gray-900 placeholder:text-gray-400 outline-none bg-transparent"
+                            className="flex-1 text-xs text-gray-900 placeholder:text-gray-500 outline-none bg-transparent"
                           />
                         </div>
                         {espDropdownOpen && (
-                          <div className="absolute z-30 mt-1 w-full bg-white border border-gray-200 rounded-lg shadow-lg max-h-44 overflow-y-auto">
+                          <div className="absolute z-30 mt-1 w-full bg-white border border-gray-200 rounded-lg shadow-lg max-h-44 overflow-y-auto [animation:dropdown-enter_0.22s_cubic-bezier(0.16,1,0.3,1)]">
                             {espCatalogo.filter(
                               (e) =>
                                 !editingEspIds.includes(e.id) &&
                                 e.nombre.toLowerCase().includes(espSearch.toLowerCase())
                             ).length === 0 ? (
-                              <p className="px-3 py-2 text-xs text-gray-400 italic">Sin resultados</p>
+                              <p className="px-3 py-2 text-xs text-gray-400">Sin coincidencias para esa búsqueda.</p>
                             ) : (
                               espCatalogo
                                 .filter(
@@ -976,7 +1050,7 @@ export function SolicitudForm({
                                       setEditingEspIds((prev) => [...prev, e.id]);
                                       setEspSearch("");
                                     }}
-                                    className="flex w-full items-center px-3 py-2 text-xs text-gray-800 hover:bg-blue-50 text-left"
+                                    className="flex w-full items-center px-3 py-2 text-xs text-gray-800 hover:bg-blue-50 hover:text-blue-900 text-left"
                                   >
                                     {e.nombre}
                                   </button>
@@ -988,37 +1062,44 @@ export function SolicitudForm({
                       )}
                     </div>
                   )}
-                  <div className="flex gap-2 pt-1">
-                    <button
-                      type="button"
-                      onClick={saveTerceroContacto}
-                      disabled={savingTercero}
-                      className="px-3 py-1.5 rounded-md bg-blue-600 text-white text-xs font-medium hover:bg-blue-700 disabled:opacity-50"
-                    >
-                      {savingTercero ? "Guardando…" : "Guardar"}
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => setEditingTercero(false)}
-                      className="px-3 py-1.5 rounded-md border border-gray-300 text-gray-700 text-xs font-medium hover:bg-gray-50"
-                    >
-                      Cancelar
-                    </button>
+                  <div className="flex flex-col gap-1.5 pt-1">
+                    <div className="flex gap-2">
+                      <button
+                        type="button"
+                        onClick={saveTerceroContacto}
+                        disabled={savingTercero}
+                        className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-blue-600 text-white text-xs font-medium hover:bg-blue-700 disabled:opacity-50 transition active:scale-[0.97] motion-reduce:active:scale-100"
+                      >
+                        {terceroSaved ? (
+                          <><CheckCircle2 size={12} className="text-green-300" />Guardado</>
+                        ) : savingTercero ? "Guardando…" : "Guardar cambios"}
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => { setEditingTercero(false); setTerceroSaveError(""); }}
+                        className="px-3 py-1.5 rounded-md border border-gray-300 text-gray-700 text-xs font-medium hover:bg-gray-50"
+                      >
+                        Cancelar
+                      </button>
+                    </div>
+                    {terceroSaveError && (
+                      <p className="text-xs text-red-500 [animation:fade-up-in_0.15s_ease-out]">{terceroSaveError}</p>
+                    )}
                   </div>
                 </div>
               ) : (
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-2 text-sm">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-3 text-sm [animation:fade-in_0.15s_ease-out]">
                   {[
-                    ["Razón Social", selectedTercero.razonSocial],
+                    ["Razón social", selectedTercero.razonSocial],
                     ["NIT", selectedTercero.nit],
-                    ["Representante Legal", selectedTercero.representanteLegal],
-                    ["Cédula Representante", selectedTercero.cedulaRepresentante],
-                    ["Correo de Firma", selectedTercero.correoFirma],
-                    ["Dirección Representante", selectedTercero.direccionRepresentante],
-                    ["Teléfono Representante", selectedTercero.telefonoRepresentante],
-                    ...(selectedTercero.nombreContacto ? [["Nombre Contacto", selectedTercero.nombreContacto]] : []),
-                    ...(selectedTercero.telefonoContacto ? [["Teléfono Contacto", selectedTercero.telefonoContacto]] : []),
-                    ...(selectedTercero.correoContacto ? [["Correo Contacto", selectedTercero.correoContacto]] : []),
+                    ["Representante legal", selectedTercero.representanteLegal],
+                    ["Cédula representante", selectedTercero.cedulaRepresentante],
+                    ["Correo de firma", selectedTercero.correoFirma],
+                    ["Dirección representante", selectedTercero.direccionRepresentante],
+                    ["Teléfono representante", selectedTercero.telefonoRepresentante],
+                    ...(selectedTercero.nombreContacto ? [["Nombre contacto", selectedTercero.nombreContacto]] : []),
+                    ...(selectedTercero.telefonoContacto ? [["Teléfono contacto", selectedTercero.telefonoContacto]] : []),
+                    ...(selectedTercero.correoContacto ? [["Correo contacto", selectedTercero.correoContacto]] : []),
                   ].map(([k, v]) => (
                     <div key={k}>
                       <span className="text-xs text-gray-500">{k}: </span>
@@ -1030,21 +1111,21 @@ export function SolicitudForm({
             </div>
           )}
           <div>
-            <p className="text-xs font-medium text-gray-500 uppercase tracking-wide mb-1">Objeto</p>
+            <p className="text-xs font-medium text-gray-500 mb-1 tracking-[0.03em]">Objeto</p>
             <p className="text-sm text-gray-800 bg-gray-50 border border-gray-200 rounded-lg px-3 py-2 min-h-[3rem]">
               {watchDescripcion || <span className="text-gray-400 italic">Se completará con el objeto.</span>}
             </p>
           </div>
-          <Textarea label="Alcance" placeholder="Describa el alcance del contrato…" rows={3} {...register("alcance")} error={errors.alcance?.message} />
-          <Textarea label="Términos de referencia / Especificaciones técnicas" placeholder="Describa los términos de referencia…" rows={3} {...register("terminosReferencia")} error={errors.terminosReferencia?.message} />
+          <Textarea label="Alcance" placeholder="Ej: Suministro e instalación de equipos de climatización en las torres A y B del proyecto…" rows={3} {...register("alcance")} error={errors.alcance?.message} />
+          <Textarea label="Términos de referencia" placeholder="Ej: El contratista deberá entregar planos en formato DWG y PDF, firmados por el ingeniero responsable…" rows={3} {...register("terminosReferencia")} error={errors.terminosReferencia?.message} />
           {watchValorFinal && watchValorFinal > 0 && (
             <div>
-              <p className="text-xs font-medium text-gray-500 uppercase tracking-wide mb-1">Valor a Contratar</p>
+              <p className="text-xs font-medium text-gray-500 mb-1 tracking-[0.03em]">Valor a Contratar</p>
               <p className="text-sm text-gray-800 font-semibold">{formatCurrency(watchValorFinal)}</p>
               {valorEnLetras && <p className="text-xs text-gray-500 mt-0.5">{valorEnLetras}</p>}
             </div>
           )}
-          <Textarea label="Condiciones Especiales" placeholder="Indique condiciones especiales…" rows={3} {...register("condicionesEspeciales")} error={errors.condicionesEspeciales?.message} />
+          <Textarea label="Condiciones especiales" placeholder="Ej: Confidencialidad, restricciones de acceso a la obra, entregables adicionales no incluidos en el objeto…" rows={3} {...register("condicionesEspeciales")} error={errors.condicionesEspeciales?.message} />
         </div>
       </Section>
 
@@ -1055,7 +1136,7 @@ export function SolicitudForm({
           minDays={tipoSolicitud === "ORDEN_SERVICIO" ? 2 : 13}
         />
         {cronogramaError && (
-          <div className="flex items-center gap-2 mt-2 text-xs text-red-600">
+          <div className="flex items-center gap-2 mt-2 text-xs text-red-600 [animation:fade-up-in_0.18s_ease-out]">
             <AlertCircle size={13} className="shrink-0" />
             {cronogramaError}
           </div>
@@ -1063,12 +1144,12 @@ export function SolicitudForm({
       </Section>
 
       {submitError && (
-        <div className="flex items-start gap-2.5 rounded-lg bg-red-50 border border-red-200 px-4 py-3 text-sm text-red-700">
+        <div className="flex items-start gap-2.5 rounded-lg bg-red-50 border border-red-200 px-4 py-3 text-sm text-red-700 [animation:fade-up-in_0.2s_ease-out]">
           <AlertCircle size={16} className="mt-0.5 shrink-0" /> {submitError}
         </div>
       )}
 
-      <div className="flex flex-col sm:flex-row items-center gap-3 sm:justify-end pt-2">
+      <div className="flex flex-col sm:flex-row items-center gap-3 sm:justify-end pt-6 border-t border-gray-200">
         <Button
           type="button"
           variant={isEdit ? "primary" : "secondary"}
@@ -1078,7 +1159,7 @@ export function SolicitudForm({
           onClick={handleSubmit(onSaveDraft, onInvalid)}
         >
           <Save size={16} />
-          {isEdit ? "Guardar Cambios" : "Guardar Borrador"}
+          {isEdit ? "Guardar cambios" : "Guardar borrador"}
         </Button>
 
         {!isEdit && (

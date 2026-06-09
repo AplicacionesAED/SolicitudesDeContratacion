@@ -82,7 +82,7 @@ export const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
           rows={4}
           className={`
             block w-full rounded-md border px-3 py-2 text-sm text-gray-900
-            placeholder:text-gray-400 resize-y
+            placeholder:text-gray-500 resize-y
             transition-colors duration-150
             focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500
             disabled:cursor-not-allowed disabled:bg-gray-50 disabled:text-gray-400

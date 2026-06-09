@@ -113,11 +113,9 @@ export default function NuevaSolicitudPage() {
   return (
     <div className="max-w-4xl mx-auto space-y-6">
       <div>
-        <h1 className="text-2xl font-bold text-gray-900">
-          Nueva Solicitud — Selecciona el tipo
-        </h1>
+        <h1 className="text-2xl font-bold text-gray-900">Nueva Solicitud</h1>
         <p className="text-sm text-gray-500 mt-1">
-          Elige el tipo de solicitud que deseas crear para continuar con el formulario.
+          Selecciona el tipo de solicitud para continuar.
         </p>
       </div>
 

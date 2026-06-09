@@ -1,0 +1,135 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-06-05T00:00:00Z",
+  "title": "Design System: Solicitudes Indirectos — Baia Kristal",
+  "extensions": {
+    "colorMeta": {
+      "primary":           { "role": "primary",  "displayName": "Azul Ingeniería",          "canonical": "#2563eb", "tonalRamp": ["#0f1d5a", "#1330a0", "#1d4ed8", "#2563eb", "#3b82f6", "#60a5fa", "#93c5fd", "#dbeafe"] },
+      "primary-hover":     { "role": "primary",  "displayName": "Azul Ingeniería Profundo", "canonical": "#1d4ed8", "tonalRamp": ["#0f1d5a", "#1330a0", "#1d4ed8", "#2563eb", "#3b82f6", "#60a5fa", "#93c5fd", "#dbeafe"] },
+      "primary-tint":      { "role": "primary",  "displayName": "Azul Tinta",               "canonical": "#eff6ff", "tonalRamp": ["#0f1d5a", "#1330a0", "#1d4ed8", "#2563eb", "#3b82f6", "#60a5fa", "#93c5fd", "#eff6ff"] },
+      "surface":           { "role": "neutral",  "displayName": "Blanco Superficie",        "canonical": "#ffffff", "tonalRamp": ["#111827", "#374151", "#6b7280", "#9ca3af", "#d1d5db", "#e5e7eb", "#f3f4f6", "#ffffff"] },
+      "surface-muted":     { "role": "neutral",  "displayName": "Gris Documento",           "canonical": "#f9fafb", "tonalRamp": ["#111827", "#374151", "#6b7280", "#9ca3af", "#d1d5db", "#e5e7eb", "#f9fafb", "#ffffff"] },
+      "ink-primary":       { "role": "neutral",  "displayName": "Tinta Principal",          "canonical": "#111827", "tonalRamp": ["#111827", "#1f2937", "#374151", "#4b5563", "#6b7280", "#9ca3af", "#e5e7eb", "#f9fafb"] },
+      "ink-secondary":     { "role": "neutral",  "displayName": "Tinta Secundaria",         "canonical": "#4b5563", "tonalRamp": ["#111827", "#1f2937", "#374151", "#4b5563", "#6b7280", "#9ca3af", "#e5e7eb", "#f9fafb"] },
+      "danger":            { "role": "tertiary", "displayName": "Rojo Error",               "canonical": "#dc2626", "tonalRamp": ["#450a0a", "#7f1d1d", "#991b1b", "#dc2626", "#ef4444", "#f87171", "#fca5a5", "#fee2e2"] }
+    },
+    "typographyMeta": {
+      "headline": { "displayName": "Headline", "purpose": "Page titles and modal headings. Used once per screen." },
+      "title":    { "displayName": "Title",    "purpose": "Card titles, section headers, dialog titles." },
+      "body":     { "displayName": "Body",     "purpose": "All body copy, form help text, timeline descriptions." },
+      "label":    { "displayName": "Label",    "purpose": "Form labels, button text, nav items, badge copy." },
+      "caption":  { "displayName": "Caption",  "purpose": "Timestamps, muted metadata, sub-labels. Never for primary info." }
+    },
+    "shadows": [
+      { "name": "ambient-min",  "value": "0 1px 2px 0 rgb(0 0 0 / 0.05)",                                                            "purpose": "Login card and full-page overlays only." },
+      { "name": "dropdown",     "value": "0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1)",                       "purpose": "Floating dropdowns and popovers." },
+      { "name": "modal",        "value": "0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1)",                     "purpose": "Modal dialogs." }
+    ],
+    "motion": [
+      { "name": "state-change", "value": "150ms ease-in-out", "purpose": "Color and border transitions on interactive elements." },
+      { "name": "sidebar",      "value": "200ms ease-in-out", "purpose": "Sidebar collapse/expand width transition." }
+    ],
+    "breakpoints": [
+      { "name": "sm",  "value": "640px"  },
+      { "name": "md",  "value": "768px"  },
+      { "name": "lg",  "value": "1024px" },
+      { "name": "xl",  "value": "1280px" }
+    ]
+  },
+  "components": [
+    {
+      "name": "Primary Button",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "Primary action. Used once per form or section. Blue-600, 36px height.",
+      "html": "<button class=\"ds-btn-primary\">Guardar cambios</button>",
+      "css": ".ds-btn-primary { display: inline-flex; align-items: center; justify-content: center; gap: 8px; height: 36px; padding: 0 16px; background-color: #2563eb; color: #ffffff; font-family: 'Geist Sans', system-ui, sans-serif; font-size: 0.875rem; font-weight: 500; line-height: 1.4; border: 1px solid transparent; border-radius: 6px; cursor: pointer; transition: background-color 150ms ease-in-out; } .ds-btn-primary:hover { background-color: #1d4ed8; } .ds-btn-primary:focus-visible { outline: none; box-shadow: 0 0 0 2px #ffffff, 0 0 0 4px #2563eb; } .ds-btn-primary:disabled { opacity: 0.6; cursor: not-allowed; }"
+    },
+    {
+      "name": "Secondary Button",
+      "kind": "button",
+      "refersTo": "button-secondary",
+      "description": "Secondary action. White background with gray border.",
+      "html": "<button class=\"ds-btn-secondary\">Cancelar</button>",
+      "css": ".ds-btn-secondary { display: inline-flex; align-items: center; justify-content: center; gap: 8px; height: 36px; padding: 0 16px; background-color: #ffffff; color: #374151; font-family: 'Geist Sans', system-ui, sans-serif; font-size: 0.875rem; font-weight: 500; line-height: 1.4; border: 1px solid #d1d5db; border-radius: 6px; cursor: pointer; transition: background-color 150ms ease-in-out, border-color 150ms ease-in-out; } .ds-btn-secondary:hover { background-color: #f9fafb; } .ds-btn-secondary:focus-visible { outline: none; box-shadow: 0 0 0 2px #ffffff, 0 0 0 4px #9ca3af; } .ds-btn-secondary:disabled { opacity: 0.6; cursor: not-allowed; background-color: #f9fafb; color: #9ca3af; }"
+    },
+    {
+      "name": "Danger Button",
+      "kind": "button",
+      "refersTo": "button-danger",
+      "description": "Destructive action. Red-600, confirms irreversible operations.",
+      "html": "<button class=\"ds-btn-danger\">Eliminar solicitud</button>",
+      "css": ".ds-btn-danger { display: inline-flex; align-items: center; justify-content: center; gap: 8px; height: 36px; padding: 0 16px; background-color: #dc2626; color: #ffffff; font-family: 'Geist Sans', system-ui, sans-serif; font-size: 0.875rem; font-weight: 500; line-height: 1.4; border: 1px solid transparent; border-radius: 6px; cursor: pointer; transition: background-color 150ms ease-in-out; } .ds-btn-danger:hover { background-color: #b91c1c; } .ds-btn-danger:focus-visible { outline: none; box-shadow: 0 0 0 2px #ffffff, 0 0 0 4px #dc2626; } .ds-btn-danger:disabled { opacity: 0.6; cursor: not-allowed; }"
+    },
+    {
+      "name": "Text Input",
+      "kind": "input",
+      "refersTo": "input-default",
+      "description": "Standard form field. White background, gray-300 border, blue focus ring.",
+      "html": "<div class=\"ds-field\"><label class=\"ds-field-label\" for=\"ds-input\">Descripción del objeto</label><input class=\"ds-input\" id=\"ds-input\" type=\"text\" placeholder=\"Ingresa el objeto del contrato\" /></div>",
+      "css": ".ds-field { display: flex; flex-direction: column; gap: 4px; } .ds-field-label { font-family: 'Geist Sans', system-ui, sans-serif; font-size: 0.875rem; font-weight: 500; color: #374151; line-height: 1.4; } .ds-input { width: 100%; padding: 10px 12px; background-color: #ffffff; color: #111827; font-family: 'Geist Sans', system-ui, sans-serif; font-size: 0.875rem; font-weight: 400; line-height: 1.5; border: 1px solid #d1d5db; border-radius: 8px; transition: border-color 150ms ease-in-out, box-shadow 150ms ease-in-out; box-sizing: border-box; } .ds-input::placeholder { color: #9ca3af; } .ds-input:hover { border-color: #9ca3af; } .ds-input:focus { outline: none; border-color: #2563eb; box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.2); } .ds-input:disabled { background-color: #f9fafb; color: #9ca3af; cursor: not-allowed; }"
+    },
+    {
+      "name": "Content Card",
+      "kind": "card",
+      "refersTo": "card",
+      "description": "Standard content container. White on gray-50, no shadow, rounded-xl.",
+      "html": "<div class=\"ds-card\"><p class=\"ds-card-title\">Solicitud SOL-ODS-BK-KALA1-001</p><p class=\"ds-card-body\">Orden de servicio para mantenimiento de equipos en frente Kala 1. Creada el 5 de junio de 2026.</p></div>",
+      "css": ".ds-card { background-color: #ffffff; border: 1px solid #e5e7eb; border-radius: 12px; padding: 20px; transition: border-color 150ms ease-in-out; } .ds-card:hover { border-color: #bfdbfe; } .ds-card-title { font-family: 'Geist Sans', system-ui, sans-serif; font-size: 1rem; font-weight: 600; color: #111827; line-height: 1.5; margin: 0 0 8px 0; } .ds-card-body { font-family: 'Geist Sans', system-ui, sans-serif; font-size: 0.875rem; font-weight: 400; color: #4b5563; line-height: 1.5; margin: 0; }"
+    },
+    {
+      "name": "Estado Badge — Completada",
+      "kind": "chip",
+      "refersTo": "button-secondary",
+      "description": "Workflow state pill. Green for COMPLETADA. Pairs color with uppercase label.",
+      "html": "<span class=\"ds-badge ds-badge--completada\">COMPLETADA</span>",
+      "css": ".ds-badge { display: inline-flex; align-items: center; padding: 2px 10px; border-radius: 9999px; font-family: 'Geist Sans', system-ui, sans-serif; font-size: 0.75rem; font-weight: 500; line-height: 1.4; white-space: nowrap; } .ds-badge--completada { background-color: #dcfce7; color: #15803d; } .ds-badge--enviada { background-color: #dbeafe; color: #1d4ed8; } .ds-badge--borrador { background-color: #f3f4f6; color: #374151; } .ds-badge--devuelta { background-color: #fee2e2; color: #b91c1c; } .ds-badge--en-tramite { background-color: #e0e7ff; color: #3730a3; } .ds-badge--en-controles { background-color: #f3e8ff; color: #7e22ce; }"
+    },
+    {
+      "name": "Sidebar Nav Item — Active",
+      "kind": "nav",
+      "refersTo": "button-ghost",
+      "description": "Sidebar navigation link. Active state: blue tint fill with blue-700 text.",
+      "html": "<nav class=\"ds-nav\"><a href=\"#\" class=\"ds-nav-item ds-nav-item--active\"><svg class=\"ds-nav-icon\" width=\"18\" height=\"18\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><rect x=\"3\" y=\"3\" width=\"7\" height=\"7\"/><rect x=\"14\" y=\"3\" width=\"7\" height=\"7\"/><rect x=\"3\" y=\"14\" width=\"7\" height=\"7\"/><rect x=\"14\" y=\"14\" width=\"7\" height=\"7\"/></svg><span>Dashboard</span></a><a href=\"#\" class=\"ds-nav-item\"><svg class=\"ds-nav-icon\" width=\"18\" height=\"18\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z\"/><polyline points=\"14 2 14 8 20 8\"/></svg><span>Solicitudes</span></a></nav>",
+      "css": ".ds-nav { display: flex; flex-direction: column; gap: 2px; padding: 8px; } .ds-nav-item { display: flex; align-items: center; gap: 12px; padding: 10px 12px; border-radius: 8px; font-family: 'Geist Sans', system-ui, sans-serif; font-size: 0.875rem; font-weight: 500; text-decoration: none; color: #4b5563; transition: background-color 150ms ease-in-out, color 150ms ease-in-out; } .ds-nav-item:hover { background-color: #f3f4f6; color: #111827; } .ds-nav-item:hover .ds-nav-icon { color: #4b5563; } .ds-nav-item--active { background-color: #eff6ff; color: #1d4ed8; } .ds-nav-item--active .ds-nav-icon { color: #2563eb; } .ds-nav-icon { flex-shrink: 0; color: #9ca3af; transition: color 150ms ease-in-out; }"
+    }
+  ],
+  "narrative": {
+    "northStar": "El Expediente",
+    "overview": "Every screen is a record. A contracting request is not a card or a form — it is a document with legal weight, an audit trail, and a chain of custody. The visual system reflects this: clear hierarchies, unambiguous labels, and a surface that communicates institutional permanence without formality for its own sake.\n\nThe governing register is dense-and-scannable. Users open this app to advance work, not to explore. They land in the middle of a workflow and need to see where it stands, who is next, and what action is available to them.\n\nThis system explicitly rejects consumer SaaS aesthetics and the generic internal-tool look. The goal is earned familiarity — the interface disappears into the task.",
+    "keyCharacteristics": [
+      "Flat surfaces with structural borders, not shadows",
+      "Geist Sans at consistent sizes — no display type, no scale drama",
+      "Blue-600 accent reserved for primary actions and active states only",
+      "Mobile-first layout: critical workflow paths completable on 320px",
+      "State legibility above all: a solicitud's estado must be unmistakable at a glance"
+    ],
+    "rules": [
+      { "name": "The Azul Ingeniería Rule",   "body": "Blue-600 (#2563eb) appears on at most two elements per screen: the primary action button and the active navigation item. It must not appear in decorative contexts.", "section": "colors" },
+      { "name": "The No Warm Neutral Rule",   "body": "The background is #f9fafb, not a sand, cream, or tinted warm. Warmth comes from accurate status colors and purposeful density, not from background tint.", "section": "colors" },
+      { "name": "The Single Family Rule",     "body": "Geist Sans is the only typeface. No serif accent, no extra geometric sans, no display font for headings.", "section": "typography" },
+      { "name": "The No Uppercase Body Rule", "body": "Uppercase is prohibited in body copy and form labels. Permitted only for short badge labels (≤4 words).", "section": "typography" },
+      { "name": "The Flat-By-Default Rule",   "body": "Surfaces are flat at rest. A shadow on a card communicates interactive context cards don't have. Use border + background contrast instead.", "section": "elevation" }
+    ],
+    "dos": [
+      "Do reserve Azul Ingeniería (#2563eb) for primary actions and active nav states only.",
+      "Do use estado badges as the primary status signal, pairing color with a short uppercase label.",
+      "Do keep cards flat: white background + #e5e7eb border, no shadow.",
+      "Do use 14px label-weight (500) for all button text, form labels, and nav items.",
+      "Do size tap targets at 44px minimum height for mobile.",
+      "Do complete all interactive states: default, hover, focus, active, disabled, loading.",
+      "Do use #f9fafb as the page background and #ffffff for all content containers.",
+      "Do prefer inline forms and progressive disclosure over modals."
+    ],
+    "donts": [
+      "Don't introduce a second typeface. Geist Sans is the only typeface.",
+      "Don't use the consumer SaaS aesthetic: large empty whitespace, oversized hero typography, playful illustration.",
+      "Don't use a warm, cream, or sand background. The background is #f9fafb, chroma 0.",
+      "Don't use the generic Bootstrap/Material visual language: navy headers, repeated icon+heading+text card grids.",
+      "Don't apply a shadow to an inline card or list item.",
+      "Don't use all-uppercase body copy or form labels.",
+      "Don't use gradient text (background-clip: text + gradient).",
+      "Don't put a colored left border (border-left > 1px) on cards, list items, or alerts."
+    ]
+  }
+}
