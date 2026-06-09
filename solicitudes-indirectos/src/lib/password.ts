@@ -5,16 +5,28 @@ export function generatePassword(): string {
   const special = '!@#$%';
   const all = upper + lower + nums + special;
 
+  function randomIndex(max: number): number {
+    const arr = new Uint32Array(1);
+    crypto.getRandomValues(arr);
+    return arr[0] % max;
+  }
+
   const chars = [
-    upper[Math.floor(Math.random() * upper.length)],
-    lower[Math.floor(Math.random() * lower.length)],
-    nums[Math.floor(Math.random() * nums.length)],
-    special[Math.floor(Math.random() * special.length)],
+    upper[randomIndex(upper.length)],
+    lower[randomIndex(lower.length)],
+    nums[randomIndex(nums.length)],
+    special[randomIndex(special.length)],
   ];
 
   for (let i = 4; i < 10; i++) {
-    chars.push(all[Math.floor(Math.random() * all.length)]);
+    chars.push(all[randomIndex(all.length)]);
   }
 
-  return chars.sort(() => Math.random() - 0.5).join('');
+  // Fisher-Yates shuffle with crypto randomness
+  for (let i = chars.length - 1; i > 0; i--) {
+    const j = randomIndex(i + 1);
+    [chars[i], chars[j]] = [chars[j], chars[i]];
+  }
+
+  return chars.join('');
 }
