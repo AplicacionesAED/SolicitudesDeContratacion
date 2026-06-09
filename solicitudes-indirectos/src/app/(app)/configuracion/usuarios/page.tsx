@@ -212,6 +212,7 @@ export default function UsuariosPage() {
   }
 
   function exportarContrasenas() {
+    if (generatedPasswords.length === 0) return;
     const wb = XLSX.utils.book_new();
     const ws = XLSX.utils.json_to_sheet(
       generatedPasswords.map((p) => ({
@@ -493,6 +494,56 @@ export default function UsuariosPage() {
           {usuariosFiltrados.length} de {users.length} usuario{users.length !== 1 ? "s" : ""}
         </p>
       </div>
+
+      {/* Generated passwords banner */}
+      {generatedPasswords.length > 0 && (
+        <div className="bg-amber-50 border border-amber-200 rounded-xl p-4 space-y-3">
+          <div className="flex flex-wrap items-start justify-between gap-3">
+            <div className="flex items-start gap-2">
+              <AlertTriangle size={16} className="text-amber-600 mt-0.5 shrink-0" />
+              <p className="text-sm text-amber-800 font-medium">
+                {generatedPasswords.length} contraseña{generatedPasswords.length !== 1 ? "s" : ""} generada{generatedPasswords.length !== 1 ? "s" : ""} — expórtalas antes de salir, no se pueden recuperar después.
+              </p>
+            </div>
+            <div className="flex items-center gap-2 shrink-0">
+              <button
+                onClick={exportarContrasenas}
+                className="inline-flex items-center gap-1.5 rounded-lg bg-emerald-600 px-3 py-1.5 text-xs font-medium text-white hover:bg-emerald-700 transition-colors"
+              >
+                <FileDown size={13} />
+                Exportar Excel
+              </button>
+              <button
+                onClick={() => setGeneratedPasswords([])}
+                className="inline-flex items-center gap-1.5 rounded-lg border border-amber-300 px-3 py-1.5 text-xs font-medium text-amber-700 hover:bg-amber-100 transition-colors"
+              >
+                <X size={13} />
+                Limpiar
+              </button>
+            </div>
+          </div>
+          <div className="overflow-x-auto rounded-lg border border-amber-200">
+            <table className="min-w-full text-xs">
+              <thead>
+                <tr className="bg-amber-100/60 border-b border-amber-200">
+                  <th className="px-3 py-2 text-left font-semibold text-amber-700 whitespace-nowrap">Nombre</th>
+                  <th className="px-3 py-2 text-left font-semibold text-amber-700 whitespace-nowrap">Email</th>
+                  <th className="px-3 py-2 text-left font-semibold text-amber-700 whitespace-nowrap">Contraseña Temporal</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-amber-100">
+                {generatedPasswords.map((p) => (
+                  <tr key={p.email} className="hover:bg-amber-50/50">
+                    <td className="px-3 py-2 text-gray-800 whitespace-nowrap">{p.nombre}</td>
+                    <td className="px-3 py-2 text-gray-600 whitespace-nowrap">{p.email}</td>
+                    <td className="px-3 py-2 font-mono font-medium text-gray-900 whitespace-nowrap">{p.password}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      )}
 
       {/* Table */}
       <div className="bg-white border border-gray-200 rounded-xl overflow-hidden">
