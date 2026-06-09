@@ -25,6 +25,13 @@ export async function PUT(
     verTodasSolicitudes?: boolean;
   };
 
+  if (rol.protegido && (body.funcionalidades !== undefined || body.verTodasSolicitudes !== undefined)) {
+    return Response.json(
+      { error: "Los roles del sistema no permiten modificar funcionalidades ni visibilidad" },
+      { status: 400 }
+    );
+  }
+
   const updated = await prisma.rol.update({
     where: { slug },
     data: {
