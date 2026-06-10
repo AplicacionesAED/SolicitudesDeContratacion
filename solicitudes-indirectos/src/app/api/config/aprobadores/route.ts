@@ -47,11 +47,15 @@ export async function POST(request: Request) {
       );
     }
 
-    // Upsert aprobador config for frente
+    // Preserve any additional configured directors; replace only the first one
+    const existing = await prisma.aprobadorFrente.findUnique({ where: { frenteId } });
+    const existingIds: string[] = (() => { try { return JSON.parse(existing?.aprobadorIds ?? "[]"); } catch { return []; } })();
+    const updatedIds = [aprobadorId, ...existingIds.filter((id) => id !== aprobadorId)];
+
     const config = await prisma.aprobadorFrente.upsert({
       where: { frenteId },
-      update: { aprobadorId },
-      create: { frenteId, aprobadorId },
+      update: { aprobadorIds: JSON.stringify(updatedIds) },
+      create: { frenteId, aprobadorIds: JSON.stringify(updatedIds) },
       include: {
         frente: { include: { proyecto: true } },
       },

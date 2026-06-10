@@ -175,8 +175,8 @@ async function main() {
     if (frenteId && aprobador) {
       await prisma.aprobadorFrente.upsert({
         where: { frenteId },
-        update: { aprobadorId: aprobador.id },
-        create: { frenteId, aprobadorId: aprobador.id },
+        update: { aprobadorIds: JSON.stringify([aprobador.id]) },
+        create: { frenteId, aprobadorIds: JSON.stringify([aprobador.id]) },
       });
     }
   }

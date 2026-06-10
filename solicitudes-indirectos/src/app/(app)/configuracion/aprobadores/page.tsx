@@ -12,7 +12,7 @@ interface Frente {
   id: number;
   nombre: string;
   proyecto: { id: number; nombre: string };
-  aprobadorConfig?: { id: number; aprobadorId: string; frenteId: number } | null;
+  aprobadorConfig?: { id: number; aprobadorIds: string; frenteId: number } | null;
 }
 
 interface User {
@@ -62,9 +62,8 @@ export default function AprobadoresPage() {
       // Init selections from current config
       const initial: Record<number, string> = {};
       for (const f of frentesData) {
-        if (f.aprobadorConfig?.aprobadorId) {
-          initial[f.id] = f.aprobadorConfig.aprobadorId;
-        }
+        const ids: string[] = (() => { try { return JSON.parse(f.aprobadorConfig?.aprobadorIds ?? "[]"); } catch { return []; } })();
+        if (ids[0]) initial[f.id] = ids[0];
       }
       setSelections(initial);
     } catch (e) {
@@ -199,7 +198,7 @@ export default function AprobadoresPage() {
                 </thead>
                 <tbody className="divide-y divide-gray-100">
                   {pFreentes.map((frente) => {
-                    const currentAprobadorId = frente.aprobadorConfig?.aprobadorId;
+                    const currentAprobadorId = (() => { try { return JSON.parse(frente.aprobadorConfig?.aprobadorIds ?? "[]")[0] ?? null; } catch { return null; } })();
                     const currentDirector = directors.find(
                       (d) => d.id === currentAprobadorId
                     );
