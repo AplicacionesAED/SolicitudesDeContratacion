@@ -199,11 +199,11 @@ exports.Prisma.FrenteUsuarioScalarFieldEnum = {
 exports.Prisma.AprobadorFrenteScalarFieldEnum = {
   id: 'id',
   frenteId: 'frenteId',
-  aprobadorId: 'aprobadorId',
-  contratosTramiteId: 'contratosTramiteId',
-  contratosMinutaId: 'contratosMinutaId',
+  aprobadorIds: 'aprobadorIds',
+  contratosTramiteIds: 'contratosTramiteIds',
+  contratosMinutaIds: 'contratosMinutaIds',
   controlesId: 'controlesId',
-  directorControlesId: 'directorControlesId'
+  directorControlesIds: 'directorControlesIds'
 };
 
 exports.Prisma.TerceroScalarFieldEnum = {

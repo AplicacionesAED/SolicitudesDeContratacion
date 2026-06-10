@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback } from "react";
 import { useSession } from "next-auth/react";
-import { MapPin, Users, Settings, Plus, X, Pencil, Trash2, LayoutDashboard, Hash, Filter } from "lucide-react";
+import { MapPin, Users, Settings, Plus, X, Pencil, Trash2, LayoutDashboard, Hash, Filter, ArrowLeft } from "lucide-react";
 import { Spinner } from "@/shared/ui/spinner";
 import Link from "next/link";
 
@@ -27,11 +27,11 @@ interface Frente {
   etapa?: number | null;
   proyecto: { id: number; nombre: string; activo: boolean };
   aprobadorConfig?: {
-    aprobadorId: string;
-    contratosTramiteId?: string | null;
-    contratosMinutaId?: string | null;
+    aprobadorIds: string;
+    contratosTramiteIds: string;
+    contratosMinutaIds: string;
     controlesId?: string | null;
-    directorControlesId?: string | null;
+    directorControlesIds: string;
   } | null;
   usuarios?: FrenteUsuario[];
 }
@@ -323,6 +323,15 @@ export default function FrentesPage() {
   return (
     <div className="max-w-5xl mx-auto space-y-5">
       {/* Header */}
+      <div>
+        <Link
+          href="/configuracion"
+          className="inline-flex items-center gap-1.5 text-sm text-gray-500 hover:text-gray-700 mb-4 transition-colors group"
+        >
+          <ArrowLeft size={16} className="group-hover:-translate-x-0.5 transition-transform" />
+          Volver a Configuración
+        </Link>
+      </div>
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
           <h1 className="text-2xl font-bold text-gray-900">Proyectos y Frentes</h1>

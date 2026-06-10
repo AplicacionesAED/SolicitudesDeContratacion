@@ -203,12 +203,19 @@ export async function POST(
     }
 
     if (accion === "APROBAR_DIRECTOR") {
-      // Must be the assigned aprobador (Director de Proyecto)
-      if (solicitud.aprobadorId && solicitud.aprobadorId !== userId && !userRoles.includes("ADMIN")) {
-        return Response.json(
-          { error: "Solo el director de proyecto asignado puede aprobar esta solicitud" },
-          { status: 403 }
-        );
+      if (!userRoles.includes("ADMIN") && solicitud.aprobadorId && solicitud.aprobadorId !== userId) {
+        // Check if user is in any of the configured approver arrays for the frente
+        const frenteIds: number[] = (() => { try { return JSON.parse(solicitud.frentesIds || "[]"); } catch { return []; } })();
+        const frenteConfig = frenteIds.length
+          ? await prisma.aprobadorFrente.findFirst({ where: { frenteId: { in: frenteIds } } })
+          : null;
+        const configuredIds: string[] = (() => { try { return JSON.parse(frenteConfig?.aprobadorIds ?? "[]"); } catch { return []; } })();
+        if (!configuredIds.includes(userId)) {
+          return Response.json(
+            { error: "Solo el director de proyecto asignado puede aprobar esta solicitud" },
+            { status: 403 }
+          );
+        }
       }
     }
 
@@ -232,22 +239,34 @@ export async function POST(
     }
 
     if (accion === "TRAMITAR_OK" || (accion === "DEVOLVER" && solicitud.estado === "EN_TRAMITE_CONTRATOS") || (accion === "REVISAR" && solicitud.estado === "EN_TRAMITE_CONTRATOS")) {
-      // Must be the assigned Contratos user for Tramite
-      if (solicitud.responsableContratosTramiteId && solicitud.responsableContratosTramiteId !== userId && !userRoles.includes("ADMIN")) {
-        return Response.json(
-          { error: "Solo el responsable de contratos asignado para el trámite puede realizar esta acción" },
-          { status: 403 }
-        );
+      if (!userRoles.includes("ADMIN") && solicitud.responsableContratosTramiteId && solicitud.responsableContratosTramiteId !== userId) {
+        const frenteIds: number[] = (() => { try { return JSON.parse(solicitud.frentesIds || "[]"); } catch { return []; } })();
+        const frenteConfig = frenteIds.length
+          ? await prisma.aprobadorFrente.findFirst({ where: { frenteId: { in: frenteIds } } })
+          : null;
+        const configuredIds: string[] = (() => { try { return JSON.parse(frenteConfig?.contratosTramiteIds ?? "[]"); } catch { return []; } })();
+        if (!configuredIds.includes(userId)) {
+          return Response.json(
+            { error: "Solo el responsable de contratos asignado para el trámite puede realizar esta acción" },
+            { status: 403 }
+          );
+        }
       }
     }
 
     if (accion === "AVANZAR_CONTRATOS") {
-      // Must be the assigned Contratos user for Minuta
-      if (solicitud.responsableContratosMinutaId && solicitud.responsableContratosMinutaId !== userId && !userRoles.includes("ADMIN")) {
-        return Response.json(
-          { error: "Solo el responsable de contratos asignado para la creación de minuta puede realizar esta acción" },
-          { status: 403 }
-        );
+      if (!userRoles.includes("ADMIN") && solicitud.responsableContratosMinutaId && solicitud.responsableContratosMinutaId !== userId) {
+        const frenteIds: number[] = (() => { try { return JSON.parse(solicitud.frentesIds || "[]"); } catch { return []; } })();
+        const frenteConfig = frenteIds.length
+          ? await prisma.aprobadorFrente.findFirst({ where: { frenteId: { in: frenteIds } } })
+          : null;
+        const configuredIds: string[] = (() => { try { return JSON.parse(frenteConfig?.contratosMinutaIds ?? "[]"); } catch { return []; } })();
+        if (!configuredIds.includes(userId)) {
+          return Response.json(
+            { error: "Solo el responsable de contratos asignado para la creación de minuta puede realizar esta acción" },
+            { status: 403 }
+          );
+        }
       }
 
       const anexos: unknown[] = (() => { try { return JSON.parse(solicitud.archivosAnexos || "[]"); } catch { return []; } })();
@@ -269,12 +288,18 @@ export async function POST(
     }
 
     if (accion === "APROBAR_FINAL") {
-      // Must be the assigned Director de Controles
-      if (solicitud.directorControlesId && solicitud.directorControlesId !== userId && !userRoles.includes("ADMIN")) {
-        return Response.json(
-          { error: "Solo el director de controles asignado puede dar la aprobación final" },
-          { status: 403 }
-        );
+      if (!userRoles.includes("ADMIN") && solicitud.directorControlesId && solicitud.directorControlesId !== userId) {
+        const frenteIds: number[] = (() => { try { return JSON.parse(solicitud.frentesIds || "[]"); } catch { return []; } })();
+        const frenteConfig = frenteIds.length
+          ? await prisma.aprobadorFrente.findFirst({ where: { frenteId: { in: frenteIds } } })
+          : null;
+        const configuredIds: string[] = (() => { try { return JSON.parse(frenteConfig?.directorControlesIds ?? "[]"); } catch { return []; } })();
+        if (!configuredIds.includes(userId)) {
+          return Response.json(
+            { error: "Solo el director de controles asignado puede dar la aprobación final" },
+            { status: 403 }
+          );
+        }
       }
     }
 

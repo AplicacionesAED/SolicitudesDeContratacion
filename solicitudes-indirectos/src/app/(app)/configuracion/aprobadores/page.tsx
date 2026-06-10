@@ -2,8 +2,9 @@
 
 import { useState, useEffect, useCallback } from "react";
 import { useSession } from "next-auth/react";
-import { Save, Settings } from "lucide-react";
+import { Save, Settings, ArrowLeft } from "lucide-react";
 import { Spinner } from "@/shared/ui/spinner";
+import Link from "next/link";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -135,6 +136,13 @@ export default function AprobadoresPage() {
   return (
     <div className="max-w-4xl mx-auto space-y-5">
       <div>
+        <Link
+          href="/configuracion"
+          className="inline-flex items-center gap-1.5 text-sm text-gray-500 hover:text-gray-700 mb-4 transition-colors group"
+        >
+          <ArrowLeft size={16} className="group-hover:-translate-x-0.5 transition-transform" />
+          Volver a Configuración
+        </Link>
         <h1 className="text-2xl font-bold text-gray-900">
           Aprobadores por Frente
         </h1>

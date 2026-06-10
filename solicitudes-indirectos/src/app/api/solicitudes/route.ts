@@ -383,8 +383,12 @@ export async function POST(request: Request) {
       where: { frenteId: Number(firstFrenteId) }
     });
 
-    let aprobadorId: string | null = config?.aprobadorId ?? null;
-    
+    const parseIdsField = (json: string | null | undefined): string[] => {
+      try { return JSON.parse(json ?? "[]"); } catch { return []; }
+    };
+
+    let aprobadorId: string | null = parseIdsField(config?.aprobadorIds)[0] ?? null;
+
     // Fallback for first approval: if not configured and the solicitante is themselves a DIRECTOR_PROYECTO, they self-approve;
     if (!aprobadorId) {
       if (userRoles.includes("DIRECTOR_PROYECTO")) {
@@ -437,10 +441,10 @@ export async function POST(request: Request) {
           frentesIds: JSON.stringify(frentesIds || []),
           solicitanteId: session.user.id,
           aprobadorId: aprobadorId ?? null,
-          responsableContratosTramiteId: config?.contratosTramiteId ?? null,
-          responsableContratosMinutaId: config?.contratosMinutaId ?? null,
+          responsableContratosTramiteId: parseIdsField(config?.contratosTramiteIds)[0] ?? null,
+          responsableContratosMinutaId: parseIdsField(config?.contratosMinutaIds)[0] ?? null,
           coordinadorControlesId: config?.controlesId ?? null,
-          directorControlesId: config?.directorControlesId ?? null,
+          directorControlesId: parseIdsField(config?.directorControlesIds)[0] ?? null,
           estado: "BORRADOR",
           terceroId: terceroId ?? null,
           descripcionActividad: descripcionActividad ?? null,

@@ -10722,31 +10722,31 @@ export namespace Prisma {
   export type AprobadorFrenteMinAggregateOutputType = {
     id: number | null
     frenteId: number | null
-    aprobadorId: string | null
-    contratosTramiteId: string | null
-    contratosMinutaId: string | null
+    aprobadorIds: string | null
+    contratosTramiteIds: string | null
+    contratosMinutaIds: string | null
     controlesId: string | null
-    directorControlesId: string | null
+    directorControlesIds: string | null
   }
 
   export type AprobadorFrenteMaxAggregateOutputType = {
     id: number | null
     frenteId: number | null
-    aprobadorId: string | null
-    contratosTramiteId: string | null
-    contratosMinutaId: string | null
+    aprobadorIds: string | null
+    contratosTramiteIds: string | null
+    contratosMinutaIds: string | null
     controlesId: string | null
-    directorControlesId: string | null
+    directorControlesIds: string | null
   }
 
   export type AprobadorFrenteCountAggregateOutputType = {
     id: number
     frenteId: number
-    aprobadorId: number
-    contratosTramiteId: number
-    contratosMinutaId: number
+    aprobadorIds: number
+    contratosTramiteIds: number
+    contratosMinutaIds: number
     controlesId: number
-    directorControlesId: number
+    directorControlesIds: number
     _all: number
   }
 
@@ -10764,31 +10764,31 @@ export namespace Prisma {
   export type AprobadorFrenteMinAggregateInputType = {
     id?: true
     frenteId?: true
-    aprobadorId?: true
-    contratosTramiteId?: true
-    contratosMinutaId?: true
+    aprobadorIds?: true
+    contratosTramiteIds?: true
+    contratosMinutaIds?: true
     controlesId?: true
-    directorControlesId?: true
+    directorControlesIds?: true
   }
 
   export type AprobadorFrenteMaxAggregateInputType = {
     id?: true
     frenteId?: true
-    aprobadorId?: true
-    contratosTramiteId?: true
-    contratosMinutaId?: true
+    aprobadorIds?: true
+    contratosTramiteIds?: true
+    contratosMinutaIds?: true
     controlesId?: true
-    directorControlesId?: true
+    directorControlesIds?: true
   }
 
   export type AprobadorFrenteCountAggregateInputType = {
     id?: true
     frenteId?: true
-    aprobadorId?: true
-    contratosTramiteId?: true
-    contratosMinutaId?: true
+    aprobadorIds?: true
+    contratosTramiteIds?: true
+    contratosMinutaIds?: true
     controlesId?: true
-    directorControlesId?: true
+    directorControlesIds?: true
     _all?: true
   }
 
@@ -10881,11 +10881,11 @@ export namespace Prisma {
   export type AprobadorFrenteGroupByOutputType = {
     id: number
     frenteId: number
-    aprobadorId: string
-    contratosTramiteId: string | null
-    contratosMinutaId: string | null
+    aprobadorIds: string
+    contratosTramiteIds: string
+    contratosMinutaIds: string
     controlesId: string | null
-    directorControlesId: string | null
+    directorControlesIds: string
     _count: AprobadorFrenteCountAggregateOutputType | null
     _avg: AprobadorFrenteAvgAggregateOutputType | null
     _sum: AprobadorFrenteSumAggregateOutputType | null
@@ -10910,22 +10910,22 @@ export namespace Prisma {
   export type AprobadorFrenteSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
     frenteId?: boolean
-    aprobadorId?: boolean
-    contratosTramiteId?: boolean
-    contratosMinutaId?: boolean
+    aprobadorIds?: boolean
+    contratosTramiteIds?: boolean
+    contratosMinutaIds?: boolean
     controlesId?: boolean
-    directorControlesId?: boolean
+    directorControlesIds?: boolean
     frente?: boolean | FrenteDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["aprobadorFrente"]>
 
   export type AprobadorFrenteSelectScalar = {
     id?: boolean
     frenteId?: boolean
-    aprobadorId?: boolean
-    contratosTramiteId?: boolean
-    contratosMinutaId?: boolean
+    aprobadorIds?: boolean
+    contratosTramiteIds?: boolean
+    contratosMinutaIds?: boolean
     controlesId?: boolean
-    directorControlesId?: boolean
+    directorControlesIds?: boolean
   }
 
 
@@ -10942,11 +10942,11 @@ export namespace Prisma {
     scalars: $Extensions.GetPayloadResult<{
       id: number
       frenteId: number
-      aprobadorId: string
-      contratosTramiteId: string | null
-      contratosMinutaId: string | null
+      aprobadorIds: string
+      contratosTramiteIds: string
+      contratosMinutaIds: string
       controlesId: string | null
-      directorControlesId: string | null
+      directorControlesIds: string
     }, ExtArgs["result"]["aprobadorFrente"]>
     composites: {}
   }
@@ -11370,11 +11370,11 @@ export namespace Prisma {
   interface AprobadorFrenteFieldRefs {
     readonly id: FieldRef<"AprobadorFrente", 'Int'>
     readonly frenteId: FieldRef<"AprobadorFrente", 'Int'>
-    readonly aprobadorId: FieldRef<"AprobadorFrente", 'String'>
-    readonly contratosTramiteId: FieldRef<"AprobadorFrente", 'String'>
-    readonly contratosMinutaId: FieldRef<"AprobadorFrente", 'String'>
+    readonly aprobadorIds: FieldRef<"AprobadorFrente", 'String'>
+    readonly contratosTramiteIds: FieldRef<"AprobadorFrente", 'String'>
+    readonly contratosMinutaIds: FieldRef<"AprobadorFrente", 'String'>
     readonly controlesId: FieldRef<"AprobadorFrente", 'String'>
-    readonly directorControlesId: FieldRef<"AprobadorFrente", 'String'>
+    readonly directorControlesIds: FieldRef<"AprobadorFrente", 'String'>
   }
     
 
@@ -21715,11 +21715,11 @@ export namespace Prisma {
   export const AprobadorFrenteScalarFieldEnum: {
     id: 'id',
     frenteId: 'frenteId',
-    aprobadorId: 'aprobadorId',
-    contratosTramiteId: 'contratosTramiteId',
-    contratosMinutaId: 'contratosMinutaId',
+    aprobadorIds: 'aprobadorIds',
+    contratosTramiteIds: 'contratosTramiteIds',
+    contratosMinutaIds: 'contratosMinutaIds',
     controlesId: 'controlesId',
-    directorControlesId: 'directorControlesId'
+    directorControlesIds: 'directorControlesIds'
   };
 
   export type AprobadorFrenteScalarFieldEnum = (typeof AprobadorFrenteScalarFieldEnum)[keyof typeof AprobadorFrenteScalarFieldEnum]
@@ -22543,22 +22543,22 @@ export namespace Prisma {
     NOT?: AprobadorFrenteWhereInput | AprobadorFrenteWhereInput[]
     id?: IntFilter<"AprobadorFrente"> | number
     frenteId?: IntFilter<"AprobadorFrente"> | number
-    aprobadorId?: StringFilter<"AprobadorFrente"> | string
-    contratosTramiteId?: StringNullableFilter<"AprobadorFrente"> | string | null
-    contratosMinutaId?: StringNullableFilter<"AprobadorFrente"> | string | null
+    aprobadorIds?: StringFilter<"AprobadorFrente"> | string
+    contratosTramiteIds?: StringFilter<"AprobadorFrente"> | string
+    contratosMinutaIds?: StringFilter<"AprobadorFrente"> | string
     controlesId?: StringNullableFilter<"AprobadorFrente"> | string | null
-    directorControlesId?: StringNullableFilter<"AprobadorFrente"> | string | null
+    directorControlesIds?: StringFilter<"AprobadorFrente"> | string
     frente?: XOR<FrenteRelationFilter, FrenteWhereInput>
   }
 
   export type AprobadorFrenteOrderByWithRelationInput = {
     id?: SortOrder
     frenteId?: SortOrder
-    aprobadorId?: SortOrder
-    contratosTramiteId?: SortOrderInput | SortOrder
-    contratosMinutaId?: SortOrderInput | SortOrder
+    aprobadorIds?: SortOrder
+    contratosTramiteIds?: SortOrder
+    contratosMinutaIds?: SortOrder
     controlesId?: SortOrderInput | SortOrder
-    directorControlesId?: SortOrderInput | SortOrder
+    directorControlesIds?: SortOrder
     frente?: FrenteOrderByWithRelationInput
   }
 
@@ -22568,22 +22568,22 @@ export namespace Prisma {
     AND?: AprobadorFrenteWhereInput | AprobadorFrenteWhereInput[]
     OR?: AprobadorFrenteWhereInput[]
     NOT?: AprobadorFrenteWhereInput | AprobadorFrenteWhereInput[]
-    aprobadorId?: StringFilter<"AprobadorFrente"> | string
-    contratosTramiteId?: StringNullableFilter<"AprobadorFrente"> | string | null
-    contratosMinutaId?: StringNullableFilter<"AprobadorFrente"> | string | null
+    aprobadorIds?: StringFilter<"AprobadorFrente"> | string
+    contratosTramiteIds?: StringFilter<"AprobadorFrente"> | string
+    contratosMinutaIds?: StringFilter<"AprobadorFrente"> | string
     controlesId?: StringNullableFilter<"AprobadorFrente"> | string | null
-    directorControlesId?: StringNullableFilter<"AprobadorFrente"> | string | null
+    directorControlesIds?: StringFilter<"AprobadorFrente"> | string
     frente?: XOR<FrenteRelationFilter, FrenteWhereInput>
   }, "id" | "frenteId">
 
   export type AprobadorFrenteOrderByWithAggregationInput = {
     id?: SortOrder
     frenteId?: SortOrder
-    aprobadorId?: SortOrder
-    contratosTramiteId?: SortOrderInput | SortOrder
-    contratosMinutaId?: SortOrderInput | SortOrder
+    aprobadorIds?: SortOrder
+    contratosTramiteIds?: SortOrder
+    contratosMinutaIds?: SortOrder
     controlesId?: SortOrderInput | SortOrder
-    directorControlesId?: SortOrderInput | SortOrder
+    directorControlesIds?: SortOrder
     _count?: AprobadorFrenteCountOrderByAggregateInput
     _avg?: AprobadorFrenteAvgOrderByAggregateInput
     _max?: AprobadorFrenteMaxOrderByAggregateInput
@@ -22597,11 +22597,11 @@ export namespace Prisma {
     NOT?: AprobadorFrenteScalarWhereWithAggregatesInput | AprobadorFrenteScalarWhereWithAggregatesInput[]
     id?: IntWithAggregatesFilter<"AprobadorFrente"> | number
     frenteId?: IntWithAggregatesFilter<"AprobadorFrente"> | number
-    aprobadorId?: StringWithAggregatesFilter<"AprobadorFrente"> | string
-    contratosTramiteId?: StringNullableWithAggregatesFilter<"AprobadorFrente"> | string | null
-    contratosMinutaId?: StringNullableWithAggregatesFilter<"AprobadorFrente"> | string | null
+    aprobadorIds?: StringWithAggregatesFilter<"AprobadorFrente"> | string
+    contratosTramiteIds?: StringWithAggregatesFilter<"AprobadorFrente"> | string
+    contratosMinutaIds?: StringWithAggregatesFilter<"AprobadorFrente"> | string
     controlesId?: StringNullableWithAggregatesFilter<"AprobadorFrente"> | string | null
-    directorControlesId?: StringNullableWithAggregatesFilter<"AprobadorFrente"> | string | null
+    directorControlesIds?: StringWithAggregatesFilter<"AprobadorFrente"> | string
   }
 
   export type TerceroWhereInput = {
@@ -24055,69 +24055,69 @@ export namespace Prisma {
   }
 
   export type AprobadorFrenteCreateInput = {
-    aprobadorId: string
-    contratosTramiteId?: string | null
-    contratosMinutaId?: string | null
+    aprobadorIds?: string
+    contratosTramiteIds?: string
+    contratosMinutaIds?: string
     controlesId?: string | null
-    directorControlesId?: string | null
+    directorControlesIds?: string
     frente: FrenteCreateNestedOneWithoutAprobadorConfigInput
   }
 
   export type AprobadorFrenteUncheckedCreateInput = {
     id?: number
     frenteId: number
-    aprobadorId: string
-    contratosTramiteId?: string | null
-    contratosMinutaId?: string | null
+    aprobadorIds?: string
+    contratosTramiteIds?: string
+    contratosMinutaIds?: string
     controlesId?: string | null
-    directorControlesId?: string | null
+    directorControlesIds?: string
   }
 
   export type AprobadorFrenteUpdateInput = {
-    aprobadorId?: StringFieldUpdateOperationsInput | string
-    contratosTramiteId?: NullableStringFieldUpdateOperationsInput | string | null
-    contratosMinutaId?: NullableStringFieldUpdateOperationsInput | string | null
+    aprobadorIds?: StringFieldUpdateOperationsInput | string
+    contratosTramiteIds?: StringFieldUpdateOperationsInput | string
+    contratosMinutaIds?: StringFieldUpdateOperationsInput | string
     controlesId?: NullableStringFieldUpdateOperationsInput | string | null
-    directorControlesId?: NullableStringFieldUpdateOperationsInput | string | null
+    directorControlesIds?: StringFieldUpdateOperationsInput | string
     frente?: FrenteUpdateOneRequiredWithoutAprobadorConfigNestedInput
   }
 
   export type AprobadorFrenteUncheckedUpdateInput = {
     id?: IntFieldUpdateOperationsInput | number
     frenteId?: IntFieldUpdateOperationsInput | number
-    aprobadorId?: StringFieldUpdateOperationsInput | string
-    contratosTramiteId?: NullableStringFieldUpdateOperationsInput | string | null
-    contratosMinutaId?: NullableStringFieldUpdateOperationsInput | string | null
+    aprobadorIds?: StringFieldUpdateOperationsInput | string
+    contratosTramiteIds?: StringFieldUpdateOperationsInput | string
+    contratosMinutaIds?: StringFieldUpdateOperationsInput | string
     controlesId?: NullableStringFieldUpdateOperationsInput | string | null
-    directorControlesId?: NullableStringFieldUpdateOperationsInput | string | null
+    directorControlesIds?: StringFieldUpdateOperationsInput | string
   }
 
   export type AprobadorFrenteCreateManyInput = {
     id?: number
     frenteId: number
-    aprobadorId: string
-    contratosTramiteId?: string | null
-    contratosMinutaId?: string | null
+    aprobadorIds?: string
+    contratosTramiteIds?: string
+    contratosMinutaIds?: string
     controlesId?: string | null
-    directorControlesId?: string | null
+    directorControlesIds?: string
   }
 
   export type AprobadorFrenteUpdateManyMutationInput = {
-    aprobadorId?: StringFieldUpdateOperationsInput | string
-    contratosTramiteId?: NullableStringFieldUpdateOperationsInput | string | null
-    contratosMinutaId?: NullableStringFieldUpdateOperationsInput | string | null
+    aprobadorIds?: StringFieldUpdateOperationsInput | string
+    contratosTramiteIds?: StringFieldUpdateOperationsInput | string
+    contratosMinutaIds?: StringFieldUpdateOperationsInput | string
     controlesId?: NullableStringFieldUpdateOperationsInput | string | null
-    directorControlesId?: NullableStringFieldUpdateOperationsInput | string | null
+    directorControlesIds?: StringFieldUpdateOperationsInput | string
   }
 
   export type AprobadorFrenteUncheckedUpdateManyInput = {
     id?: IntFieldUpdateOperationsInput | number
     frenteId?: IntFieldUpdateOperationsInput | number
-    aprobadorId?: StringFieldUpdateOperationsInput | string
-    contratosTramiteId?: NullableStringFieldUpdateOperationsInput | string | null
-    contratosMinutaId?: NullableStringFieldUpdateOperationsInput | string | null
+    aprobadorIds?: StringFieldUpdateOperationsInput | string
+    contratosTramiteIds?: StringFieldUpdateOperationsInput | string
+    contratosMinutaIds?: StringFieldUpdateOperationsInput | string
     controlesId?: NullableStringFieldUpdateOperationsInput | string | null
-    directorControlesId?: NullableStringFieldUpdateOperationsInput | string | null
+    directorControlesIds?: StringFieldUpdateOperationsInput | string
   }
 
   export type TerceroCreateInput = {
@@ -25657,11 +25657,11 @@ export namespace Prisma {
   export type AprobadorFrenteCountOrderByAggregateInput = {
     id?: SortOrder
     frenteId?: SortOrder
-    aprobadorId?: SortOrder
-    contratosTramiteId?: SortOrder
-    contratosMinutaId?: SortOrder
+    aprobadorIds?: SortOrder
+    contratosTramiteIds?: SortOrder
+    contratosMinutaIds?: SortOrder
     controlesId?: SortOrder
-    directorControlesId?: SortOrder
+    directorControlesIds?: SortOrder
   }
 
   export type AprobadorFrenteAvgOrderByAggregateInput = {
@@ -25672,21 +25672,21 @@ export namespace Prisma {
   export type AprobadorFrenteMaxOrderByAggregateInput = {
     id?: SortOrder
     frenteId?: SortOrder
-    aprobadorId?: SortOrder
-    contratosTramiteId?: SortOrder
-    contratosMinutaId?: SortOrder
+    aprobadorIds?: SortOrder
+    contratosTramiteIds?: SortOrder
+    contratosMinutaIds?: SortOrder
     controlesId?: SortOrder
-    directorControlesId?: SortOrder
+    directorControlesIds?: SortOrder
   }
 
   export type AprobadorFrenteMinOrderByAggregateInput = {
     id?: SortOrder
     frenteId?: SortOrder
-    aprobadorId?: SortOrder
-    contratosTramiteId?: SortOrder
-    contratosMinutaId?: SortOrder
+    aprobadorIds?: SortOrder
+    contratosTramiteIds?: SortOrder
+    contratosMinutaIds?: SortOrder
     controlesId?: SortOrder
-    directorControlesId?: SortOrder
+    directorControlesIds?: SortOrder
   }
 
   export type AprobadorFrenteSumOrderByAggregateInput = {
@@ -28547,20 +28547,20 @@ export namespace Prisma {
   }
 
   export type AprobadorFrenteCreateWithoutFrenteInput = {
-    aprobadorId: string
-    contratosTramiteId?: string | null
-    contratosMinutaId?: string | null
+    aprobadorIds?: string
+    contratosTramiteIds?: string
+    contratosMinutaIds?: string
     controlesId?: string | null
-    directorControlesId?: string | null
+    directorControlesIds?: string
   }
 
   export type AprobadorFrenteUncheckedCreateWithoutFrenteInput = {
     id?: number
-    aprobadorId: string
-    contratosTramiteId?: string | null
-    contratosMinutaId?: string | null
+    aprobadorIds?: string
+    contratosTramiteIds?: string
+    contratosMinutaIds?: string
     controlesId?: string | null
-    directorControlesId?: string | null
+    directorControlesIds?: string
   }
 
   export type AprobadorFrenteCreateOrConnectWithoutFrenteInput = {
@@ -28620,20 +28620,20 @@ export namespace Prisma {
   }
 
   export type AprobadorFrenteUpdateWithoutFrenteInput = {
-    aprobadorId?: StringFieldUpdateOperationsInput | string
-    contratosTramiteId?: NullableStringFieldUpdateOperationsInput | string | null
-    contratosMinutaId?: NullableStringFieldUpdateOperationsInput | string | null
+    aprobadorIds?: StringFieldUpdateOperationsInput | string
+    contratosTramiteIds?: StringFieldUpdateOperationsInput | string
+    contratosMinutaIds?: StringFieldUpdateOperationsInput | string
     controlesId?: NullableStringFieldUpdateOperationsInput | string | null
-    directorControlesId?: NullableStringFieldUpdateOperationsInput | string | null
+    directorControlesIds?: StringFieldUpdateOperationsInput | string
   }
 
   export type AprobadorFrenteUncheckedUpdateWithoutFrenteInput = {
     id?: IntFieldUpdateOperationsInput | number
-    aprobadorId?: StringFieldUpdateOperationsInput | string
-    contratosTramiteId?: NullableStringFieldUpdateOperationsInput | string | null
-    contratosMinutaId?: NullableStringFieldUpdateOperationsInput | string | null
+    aprobadorIds?: StringFieldUpdateOperationsInput | string
+    contratosTramiteIds?: StringFieldUpdateOperationsInput | string
+    contratosMinutaIds?: StringFieldUpdateOperationsInput | string
     controlesId?: NullableStringFieldUpdateOperationsInput | string | null
-    directorControlesId?: NullableStringFieldUpdateOperationsInput | string | null
+    directorControlesIds?: StringFieldUpdateOperationsInput | string
   }
 
   export type UserCreateWithoutFrentesAsignadosInput = {

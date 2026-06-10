@@ -6,13 +6,14 @@ import {
   ArrowLeft,
   Users,
   ShieldCheck,
-  Settings,
   User as UserIcon,
   Building2,
   CheckCircle2,
   AlertCircle,
   Layers,
   Info,
+  Plus,
+  X,
 } from "lucide-react";
 import Link from "next/link";
 import { Spinner } from "@/shared/ui/spinner";
@@ -30,11 +31,11 @@ interface Frente {
   etapa?: number | null;
   proyecto: { nombre: string };
   aprobadorConfig?: {
-    aprobadorId: string;
-    contratosTramiteId?: string | null;
-    contratosMinutaId?: string | null;
+    aprobadorIds: string;
+    contratosTramiteIds: string;
+    contratosMinutaIds: string;
     controlesId?: string | null;
-    directorControlesId?: string | null;
+    directorControlesIds: string;
   } | null;
   usuarios?: { userId: string; user?: User }[];
 }
@@ -42,6 +43,10 @@ interface Frente {
 interface Props {
   frente: Frente;
   allUsers: User[];
+}
+
+function parseIds(json: string | undefined | null): string[] {
+  try { return JSON.parse(json ?? "[]"); } catch { return []; }
 }
 
 function InfoRow({
@@ -72,29 +77,115 @@ function InfoRow({
   );
 }
 
+function MultiPersonStep({
+  label,
+  ids,
+  options,
+  icon: Icon,
+  onChange,
+}: {
+  label: string;
+  ids: string[];
+  options: User[];
+  icon: React.ElementType;
+  onChange: (ids: string[]) => void;
+}) {
+  const selectedUsers = ids.map(id => options.find(u => u.id === id)).filter(Boolean) as User[];
+  const remaining = options.filter(u => !ids.includes(u.id));
+
+  function remove(id: string) {
+    onChange(ids.filter(i => i !== id));
+  }
+
+  function add(id: string) {
+    if (id && !ids.includes(id)) onChange([...ids, id]);
+  }
+
+  return (
+    <div className="group">
+      <label className="text-[11px] text-gray-400 font-bold uppercase tracking-wider block mb-2 group-focus-within:text-blue-600 transition-colors">
+        {label}
+      </label>
+
+      <div className="space-y-2">
+        {selectedUsers.map(user => (
+          <div
+            key={user.id}
+            className="flex items-center gap-3 rounded-xl border border-gray-200 bg-white px-4 py-3 shadow-sm"
+          >
+            <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-gray-100 shrink-0">
+              <Icon size={14} className="text-gray-500" />
+            </div>
+            <span className="flex-1 text-sm font-medium text-gray-800">{user.nombre}</span>
+            <button
+              type="button"
+              onClick={() => remove(user.id)}
+              className="flex h-6 w-6 items-center justify-center rounded-lg text-gray-300 hover:bg-red-50 hover:text-red-500 transition-colors"
+              title="Quitar"
+            >
+              <X size={13} />
+            </button>
+          </div>
+        ))}
+
+        {remaining.length > 0 ? (
+          <div className="relative">
+            <select
+              value=""
+              onChange={(e) => { add(e.target.value); e.target.value = ""; }}
+              className="w-full rounded-xl border-2 border-dashed border-gray-200 bg-white px-4 py-3 text-sm text-gray-400 hover:border-blue-300 hover:text-blue-500 focus:border-blue-400 focus:ring-2 focus:ring-blue-50 outline-none transition-all appearance-none cursor-pointer"
+            >
+              <option value="">+ Agregar persona...</option>
+              {remaining.map(u => (
+                <option key={u.id} value={u.id}>{u.nombre}</option>
+              ))}
+            </select>
+            <div className="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 text-gray-300">
+              <Plus size={14} />
+            </div>
+          </div>
+        ) : options.length === 0 ? (
+          <p className="rounded-xl border border-dashed border-gray-200 px-4 py-3 text-xs text-gray-400 italic text-center">
+            No hay personal con el perfil requerido asignado a este frente.
+          </p>
+        ) : (
+          <p className="rounded-xl border border-dashed border-green-200 bg-green-50/40 px-4 py-3 text-xs text-green-600 text-center">
+            Todos los responsables disponibles han sido asignados.
+          </p>
+        )}
+      </div>
+    </div>
+  );
+}
+
 export default function FrenteDetalle({ frente, allUsers }: Props) {
   const router = useRouter();
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
 
-  const [aprobadorId, setAprobadorId] = useState(frente.aprobadorConfig?.aprobadorId ?? "");
-  const [contratosTramiteId, setContratosTramiteId] = useState(frente.aprobadorConfig?.contratosTramiteId ?? "");
-  const [contratosMinutaId, setContratosMinutaId] = useState(frente.aprobadorConfig?.contratosMinutaId ?? "");
-  const [controlesId, setControlesId] = useState(frente.aprobadorConfig?.controlesId ?? "");
-  const [directorControlesId, setDirectorControlesId] = useState(frente.aprobadorConfig?.directorControlesId ?? "");
+  const [aprobadorIds, setAprobadorIds] = useState<string[]>(
+    parseIds(frente.aprobadorConfig?.aprobadorIds)
+  );
+  const [contratosTramiteIds, setContratosTramiteIds] = useState<string[]>(
+    parseIds(frente.aprobadorConfig?.contratosTramiteIds)
+  );
+  const [contratosMinutaIds, setContratosMinutaIds] = useState<string[]>(
+    parseIds(frente.aprobadorConfig?.contratosMinutaIds)
+  );
+  const [directorControlesIds, setDirectorControlesIds] = useState<string[]>(
+    parseIds(frente.aprobadorConfig?.directorControlesIds)
+  );
 
-  const assignedUserIds = frente.usuarios?.map(fu => fu.userId) ?? [];
-  const assignedUsers = allUsers.filter(u => assignedUserIds.includes(u.id));
-
-  const filterByRole = (role: string) => {
-    return assignedUsers.filter(u => u.roles.includes(role) || u.roles.includes("ADMIN"));
-  };
+  const filterByRole = (role: string) =>
+    allUsers.filter(u => u.roles.includes(role));
 
   const directoresProyecto = filterByRole("DIRECTOR_PROYECTO");
   const personalContratos = filterByRole("CONTRATOS");
-  const coordinadoresControles = filterByRole("CONTROLES");
   const directoresControles = filterByRole("DIRECTOR_CONTROLES");
+
+  const assignedUserIds = frente.usuarios?.map(fu => fu.userId) ?? [];
+  const assignedUsers = allUsers.filter(u => assignedUserIds.includes(u.id));
 
   async function handleSave(e: React.FormEvent) {
     e.preventDefault();
@@ -108,11 +199,10 @@ export default function FrenteDetalle({ frente, allUsers }: Props) {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           id: frente.id,
-          aprobadorId: aprobadorId || null,
-          contratosTramiteId: contratosTramiteId || null,
-          contratosMinutaId: contratosMinutaId || null,
-          controlesId: controlesId || null,
-          directorControlesId: directorControlesId || null,
+          aprobadorIds,
+          contratosTramiteIds,
+          contratosMinutaIds,
+          directorControlesIds,
         }),
       });
 
@@ -133,7 +223,6 @@ export default function FrenteDetalle({ frente, allUsers }: Props) {
 
   return (
     <div className="max-w-5xl mx-auto space-y-6">
-      {/* Header with back button */}
       <div>
         <Link
           href="/configuracion/frentes"
@@ -188,19 +277,13 @@ export default function FrenteDetalle({ frente, allUsers }: Props) {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Left Column: Info + Personal Asignado */}
         <div className="lg:col-span-1 space-y-6">
-
-          {/* Información General */}
           <div className="bg-white border border-gray-200 rounded-2xl shadow-sm overflow-hidden">
             <div className="px-6 py-4 border-b border-gray-50 bg-gray-50/50 flex items-center gap-2">
               <Building2 size={16} className="text-gray-500" />
               <h3 className="text-sm font-bold text-gray-800 uppercase tracking-widest">Información General</h3>
             </div>
             <div className="p-6 space-y-5">
-              <InfoRow
-                label="Proyecto"
-                value={frente.proyecto.nombre}
-                icon={Building2}
-              />
+              <InfoRow label="Proyecto" value={frente.proyecto.nombre} icon={Building2} />
               <InfoRow
                 label="Etapa"
                 value={
@@ -218,7 +301,6 @@ export default function FrenteDetalle({ frente, allUsers }: Props) {
             </div>
           </div>
 
-          {/* Personal Asignado */}
           <div className="bg-white border border-gray-200 rounded-2xl shadow-sm overflow-hidden">
             <div className="px-6 py-4 border-b border-gray-50 bg-gray-50/50 flex items-center gap-2">
               <Users size={16} className="text-blue-600" />
@@ -251,7 +333,7 @@ export default function FrenteDetalle({ frente, allUsers }: Props) {
           </div>
         </div>
 
-        {/* Right Column: Configuración de Aprobadores */}
+        {/* Right Column: Flujo de Aprobación */}
         <div className="lg:col-span-2">
           <div className="bg-white border border-gray-200 rounded-2xl shadow-sm overflow-hidden h-full">
             <div className="px-6 py-4 border-b border-gray-50 bg-gray-50/50 flex items-center gap-2">
@@ -260,39 +342,33 @@ export default function FrenteDetalle({ frente, allUsers }: Props) {
             </div>
             <div className="p-6">
               <p className="text-sm text-gray-500 mb-8 leading-relaxed">
-                Define quién será el responsable de cada hito en el flujo de trabajo de este frente. Solo el personal asignado a este frente con los perfiles adecuados aparecerá en los selectores.
+                Define quiénes serán responsables de cada hito en el flujo de trabajo de este frente. Puedes asignar múltiples personas por paso — cualquiera de ellas podrá realizar la acción.
               </p>
 
               <form onSubmit={handleSave} className="space-y-6">
-                {[
-                  { label: "1. Aprobación Director (Director de Proyecto)", value: aprobadorId, setter: setAprobadorId, options: directoresProyecto, icon: UserIcon },
-                  { label: "2. Trámite Contratos (Contratos)", value: contratosTramiteId, setter: setContratosTramiteId, options: personalContratos, icon: Building2 },
-                  { label: "3. Creación de Minuta (Contratos)", value: contratosMinutaId, setter: setContratosMinutaId, options: personalContratos, icon: Building2 },
-                ].map((item, idx) => (
-                  <div key={idx} className="group">
-                    <label className="text-[11px] text-gray-400 font-bold uppercase tracking-wider block mb-2 group-focus-within:text-blue-600 transition-colors">
-                      {item.label}
-                    </label>
-                    <div className="relative">
-                      <div className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none group-focus-within:text-blue-500 transition-colors">
-                        <item.icon size={16} />
-                      </div>
-                      <select
-                        value={item.value}
-                        onChange={(e) => item.setter(e.target.value)}
-                        className="w-full rounded-xl border border-gray-200 bg-white pl-11 pr-10 py-3 text-sm font-medium focus:ring-4 focus:ring-blue-50 focus:border-blue-500 outline-none transition-all appearance-none text-gray-700 shadow-sm"
-                      >
-                        <option value="">Seleccionar responsable...</option>
-                        {item.options.map(u => (
-                          <option key={u.id} value={u.id}>{u.nombre}</option>
-                        ))}
-                      </select>
-                      <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-gray-300">
-                        <Settings size={14} />
-                      </div>
-                    </div>
-                  </div>
-                ))}
+                <MultiPersonStep
+                  label="1. Aprobación Director (Director de Proyecto)"
+                  ids={aprobadorIds}
+                  options={directoresProyecto}
+                  icon={UserIcon}
+                  onChange={setAprobadorIds}
+                />
+
+                <MultiPersonStep
+                  label="2. Trámite Contratos (Contratos)"
+                  ids={contratosTramiteIds}
+                  options={personalContratos}
+                  icon={Building2}
+                  onChange={setContratosTramiteIds}
+                />
+
+                <MultiPersonStep
+                  label="3. Creación de Minuta (Contratos)"
+                  ids={contratosMinutaIds}
+                  options={personalContratos}
+                  icon={Building2}
+                  onChange={setContratosMinutaIds}
+                />
 
                 {/* Paso 4: abierto a cualquier usuario con perfil Controles */}
                 <div>
@@ -307,33 +383,13 @@ export default function FrenteDetalle({ frente, allUsers }: Props) {
                   </div>
                 </div>
 
-                {[
-                  { label: "5. Aprobación Final (Director de Controles)", value: directorControlesId, setter: setDirectorControlesId, options: directoresControles, icon: ShieldCheck },
-                ].map((item, idx) => (
-                  <div key={idx} className="group">
-                    <label className="text-[11px] text-gray-400 font-bold uppercase tracking-wider block mb-2 group-focus-within:text-blue-600 transition-colors">
-                      {item.label}
-                    </label>
-                    <div className="relative">
-                      <div className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none group-focus-within:text-blue-500 transition-colors">
-                        <item.icon size={16} />
-                      </div>
-                      <select
-                        value={item.value}
-                        onChange={(e) => item.setter(e.target.value)}
-                        className="w-full rounded-xl border border-gray-200 bg-white pl-11 pr-10 py-3 text-sm font-medium focus:ring-4 focus:ring-blue-50 focus:border-blue-500 outline-none transition-all appearance-none text-gray-700 shadow-sm"
-                      >
-                        <option value="">Seleccionar responsable...</option>
-                        {item.options.map(u => (
-                          <option key={u.id} value={u.id}>{u.nombre}</option>
-                        ))}
-                      </select>
-                      <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-gray-300">
-                        <Settings size={14} />
-                      </div>
-                    </div>
-                  </div>
-                ))}
+                <MultiPersonStep
+                  label="5. Aprobación Final (Director de Controles)"
+                  ids={directorControlesIds}
+                  options={directoresControles}
+                  icon={ShieldCheck}
+                  onChange={setDirectorControlesIds}
+                />
 
                 <div className="pt-6 border-t border-gray-50 flex justify-end">
                   <button

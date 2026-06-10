@@ -2,7 +2,8 @@
 
 import { useState, useEffect, useCallback } from "react";
 import { useSession } from "next-auth/react";
-import { Plus, Pencil, Trash2, Shield, ShieldCheck, X, Settings } from "lucide-react";
+import { Plus, Pencil, Trash2, Shield, ShieldCheck, X, Settings, ArrowLeft } from "lucide-react";
+import Link from "next/link";
 import { FUNCIONALIDADES_DISPONIBLES } from "@/lib/utils";
 import { Spinner } from "@/shared/ui/spinner";
 
@@ -120,20 +121,29 @@ export default function RolesPage() {
 
   return (
     <div className="max-w-4xl mx-auto space-y-6">
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl font-bold text-gray-900">Roles</h1>
-          <p className="text-sm text-gray-500 mt-0.5">
-            Gestiona los roles del sistema y sus permisos
-          </p>
-        </div>
-        <button
-          onClick={openCreate}
-          className="flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-blue-700 transition-colors"
+      <div>
+        <Link
+          href="/configuracion"
+          className="inline-flex items-center gap-1.5 text-sm text-gray-500 hover:text-gray-700 mb-4 transition-colors group"
         >
-          <Plus size={16} />
-          Nuevo Rol
-        </button>
+          <ArrowLeft size={16} className="group-hover:-translate-x-0.5 transition-transform" />
+          Volver a Configuración
+        </Link>
+        <div className="flex items-center justify-between">
+          <div>
+            <h1 className="text-2xl font-bold text-gray-900">Roles</h1>
+            <p className="text-sm text-gray-500 mt-0.5">
+              Gestiona los roles del sistema y sus permisos
+            </p>
+          </div>
+          <button
+            onClick={openCreate}
+            className="flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-blue-700 transition-colors"
+          >
+            <Plus size={16} />
+            Nuevo Rol
+          </button>
+        </div>
       </div>
 
       {loading ? (

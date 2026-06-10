@@ -116,14 +116,14 @@ model FrenteUsuario {
 }
 
 model AprobadorFrente {
-  id                  Int     @id @default(autoincrement())
-  frenteId            Int     @unique
-  aprobadorId         String // Director Proyecto
-  contratosTramiteId  String?
-  contratosMinutaId   String?
-  controlesId         String? // Coordinador Controles
-  directorControlesId String?
-  frente              Frente  @relation(fields: [frenteId], references: [id])
+  id                   Int     @id @default(autoincrement())
+  frenteId             Int     @unique
+  aprobadorIds         String  @default("[]") // JSON array - Director Proyecto (cualquiera puede aprobar)
+  contratosTramiteIds  String  @default("[]") // JSON array - Contratos Trámite
+  contratosMinutaIds   String  @default("[]") // JSON array - Contratos Minuta
+  controlesId          String? // Coordinador Controles (solo informativo — cualquier CONTROLES puede actuar)
+  directorControlesIds String  @default("[]") // JSON array - Director Controles
+  frente               Frente  @relation(fields: [frenteId], references: [id])
 }
 
 // ─── Terceros / Debida Diligencia ────────────────────────────────────────────

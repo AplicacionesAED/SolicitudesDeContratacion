@@ -77,7 +77,10 @@ export async function PATCH(request: Request) {
       return Response.json({ error: "No autorizado" }, { status: 403 });
     }
 
-    const { id, nombre, proyectoId, etapa, aprobadorId, contratosTramiteId, contratosMinutaId, controlesId, directorControlesId } = await request.json();
+    const {
+      id, nombre, proyectoId, etapa,
+      aprobadorIds, contratosTramiteIds, contratosMinutaIds, controlesId, directorControlesIds
+    } = await request.json();
     if (!id) {
       return Response.json({ error: "El ID del frente es requerido" }, { status: 400 });
     }
@@ -88,31 +91,22 @@ export async function PATCH(request: Request) {
       ...(etapa !== undefined ? { etapa: etapa ? Number(etapa) : null } : {}),
     };
 
-    if (aprobadorId !== undefined || contratosTramiteId !== undefined || contratosMinutaId !== undefined || controlesId !== undefined || directorControlesId !== undefined) {
-      if (aprobadorId || contratosTramiteId || contratosMinutaId || controlesId || directorControlesId) {
-        data.aprobadorConfig = {
-          upsert: {
-            create: { 
-              aprobadorId: aprobadorId || "",
-              contratosTramiteId: contratosTramiteId || null,
-              contratosMinutaId: contratosMinutaId || null,
-              controlesId: controlesId || null,
-              directorControlesId: directorControlesId || null,
-            },
-            update: { 
-              aprobadorId: aprobadorId || "",
-              contratosTramiteId: contratosTramiteId || null,
-              contratosMinutaId: contratosMinutaId || null,
-              controlesId: controlesId || null,
-              directorControlesId: directorControlesId || null,
-            }
-          }
+    const hasAprobadorPayload = aprobadorIds !== undefined || contratosTramiteIds !== undefined || contratosMinutaIds !== undefined || controlesId !== undefined || directorControlesIds !== undefined;
+    if (hasAprobadorPayload) {
+      const idsStr = (arr: string[] | undefined) => JSON.stringify(arr ?? []);
+      const hasAny = (aprobadorIds?.length ?? 0) > 0 || (contratosTramiteIds?.length ?? 0) > 0 || (contratosMinutaIds?.length ?? 0) > 0 || controlesId || (directorControlesIds?.length ?? 0) > 0;
+
+      if (hasAny) {
+        const configData = {
+          aprobadorIds: idsStr(aprobadorIds),
+          contratosTramiteIds: idsStr(contratosTramiteIds),
+          contratosMinutaIds: idsStr(contratosMinutaIds),
+          controlesId: controlesId || null,
+          directorControlesIds: idsStr(directorControlesIds),
         };
+        data.aprobadorConfig = { upsert: { create: configData, update: configData } };
       } else {
-        // Si vienen todos vacíos, lo eliminamos
-        data.aprobadorConfig = {
-          delete: true
-        };
+        data.aprobadorConfig = { delete: true };
       }
     }
 
