@@ -1,8 +1,8 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, type ReactNode } from "react";
 import { useSession } from "next-auth/react";
-import { Plus, Pencil, UserCheck, UserX, X, Settings, Search, Filter, KeyRound, AlertTriangle, FileDown, ArrowLeft } from "lucide-react";
+import { Plus, Pencil, UserCheck, UserX, X, Settings, Search, Filter, KeyRound, AlertTriangle, FileDown, ArrowLeft, User, Mail, Phone, Briefcase, Lock, ShieldCheck, ListChecks, MapPin, Check } from "lucide-react";
 import Link from "next/link";
 import * as XLSX from "xlsx";
 import { generatePassword } from "@/lib/password";
@@ -14,7 +14,45 @@ import { ROL_LABELS, FUNCIONALIDADES_POR_ROL } from "@/lib/utils";
 interface Frente {
   id: number;
   nombre: string;
+  etapa?: number | null;
   proyecto: { id: number; nombre: string };
+}
+
+// Agrupa frentes por proyecto y, dentro de cada proyecto, por etapa.
+function agruparFrentesPorProyectoYEtapa(frentes: Frente[]) {
+  const byProj: Record<string, { proyectoId: number; nombre: string; items: Frente[] }> = {};
+  for (const f of frentes) {
+    const k = String(f.proyecto.id);
+    if (!byProj[k]) byProj[k] = { proyectoId: f.proyecto.id, nombre: f.proyecto.nombre, items: [] };
+    byProj[k].items.push(f);
+  }
+  return Object.values(byProj)
+    .sort((a, b) => a.nombre.localeCompare(b.nombre))
+    .map((group) => {
+      const ordenados = [...group.items].sort((a, b) => (a.etapa ?? 999) - (b.etapa ?? 999));
+      const etapas: { etapa: number | null; items: Frente[] }[] = [];
+      for (const f of ordenados) {
+        const etapa = f.etapa ?? null;
+        const grupo = etapas.find((g) => g.etapa === etapa);
+        if (grupo) grupo.items.push(f);
+        else etapas.push({ etapa, items: [f] });
+      }
+      return { ...group, etapas };
+    });
+}
+
+// Encabezado de sección dentro del modal de usuario.
+function SectionLabel({ icon, title, hint, required }: { icon: ReactNode; title: string; hint?: ReactNode; required?: boolean }) {
+  return (
+    <div className="flex items-center gap-2 mb-3">
+      <span className="flex h-6 w-6 items-center justify-center rounded-md bg-blue-50 text-blue-600 shrink-0">{icon}</span>
+      <h3 className="text-sm font-semibold text-gray-800">
+        {title}
+        {required && <span className="text-red-500"> *</span>}
+      </h3>
+      {hint != null && <span className="ml-auto text-xs font-medium text-gray-400">{hint}</span>}
+    </div>
+  );
 }
 
 interface User {
@@ -699,22 +737,31 @@ export default function UsuariosPage() {
       {modalOpen && (
         <>
           <div
-            className="fixed inset-0 z-40 bg-black/40"
+            className="fixed inset-0 z-40 bg-black/50 backdrop-blur-sm"
             onClick={closeModal}
             aria-hidden="true"
           />
           <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-            <div className="bg-white rounded-xl shadow-xl w-full max-w-lg max-h-[90vh] flex flex-col">
+            <div className="bg-white rounded-2xl shadow-2xl ring-1 ring-gray-900/5 w-full max-w-5xl max-h-[90vh] flex flex-col overflow-hidden animate-[fade-up-in_0.2s_ease-out]">
               {/* Header */}
-              <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100 shrink-0">
-                <h2 className="text-base font-semibold text-gray-900">
-                  {editingUser ? "Editar Usuario" : "Nuevo Usuario"}
-                </h2>
+              <div className="flex items-center gap-4 px-6 py-5 border-b border-gray-100 shrink-0">
+                <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-blue-600 text-white text-base font-bold shadow-sm shadow-blue-200 shrink-0">
+                  {form.nombre.trim().split(/\s+/).filter(Boolean).slice(0, 2).map((w) => w[0]).join("").toUpperCase() || <User size={20} />}
+                </div>
+                <div className="min-w-0 flex-1">
+                  <h2 className="text-lg font-bold text-gray-900 leading-tight truncate">
+                    {editingUser ? (form.nombre || "Editar usuario") : "Nuevo usuario"}
+                  </h2>
+                  <p className="text-xs text-gray-500 truncate">
+                    {editingUser ? form.email : "Completa la información para crear la cuenta"}
+                  </p>
+                </div>
                 <button
                   onClick={closeModal}
-                  className="p-1.5 rounded-md text-gray-400 hover:text-gray-600 hover:bg-gray-100"
+                  className="p-2 rounded-lg text-gray-400 hover:text-gray-600 hover:bg-gray-100 transition-colors shrink-0"
+                  aria-label="Cerrar"
                 >
-                  <X size={16} />
+                  <X size={18} />
                 </button>
               </div>
 
@@ -723,252 +770,267 @@ export default function UsuariosPage() {
                 onSubmit={handleSubmit}
                 className="flex flex-col flex-1 overflow-hidden"
               >
-                <div className="flex-1 overflow-y-auto px-6 py-4 space-y-4">
+                <div className="flex-1 overflow-y-auto px-6 py-5 space-y-6">
                   {formError && (
                     <div className="rounded-lg bg-red-50 border border-red-200 px-4 py-3 text-sm text-red-700">
                       {formError}
                     </div>
                   )}
 
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <div>
-                      <label className="block text-xs font-medium text-gray-700 mb-1">
-                        Nombre <span className="text-red-500">*</span>
-                      </label>
-                      <input
-                        required
-                        value={form.nombre}
-                        onChange={(e) =>
-                          setForm((f) => ({ ...f, nombre: e.target.value }))
-                        }
-                        className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-                        placeholder="Juan Pérez"
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-xs font-medium text-gray-700 mb-1">
-                        Cargo
-                      </label>
-                      <input
-                        value={form.cargo}
-                        onChange={(e) =>
-                          setForm((f) => ({ ...f, cargo: e.target.value }))
-                        }
-                        className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-                        placeholder="Ingeniero Civil"
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-xs font-medium text-gray-700 mb-1">
-                        Email <span className="text-red-500">*</span>
-                      </label>
-                      <input
-                        required
-                        type="email"
-                        value={form.email}
-                        onChange={(e) =>
-                          setForm((f) => ({ ...f, email: e.target.value }))
-                        }
-                        disabled={!!editingUser}
-                        className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-gray-50 disabled:text-gray-400"
-                        placeholder="juan@empresa.com"
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-xs font-medium text-gray-700 mb-1">
-                        Teléfono
-                      </label>
-                      <input
-                        value={form.telefono}
-                        onChange={(e) =>
-                          setForm((f) => ({ ...f, telefono: e.target.value }))
-                        }
-                        className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-                        placeholder="+57 300 000 0000"
-                      />
-                    </div>
-                    {!editingUser && (
-                      <div className="sm:col-span-2">
-                        <label className="block text-xs font-medium text-gray-700 mb-1">
-                          Contraseña <span className="text-red-500">*</span>
+                  {/* Datos personales */}
+                  <section>
+                    <SectionLabel icon={<User size={14} />} title="Datos personales" />
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                      <div>
+                        <label className="block text-xs font-medium text-gray-600 mb-1.5">
+                          Nombre <span className="text-red-500">*</span>
                         </label>
-                        <input
-                          required={!editingUser}
-                          type="password"
-                          value={form.password}
-                          onChange={(e) =>
-                            setForm((f) => ({ ...f, password: e.target.value }))
-                          }
-                          className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-                          placeholder="••••••••"
-                          minLength={6}
-                        />
-                      </div>
-                    )}
-                  </div>
-
-                  {/* Roles — multi-checkbox */}
-                  <div>
-                    <label className="block text-xs font-medium text-gray-700 mb-2">
-                      Perfiles <span className="text-red-500">*</span>
-                    </label>
-                    <div className="border border-gray-200 rounded-lg p-3 grid grid-cols-1 sm:grid-cols-2 gap-2">
-                      {ROL_OPTIONS.map(([value, label]) => (
-                        <label
-                          key={value}
-                          className="flex items-center gap-2 cursor-pointer hover:bg-gray-50 rounded px-2 py-1.5"
-                        >
+                        <div className="relative">
+                          <User size={15} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" />
                           <input
-                            type="checkbox"
-                            checked={form.roles.includes(value)}
-                            onChange={() => toggleRol(value)}
-                            className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                            required
+                            value={form.nombre}
+                            onChange={(e) => setForm((f) => ({ ...f, nombre: e.target.value }))}
+                            className="w-full rounded-lg border border-gray-300 bg-white pl-9 pr-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-shadow"
+                            placeholder="Juan Pérez"
                           />
-                          <span className="text-sm text-gray-700">{label}</span>
+                        </div>
+                      </div>
+                      <div>
+                        <label className="block text-xs font-medium text-gray-600 mb-1.5">Cargo</label>
+                        <div className="relative">
+                          <Briefcase size={15} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" />
+                          <input
+                            value={form.cargo}
+                            onChange={(e) => setForm((f) => ({ ...f, cargo: e.target.value }))}
+                            className="w-full rounded-lg border border-gray-300 bg-white pl-9 pr-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-shadow"
+                            placeholder="Ingeniero Civil"
+                          />
+                        </div>
+                      </div>
+                      <div>
+                        <label className="block text-xs font-medium text-gray-600 mb-1.5">
+                          Email <span className="text-red-500">*</span>
                         </label>
-                      ))}
+                        <div className="relative">
+                          <Mail size={15} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" />
+                          <input
+                            required
+                            type="email"
+                            value={form.email}
+                            onChange={(e) => setForm((f) => ({ ...f, email: e.target.value }))}
+                            disabled={!!editingUser}
+                            className="w-full rounded-lg border border-gray-300 bg-white pl-9 pr-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-shadow disabled:bg-gray-50 disabled:text-gray-400"
+                            placeholder="juan@empresa.com"
+                          />
+                        </div>
+                      </div>
+                      <div>
+                        <label className="block text-xs font-medium text-gray-600 mb-1.5">Teléfono</label>
+                        <div className="relative">
+                          <Phone size={15} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" />
+                          <input
+                            value={form.telefono}
+                            onChange={(e) => setForm((f) => ({ ...f, telefono: e.target.value }))}
+                            className="w-full rounded-lg border border-gray-300 bg-white pl-9 pr-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-shadow"
+                            placeholder="+57 300 000 0000"
+                          />
+                        </div>
+                      </div>
+                      {!editingUser && (
+                        <div className="sm:col-span-2">
+                          <label className="block text-xs font-medium text-gray-600 mb-1.5">
+                            Contraseña <span className="text-red-500">*</span>
+                          </label>
+                          <div className="relative">
+                            <Lock size={15} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" />
+                            <input
+                              required={!editingUser}
+                              type="password"
+                              value={form.password}
+                              onChange={(e) => setForm((f) => ({ ...f, password: e.target.value }))}
+                              className="w-full rounded-lg border border-gray-300 bg-white pl-9 pr-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-shadow"
+                              placeholder="••••••••"
+                              minLength={6}
+                            />
+                          </div>
+                        </div>
+                      )}
                     </div>
-                    {form.roles.length === 0 && (
-                      <p className="text-xs text-red-600 mt-1">
-                        Selecciona al menos un perfil.
-                      </p>
-                    )}
-                  </div>
+                  </section>
 
-                  {/* Funcionalidades por rol seleccionado */}
-                  {form.roles.length > 0 && (
-                    <div>
-                      <label className="block text-xs font-medium text-gray-700 mb-2">
-                        Funcionalidades
-                      </label>
-                      <div className="border border-gray-200 rounded-lg p-3 space-y-2 max-h-72 overflow-y-auto bg-gray-50">
-                        {Object.entries(TODAS_LAS_FUNCIONALIDADES).map(
-                          ([slug, { nombre, rolPorDefecto }]) => {
-                            // Funcionalidades incluidas por defecto en alguno de los roles seleccionados
-                            const funcionalidadesDelRol = form.roles.flatMap(
-                              (rol) => FUNCIONALIDADES_POR_ROL[rol] || []
-                            );
-                            const estaEnRol = funcionalidadesDelRol.includes(slug);
+                  <div className="h-px bg-gray-100" />
 
-                            // Si está en funcionalidadesAdicionales, está seleccionada
-                            const isChecked = form.funcionalidadesAdicionales.includes(slug);
-
-                            // Tipos de estado:
-                            // 1. "Por rol" - viene con el rol base
-                            // 2. "Adicional" - no viene con el rol pero está seleccionada
-                            // 3. "Deshabilitada" - viene con el rol pero fue deseleccionada
-                            const estatus = isChecked
-                              ? (estaEnRol ? "por_rol" : "adicional")
-                              : (estaEnRol ? "deshabilitada" : "no_seleccionada");
-
+                  {/* Acceso y permisos — dos columnas */}
+                  <section className="grid grid-cols-1 lg:grid-cols-5 gap-x-8 gap-y-6">
+                    {/* Columna izquierda: perfiles + funcionalidades */}
+                    <div className="lg:col-span-3 space-y-6">
+                      {/* Perfiles */}
+                      <div>
+                        <SectionLabel icon={<ShieldCheck size={14} />} title="Perfiles" required />
+                        <div className="flex flex-wrap gap-2">
+                          {ROL_OPTIONS.map(([value, label]) => {
+                            const active = form.roles.includes(value);
                             return (
-                              <label
-                                key={slug}
-                                className="flex items-start gap-2 cursor-pointer hover:bg-white rounded px-2 py-1.5 transition-colors"
+                              <button
+                                key={value}
+                                type="button"
+                                onClick={() => toggleRol(value)}
+                                className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-medium border transition-colors ${
+                                  active
+                                    ? "bg-blue-600 border-blue-600 text-white shadow-sm shadow-blue-100"
+                                    : "bg-white border-gray-200 text-gray-600 hover:border-gray-300 hover:bg-gray-50"
+                                }`}
                               >
-                                <input
-                                  type="checkbox"
-                                  checked={isChecked}
-                                  onChange={() => toggleFuncionalidad(slug)}
-                                  className="rounded border-gray-300 text-blue-600 focus:ring-blue-500 mt-0.5"
-                                />
-                                <div className="flex-1">
-                                  <span className="text-xs text-gray-700">
-                                    {nombre}
-                                  </span>
-                                  {estatus === "por_rol" && (
-                                    <span className="ml-1.5 inline-block text-xs text-gray-400 italic">
-                                      (Por rol)
-                                    </span>
-                                  )}
-                                  {estatus === "adicional" && (
-                                    <span className="ml-1.5 inline-block text-xs text-orange-600 font-medium">
-                                      (Adicional)
-                                    </span>
-                                  )}
-                                  {estatus === "deshabilitada" && (
-                                    <span className="ml-1.5 inline-block text-xs text-red-500 font-medium">
-                                      (Deshabilitada)
-                                    </span>
-                                  )}
-                                </div>
-                              </label>
+                                {active && <Check size={13} className="-ml-0.5" />}
+                                {label}
+                              </button>
                             );
-                          }
+                          })}
+                        </div>
+                        {form.roles.length === 0 && (
+                          <p className="text-xs text-red-600 mt-2">Selecciona al menos un perfil.</p>
                         )}
                       </div>
-                      <p className="text-xs text-gray-500 mt-2">
-                        Los checkmarks representan funcionalidades que el usuario tendrá habilitadas. Desactiva las que quieras deshabilitar incluso si vienen con el rol.
-                      </p>
-                    </div>
-                  )}
 
-                  {/* Frentes — only for SOLICITANTE and DIRECTOR_PROYECTO */}
-                  {needsFrente ? (
-                    <div>
-                      <label className="block text-xs font-medium text-gray-700 mb-2">
-                        Proyectos y Frentes asignados
-                      </label>
-                      {frentes.length === 0 ? (
-                        <p className="text-xs text-gray-400 italic">No hay frentes disponibles.</p>
-                      ) : (() => {
-                        // Group frentes by project
-                        const byProj: Record<string, { nombre: string; items: Frente[] }> = {};
-                        for (const f of frentes) {
-                          const k = String(f.proyecto.id);
-                          if (!byProj[k]) byProj[k] = { nombre: f.proyecto.nombre, items: [] };
-                          byProj[k].items.push(f);
-                        }
-                        return (
-                          <div className="border border-gray-200 rounded-lg divide-y divide-gray-100 max-h-52 overflow-y-auto">
-                            {Object.values(byProj).map((group) => (
-                              <div key={group.nombre} className="px-3 py-2">
-                                <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1.5">{group.nombre}</p>
-                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-1">
-                                  {group.items.map((f) => (
-                                    <label key={f.id} className="flex items-center gap-2 cursor-pointer hover:bg-gray-50 rounded px-1 py-0.5">
-                                      <input
-                                        type="checkbox"
-                                        checked={form.frentesIds.includes(f.id)}
-                                        onChange={() => toggleFrente(f.id)}
-                                        className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
-                                      />
-                                      <span className="text-xs text-gray-700">{f.nombre}</span>
-                                    </label>
-                                  ))}
-                                </div>
-                              </div>
-                            ))}
+                      {/* Funcionalidades */}
+                      {form.roles.length > 0 && (
+                        <div>
+                          <SectionLabel
+                            icon={<ListChecks size={14} />}
+                            title="Funcionalidades"
+                            hint={`${form.funcionalidadesAdicionales.length} habilitadas`}
+                          />
+                          <div className="rounded-xl border border-gray-200 divide-y divide-gray-100 overflow-hidden">
+                            {Object.entries(TODAS_LAS_FUNCIONALIDADES).map(([slug, { nombre }]) => {
+                              const funcionalidadesDelRol = form.roles.flatMap(
+                                (rol) => FUNCIONALIDADES_POR_ROL[rol] || []
+                              );
+                              const estaEnRol = funcionalidadesDelRol.includes(slug);
+                              const isChecked = form.funcionalidadesAdicionales.includes(slug);
+                              const estatus = isChecked
+                                ? estaEnRol ? "por_rol" : "adicional"
+                                : estaEnRol ? "deshabilitada" : "no_seleccionada";
+
+                              return (
+                                <label
+                                  key={slug}
+                                  className="flex items-center gap-3 px-3 py-2.5 cursor-pointer hover:bg-gray-50 transition-colors"
+                                >
+                                  <input
+                                    type="checkbox"
+                                    checked={isChecked}
+                                    onChange={() => toggleFuncionalidad(slug)}
+                                    className="rounded border-gray-300 text-blue-600 focus:ring-blue-500 shrink-0"
+                                  />
+                                  <span className="flex-1 text-xs text-gray-700 leading-snug">{nombre}</span>
+                                  {estatus === "por_rol" && (
+                                    <span className="shrink-0 rounded-full bg-gray-100 text-gray-500 text-[10px] font-medium px-2 py-0.5">Por rol</span>
+                                  )}
+                                  {estatus === "adicional" && (
+                                    <span className="shrink-0 rounded-full bg-amber-50 text-amber-700 text-[10px] font-medium px-2 py-0.5">Adicional</span>
+                                  )}
+                                  {estatus === "deshabilitada" && (
+                                    <span className="shrink-0 rounded-full bg-red-50 text-red-600 text-[10px] font-medium px-2 py-0.5">Deshabilitada</span>
+                                  )}
+                                </label>
+                              );
+                            })}
                           </div>
-                        );
-                      })()}
+                          <p className="text-xs text-gray-500 mt-2">
+                            Las marcadas son las funcionalidades habilitadas. Desactiva las que quieras quitar, incluso si vienen con el perfil.
+                          </p>
+                        </div>
+                      )}
                     </div>
-                  ) : (
-                    <div className="rounded-lg bg-blue-50 border border-blue-100 px-4 py-3">
-                      <p className="text-xs text-blue-700">
-                        Los perfiles seleccionados tienen acceso a todas las solicitudes. No requieren asignación de proyectos o frentes.
-                      </p>
+
+                    {/* Columna derecha: frentes */}
+                    <div className="lg:col-span-2">
+                      {needsFrente ? (
+                        <>
+                          <SectionLabel
+                            icon={<MapPin size={14} />}
+                            title="Frentes asignados"
+                            hint={frentes.length > 0 ? `${form.frentesIds.length} seleccionados` : undefined}
+                          />
+                          {frentes.length === 0 ? (
+                            <div className="rounded-xl border border-dashed border-gray-200 px-4 py-8 text-center">
+                              <MapPin size={20} className="mx-auto text-gray-300 mb-2" />
+                              <p className="text-xs text-gray-400 italic">No hay frentes disponibles.</p>
+                            </div>
+                          ) : (
+                            <div className="rounded-xl border border-gray-200 divide-y divide-gray-100 max-h-[22rem] overflow-y-auto">
+                              {agruparFrentesPorProyectoYEtapa(frentes).map((group) => (
+                                <div key={group.proyectoId} className="px-3 py-2.5">
+                                  <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1.5">{group.nombre}</p>
+                                  <div className="space-y-2">
+                                    {group.etapas.map((etapaGrupo) => (
+                                      <div key={etapaGrupo.etapa ?? "sin-etapa"}>
+                                        <div className="flex items-center gap-2 mb-1">
+                                          <span className="text-[11px] font-bold text-blue-600">
+                                            {etapaGrupo.etapa !== null ? `Etapa ${etapaGrupo.etapa}` : "Sin etapa"}
+                                          </span>
+                                          <div className="flex-1 h-px bg-blue-100" />
+                                        </div>
+                                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-3 gap-y-0.5">
+                                          {etapaGrupo.items.map((f) => (
+                                            <label key={f.id} className="flex items-center gap-2 cursor-pointer hover:bg-gray-50 rounded px-1 py-1">
+                                              <input
+                                                type="checkbox"
+                                                checked={form.frentesIds.includes(f.id)}
+                                                onChange={() => toggleFrente(f.id)}
+                                                className="rounded border-gray-300 text-blue-600 focus:ring-blue-500 shrink-0"
+                                              />
+                                              <span className="text-xs text-gray-700 truncate">{f.nombre}</span>
+                                            </label>
+                                          ))}
+                                        </div>
+                                      </div>
+                                    ))}
+                                  </div>
+                                </div>
+                              ))}
+                            </div>
+                          )}
+                        </>
+                      ) : (
+                        <>
+                          <SectionLabel icon={<MapPin size={14} />} title="Frentes asignados" />
+                          <div className="rounded-xl bg-blue-50/70 border border-blue-100 px-4 py-5 flex items-start gap-3">
+                            <ShieldCheck size={18} className="text-blue-600 mt-0.5 shrink-0" />
+                            <p className="text-xs text-blue-800 leading-relaxed">
+                              Los perfiles seleccionados tienen acceso a todas las solicitudes. No requieren asignación de proyectos o frentes.
+                            </p>
+                          </div>
+                        </>
+                      )}
                     </div>
-                  )}
+                  </section>
                 </div>
 
                 {/* Footer */}
-                <div className="flex items-center justify-end gap-3 px-6 py-4 border-t border-gray-100 shrink-0">
-                  <button
-                    type="button"
-                    onClick={closeModal}
-                    className="rounded-lg border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors"
-                  >
-                    Cancelar
-                  </button>
-                  <button
-                    type="submit"
-                    disabled={saving || form.roles.length === 0}
-                    className="inline-flex items-center gap-2 rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 disabled:opacity-50 transition-colors"
-                  >
-                    {saving && <Spinner size="sm" />}
-                    {editingUser ? "Guardar cambios" : "Crear usuario"}
-                  </button>
+                <div className="flex items-center justify-between gap-3 px-6 py-4 border-t border-gray-100 bg-gray-50/60 shrink-0">
+                  <p className="text-xs text-gray-400 hidden sm:block">
+                    {form.roles.length} perfil{form.roles.length !== 1 ? "es" : ""}
+                    {needsFrente && frentes.length > 0 && ` · ${form.frentesIds.length} frente${form.frentesIds.length !== 1 ? "s" : ""}`}
+                  </p>
+                  <div className="flex items-center gap-3 ml-auto">
+                    <button
+                      type="button"
+                      onClick={closeModal}
+                      className="rounded-lg border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors"
+                    >
+                      Cancelar
+                    </button>
+                    <button
+                      type="submit"
+                      disabled={saving || form.roles.length === 0}
+                      className="inline-flex items-center gap-2 rounded-lg bg-blue-600 px-5 py-2 text-sm font-semibold text-white hover:bg-blue-700 disabled:opacity-50 transition-colors shadow-sm shadow-blue-100"
+                    >
+                      {saving && <Spinner size="sm" />}
+                      {editingUser ? "Guardar cambios" : "Crear usuario"}
+                    </button>
+                  </div>
                 </div>
               </form>
             </div>
@@ -980,7 +1042,7 @@ export default function UsuariosPage() {
         <>
           <div className="fixed inset-0 z-[60] bg-black/40 backdrop-blur-sm" onClick={() => setBulkModalOpen(false)} />
           <div className="fixed inset-0 z-[70] flex items-center justify-center p-4">
-            <div className="bg-white rounded-xl shadow-2xl w-full max-w-md overflow-hidden">
+            <div className="bg-white rounded-xl shadow-2xl w-full max-w-2xl overflow-hidden">
               <div className="px-6 py-4 border-b border-gray-100 flex items-center justify-between">
                 <h2 className="text-base font-bold text-gray-900">Asignación Masiva de Frentes</h2>
                 <button onClick={() => setBulkModalOpen(false)} className="text-gray-400 hover:text-gray-600"><X size={18} /></button>
@@ -989,23 +1051,39 @@ export default function UsuariosPage() {
                 <p className="text-xs text-gray-500">
                   Selecciona los frentes que deseas asignar a los <strong>{selectedIds.length}</strong> usuarios seleccionados.
                 </p>
-                <div className="max-h-60 overflow-y-auto border border-gray-100 rounded-lg p-2 space-y-1">
-                  {frentes.map((f) => (
-                    <label key={f.id} className="flex items-center gap-2 p-2 hover:bg-gray-50 rounded cursor-pointer transition-colors">
-                      <input
-                        type="checkbox"
-                        checked={bulkFrentesIds.includes(f.id)}
-                        onChange={(e) => {
-                          if (e.target.checked) setBulkFrentesIds(prev => [...prev, f.id]);
-                          else setBulkFrentesIds(prev => prev.filter(id => id !== f.id));
-                        }}
-                        className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
-                      />
-                      <div className="min-w-0">
-                        <p className="text-xs font-bold text-gray-800 truncate">{f.nombre}</p>
-                        <p className="text-[10px] text-gray-400 truncate">{f.proyecto.nombre}</p>
+                <div className="max-h-[60vh] overflow-y-auto border border-gray-100 rounded-lg p-2 divide-y divide-gray-100">
+                  {agruparFrentesPorProyectoYEtapa(frentes).map((group) => (
+                    <div key={group.proyectoId} className="px-1 py-2 first:pt-1 last:pb-1">
+                      <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1.5">{group.nombre}</p>
+                      <div className="space-y-2">
+                        {group.etapas.map((etapaGrupo) => (
+                          <div key={etapaGrupo.etapa ?? "sin-etapa"}>
+                            <div className="flex items-center gap-2 mb-1">
+                              <span className="text-[11px] font-bold text-blue-600">
+                                {etapaGrupo.etapa !== null ? `Etapa ${etapaGrupo.etapa}` : "Sin etapa"}
+                              </span>
+                              <div className="flex-1 h-px bg-blue-100" />
+                            </div>
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-0.5">
+                              {etapaGrupo.items.map((f) => (
+                                <label key={f.id} className="flex items-center gap-2 p-1.5 hover:bg-gray-50 rounded cursor-pointer transition-colors">
+                                  <input
+                                    type="checkbox"
+                                    checked={bulkFrentesIds.includes(f.id)}
+                                    onChange={(e) => {
+                                      if (e.target.checked) setBulkFrentesIds(prev => [...prev, f.id]);
+                                      else setBulkFrentesIds(prev => prev.filter(id => id !== f.id));
+                                    }}
+                                    className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                                  />
+                                  <p className="text-xs font-medium text-gray-800 truncate">{f.nombre}</p>
+                                </label>
+                              ))}
+                            </div>
+                          </div>
+                        ))}
                       </div>
-                    </label>
+                    </div>
                   ))}
                 </div>
               </div>
