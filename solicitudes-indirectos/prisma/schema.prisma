@@ -72,6 +72,9 @@ model User {
   funcionalidadesAdicionales String @default("[]") // JSON array of additional permissions
   microsoftId    String? @unique
   microsoftEmail String?
+  ultimaConexion DateTime?
+  ultimaActividad DateTime?  // último heartbeat de presencia
+  presenciaEstado String?    // "activo" | "ausente" | "desconectado"
 
   accounts         Account[]
   sessions         Session[]

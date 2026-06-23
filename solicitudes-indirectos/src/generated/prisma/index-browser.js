@@ -173,6 +173,9 @@ exports.Prisma.UserScalarFieldEnum = {
   funcionalidadesAdicionales: 'funcionalidadesAdicionales',
   microsoftId: 'microsoftId',
   microsoftEmail: 'microsoftEmail',
+  ultimaConexion: 'ultimaConexion',
+  ultimaActividad: 'ultimaActividad',
+  presenciaEstado: 'presenciaEstado',
   creadoEn: 'creadoEn',
   actualizadoEn: 'actualizadoEn'
 };

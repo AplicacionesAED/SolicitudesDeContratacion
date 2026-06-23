@@ -41,6 +41,16 @@ export const authOptions: NextAuthOptions = {
         if (!isValid) return null;
         if (!user.activo) return null;
 
+        // Registrar la última conexión (no bloquea el login si falla)
+        try {
+          await prisma.user.update({
+            where: { id: user.id },
+            data: { ultimaConexion: new Date() },
+          });
+        } catch {
+          // ignorar errores de registro de conexión
+        }
+
         return {
           id: user.id,
           email: user.email,
@@ -91,7 +101,7 @@ export const authOptions: NextAuthOptions = {
         // Normal login: verify microsoftId is linked to a user
         const dbUser = await prisma.user.findFirst({
           where: { microsoftId },
-          select: { activo: true },
+          select: { id: true, activo: true },
         });
 
         if (!dbUser) {
@@ -106,6 +116,17 @@ export const authOptions: NextAuthOptions = {
         }
 
         if (!dbUser.activo) return "/login?error=OAuthAccountInactive";
+
+        // Registrar la última conexión (no bloquea el login si falla)
+        try {
+          await prisma.user.update({
+            where: { id: dbUser.id },
+            data: { ultimaConexion: new Date() },
+          });
+        } catch {
+          // ignorar errores de registro de conexión
+        }
+
         return true;
       }
       return true;

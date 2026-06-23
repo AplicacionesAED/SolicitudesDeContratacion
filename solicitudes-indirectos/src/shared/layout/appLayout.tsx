@@ -17,6 +17,7 @@ import {
   UserCircle,
 } from "lucide-react";
 import { NotificacionesBell } from "@/shared/layout/notificacionesBell";
+import { usePresence } from "@/shared/layout/usePresence";
 import { ROL_LABELS, tienePermiso } from "@/lib/utils";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
@@ -180,6 +181,8 @@ export function AppLayout({ children }: AppLayoutProps) {
   const { data: session } = useSession();
   const pathname = usePathname();
   const router = useRouter();
+
+  usePresence();
 
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);

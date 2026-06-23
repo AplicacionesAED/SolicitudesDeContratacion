@@ -2,7 +2,7 @@
 
 import { useSession } from "next-auth/react";
 import Link from "next/link";
-import { Users, MapPin, Settings, Shield } from "lucide-react";
+import { Users, MapPin, Settings, Shield, Activity } from "lucide-react";
 
 const CARDS = [
   {
@@ -25,6 +25,13 @@ const CARDS = [
     href: "/configuracion/roles",
     icon: Shield,
     color: "bg-green-50 text-green-600",
+  },
+  {
+    title: "Actividad de usuarios",
+    description: "Monitorea en tiempo real qué usuarios están activos, ausentes o desconectados.",
+    href: "/configuracion/presencia",
+    icon: Activity,
+    color: "bg-rose-50 text-rose-600",
   },
 ];
 
