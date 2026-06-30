@@ -146,8 +146,10 @@ export function SolicitudActions({ solicitud, userSession }: SolicitudActionsPro
     solicitanteId === userId;
 
   const canEdit =
-    (estado === "BORRADOR" || estado === "DEVUELTA" || estado === "EN_REVISION") &&
-    solicitanteId === userId;
+    ((estado === "BORRADOR" || estado === "DEVUELTA" || estado === "EN_REVISION") &&
+      solicitanteId === userId) ||
+    // ADMIN can edit a solicitud in any state
+    isAdmin;
 
   const hasAnyAction =
     canEnviar ||

@@ -11,6 +11,11 @@ const BLOCKED_EXTENSIONS = new Set([
 
 const MAX_SIZE_BYTES = 20 * 1024 * 1024; // 20MB
 
+// Persistent uploads directory. In production set UPLOADS_DIR to a path on a
+// mounted volume (e.g. /app/data/uploads); in dev it falls back to public/uploads.
+const UPLOADS_DIR =
+  process.env.UPLOADS_DIR || path.join(process.cwd(), "public", "uploads");
+
 export async function POST(request: Request) {
   try {
     const session = await getServerSession(authOptions);
@@ -53,13 +58,14 @@ export async function POST(request: Request) {
       .slice(0, 120);
     const filename = `${timestamp}-${safeName}`;
 
-    const uploadsDir = path.join(process.cwd(), "public", "uploads");
-    await mkdir(uploadsDir, { recursive: true });
+    await mkdir(UPLOADS_DIR, { recursive: true });
 
     const buffer = Buffer.from(await blob.arrayBuffer());
-    await writeFile(path.join(uploadsDir, filename), buffer);
+    await writeFile(path.join(UPLOADS_DIR, filename), buffer);
 
-    const url = `/uploads/${filename}`;
+    // Served through the /api/files handler (not the static public/ folder,
+    // which the standalone server does not serve for runtime-written files).
+    const url = `/api/files/${filename}`;
     return Response.json({ url, filename, nombre: originalName, size: blob.size }, { status: 201 });
   } catch (error) {
     console.error("POST /api/upload error:", error);

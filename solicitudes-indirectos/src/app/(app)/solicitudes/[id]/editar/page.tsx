@@ -31,14 +31,16 @@ export default function EditarSolicitudPage() {
 
       // Access control
       const userId = session?.user?.id;
-      const userRole = session?.user?.rol;
-      if (data.solicitanteId !== userId && userRole !== "ADMIN") {
+      const userRoles: string[] =
+        session?.user?.roles ?? (session?.user?.rol ? [session.user.rol] : []);
+      const isAdmin = userRoles.includes("ADMIN");
+      if (data.solicitanteId !== userId && !isAdmin) {
         throw new Error("No tienes permiso para editar esta solicitud");
       }
 
-      // State control
+      // State control — ADMIN can edit in any state
       const estadosEditables = ["BORRADOR", "DEVUELTA", "EN_REVISION"];
-      if (!estadosEditables.includes(data.estado)) {
+      if (!estadosEditables.includes(data.estado) && !isAdmin) {
         router.replace(`/solicitudes/${solicitudId}`);
         return;
       }

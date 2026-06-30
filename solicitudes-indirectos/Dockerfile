@@ -22,6 +22,9 @@ WORKDIR /app
 
 ENV NODE_ENV=production
 ENV DATABASE_URL=file:/app/data/prod.db
+# Uploaded files live on the persistent volume alongside the DB, so they
+# survive redeploys and are served via the /api/files route handler.
+ENV UPLOADS_DIR=/app/data/uploads
 
 COPY --from=builder /app/public ./public
 COPY --from=builder /app/.next/standalone ./
@@ -36,7 +39,7 @@ COPY --from=builder /app/prisma ./prisma
 COPY --from=builder /app/prisma/prisma.config.mjs ./prisma/prisma.config.mjs
 COPY --from=builder /app/src/generated ./src/generated
 
-RUN mkdir -p /app/data
+RUN mkdir -p /app/data /app/data/uploads
 
 EXPOSE 3000
 ENV PORT=3000

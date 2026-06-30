@@ -116,7 +116,8 @@ async function upsertCronograma(
     const inicioDay = new Date(inicio);
     inicioDay.setHours(0, 0, 0, 0);
 
-    if (inicioDay < minStartDay) {
+    // ADMIN can save schedules with past dates (e.g. editing old solicitudes)
+    if (inicioDay < minStartDay && userRol !== "ADMIN") {
       return Response.json(
         {
           error: `La fecha de inicio debe ser al menos ${minDays} días hábiles desde hoy (mínimo: ${minStart.toISOString().split("T")[0]})`,
