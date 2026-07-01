@@ -348,9 +348,38 @@ exports.Prisma.ContadorConsecutivoScalarFieldEnum = {
   ultimo: 'ultimo'
 };
 
+exports.Prisma.ActividadUsuarioScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  tipo: 'tipo',
+  descripcion: 'descripcion',
+  metadata: 'metadata',
+  ip: 'ip',
+  userAgent: 'userAgent',
+  creadoEn: 'creadoEn'
+};
+
+exports.Prisma.SesionUsuarioScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  inicio: 'inicio',
+  fin: 'fin',
+  duracionSeg: 'duracionSeg',
+  ip: 'ip',
+  userAgent: 'userAgent',
+  dispositivo: 'dispositivo',
+  navegador: 'navegador',
+  sistemaOp: 'sistemaOp'
+};
+
 exports.Prisma.SortOrder = {
   asc: 'asc',
   desc: 'desc'
+};
+
+exports.Prisma.NullableJsonNullValueInput = {
+  DbNull: Prisma.DbNull,
+  JsonNull: Prisma.JsonNull
 };
 
 exports.Prisma.QueryMode = {
@@ -361,6 +390,12 @@ exports.Prisma.QueryMode = {
 exports.Prisma.NullsOrder = {
   first: 'first',
   last: 'last'
+};
+
+exports.Prisma.JsonNullValueFilter = {
+  DbNull: Prisma.DbNull,
+  JsonNull: Prisma.JsonNull,
+  AnyNull: Prisma.AnyNull
 };
 
 
@@ -382,7 +417,9 @@ exports.Prisma.ModelName = {
   FaseCronograma: 'FaseCronograma',
   ActividadCronograma: 'ActividadCronograma',
   Notificacion: 'Notificacion',
-  ContadorConsecutivo: 'ContadorConsecutivo'
+  ContadorConsecutivo: 'ContadorConsecutivo',
+  ActividadUsuario: 'ActividadUsuario',
+  SesionUsuario: 'SesionUsuario'
 };
 
 /**

@@ -103,6 +103,16 @@ export type Notificacion = $Result.DefaultSelection<Prisma.$NotificacionPayload>
  * 
  */
 export type ContadorConsecutivo = $Result.DefaultSelection<Prisma.$ContadorConsecutivoPayload>
+/**
+ * Model ActividadUsuario
+ * 
+ */
+export type ActividadUsuario = $Result.DefaultSelection<Prisma.$ActividadUsuarioPayload>
+/**
+ * Model SesionUsuario
+ * 
+ */
+export type SesionUsuario = $Result.DefaultSelection<Prisma.$SesionUsuarioPayload>
 
 /**
  * ##  Prisma Client ʲˢ
@@ -405,6 +415,26 @@ export class PrismaClient<
     * ```
     */
   get contadorConsecutivo(): Prisma.ContadorConsecutivoDelegate<ExtArgs>;
+
+  /**
+   * `prisma.actividadUsuario`: Exposes CRUD operations for the **ActividadUsuario** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more ActividadUsuarios
+    * const actividadUsuarios = await prisma.actividadUsuario.findMany()
+    * ```
+    */
+  get actividadUsuario(): Prisma.ActividadUsuarioDelegate<ExtArgs>;
+
+  /**
+   * `prisma.sesionUsuario`: Exposes CRUD operations for the **SesionUsuario** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more SesionUsuarios
+    * const sesionUsuarios = await prisma.sesionUsuario.findMany()
+    * ```
+    */
+  get sesionUsuario(): Prisma.SesionUsuarioDelegate<ExtArgs>;
 }
 
 export namespace Prisma {
@@ -899,7 +929,9 @@ export namespace Prisma {
     FaseCronograma: 'FaseCronograma',
     ActividadCronograma: 'ActividadCronograma',
     Notificacion: 'Notificacion',
-    ContadorConsecutivo: 'ContadorConsecutivo'
+    ContadorConsecutivo: 'ContadorConsecutivo',
+    ActividadUsuario: 'ActividadUsuario',
+    SesionUsuario: 'SesionUsuario'
   };
 
   export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -916,7 +948,7 @@ export namespace Prisma {
 
   export type TypeMap<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     meta: {
-      modelProps: 'account' | 'session' | 'verificationToken' | 'rol' | 'user' | 'proyecto' | 'frente' | 'frenteUsuario' | 'aprobadorFrente' | 'tercero' | 'especialidad' | 'solicitud' | 'historialSolicitud' | 'cronogramaContrato' | 'faseCronograma' | 'actividadCronograma' | 'notificacion' | 'contadorConsecutivo'
+      modelProps: 'account' | 'session' | 'verificationToken' | 'rol' | 'user' | 'proyecto' | 'frente' | 'frenteUsuario' | 'aprobadorFrente' | 'tercero' | 'especialidad' | 'solicitud' | 'historialSolicitud' | 'cronogramaContrato' | 'faseCronograma' | 'actividadCronograma' | 'notificacion' | 'contadorConsecutivo' | 'actividadUsuario' | 'sesionUsuario'
       txIsolationLevel: Prisma.TransactionIsolationLevel
     },
     model: {
@@ -2180,6 +2212,146 @@ export namespace Prisma {
           }
         }
       }
+      ActividadUsuario: {
+        payload: Prisma.$ActividadUsuarioPayload<ExtArgs>
+        fields: Prisma.ActividadUsuarioFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.ActividadUsuarioFindUniqueArgs<ExtArgs>,
+            result: $Utils.PayloadToResult<Prisma.$ActividadUsuarioPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.ActividadUsuarioFindUniqueOrThrowArgs<ExtArgs>,
+            result: $Utils.PayloadToResult<Prisma.$ActividadUsuarioPayload>
+          }
+          findFirst: {
+            args: Prisma.ActividadUsuarioFindFirstArgs<ExtArgs>,
+            result: $Utils.PayloadToResult<Prisma.$ActividadUsuarioPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.ActividadUsuarioFindFirstOrThrowArgs<ExtArgs>,
+            result: $Utils.PayloadToResult<Prisma.$ActividadUsuarioPayload>
+          }
+          findMany: {
+            args: Prisma.ActividadUsuarioFindManyArgs<ExtArgs>,
+            result: $Utils.PayloadToResult<Prisma.$ActividadUsuarioPayload>[]
+          }
+          create: {
+            args: Prisma.ActividadUsuarioCreateArgs<ExtArgs>,
+            result: $Utils.PayloadToResult<Prisma.$ActividadUsuarioPayload>
+          }
+          createMany: {
+            args: Prisma.ActividadUsuarioCreateManyArgs<ExtArgs>,
+            result: Prisma.BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.ActividadUsuarioCreateManyAndReturnArgs<ExtArgs>,
+            result: $Utils.PayloadToResult<Prisma.$ActividadUsuarioPayload>[]
+          }
+          delete: {
+            args: Prisma.ActividadUsuarioDeleteArgs<ExtArgs>,
+            result: $Utils.PayloadToResult<Prisma.$ActividadUsuarioPayload>
+          }
+          update: {
+            args: Prisma.ActividadUsuarioUpdateArgs<ExtArgs>,
+            result: $Utils.PayloadToResult<Prisma.$ActividadUsuarioPayload>
+          }
+          deleteMany: {
+            args: Prisma.ActividadUsuarioDeleteManyArgs<ExtArgs>,
+            result: Prisma.BatchPayload
+          }
+          updateMany: {
+            args: Prisma.ActividadUsuarioUpdateManyArgs<ExtArgs>,
+            result: Prisma.BatchPayload
+          }
+          upsert: {
+            args: Prisma.ActividadUsuarioUpsertArgs<ExtArgs>,
+            result: $Utils.PayloadToResult<Prisma.$ActividadUsuarioPayload>
+          }
+          aggregate: {
+            args: Prisma.ActividadUsuarioAggregateArgs<ExtArgs>,
+            result: $Utils.Optional<AggregateActividadUsuario>
+          }
+          groupBy: {
+            args: Prisma.ActividadUsuarioGroupByArgs<ExtArgs>,
+            result: $Utils.Optional<ActividadUsuarioGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.ActividadUsuarioCountArgs<ExtArgs>,
+            result: $Utils.Optional<ActividadUsuarioCountAggregateOutputType> | number
+          }
+        }
+      }
+      SesionUsuario: {
+        payload: Prisma.$SesionUsuarioPayload<ExtArgs>
+        fields: Prisma.SesionUsuarioFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.SesionUsuarioFindUniqueArgs<ExtArgs>,
+            result: $Utils.PayloadToResult<Prisma.$SesionUsuarioPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.SesionUsuarioFindUniqueOrThrowArgs<ExtArgs>,
+            result: $Utils.PayloadToResult<Prisma.$SesionUsuarioPayload>
+          }
+          findFirst: {
+            args: Prisma.SesionUsuarioFindFirstArgs<ExtArgs>,
+            result: $Utils.PayloadToResult<Prisma.$SesionUsuarioPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.SesionUsuarioFindFirstOrThrowArgs<ExtArgs>,
+            result: $Utils.PayloadToResult<Prisma.$SesionUsuarioPayload>
+          }
+          findMany: {
+            args: Prisma.SesionUsuarioFindManyArgs<ExtArgs>,
+            result: $Utils.PayloadToResult<Prisma.$SesionUsuarioPayload>[]
+          }
+          create: {
+            args: Prisma.SesionUsuarioCreateArgs<ExtArgs>,
+            result: $Utils.PayloadToResult<Prisma.$SesionUsuarioPayload>
+          }
+          createMany: {
+            args: Prisma.SesionUsuarioCreateManyArgs<ExtArgs>,
+            result: Prisma.BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.SesionUsuarioCreateManyAndReturnArgs<ExtArgs>,
+            result: $Utils.PayloadToResult<Prisma.$SesionUsuarioPayload>[]
+          }
+          delete: {
+            args: Prisma.SesionUsuarioDeleteArgs<ExtArgs>,
+            result: $Utils.PayloadToResult<Prisma.$SesionUsuarioPayload>
+          }
+          update: {
+            args: Prisma.SesionUsuarioUpdateArgs<ExtArgs>,
+            result: $Utils.PayloadToResult<Prisma.$SesionUsuarioPayload>
+          }
+          deleteMany: {
+            args: Prisma.SesionUsuarioDeleteManyArgs<ExtArgs>,
+            result: Prisma.BatchPayload
+          }
+          updateMany: {
+            args: Prisma.SesionUsuarioUpdateManyArgs<ExtArgs>,
+            result: Prisma.BatchPayload
+          }
+          upsert: {
+            args: Prisma.SesionUsuarioUpsertArgs<ExtArgs>,
+            result: $Utils.PayloadToResult<Prisma.$SesionUsuarioPayload>
+          }
+          aggregate: {
+            args: Prisma.SesionUsuarioAggregateArgs<ExtArgs>,
+            result: $Utils.Optional<AggregateSesionUsuario>
+          }
+          groupBy: {
+            args: Prisma.SesionUsuarioGroupByArgs<ExtArgs>,
+            result: $Utils.Optional<SesionUsuarioGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.SesionUsuarioCountArgs<ExtArgs>,
+            result: $Utils.Optional<SesionUsuarioCountAggregateOutputType> | number
+          }
+        }
+      }
     }
   } & {
     other: {
@@ -2347,6 +2519,8 @@ export namespace Prisma {
     historial: number
     frentesAsignados: number
     notificaciones: number
+    actividades: number
+    sesiones: number
   }
 
   export type UserCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -2357,6 +2531,8 @@ export namespace Prisma {
     historial?: boolean | UserCountOutputTypeCountHistorialArgs
     frentesAsignados?: boolean | UserCountOutputTypeCountFrentesAsignadosArgs
     notificaciones?: boolean | UserCountOutputTypeCountNotificacionesArgs
+    actividades?: boolean | UserCountOutputTypeCountActividadesArgs
+    sesiones?: boolean | UserCountOutputTypeCountSesionesArgs
   }
 
   // Custom InputTypes
@@ -2417,6 +2593,20 @@ export namespace Prisma {
    */
   export type UserCountOutputTypeCountNotificacionesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: NotificacionWhereInput
+  }
+
+  /**
+   * UserCountOutputType without action
+   */
+  export type UserCountOutputTypeCountActividadesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: ActividadUsuarioWhereInput
+  }
+
+  /**
+   * UserCountOutputType without action
+   */
+  export type UserCountOutputTypeCountSesionesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: SesionUsuarioWhereInput
   }
 
 
@@ -6758,6 +6948,8 @@ export namespace Prisma {
     historial?: boolean | User$historialArgs<ExtArgs>
     frentesAsignados?: boolean | User$frentesAsignadosArgs<ExtArgs>
     notificaciones?: boolean | User$notificacionesArgs<ExtArgs>
+    actividades?: boolean | User$actividadesArgs<ExtArgs>
+    sesiones?: boolean | User$sesionesArgs<ExtArgs>
     _count?: boolean | UserCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["user"]>
 
@@ -6792,6 +6984,8 @@ export namespace Prisma {
     historial?: boolean | User$historialArgs<ExtArgs>
     frentesAsignados?: boolean | User$frentesAsignadosArgs<ExtArgs>
     notificaciones?: boolean | User$notificacionesArgs<ExtArgs>
+    actividades?: boolean | User$actividadesArgs<ExtArgs>
+    sesiones?: boolean | User$sesionesArgs<ExtArgs>
     _count?: boolean | UserCountOutputTypeDefaultArgs<ExtArgs>
   }
 
@@ -6806,6 +7000,8 @@ export namespace Prisma {
       historial: Prisma.$HistorialSolicitudPayload<ExtArgs>[]
       frentesAsignados: Prisma.$FrenteUsuarioPayload<ExtArgs>[]
       notificaciones: Prisma.$NotificacionPayload<ExtArgs>[]
+      actividades: Prisma.$ActividadUsuarioPayload<ExtArgs>[]
+      sesiones: Prisma.$SesionUsuarioPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
@@ -7231,6 +7427,10 @@ export namespace Prisma {
     frentesAsignados<T extends User$frentesAsignadosArgs<ExtArgs> = {}>(args?: Subset<T, User$frentesAsignadosArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$FrenteUsuarioPayload<ExtArgs>, T, 'findMany'> | Null>;
 
     notificaciones<T extends User$notificacionesArgs<ExtArgs> = {}>(args?: Subset<T, User$notificacionesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$NotificacionPayload<ExtArgs>, T, 'findMany'> | Null>;
+
+    actividades<T extends User$actividadesArgs<ExtArgs> = {}>(args?: Subset<T, User$actividadesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ActividadUsuarioPayload<ExtArgs>, T, 'findMany'> | Null>;
+
+    sesiones<T extends User$sesionesArgs<ExtArgs> = {}>(args?: Subset<T, User$sesionesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$SesionUsuarioPayload<ExtArgs>, T, 'findMany'> | Null>;
 
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
@@ -7734,6 +7934,46 @@ export namespace Prisma {
     take?: number
     skip?: number
     distinct?: NotificacionScalarFieldEnum | NotificacionScalarFieldEnum[]
+  }
+
+  /**
+   * User.actividades
+   */
+  export type User$actividadesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ActividadUsuario
+     */
+    select?: ActividadUsuarioSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ActividadUsuarioInclude<ExtArgs> | null
+    where?: ActividadUsuarioWhereInput
+    orderBy?: ActividadUsuarioOrderByWithRelationInput | ActividadUsuarioOrderByWithRelationInput[]
+    cursor?: ActividadUsuarioWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: ActividadUsuarioScalarFieldEnum | ActividadUsuarioScalarFieldEnum[]
+  }
+
+  /**
+   * User.sesiones
+   */
+  export type User$sesionesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SesionUsuario
+     */
+    select?: SesionUsuarioSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SesionUsuarioInclude<ExtArgs> | null
+    where?: SesionUsuarioWhereInput
+    orderBy?: SesionUsuarioOrderByWithRelationInput | SesionUsuarioOrderByWithRelationInput[]
+    cursor?: SesionUsuarioWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: SesionUsuarioScalarFieldEnum | SesionUsuarioScalarFieldEnum[]
   }
 
   /**
@@ -21631,6 +21871,2062 @@ export namespace Prisma {
 
 
   /**
+   * Model ActividadUsuario
+   */
+
+  export type AggregateActividadUsuario = {
+    _count: ActividadUsuarioCountAggregateOutputType | null
+    _avg: ActividadUsuarioAvgAggregateOutputType | null
+    _sum: ActividadUsuarioSumAggregateOutputType | null
+    _min: ActividadUsuarioMinAggregateOutputType | null
+    _max: ActividadUsuarioMaxAggregateOutputType | null
+  }
+
+  export type ActividadUsuarioAvgAggregateOutputType = {
+    id: number | null
+  }
+
+  export type ActividadUsuarioSumAggregateOutputType = {
+    id: number | null
+  }
+
+  export type ActividadUsuarioMinAggregateOutputType = {
+    id: number | null
+    userId: string | null
+    tipo: string | null
+    descripcion: string | null
+    ip: string | null
+    userAgent: string | null
+    creadoEn: Date | null
+  }
+
+  export type ActividadUsuarioMaxAggregateOutputType = {
+    id: number | null
+    userId: string | null
+    tipo: string | null
+    descripcion: string | null
+    ip: string | null
+    userAgent: string | null
+    creadoEn: Date | null
+  }
+
+  export type ActividadUsuarioCountAggregateOutputType = {
+    id: number
+    userId: number
+    tipo: number
+    descripcion: number
+    metadata: number
+    ip: number
+    userAgent: number
+    creadoEn: number
+    _all: number
+  }
+
+
+  export type ActividadUsuarioAvgAggregateInputType = {
+    id?: true
+  }
+
+  export type ActividadUsuarioSumAggregateInputType = {
+    id?: true
+  }
+
+  export type ActividadUsuarioMinAggregateInputType = {
+    id?: true
+    userId?: true
+    tipo?: true
+    descripcion?: true
+    ip?: true
+    userAgent?: true
+    creadoEn?: true
+  }
+
+  export type ActividadUsuarioMaxAggregateInputType = {
+    id?: true
+    userId?: true
+    tipo?: true
+    descripcion?: true
+    ip?: true
+    userAgent?: true
+    creadoEn?: true
+  }
+
+  export type ActividadUsuarioCountAggregateInputType = {
+    id?: true
+    userId?: true
+    tipo?: true
+    descripcion?: true
+    metadata?: true
+    ip?: true
+    userAgent?: true
+    creadoEn?: true
+    _all?: true
+  }
+
+  export type ActividadUsuarioAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which ActividadUsuario to aggregate.
+     */
+    where?: ActividadUsuarioWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of ActividadUsuarios to fetch.
+     */
+    orderBy?: ActividadUsuarioOrderByWithRelationInput | ActividadUsuarioOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: ActividadUsuarioWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` ActividadUsuarios from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` ActividadUsuarios.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned ActividadUsuarios
+    **/
+    _count?: true | ActividadUsuarioCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to average
+    **/
+    _avg?: ActividadUsuarioAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: ActividadUsuarioSumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: ActividadUsuarioMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: ActividadUsuarioMaxAggregateInputType
+  }
+
+  export type GetActividadUsuarioAggregateType<T extends ActividadUsuarioAggregateArgs> = {
+        [P in keyof T & keyof AggregateActividadUsuario]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateActividadUsuario[P]>
+      : GetScalarType<T[P], AggregateActividadUsuario[P]>
+  }
+
+
+
+
+  export type ActividadUsuarioGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: ActividadUsuarioWhereInput
+    orderBy?: ActividadUsuarioOrderByWithAggregationInput | ActividadUsuarioOrderByWithAggregationInput[]
+    by: ActividadUsuarioScalarFieldEnum[] | ActividadUsuarioScalarFieldEnum
+    having?: ActividadUsuarioScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: ActividadUsuarioCountAggregateInputType | true
+    _avg?: ActividadUsuarioAvgAggregateInputType
+    _sum?: ActividadUsuarioSumAggregateInputType
+    _min?: ActividadUsuarioMinAggregateInputType
+    _max?: ActividadUsuarioMaxAggregateInputType
+  }
+
+  export type ActividadUsuarioGroupByOutputType = {
+    id: number
+    userId: string
+    tipo: string
+    descripcion: string | null
+    metadata: JsonValue | null
+    ip: string | null
+    userAgent: string | null
+    creadoEn: Date
+    _count: ActividadUsuarioCountAggregateOutputType | null
+    _avg: ActividadUsuarioAvgAggregateOutputType | null
+    _sum: ActividadUsuarioSumAggregateOutputType | null
+    _min: ActividadUsuarioMinAggregateOutputType | null
+    _max: ActividadUsuarioMaxAggregateOutputType | null
+  }
+
+  type GetActividadUsuarioGroupByPayload<T extends ActividadUsuarioGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<ActividadUsuarioGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof ActividadUsuarioGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], ActividadUsuarioGroupByOutputType[P]>
+            : GetScalarType<T[P], ActividadUsuarioGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type ActividadUsuarioSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    userId?: boolean
+    tipo?: boolean
+    descripcion?: boolean
+    metadata?: boolean
+    ip?: boolean
+    userAgent?: boolean
+    creadoEn?: boolean
+    user?: boolean | UserDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["actividadUsuario"]>
+
+  export type ActividadUsuarioSelectScalar = {
+    id?: boolean
+    userId?: boolean
+    tipo?: boolean
+    descripcion?: boolean
+    metadata?: boolean
+    ip?: boolean
+    userAgent?: boolean
+    creadoEn?: boolean
+  }
+
+
+  export type ActividadUsuarioInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    user?: boolean | UserDefaultArgs<ExtArgs>
+  }
+
+
+  export type $ActividadUsuarioPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "ActividadUsuario"
+    objects: {
+      user: Prisma.$UserPayload<ExtArgs>
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: number
+      userId: string
+      tipo: string
+      descripcion: string | null
+      metadata: Prisma.JsonValue | null
+      ip: string | null
+      userAgent: string | null
+      creadoEn: Date
+    }, ExtArgs["result"]["actividadUsuario"]>
+    composites: {}
+  }
+
+
+  type ActividadUsuarioGetPayload<S extends boolean | null | undefined | ActividadUsuarioDefaultArgs> = $Result.GetResult<Prisma.$ActividadUsuarioPayload, S>
+
+  type ActividadUsuarioCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = 
+    Omit<ActividadUsuarioFindManyArgs, 'select' | 'include' | 'distinct'> & {
+      select?: ActividadUsuarioCountAggregateInputType | true
+    }
+
+  export interface ActividadUsuarioDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['ActividadUsuario'], meta: { name: 'ActividadUsuario' } }
+    /**
+     * Find zero or one ActividadUsuario that matches the filter.
+     * @param {ActividadUsuarioFindUniqueArgs} args - Arguments to find a ActividadUsuario
+     * @example
+     * // Get one ActividadUsuario
+     * const actividadUsuario = await prisma.actividadUsuario.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+    **/
+    findUnique<T extends ActividadUsuarioFindUniqueArgs<ExtArgs>>(
+      args: SelectSubset<T, ActividadUsuarioFindUniqueArgs<ExtArgs>>
+    ): Prisma__ActividadUsuarioClient<$Result.GetResult<Prisma.$ActividadUsuarioPayload<ExtArgs>, T, 'findUnique'> | null, null, ExtArgs>
+
+    /**
+     * Find one ActividadUsuario that matches the filter or throw an error with `error.code='P2025'` 
+     * if no matches were found.
+     * @param {ActividadUsuarioFindUniqueOrThrowArgs} args - Arguments to find a ActividadUsuario
+     * @example
+     * // Get one ActividadUsuario
+     * const actividadUsuario = await prisma.actividadUsuario.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+    **/
+    findUniqueOrThrow<T extends ActividadUsuarioFindUniqueOrThrowArgs<ExtArgs>>(
+      args?: SelectSubset<T, ActividadUsuarioFindUniqueOrThrowArgs<ExtArgs>>
+    ): Prisma__ActividadUsuarioClient<$Result.GetResult<Prisma.$ActividadUsuarioPayload<ExtArgs>, T, 'findUniqueOrThrow'>, never, ExtArgs>
+
+    /**
+     * Find the first ActividadUsuario that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ActividadUsuarioFindFirstArgs} args - Arguments to find a ActividadUsuario
+     * @example
+     * // Get one ActividadUsuario
+     * const actividadUsuario = await prisma.actividadUsuario.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+    **/
+    findFirst<T extends ActividadUsuarioFindFirstArgs<ExtArgs>>(
+      args?: SelectSubset<T, ActividadUsuarioFindFirstArgs<ExtArgs>>
+    ): Prisma__ActividadUsuarioClient<$Result.GetResult<Prisma.$ActividadUsuarioPayload<ExtArgs>, T, 'findFirst'> | null, null, ExtArgs>
+
+    /**
+     * Find the first ActividadUsuario that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ActividadUsuarioFindFirstOrThrowArgs} args - Arguments to find a ActividadUsuario
+     * @example
+     * // Get one ActividadUsuario
+     * const actividadUsuario = await prisma.actividadUsuario.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+    **/
+    findFirstOrThrow<T extends ActividadUsuarioFindFirstOrThrowArgs<ExtArgs>>(
+      args?: SelectSubset<T, ActividadUsuarioFindFirstOrThrowArgs<ExtArgs>>
+    ): Prisma__ActividadUsuarioClient<$Result.GetResult<Prisma.$ActividadUsuarioPayload<ExtArgs>, T, 'findFirstOrThrow'>, never, ExtArgs>
+
+    /**
+     * Find zero or more ActividadUsuarios that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ActividadUsuarioFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all ActividadUsuarios
+     * const actividadUsuarios = await prisma.actividadUsuario.findMany()
+     * 
+     * // Get first 10 ActividadUsuarios
+     * const actividadUsuarios = await prisma.actividadUsuario.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const actividadUsuarioWithIdOnly = await prisma.actividadUsuario.findMany({ select: { id: true } })
+     * 
+    **/
+    findMany<T extends ActividadUsuarioFindManyArgs<ExtArgs>>(
+      args?: SelectSubset<T, ActividadUsuarioFindManyArgs<ExtArgs>>
+    ): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ActividadUsuarioPayload<ExtArgs>, T, 'findMany'>>
+
+    /**
+     * Create a ActividadUsuario.
+     * @param {ActividadUsuarioCreateArgs} args - Arguments to create a ActividadUsuario.
+     * @example
+     * // Create one ActividadUsuario
+     * const ActividadUsuario = await prisma.actividadUsuario.create({
+     *   data: {
+     *     // ... data to create a ActividadUsuario
+     *   }
+     * })
+     * 
+    **/
+    create<T extends ActividadUsuarioCreateArgs<ExtArgs>>(
+      args: SelectSubset<T, ActividadUsuarioCreateArgs<ExtArgs>>
+    ): Prisma__ActividadUsuarioClient<$Result.GetResult<Prisma.$ActividadUsuarioPayload<ExtArgs>, T, 'create'>, never, ExtArgs>
+
+    /**
+     * Create many ActividadUsuarios.
+     * @param {ActividadUsuarioCreateManyArgs} args - Arguments to create many ActividadUsuarios.
+     * @example
+     * // Create many ActividadUsuarios
+     * const actividadUsuario = await prisma.actividadUsuario.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+    **/
+    createMany<T extends ActividadUsuarioCreateManyArgs<ExtArgs>>(
+      args?: SelectSubset<T, ActividadUsuarioCreateManyArgs<ExtArgs>>
+    ): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many ActividadUsuarios and returns the data saved in the database.
+     * @param {ActividadUsuarioCreateManyAndReturnArgs} args - Arguments to create many ActividadUsuarios.
+     * @example
+     * // Create many ActividadUsuarios
+     * const actividadUsuario = await prisma.actividadUsuario.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many ActividadUsuarios and only return the `id`
+     * const actividadUsuarioWithIdOnly = await prisma.actividadUsuario.createManyAndReturn({ 
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+    **/
+    createManyAndReturn<T extends ActividadUsuarioCreateManyAndReturnArgs<ExtArgs>>(
+      args?: SelectSubset<T, ActividadUsuarioCreateManyAndReturnArgs<ExtArgs>>
+    ): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ActividadUsuarioPayload<ExtArgs>, T, 'createManyAndReturn'>>
+
+    /**
+     * Delete a ActividadUsuario.
+     * @param {ActividadUsuarioDeleteArgs} args - Arguments to delete one ActividadUsuario.
+     * @example
+     * // Delete one ActividadUsuario
+     * const ActividadUsuario = await prisma.actividadUsuario.delete({
+     *   where: {
+     *     // ... filter to delete one ActividadUsuario
+     *   }
+     * })
+     * 
+    **/
+    delete<T extends ActividadUsuarioDeleteArgs<ExtArgs>>(
+      args: SelectSubset<T, ActividadUsuarioDeleteArgs<ExtArgs>>
+    ): Prisma__ActividadUsuarioClient<$Result.GetResult<Prisma.$ActividadUsuarioPayload<ExtArgs>, T, 'delete'>, never, ExtArgs>
+
+    /**
+     * Update one ActividadUsuario.
+     * @param {ActividadUsuarioUpdateArgs} args - Arguments to update one ActividadUsuario.
+     * @example
+     * // Update one ActividadUsuario
+     * const actividadUsuario = await prisma.actividadUsuario.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+    **/
+    update<T extends ActividadUsuarioUpdateArgs<ExtArgs>>(
+      args: SelectSubset<T, ActividadUsuarioUpdateArgs<ExtArgs>>
+    ): Prisma__ActividadUsuarioClient<$Result.GetResult<Prisma.$ActividadUsuarioPayload<ExtArgs>, T, 'update'>, never, ExtArgs>
+
+    /**
+     * Delete zero or more ActividadUsuarios.
+     * @param {ActividadUsuarioDeleteManyArgs} args - Arguments to filter ActividadUsuarios to delete.
+     * @example
+     * // Delete a few ActividadUsuarios
+     * const { count } = await prisma.actividadUsuario.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+    **/
+    deleteMany<T extends ActividadUsuarioDeleteManyArgs<ExtArgs>>(
+      args?: SelectSubset<T, ActividadUsuarioDeleteManyArgs<ExtArgs>>
+    ): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more ActividadUsuarios.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ActividadUsuarioUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many ActividadUsuarios
+     * const actividadUsuario = await prisma.actividadUsuario.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+    **/
+    updateMany<T extends ActividadUsuarioUpdateManyArgs<ExtArgs>>(
+      args: SelectSubset<T, ActividadUsuarioUpdateManyArgs<ExtArgs>>
+    ): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create or update one ActividadUsuario.
+     * @param {ActividadUsuarioUpsertArgs} args - Arguments to update or create a ActividadUsuario.
+     * @example
+     * // Update or create a ActividadUsuario
+     * const actividadUsuario = await prisma.actividadUsuario.upsert({
+     *   create: {
+     *     // ... data to create a ActividadUsuario
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the ActividadUsuario we want to update
+     *   }
+     * })
+    **/
+    upsert<T extends ActividadUsuarioUpsertArgs<ExtArgs>>(
+      args: SelectSubset<T, ActividadUsuarioUpsertArgs<ExtArgs>>
+    ): Prisma__ActividadUsuarioClient<$Result.GetResult<Prisma.$ActividadUsuarioPayload<ExtArgs>, T, 'upsert'>, never, ExtArgs>
+
+    /**
+     * Count the number of ActividadUsuarios.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ActividadUsuarioCountArgs} args - Arguments to filter ActividadUsuarios to count.
+     * @example
+     * // Count the number of ActividadUsuarios
+     * const count = await prisma.actividadUsuario.count({
+     *   where: {
+     *     // ... the filter for the ActividadUsuarios we want to count
+     *   }
+     * })
+    **/
+    count<T extends ActividadUsuarioCountArgs>(
+      args?: Subset<T, ActividadUsuarioCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], ActividadUsuarioCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a ActividadUsuario.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ActividadUsuarioAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends ActividadUsuarioAggregateArgs>(args: Subset<T, ActividadUsuarioAggregateArgs>): Prisma.PrismaPromise<GetActividadUsuarioAggregateType<T>>
+
+    /**
+     * Group by ActividadUsuario.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ActividadUsuarioGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends ActividadUsuarioGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: ActividadUsuarioGroupByArgs['orderBy'] }
+        : { orderBy?: ActividadUsuarioGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, ActividadUsuarioGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetActividadUsuarioGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the ActividadUsuario model
+   */
+  readonly fields: ActividadUsuarioFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for ActividadUsuario.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__ActividadUsuarioClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: 'PrismaPromise';
+
+    user<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, 'findUniqueOrThrow'> | Null, Null, ExtArgs>;
+
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>;
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>;
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>;
+  }
+
+
+
+  /**
+   * Fields of the ActividadUsuario model
+   */ 
+  interface ActividadUsuarioFieldRefs {
+    readonly id: FieldRef<"ActividadUsuario", 'Int'>
+    readonly userId: FieldRef<"ActividadUsuario", 'String'>
+    readonly tipo: FieldRef<"ActividadUsuario", 'String'>
+    readonly descripcion: FieldRef<"ActividadUsuario", 'String'>
+    readonly metadata: FieldRef<"ActividadUsuario", 'Json'>
+    readonly ip: FieldRef<"ActividadUsuario", 'String'>
+    readonly userAgent: FieldRef<"ActividadUsuario", 'String'>
+    readonly creadoEn: FieldRef<"ActividadUsuario", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * ActividadUsuario findUnique
+   */
+  export type ActividadUsuarioFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ActividadUsuario
+     */
+    select?: ActividadUsuarioSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ActividadUsuarioInclude<ExtArgs> | null
+    /**
+     * Filter, which ActividadUsuario to fetch.
+     */
+    where: ActividadUsuarioWhereUniqueInput
+  }
+
+  /**
+   * ActividadUsuario findUniqueOrThrow
+   */
+  export type ActividadUsuarioFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ActividadUsuario
+     */
+    select?: ActividadUsuarioSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ActividadUsuarioInclude<ExtArgs> | null
+    /**
+     * Filter, which ActividadUsuario to fetch.
+     */
+    where: ActividadUsuarioWhereUniqueInput
+  }
+
+  /**
+   * ActividadUsuario findFirst
+   */
+  export type ActividadUsuarioFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ActividadUsuario
+     */
+    select?: ActividadUsuarioSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ActividadUsuarioInclude<ExtArgs> | null
+    /**
+     * Filter, which ActividadUsuario to fetch.
+     */
+    where?: ActividadUsuarioWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of ActividadUsuarios to fetch.
+     */
+    orderBy?: ActividadUsuarioOrderByWithRelationInput | ActividadUsuarioOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for ActividadUsuarios.
+     */
+    cursor?: ActividadUsuarioWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` ActividadUsuarios from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` ActividadUsuarios.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of ActividadUsuarios.
+     */
+    distinct?: ActividadUsuarioScalarFieldEnum | ActividadUsuarioScalarFieldEnum[]
+  }
+
+  /**
+   * ActividadUsuario findFirstOrThrow
+   */
+  export type ActividadUsuarioFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ActividadUsuario
+     */
+    select?: ActividadUsuarioSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ActividadUsuarioInclude<ExtArgs> | null
+    /**
+     * Filter, which ActividadUsuario to fetch.
+     */
+    where?: ActividadUsuarioWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of ActividadUsuarios to fetch.
+     */
+    orderBy?: ActividadUsuarioOrderByWithRelationInput | ActividadUsuarioOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for ActividadUsuarios.
+     */
+    cursor?: ActividadUsuarioWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` ActividadUsuarios from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` ActividadUsuarios.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of ActividadUsuarios.
+     */
+    distinct?: ActividadUsuarioScalarFieldEnum | ActividadUsuarioScalarFieldEnum[]
+  }
+
+  /**
+   * ActividadUsuario findMany
+   */
+  export type ActividadUsuarioFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ActividadUsuario
+     */
+    select?: ActividadUsuarioSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ActividadUsuarioInclude<ExtArgs> | null
+    /**
+     * Filter, which ActividadUsuarios to fetch.
+     */
+    where?: ActividadUsuarioWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of ActividadUsuarios to fetch.
+     */
+    orderBy?: ActividadUsuarioOrderByWithRelationInput | ActividadUsuarioOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing ActividadUsuarios.
+     */
+    cursor?: ActividadUsuarioWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` ActividadUsuarios from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` ActividadUsuarios.
+     */
+    skip?: number
+    distinct?: ActividadUsuarioScalarFieldEnum | ActividadUsuarioScalarFieldEnum[]
+  }
+
+  /**
+   * ActividadUsuario create
+   */
+  export type ActividadUsuarioCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ActividadUsuario
+     */
+    select?: ActividadUsuarioSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ActividadUsuarioInclude<ExtArgs> | null
+    /**
+     * The data needed to create a ActividadUsuario.
+     */
+    data: XOR<ActividadUsuarioCreateInput, ActividadUsuarioUncheckedCreateInput>
+  }
+
+  /**
+   * ActividadUsuario createMany
+   */
+  export type ActividadUsuarioCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many ActividadUsuarios.
+     */
+    data: ActividadUsuarioCreateManyInput | ActividadUsuarioCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * ActividadUsuario createManyAndReturn
+   */
+  export type ActividadUsuarioCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ActividadUsuario
+     */
+    select?: ActividadUsuarioSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ActividadUsuarioInclude<ExtArgs> | null
+    /**
+     * The data used to create many ActividadUsuarios.
+     */
+    data: ActividadUsuarioCreateManyInput | ActividadUsuarioCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * ActividadUsuario update
+   */
+  export type ActividadUsuarioUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ActividadUsuario
+     */
+    select?: ActividadUsuarioSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ActividadUsuarioInclude<ExtArgs> | null
+    /**
+     * The data needed to update a ActividadUsuario.
+     */
+    data: XOR<ActividadUsuarioUpdateInput, ActividadUsuarioUncheckedUpdateInput>
+    /**
+     * Choose, which ActividadUsuario to update.
+     */
+    where: ActividadUsuarioWhereUniqueInput
+  }
+
+  /**
+   * ActividadUsuario updateMany
+   */
+  export type ActividadUsuarioUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update ActividadUsuarios.
+     */
+    data: XOR<ActividadUsuarioUpdateManyMutationInput, ActividadUsuarioUncheckedUpdateManyInput>
+    /**
+     * Filter which ActividadUsuarios to update
+     */
+    where?: ActividadUsuarioWhereInput
+  }
+
+  /**
+   * ActividadUsuario upsert
+   */
+  export type ActividadUsuarioUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ActividadUsuario
+     */
+    select?: ActividadUsuarioSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ActividadUsuarioInclude<ExtArgs> | null
+    /**
+     * The filter to search for the ActividadUsuario to update in case it exists.
+     */
+    where: ActividadUsuarioWhereUniqueInput
+    /**
+     * In case the ActividadUsuario found by the `where` argument doesn't exist, create a new ActividadUsuario with this data.
+     */
+    create: XOR<ActividadUsuarioCreateInput, ActividadUsuarioUncheckedCreateInput>
+    /**
+     * In case the ActividadUsuario was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<ActividadUsuarioUpdateInput, ActividadUsuarioUncheckedUpdateInput>
+  }
+
+  /**
+   * ActividadUsuario delete
+   */
+  export type ActividadUsuarioDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ActividadUsuario
+     */
+    select?: ActividadUsuarioSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ActividadUsuarioInclude<ExtArgs> | null
+    /**
+     * Filter which ActividadUsuario to delete.
+     */
+    where: ActividadUsuarioWhereUniqueInput
+  }
+
+  /**
+   * ActividadUsuario deleteMany
+   */
+  export type ActividadUsuarioDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which ActividadUsuarios to delete
+     */
+    where?: ActividadUsuarioWhereInput
+  }
+
+  /**
+   * ActividadUsuario without action
+   */
+  export type ActividadUsuarioDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ActividadUsuario
+     */
+    select?: ActividadUsuarioSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ActividadUsuarioInclude<ExtArgs> | null
+  }
+
+
+  /**
+   * Model SesionUsuario
+   */
+
+  export type AggregateSesionUsuario = {
+    _count: SesionUsuarioCountAggregateOutputType | null
+    _avg: SesionUsuarioAvgAggregateOutputType | null
+    _sum: SesionUsuarioSumAggregateOutputType | null
+    _min: SesionUsuarioMinAggregateOutputType | null
+    _max: SesionUsuarioMaxAggregateOutputType | null
+  }
+
+  export type SesionUsuarioAvgAggregateOutputType = {
+    id: number | null
+    duracionSeg: number | null
+  }
+
+  export type SesionUsuarioSumAggregateOutputType = {
+    id: number | null
+    duracionSeg: number | null
+  }
+
+  export type SesionUsuarioMinAggregateOutputType = {
+    id: number | null
+    userId: string | null
+    inicio: Date | null
+    fin: Date | null
+    duracionSeg: number | null
+    ip: string | null
+    userAgent: string | null
+    dispositivo: string | null
+    navegador: string | null
+    sistemaOp: string | null
+  }
+
+  export type SesionUsuarioMaxAggregateOutputType = {
+    id: number | null
+    userId: string | null
+    inicio: Date | null
+    fin: Date | null
+    duracionSeg: number | null
+    ip: string | null
+    userAgent: string | null
+    dispositivo: string | null
+    navegador: string | null
+    sistemaOp: string | null
+  }
+
+  export type SesionUsuarioCountAggregateOutputType = {
+    id: number
+    userId: number
+    inicio: number
+    fin: number
+    duracionSeg: number
+    ip: number
+    userAgent: number
+    dispositivo: number
+    navegador: number
+    sistemaOp: number
+    _all: number
+  }
+
+
+  export type SesionUsuarioAvgAggregateInputType = {
+    id?: true
+    duracionSeg?: true
+  }
+
+  export type SesionUsuarioSumAggregateInputType = {
+    id?: true
+    duracionSeg?: true
+  }
+
+  export type SesionUsuarioMinAggregateInputType = {
+    id?: true
+    userId?: true
+    inicio?: true
+    fin?: true
+    duracionSeg?: true
+    ip?: true
+    userAgent?: true
+    dispositivo?: true
+    navegador?: true
+    sistemaOp?: true
+  }
+
+  export type SesionUsuarioMaxAggregateInputType = {
+    id?: true
+    userId?: true
+    inicio?: true
+    fin?: true
+    duracionSeg?: true
+    ip?: true
+    userAgent?: true
+    dispositivo?: true
+    navegador?: true
+    sistemaOp?: true
+  }
+
+  export type SesionUsuarioCountAggregateInputType = {
+    id?: true
+    userId?: true
+    inicio?: true
+    fin?: true
+    duracionSeg?: true
+    ip?: true
+    userAgent?: true
+    dispositivo?: true
+    navegador?: true
+    sistemaOp?: true
+    _all?: true
+  }
+
+  export type SesionUsuarioAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which SesionUsuario to aggregate.
+     */
+    where?: SesionUsuarioWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of SesionUsuarios to fetch.
+     */
+    orderBy?: SesionUsuarioOrderByWithRelationInput | SesionUsuarioOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: SesionUsuarioWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` SesionUsuarios from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` SesionUsuarios.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned SesionUsuarios
+    **/
+    _count?: true | SesionUsuarioCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to average
+    **/
+    _avg?: SesionUsuarioAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: SesionUsuarioSumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: SesionUsuarioMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: SesionUsuarioMaxAggregateInputType
+  }
+
+  export type GetSesionUsuarioAggregateType<T extends SesionUsuarioAggregateArgs> = {
+        [P in keyof T & keyof AggregateSesionUsuario]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateSesionUsuario[P]>
+      : GetScalarType<T[P], AggregateSesionUsuario[P]>
+  }
+
+
+
+
+  export type SesionUsuarioGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: SesionUsuarioWhereInput
+    orderBy?: SesionUsuarioOrderByWithAggregationInput | SesionUsuarioOrderByWithAggregationInput[]
+    by: SesionUsuarioScalarFieldEnum[] | SesionUsuarioScalarFieldEnum
+    having?: SesionUsuarioScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: SesionUsuarioCountAggregateInputType | true
+    _avg?: SesionUsuarioAvgAggregateInputType
+    _sum?: SesionUsuarioSumAggregateInputType
+    _min?: SesionUsuarioMinAggregateInputType
+    _max?: SesionUsuarioMaxAggregateInputType
+  }
+
+  export type SesionUsuarioGroupByOutputType = {
+    id: number
+    userId: string
+    inicio: Date
+    fin: Date | null
+    duracionSeg: number | null
+    ip: string | null
+    userAgent: string | null
+    dispositivo: string | null
+    navegador: string | null
+    sistemaOp: string | null
+    _count: SesionUsuarioCountAggregateOutputType | null
+    _avg: SesionUsuarioAvgAggregateOutputType | null
+    _sum: SesionUsuarioSumAggregateOutputType | null
+    _min: SesionUsuarioMinAggregateOutputType | null
+    _max: SesionUsuarioMaxAggregateOutputType | null
+  }
+
+  type GetSesionUsuarioGroupByPayload<T extends SesionUsuarioGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<SesionUsuarioGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof SesionUsuarioGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], SesionUsuarioGroupByOutputType[P]>
+            : GetScalarType<T[P], SesionUsuarioGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type SesionUsuarioSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    userId?: boolean
+    inicio?: boolean
+    fin?: boolean
+    duracionSeg?: boolean
+    ip?: boolean
+    userAgent?: boolean
+    dispositivo?: boolean
+    navegador?: boolean
+    sistemaOp?: boolean
+    user?: boolean | UserDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["sesionUsuario"]>
+
+  export type SesionUsuarioSelectScalar = {
+    id?: boolean
+    userId?: boolean
+    inicio?: boolean
+    fin?: boolean
+    duracionSeg?: boolean
+    ip?: boolean
+    userAgent?: boolean
+    dispositivo?: boolean
+    navegador?: boolean
+    sistemaOp?: boolean
+  }
+
+
+  export type SesionUsuarioInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    user?: boolean | UserDefaultArgs<ExtArgs>
+  }
+
+
+  export type $SesionUsuarioPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "SesionUsuario"
+    objects: {
+      user: Prisma.$UserPayload<ExtArgs>
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: number
+      userId: string
+      inicio: Date
+      fin: Date | null
+      duracionSeg: number | null
+      ip: string | null
+      userAgent: string | null
+      dispositivo: string | null
+      navegador: string | null
+      sistemaOp: string | null
+    }, ExtArgs["result"]["sesionUsuario"]>
+    composites: {}
+  }
+
+
+  type SesionUsuarioGetPayload<S extends boolean | null | undefined | SesionUsuarioDefaultArgs> = $Result.GetResult<Prisma.$SesionUsuarioPayload, S>
+
+  type SesionUsuarioCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = 
+    Omit<SesionUsuarioFindManyArgs, 'select' | 'include' | 'distinct'> & {
+      select?: SesionUsuarioCountAggregateInputType | true
+    }
+
+  export interface SesionUsuarioDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['SesionUsuario'], meta: { name: 'SesionUsuario' } }
+    /**
+     * Find zero or one SesionUsuario that matches the filter.
+     * @param {SesionUsuarioFindUniqueArgs} args - Arguments to find a SesionUsuario
+     * @example
+     * // Get one SesionUsuario
+     * const sesionUsuario = await prisma.sesionUsuario.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+    **/
+    findUnique<T extends SesionUsuarioFindUniqueArgs<ExtArgs>>(
+      args: SelectSubset<T, SesionUsuarioFindUniqueArgs<ExtArgs>>
+    ): Prisma__SesionUsuarioClient<$Result.GetResult<Prisma.$SesionUsuarioPayload<ExtArgs>, T, 'findUnique'> | null, null, ExtArgs>
+
+    /**
+     * Find one SesionUsuario that matches the filter or throw an error with `error.code='P2025'` 
+     * if no matches were found.
+     * @param {SesionUsuarioFindUniqueOrThrowArgs} args - Arguments to find a SesionUsuario
+     * @example
+     * // Get one SesionUsuario
+     * const sesionUsuario = await prisma.sesionUsuario.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+    **/
+    findUniqueOrThrow<T extends SesionUsuarioFindUniqueOrThrowArgs<ExtArgs>>(
+      args?: SelectSubset<T, SesionUsuarioFindUniqueOrThrowArgs<ExtArgs>>
+    ): Prisma__SesionUsuarioClient<$Result.GetResult<Prisma.$SesionUsuarioPayload<ExtArgs>, T, 'findUniqueOrThrow'>, never, ExtArgs>
+
+    /**
+     * Find the first SesionUsuario that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {SesionUsuarioFindFirstArgs} args - Arguments to find a SesionUsuario
+     * @example
+     * // Get one SesionUsuario
+     * const sesionUsuario = await prisma.sesionUsuario.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+    **/
+    findFirst<T extends SesionUsuarioFindFirstArgs<ExtArgs>>(
+      args?: SelectSubset<T, SesionUsuarioFindFirstArgs<ExtArgs>>
+    ): Prisma__SesionUsuarioClient<$Result.GetResult<Prisma.$SesionUsuarioPayload<ExtArgs>, T, 'findFirst'> | null, null, ExtArgs>
+
+    /**
+     * Find the first SesionUsuario that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {SesionUsuarioFindFirstOrThrowArgs} args - Arguments to find a SesionUsuario
+     * @example
+     * // Get one SesionUsuario
+     * const sesionUsuario = await prisma.sesionUsuario.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+    **/
+    findFirstOrThrow<T extends SesionUsuarioFindFirstOrThrowArgs<ExtArgs>>(
+      args?: SelectSubset<T, SesionUsuarioFindFirstOrThrowArgs<ExtArgs>>
+    ): Prisma__SesionUsuarioClient<$Result.GetResult<Prisma.$SesionUsuarioPayload<ExtArgs>, T, 'findFirstOrThrow'>, never, ExtArgs>
+
+    /**
+     * Find zero or more SesionUsuarios that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {SesionUsuarioFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all SesionUsuarios
+     * const sesionUsuarios = await prisma.sesionUsuario.findMany()
+     * 
+     * // Get first 10 SesionUsuarios
+     * const sesionUsuarios = await prisma.sesionUsuario.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const sesionUsuarioWithIdOnly = await prisma.sesionUsuario.findMany({ select: { id: true } })
+     * 
+    **/
+    findMany<T extends SesionUsuarioFindManyArgs<ExtArgs>>(
+      args?: SelectSubset<T, SesionUsuarioFindManyArgs<ExtArgs>>
+    ): Prisma.PrismaPromise<$Result.GetResult<Prisma.$SesionUsuarioPayload<ExtArgs>, T, 'findMany'>>
+
+    /**
+     * Create a SesionUsuario.
+     * @param {SesionUsuarioCreateArgs} args - Arguments to create a SesionUsuario.
+     * @example
+     * // Create one SesionUsuario
+     * const SesionUsuario = await prisma.sesionUsuario.create({
+     *   data: {
+     *     // ... data to create a SesionUsuario
+     *   }
+     * })
+     * 
+    **/
+    create<T extends SesionUsuarioCreateArgs<ExtArgs>>(
+      args: SelectSubset<T, SesionUsuarioCreateArgs<ExtArgs>>
+    ): Prisma__SesionUsuarioClient<$Result.GetResult<Prisma.$SesionUsuarioPayload<ExtArgs>, T, 'create'>, never, ExtArgs>
+
+    /**
+     * Create many SesionUsuarios.
+     * @param {SesionUsuarioCreateManyArgs} args - Arguments to create many SesionUsuarios.
+     * @example
+     * // Create many SesionUsuarios
+     * const sesionUsuario = await prisma.sesionUsuario.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+    **/
+    createMany<T extends SesionUsuarioCreateManyArgs<ExtArgs>>(
+      args?: SelectSubset<T, SesionUsuarioCreateManyArgs<ExtArgs>>
+    ): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many SesionUsuarios and returns the data saved in the database.
+     * @param {SesionUsuarioCreateManyAndReturnArgs} args - Arguments to create many SesionUsuarios.
+     * @example
+     * // Create many SesionUsuarios
+     * const sesionUsuario = await prisma.sesionUsuario.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many SesionUsuarios and only return the `id`
+     * const sesionUsuarioWithIdOnly = await prisma.sesionUsuario.createManyAndReturn({ 
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+    **/
+    createManyAndReturn<T extends SesionUsuarioCreateManyAndReturnArgs<ExtArgs>>(
+      args?: SelectSubset<T, SesionUsuarioCreateManyAndReturnArgs<ExtArgs>>
+    ): Prisma.PrismaPromise<$Result.GetResult<Prisma.$SesionUsuarioPayload<ExtArgs>, T, 'createManyAndReturn'>>
+
+    /**
+     * Delete a SesionUsuario.
+     * @param {SesionUsuarioDeleteArgs} args - Arguments to delete one SesionUsuario.
+     * @example
+     * // Delete one SesionUsuario
+     * const SesionUsuario = await prisma.sesionUsuario.delete({
+     *   where: {
+     *     // ... filter to delete one SesionUsuario
+     *   }
+     * })
+     * 
+    **/
+    delete<T extends SesionUsuarioDeleteArgs<ExtArgs>>(
+      args: SelectSubset<T, SesionUsuarioDeleteArgs<ExtArgs>>
+    ): Prisma__SesionUsuarioClient<$Result.GetResult<Prisma.$SesionUsuarioPayload<ExtArgs>, T, 'delete'>, never, ExtArgs>
+
+    /**
+     * Update one SesionUsuario.
+     * @param {SesionUsuarioUpdateArgs} args - Arguments to update one SesionUsuario.
+     * @example
+     * // Update one SesionUsuario
+     * const sesionUsuario = await prisma.sesionUsuario.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+    **/
+    update<T extends SesionUsuarioUpdateArgs<ExtArgs>>(
+      args: SelectSubset<T, SesionUsuarioUpdateArgs<ExtArgs>>
+    ): Prisma__SesionUsuarioClient<$Result.GetResult<Prisma.$SesionUsuarioPayload<ExtArgs>, T, 'update'>, never, ExtArgs>
+
+    /**
+     * Delete zero or more SesionUsuarios.
+     * @param {SesionUsuarioDeleteManyArgs} args - Arguments to filter SesionUsuarios to delete.
+     * @example
+     * // Delete a few SesionUsuarios
+     * const { count } = await prisma.sesionUsuario.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+    **/
+    deleteMany<T extends SesionUsuarioDeleteManyArgs<ExtArgs>>(
+      args?: SelectSubset<T, SesionUsuarioDeleteManyArgs<ExtArgs>>
+    ): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more SesionUsuarios.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {SesionUsuarioUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many SesionUsuarios
+     * const sesionUsuario = await prisma.sesionUsuario.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+    **/
+    updateMany<T extends SesionUsuarioUpdateManyArgs<ExtArgs>>(
+      args: SelectSubset<T, SesionUsuarioUpdateManyArgs<ExtArgs>>
+    ): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create or update one SesionUsuario.
+     * @param {SesionUsuarioUpsertArgs} args - Arguments to update or create a SesionUsuario.
+     * @example
+     * // Update or create a SesionUsuario
+     * const sesionUsuario = await prisma.sesionUsuario.upsert({
+     *   create: {
+     *     // ... data to create a SesionUsuario
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the SesionUsuario we want to update
+     *   }
+     * })
+    **/
+    upsert<T extends SesionUsuarioUpsertArgs<ExtArgs>>(
+      args: SelectSubset<T, SesionUsuarioUpsertArgs<ExtArgs>>
+    ): Prisma__SesionUsuarioClient<$Result.GetResult<Prisma.$SesionUsuarioPayload<ExtArgs>, T, 'upsert'>, never, ExtArgs>
+
+    /**
+     * Count the number of SesionUsuarios.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {SesionUsuarioCountArgs} args - Arguments to filter SesionUsuarios to count.
+     * @example
+     * // Count the number of SesionUsuarios
+     * const count = await prisma.sesionUsuario.count({
+     *   where: {
+     *     // ... the filter for the SesionUsuarios we want to count
+     *   }
+     * })
+    **/
+    count<T extends SesionUsuarioCountArgs>(
+      args?: Subset<T, SesionUsuarioCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], SesionUsuarioCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a SesionUsuario.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {SesionUsuarioAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends SesionUsuarioAggregateArgs>(args: Subset<T, SesionUsuarioAggregateArgs>): Prisma.PrismaPromise<GetSesionUsuarioAggregateType<T>>
+
+    /**
+     * Group by SesionUsuario.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {SesionUsuarioGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends SesionUsuarioGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: SesionUsuarioGroupByArgs['orderBy'] }
+        : { orderBy?: SesionUsuarioGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, SesionUsuarioGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetSesionUsuarioGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the SesionUsuario model
+   */
+  readonly fields: SesionUsuarioFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for SesionUsuario.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__SesionUsuarioClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: 'PrismaPromise';
+
+    user<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, 'findUniqueOrThrow'> | Null, Null, ExtArgs>;
+
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>;
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>;
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>;
+  }
+
+
+
+  /**
+   * Fields of the SesionUsuario model
+   */ 
+  interface SesionUsuarioFieldRefs {
+    readonly id: FieldRef<"SesionUsuario", 'Int'>
+    readonly userId: FieldRef<"SesionUsuario", 'String'>
+    readonly inicio: FieldRef<"SesionUsuario", 'DateTime'>
+    readonly fin: FieldRef<"SesionUsuario", 'DateTime'>
+    readonly duracionSeg: FieldRef<"SesionUsuario", 'Int'>
+    readonly ip: FieldRef<"SesionUsuario", 'String'>
+    readonly userAgent: FieldRef<"SesionUsuario", 'String'>
+    readonly dispositivo: FieldRef<"SesionUsuario", 'String'>
+    readonly navegador: FieldRef<"SesionUsuario", 'String'>
+    readonly sistemaOp: FieldRef<"SesionUsuario", 'String'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * SesionUsuario findUnique
+   */
+  export type SesionUsuarioFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SesionUsuario
+     */
+    select?: SesionUsuarioSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SesionUsuarioInclude<ExtArgs> | null
+    /**
+     * Filter, which SesionUsuario to fetch.
+     */
+    where: SesionUsuarioWhereUniqueInput
+  }
+
+  /**
+   * SesionUsuario findUniqueOrThrow
+   */
+  export type SesionUsuarioFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SesionUsuario
+     */
+    select?: SesionUsuarioSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SesionUsuarioInclude<ExtArgs> | null
+    /**
+     * Filter, which SesionUsuario to fetch.
+     */
+    where: SesionUsuarioWhereUniqueInput
+  }
+
+  /**
+   * SesionUsuario findFirst
+   */
+  export type SesionUsuarioFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SesionUsuario
+     */
+    select?: SesionUsuarioSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SesionUsuarioInclude<ExtArgs> | null
+    /**
+     * Filter, which SesionUsuario to fetch.
+     */
+    where?: SesionUsuarioWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of SesionUsuarios to fetch.
+     */
+    orderBy?: SesionUsuarioOrderByWithRelationInput | SesionUsuarioOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for SesionUsuarios.
+     */
+    cursor?: SesionUsuarioWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` SesionUsuarios from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` SesionUsuarios.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of SesionUsuarios.
+     */
+    distinct?: SesionUsuarioScalarFieldEnum | SesionUsuarioScalarFieldEnum[]
+  }
+
+  /**
+   * SesionUsuario findFirstOrThrow
+   */
+  export type SesionUsuarioFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SesionUsuario
+     */
+    select?: SesionUsuarioSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SesionUsuarioInclude<ExtArgs> | null
+    /**
+     * Filter, which SesionUsuario to fetch.
+     */
+    where?: SesionUsuarioWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of SesionUsuarios to fetch.
+     */
+    orderBy?: SesionUsuarioOrderByWithRelationInput | SesionUsuarioOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for SesionUsuarios.
+     */
+    cursor?: SesionUsuarioWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` SesionUsuarios from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` SesionUsuarios.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of SesionUsuarios.
+     */
+    distinct?: SesionUsuarioScalarFieldEnum | SesionUsuarioScalarFieldEnum[]
+  }
+
+  /**
+   * SesionUsuario findMany
+   */
+  export type SesionUsuarioFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SesionUsuario
+     */
+    select?: SesionUsuarioSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SesionUsuarioInclude<ExtArgs> | null
+    /**
+     * Filter, which SesionUsuarios to fetch.
+     */
+    where?: SesionUsuarioWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of SesionUsuarios to fetch.
+     */
+    orderBy?: SesionUsuarioOrderByWithRelationInput | SesionUsuarioOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing SesionUsuarios.
+     */
+    cursor?: SesionUsuarioWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` SesionUsuarios from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` SesionUsuarios.
+     */
+    skip?: number
+    distinct?: SesionUsuarioScalarFieldEnum | SesionUsuarioScalarFieldEnum[]
+  }
+
+  /**
+   * SesionUsuario create
+   */
+  export type SesionUsuarioCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SesionUsuario
+     */
+    select?: SesionUsuarioSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SesionUsuarioInclude<ExtArgs> | null
+    /**
+     * The data needed to create a SesionUsuario.
+     */
+    data: XOR<SesionUsuarioCreateInput, SesionUsuarioUncheckedCreateInput>
+  }
+
+  /**
+   * SesionUsuario createMany
+   */
+  export type SesionUsuarioCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many SesionUsuarios.
+     */
+    data: SesionUsuarioCreateManyInput | SesionUsuarioCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * SesionUsuario createManyAndReturn
+   */
+  export type SesionUsuarioCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SesionUsuario
+     */
+    select?: SesionUsuarioSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SesionUsuarioInclude<ExtArgs> | null
+    /**
+     * The data used to create many SesionUsuarios.
+     */
+    data: SesionUsuarioCreateManyInput | SesionUsuarioCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * SesionUsuario update
+   */
+  export type SesionUsuarioUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SesionUsuario
+     */
+    select?: SesionUsuarioSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SesionUsuarioInclude<ExtArgs> | null
+    /**
+     * The data needed to update a SesionUsuario.
+     */
+    data: XOR<SesionUsuarioUpdateInput, SesionUsuarioUncheckedUpdateInput>
+    /**
+     * Choose, which SesionUsuario to update.
+     */
+    where: SesionUsuarioWhereUniqueInput
+  }
+
+  /**
+   * SesionUsuario updateMany
+   */
+  export type SesionUsuarioUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update SesionUsuarios.
+     */
+    data: XOR<SesionUsuarioUpdateManyMutationInput, SesionUsuarioUncheckedUpdateManyInput>
+    /**
+     * Filter which SesionUsuarios to update
+     */
+    where?: SesionUsuarioWhereInput
+  }
+
+  /**
+   * SesionUsuario upsert
+   */
+  export type SesionUsuarioUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SesionUsuario
+     */
+    select?: SesionUsuarioSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SesionUsuarioInclude<ExtArgs> | null
+    /**
+     * The filter to search for the SesionUsuario to update in case it exists.
+     */
+    where: SesionUsuarioWhereUniqueInput
+    /**
+     * In case the SesionUsuario found by the `where` argument doesn't exist, create a new SesionUsuario with this data.
+     */
+    create: XOR<SesionUsuarioCreateInput, SesionUsuarioUncheckedCreateInput>
+    /**
+     * In case the SesionUsuario was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<SesionUsuarioUpdateInput, SesionUsuarioUncheckedUpdateInput>
+  }
+
+  /**
+   * SesionUsuario delete
+   */
+  export type SesionUsuarioDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SesionUsuario
+     */
+    select?: SesionUsuarioSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SesionUsuarioInclude<ExtArgs> | null
+    /**
+     * Filter which SesionUsuario to delete.
+     */
+    where: SesionUsuarioWhereUniqueInput
+  }
+
+  /**
+   * SesionUsuario deleteMany
+   */
+  export type SesionUsuarioDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which SesionUsuarios to delete
+     */
+    where?: SesionUsuarioWhereInput
+  }
+
+  /**
+   * SesionUsuario without action
+   */
+  export type SesionUsuarioDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SesionUsuario
+     */
+    select?: SesionUsuarioSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SesionUsuarioInclude<ExtArgs> | null
+  }
+
+
+  /**
    * Enums
    */
 
@@ -21927,12 +24223,50 @@ export namespace Prisma {
   export type ContadorConsecutivoScalarFieldEnum = (typeof ContadorConsecutivoScalarFieldEnum)[keyof typeof ContadorConsecutivoScalarFieldEnum]
 
 
+  export const ActividadUsuarioScalarFieldEnum: {
+    id: 'id',
+    userId: 'userId',
+    tipo: 'tipo',
+    descripcion: 'descripcion',
+    metadata: 'metadata',
+    ip: 'ip',
+    userAgent: 'userAgent',
+    creadoEn: 'creadoEn'
+  };
+
+  export type ActividadUsuarioScalarFieldEnum = (typeof ActividadUsuarioScalarFieldEnum)[keyof typeof ActividadUsuarioScalarFieldEnum]
+
+
+  export const SesionUsuarioScalarFieldEnum: {
+    id: 'id',
+    userId: 'userId',
+    inicio: 'inicio',
+    fin: 'fin',
+    duracionSeg: 'duracionSeg',
+    ip: 'ip',
+    userAgent: 'userAgent',
+    dispositivo: 'dispositivo',
+    navegador: 'navegador',
+    sistemaOp: 'sistemaOp'
+  };
+
+  export type SesionUsuarioScalarFieldEnum = (typeof SesionUsuarioScalarFieldEnum)[keyof typeof SesionUsuarioScalarFieldEnum]
+
+
   export const SortOrder: {
     asc: 'asc',
     desc: 'desc'
   };
 
   export type SortOrder = (typeof SortOrder)[keyof typeof SortOrder]
+
+
+  export const NullableJsonNullValueInput: {
+    DbNull: typeof DbNull,
+    JsonNull: typeof JsonNull
+  };
+
+  export type NullableJsonNullValueInput = (typeof NullableJsonNullValueInput)[keyof typeof NullableJsonNullValueInput]
 
 
   export const QueryMode: {
@@ -21949,6 +24283,15 @@ export namespace Prisma {
   };
 
   export type NullsOrder = (typeof NullsOrder)[keyof typeof NullsOrder]
+
+
+  export const JsonNullValueFilter: {
+    DbNull: typeof DbNull,
+    JsonNull: typeof JsonNull,
+    AnyNull: typeof AnyNull
+  };
+
+  export type JsonNullValueFilter = (typeof JsonNullValueFilter)[keyof typeof JsonNullValueFilter]
 
 
   /**
@@ -22016,6 +24359,13 @@ export namespace Prisma {
    * Reference to a field of type 'Decimal[]'
    */
   export type ListDecimalFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Decimal[]'>
+    
+
+
+  /**
+   * Reference to a field of type 'Json'
+   */
+  export type JsonFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Json'>
     
 
 
@@ -22319,6 +24669,8 @@ export namespace Prisma {
     historial?: HistorialSolicitudListRelationFilter
     frentesAsignados?: FrenteUsuarioListRelationFilter
     notificaciones?: NotificacionListRelationFilter
+    actividades?: ActividadUsuarioListRelationFilter
+    sesiones?: SesionUsuarioListRelationFilter
   }
 
   export type UserOrderByWithRelationInput = {
@@ -22348,6 +24700,8 @@ export namespace Prisma {
     historial?: HistorialSolicitudOrderByRelationAggregateInput
     frentesAsignados?: FrenteUsuarioOrderByRelationAggregateInput
     notificaciones?: NotificacionOrderByRelationAggregateInput
+    actividades?: ActividadUsuarioOrderByRelationAggregateInput
+    sesiones?: SesionUsuarioOrderByRelationAggregateInput
   }
 
   export type UserWhereUniqueInput = Prisma.AtLeast<{
@@ -22380,6 +24734,8 @@ export namespace Prisma {
     historial?: HistorialSolicitudListRelationFilter
     frentesAsignados?: FrenteUsuarioListRelationFilter
     notificaciones?: NotificacionListRelationFilter
+    actividades?: ActividadUsuarioListRelationFilter
+    sesiones?: SesionUsuarioListRelationFilter
   }, "id" | "email" | "microsoftId">
 
   export type UserOrderByWithAggregationInput = {
@@ -23536,6 +25892,160 @@ export namespace Prisma {
     ultimo?: IntWithAggregatesFilter<"ContadorConsecutivo"> | number
   }
 
+  export type ActividadUsuarioWhereInput = {
+    AND?: ActividadUsuarioWhereInput | ActividadUsuarioWhereInput[]
+    OR?: ActividadUsuarioWhereInput[]
+    NOT?: ActividadUsuarioWhereInput | ActividadUsuarioWhereInput[]
+    id?: IntFilter<"ActividadUsuario"> | number
+    userId?: StringFilter<"ActividadUsuario"> | string
+    tipo?: StringFilter<"ActividadUsuario"> | string
+    descripcion?: StringNullableFilter<"ActividadUsuario"> | string | null
+    metadata?: JsonNullableFilter<"ActividadUsuario">
+    ip?: StringNullableFilter<"ActividadUsuario"> | string | null
+    userAgent?: StringNullableFilter<"ActividadUsuario"> | string | null
+    creadoEn?: DateTimeFilter<"ActividadUsuario"> | Date | string
+    user?: XOR<UserRelationFilter, UserWhereInput>
+  }
+
+  export type ActividadUsuarioOrderByWithRelationInput = {
+    id?: SortOrder
+    userId?: SortOrder
+    tipo?: SortOrder
+    descripcion?: SortOrderInput | SortOrder
+    metadata?: SortOrderInput | SortOrder
+    ip?: SortOrderInput | SortOrder
+    userAgent?: SortOrderInput | SortOrder
+    creadoEn?: SortOrder
+    user?: UserOrderByWithRelationInput
+  }
+
+  export type ActividadUsuarioWhereUniqueInput = Prisma.AtLeast<{
+    id?: number
+    AND?: ActividadUsuarioWhereInput | ActividadUsuarioWhereInput[]
+    OR?: ActividadUsuarioWhereInput[]
+    NOT?: ActividadUsuarioWhereInput | ActividadUsuarioWhereInput[]
+    userId?: StringFilter<"ActividadUsuario"> | string
+    tipo?: StringFilter<"ActividadUsuario"> | string
+    descripcion?: StringNullableFilter<"ActividadUsuario"> | string | null
+    metadata?: JsonNullableFilter<"ActividadUsuario">
+    ip?: StringNullableFilter<"ActividadUsuario"> | string | null
+    userAgent?: StringNullableFilter<"ActividadUsuario"> | string | null
+    creadoEn?: DateTimeFilter<"ActividadUsuario"> | Date | string
+    user?: XOR<UserRelationFilter, UserWhereInput>
+  }, "id">
+
+  export type ActividadUsuarioOrderByWithAggregationInput = {
+    id?: SortOrder
+    userId?: SortOrder
+    tipo?: SortOrder
+    descripcion?: SortOrderInput | SortOrder
+    metadata?: SortOrderInput | SortOrder
+    ip?: SortOrderInput | SortOrder
+    userAgent?: SortOrderInput | SortOrder
+    creadoEn?: SortOrder
+    _count?: ActividadUsuarioCountOrderByAggregateInput
+    _avg?: ActividadUsuarioAvgOrderByAggregateInput
+    _max?: ActividadUsuarioMaxOrderByAggregateInput
+    _min?: ActividadUsuarioMinOrderByAggregateInput
+    _sum?: ActividadUsuarioSumOrderByAggregateInput
+  }
+
+  export type ActividadUsuarioScalarWhereWithAggregatesInput = {
+    AND?: ActividadUsuarioScalarWhereWithAggregatesInput | ActividadUsuarioScalarWhereWithAggregatesInput[]
+    OR?: ActividadUsuarioScalarWhereWithAggregatesInput[]
+    NOT?: ActividadUsuarioScalarWhereWithAggregatesInput | ActividadUsuarioScalarWhereWithAggregatesInput[]
+    id?: IntWithAggregatesFilter<"ActividadUsuario"> | number
+    userId?: StringWithAggregatesFilter<"ActividadUsuario"> | string
+    tipo?: StringWithAggregatesFilter<"ActividadUsuario"> | string
+    descripcion?: StringNullableWithAggregatesFilter<"ActividadUsuario"> | string | null
+    metadata?: JsonNullableWithAggregatesFilter<"ActividadUsuario">
+    ip?: StringNullableWithAggregatesFilter<"ActividadUsuario"> | string | null
+    userAgent?: StringNullableWithAggregatesFilter<"ActividadUsuario"> | string | null
+    creadoEn?: DateTimeWithAggregatesFilter<"ActividadUsuario"> | Date | string
+  }
+
+  export type SesionUsuarioWhereInput = {
+    AND?: SesionUsuarioWhereInput | SesionUsuarioWhereInput[]
+    OR?: SesionUsuarioWhereInput[]
+    NOT?: SesionUsuarioWhereInput | SesionUsuarioWhereInput[]
+    id?: IntFilter<"SesionUsuario"> | number
+    userId?: StringFilter<"SesionUsuario"> | string
+    inicio?: DateTimeFilter<"SesionUsuario"> | Date | string
+    fin?: DateTimeNullableFilter<"SesionUsuario"> | Date | string | null
+    duracionSeg?: IntNullableFilter<"SesionUsuario"> | number | null
+    ip?: StringNullableFilter<"SesionUsuario"> | string | null
+    userAgent?: StringNullableFilter<"SesionUsuario"> | string | null
+    dispositivo?: StringNullableFilter<"SesionUsuario"> | string | null
+    navegador?: StringNullableFilter<"SesionUsuario"> | string | null
+    sistemaOp?: StringNullableFilter<"SesionUsuario"> | string | null
+    user?: XOR<UserRelationFilter, UserWhereInput>
+  }
+
+  export type SesionUsuarioOrderByWithRelationInput = {
+    id?: SortOrder
+    userId?: SortOrder
+    inicio?: SortOrder
+    fin?: SortOrderInput | SortOrder
+    duracionSeg?: SortOrderInput | SortOrder
+    ip?: SortOrderInput | SortOrder
+    userAgent?: SortOrderInput | SortOrder
+    dispositivo?: SortOrderInput | SortOrder
+    navegador?: SortOrderInput | SortOrder
+    sistemaOp?: SortOrderInput | SortOrder
+    user?: UserOrderByWithRelationInput
+  }
+
+  export type SesionUsuarioWhereUniqueInput = Prisma.AtLeast<{
+    id?: number
+    AND?: SesionUsuarioWhereInput | SesionUsuarioWhereInput[]
+    OR?: SesionUsuarioWhereInput[]
+    NOT?: SesionUsuarioWhereInput | SesionUsuarioWhereInput[]
+    userId?: StringFilter<"SesionUsuario"> | string
+    inicio?: DateTimeFilter<"SesionUsuario"> | Date | string
+    fin?: DateTimeNullableFilter<"SesionUsuario"> | Date | string | null
+    duracionSeg?: IntNullableFilter<"SesionUsuario"> | number | null
+    ip?: StringNullableFilter<"SesionUsuario"> | string | null
+    userAgent?: StringNullableFilter<"SesionUsuario"> | string | null
+    dispositivo?: StringNullableFilter<"SesionUsuario"> | string | null
+    navegador?: StringNullableFilter<"SesionUsuario"> | string | null
+    sistemaOp?: StringNullableFilter<"SesionUsuario"> | string | null
+    user?: XOR<UserRelationFilter, UserWhereInput>
+  }, "id">
+
+  export type SesionUsuarioOrderByWithAggregationInput = {
+    id?: SortOrder
+    userId?: SortOrder
+    inicio?: SortOrder
+    fin?: SortOrderInput | SortOrder
+    duracionSeg?: SortOrderInput | SortOrder
+    ip?: SortOrderInput | SortOrder
+    userAgent?: SortOrderInput | SortOrder
+    dispositivo?: SortOrderInput | SortOrder
+    navegador?: SortOrderInput | SortOrder
+    sistemaOp?: SortOrderInput | SortOrder
+    _count?: SesionUsuarioCountOrderByAggregateInput
+    _avg?: SesionUsuarioAvgOrderByAggregateInput
+    _max?: SesionUsuarioMaxOrderByAggregateInput
+    _min?: SesionUsuarioMinOrderByAggregateInput
+    _sum?: SesionUsuarioSumOrderByAggregateInput
+  }
+
+  export type SesionUsuarioScalarWhereWithAggregatesInput = {
+    AND?: SesionUsuarioScalarWhereWithAggregatesInput | SesionUsuarioScalarWhereWithAggregatesInput[]
+    OR?: SesionUsuarioScalarWhereWithAggregatesInput[]
+    NOT?: SesionUsuarioScalarWhereWithAggregatesInput | SesionUsuarioScalarWhereWithAggregatesInput[]
+    id?: IntWithAggregatesFilter<"SesionUsuario"> | number
+    userId?: StringWithAggregatesFilter<"SesionUsuario"> | string
+    inicio?: DateTimeWithAggregatesFilter<"SesionUsuario"> | Date | string
+    fin?: DateTimeNullableWithAggregatesFilter<"SesionUsuario"> | Date | string | null
+    duracionSeg?: IntNullableWithAggregatesFilter<"SesionUsuario"> | number | null
+    ip?: StringNullableWithAggregatesFilter<"SesionUsuario"> | string | null
+    userAgent?: StringNullableWithAggregatesFilter<"SesionUsuario"> | string | null
+    dispositivo?: StringNullableWithAggregatesFilter<"SesionUsuario"> | string | null
+    navegador?: StringNullableWithAggregatesFilter<"SesionUsuario"> | string | null
+    sistemaOp?: StringNullableWithAggregatesFilter<"SesionUsuario"> | string | null
+  }
+
   export type AccountCreateInput = {
     id?: string
     type: string
@@ -23834,6 +26344,8 @@ export namespace Prisma {
     historial?: HistorialSolicitudCreateNestedManyWithoutUsuarioInput
     frentesAsignados?: FrenteUsuarioCreateNestedManyWithoutUserInput
     notificaciones?: NotificacionCreateNestedManyWithoutUserInput
+    actividades?: ActividadUsuarioCreateNestedManyWithoutUserInput
+    sesiones?: SesionUsuarioCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateInput = {
@@ -23863,6 +26375,8 @@ export namespace Prisma {
     historial?: HistorialSolicitudUncheckedCreateNestedManyWithoutUsuarioInput
     frentesAsignados?: FrenteUsuarioUncheckedCreateNestedManyWithoutUserInput
     notificaciones?: NotificacionUncheckedCreateNestedManyWithoutUserInput
+    actividades?: ActividadUsuarioUncheckedCreateNestedManyWithoutUserInput
+    sesiones?: SesionUsuarioUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserUpdateInput = {
@@ -23892,6 +26406,8 @@ export namespace Prisma {
     historial?: HistorialSolicitudUpdateManyWithoutUsuarioNestedInput
     frentesAsignados?: FrenteUsuarioUpdateManyWithoutUserNestedInput
     notificaciones?: NotificacionUpdateManyWithoutUserNestedInput
+    actividades?: ActividadUsuarioUpdateManyWithoutUserNestedInput
+    sesiones?: SesionUsuarioUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateInput = {
@@ -23921,6 +26437,8 @@ export namespace Prisma {
     historial?: HistorialSolicitudUncheckedUpdateManyWithoutUsuarioNestedInput
     frentesAsignados?: FrenteUsuarioUncheckedUpdateManyWithoutUserNestedInput
     notificaciones?: NotificacionUncheckedUpdateManyWithoutUserNestedInput
+    actividades?: ActividadUsuarioUncheckedUpdateManyWithoutUserNestedInput
+    sesiones?: SesionUsuarioUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type UserCreateManyInput = {
@@ -25166,6 +27684,166 @@ export namespace Prisma {
     ultimo?: IntFieldUpdateOperationsInput | number
   }
 
+  export type ActividadUsuarioCreateInput = {
+    tipo: string
+    descripcion?: string | null
+    metadata?: NullableJsonNullValueInput | InputJsonValue
+    ip?: string | null
+    userAgent?: string | null
+    creadoEn?: Date | string
+    user: UserCreateNestedOneWithoutActividadesInput
+  }
+
+  export type ActividadUsuarioUncheckedCreateInput = {
+    id?: number
+    userId: string
+    tipo: string
+    descripcion?: string | null
+    metadata?: NullableJsonNullValueInput | InputJsonValue
+    ip?: string | null
+    userAgent?: string | null
+    creadoEn?: Date | string
+  }
+
+  export type ActividadUsuarioUpdateInput = {
+    tipo?: StringFieldUpdateOperationsInput | string
+    descripcion?: NullableStringFieldUpdateOperationsInput | string | null
+    metadata?: NullableJsonNullValueInput | InputJsonValue
+    ip?: NullableStringFieldUpdateOperationsInput | string | null
+    userAgent?: NullableStringFieldUpdateOperationsInput | string | null
+    creadoEn?: DateTimeFieldUpdateOperationsInput | Date | string
+    user?: UserUpdateOneRequiredWithoutActividadesNestedInput
+  }
+
+  export type ActividadUsuarioUncheckedUpdateInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    userId?: StringFieldUpdateOperationsInput | string
+    tipo?: StringFieldUpdateOperationsInput | string
+    descripcion?: NullableStringFieldUpdateOperationsInput | string | null
+    metadata?: NullableJsonNullValueInput | InputJsonValue
+    ip?: NullableStringFieldUpdateOperationsInput | string | null
+    userAgent?: NullableStringFieldUpdateOperationsInput | string | null
+    creadoEn?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type ActividadUsuarioCreateManyInput = {
+    id?: number
+    userId: string
+    tipo: string
+    descripcion?: string | null
+    metadata?: NullableJsonNullValueInput | InputJsonValue
+    ip?: string | null
+    userAgent?: string | null
+    creadoEn?: Date | string
+  }
+
+  export type ActividadUsuarioUpdateManyMutationInput = {
+    tipo?: StringFieldUpdateOperationsInput | string
+    descripcion?: NullableStringFieldUpdateOperationsInput | string | null
+    metadata?: NullableJsonNullValueInput | InputJsonValue
+    ip?: NullableStringFieldUpdateOperationsInput | string | null
+    userAgent?: NullableStringFieldUpdateOperationsInput | string | null
+    creadoEn?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type ActividadUsuarioUncheckedUpdateManyInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    userId?: StringFieldUpdateOperationsInput | string
+    tipo?: StringFieldUpdateOperationsInput | string
+    descripcion?: NullableStringFieldUpdateOperationsInput | string | null
+    metadata?: NullableJsonNullValueInput | InputJsonValue
+    ip?: NullableStringFieldUpdateOperationsInput | string | null
+    userAgent?: NullableStringFieldUpdateOperationsInput | string | null
+    creadoEn?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type SesionUsuarioCreateInput = {
+    inicio?: Date | string
+    fin?: Date | string | null
+    duracionSeg?: number | null
+    ip?: string | null
+    userAgent?: string | null
+    dispositivo?: string | null
+    navegador?: string | null
+    sistemaOp?: string | null
+    user: UserCreateNestedOneWithoutSesionesInput
+  }
+
+  export type SesionUsuarioUncheckedCreateInput = {
+    id?: number
+    userId: string
+    inicio?: Date | string
+    fin?: Date | string | null
+    duracionSeg?: number | null
+    ip?: string | null
+    userAgent?: string | null
+    dispositivo?: string | null
+    navegador?: string | null
+    sistemaOp?: string | null
+  }
+
+  export type SesionUsuarioUpdateInput = {
+    inicio?: DateTimeFieldUpdateOperationsInput | Date | string
+    fin?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    duracionSeg?: NullableIntFieldUpdateOperationsInput | number | null
+    ip?: NullableStringFieldUpdateOperationsInput | string | null
+    userAgent?: NullableStringFieldUpdateOperationsInput | string | null
+    dispositivo?: NullableStringFieldUpdateOperationsInput | string | null
+    navegador?: NullableStringFieldUpdateOperationsInput | string | null
+    sistemaOp?: NullableStringFieldUpdateOperationsInput | string | null
+    user?: UserUpdateOneRequiredWithoutSesionesNestedInput
+  }
+
+  export type SesionUsuarioUncheckedUpdateInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    userId?: StringFieldUpdateOperationsInput | string
+    inicio?: DateTimeFieldUpdateOperationsInput | Date | string
+    fin?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    duracionSeg?: NullableIntFieldUpdateOperationsInput | number | null
+    ip?: NullableStringFieldUpdateOperationsInput | string | null
+    userAgent?: NullableStringFieldUpdateOperationsInput | string | null
+    dispositivo?: NullableStringFieldUpdateOperationsInput | string | null
+    navegador?: NullableStringFieldUpdateOperationsInput | string | null
+    sistemaOp?: NullableStringFieldUpdateOperationsInput | string | null
+  }
+
+  export type SesionUsuarioCreateManyInput = {
+    id?: number
+    userId: string
+    inicio?: Date | string
+    fin?: Date | string | null
+    duracionSeg?: number | null
+    ip?: string | null
+    userAgent?: string | null
+    dispositivo?: string | null
+    navegador?: string | null
+    sistemaOp?: string | null
+  }
+
+  export type SesionUsuarioUpdateManyMutationInput = {
+    inicio?: DateTimeFieldUpdateOperationsInput | Date | string
+    fin?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    duracionSeg?: NullableIntFieldUpdateOperationsInput | number | null
+    ip?: NullableStringFieldUpdateOperationsInput | string | null
+    userAgent?: NullableStringFieldUpdateOperationsInput | string | null
+    dispositivo?: NullableStringFieldUpdateOperationsInput | string | null
+    navegador?: NullableStringFieldUpdateOperationsInput | string | null
+    sistemaOp?: NullableStringFieldUpdateOperationsInput | string | null
+  }
+
+  export type SesionUsuarioUncheckedUpdateManyInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    userId?: StringFieldUpdateOperationsInput | string
+    inicio?: DateTimeFieldUpdateOperationsInput | Date | string
+    fin?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    duracionSeg?: NullableIntFieldUpdateOperationsInput | number | null
+    ip?: NullableStringFieldUpdateOperationsInput | string | null
+    userAgent?: NullableStringFieldUpdateOperationsInput | string | null
+    dispositivo?: NullableStringFieldUpdateOperationsInput | string | null
+    navegador?: NullableStringFieldUpdateOperationsInput | string | null
+    sistemaOp?: NullableStringFieldUpdateOperationsInput | string | null
+  }
+
   export type StringFilter<$PrismaModel = never> = {
     equals?: string | StringFieldRefInput<$PrismaModel>
     in?: string[] | ListStringFieldRefInput<$PrismaModel>
@@ -25489,6 +28167,18 @@ export namespace Prisma {
     none?: NotificacionWhereInput
   }
 
+  export type ActividadUsuarioListRelationFilter = {
+    every?: ActividadUsuarioWhereInput
+    some?: ActividadUsuarioWhereInput
+    none?: ActividadUsuarioWhereInput
+  }
+
+  export type SesionUsuarioListRelationFilter = {
+    every?: SesionUsuarioWhereInput
+    some?: SesionUsuarioWhereInput
+    none?: SesionUsuarioWhereInput
+  }
+
   export type AccountOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
@@ -25510,6 +28200,14 @@ export namespace Prisma {
   }
 
   export type NotificacionOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type ActividadUsuarioOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type SesionUsuarioOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
 
@@ -26400,6 +29098,141 @@ export namespace Prisma {
     anio?: SortOrder
     ultimo?: SortOrder
   }
+  export type JsonNullableFilter<$PrismaModel = never> = 
+    | PatchUndefined<
+        Either<Required<JsonNullableFilterBase<$PrismaModel>>, Exclude<keyof Required<JsonNullableFilterBase<$PrismaModel>>, 'path'>>,
+        Required<JsonNullableFilterBase<$PrismaModel>>
+      >
+    | OptionalFlat<Omit<Required<JsonNullableFilterBase<$PrismaModel>>, 'path'>>
+
+  export type JsonNullableFilterBase<$PrismaModel = never> = {
+    equals?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
+    path?: string[]
+    string_contains?: string | StringFieldRefInput<$PrismaModel>
+    string_starts_with?: string | StringFieldRefInput<$PrismaModel>
+    string_ends_with?: string | StringFieldRefInput<$PrismaModel>
+    array_contains?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    array_starts_with?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    array_ends_with?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    lt?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    lte?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    gt?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    gte?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    not?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
+  }
+
+  export type ActividadUsuarioCountOrderByAggregateInput = {
+    id?: SortOrder
+    userId?: SortOrder
+    tipo?: SortOrder
+    descripcion?: SortOrder
+    metadata?: SortOrder
+    ip?: SortOrder
+    userAgent?: SortOrder
+    creadoEn?: SortOrder
+  }
+
+  export type ActividadUsuarioAvgOrderByAggregateInput = {
+    id?: SortOrder
+  }
+
+  export type ActividadUsuarioMaxOrderByAggregateInput = {
+    id?: SortOrder
+    userId?: SortOrder
+    tipo?: SortOrder
+    descripcion?: SortOrder
+    ip?: SortOrder
+    userAgent?: SortOrder
+    creadoEn?: SortOrder
+  }
+
+  export type ActividadUsuarioMinOrderByAggregateInput = {
+    id?: SortOrder
+    userId?: SortOrder
+    tipo?: SortOrder
+    descripcion?: SortOrder
+    ip?: SortOrder
+    userAgent?: SortOrder
+    creadoEn?: SortOrder
+  }
+
+  export type ActividadUsuarioSumOrderByAggregateInput = {
+    id?: SortOrder
+  }
+  export type JsonNullableWithAggregatesFilter<$PrismaModel = never> = 
+    | PatchUndefined<
+        Either<Required<JsonNullableWithAggregatesFilterBase<$PrismaModel>>, Exclude<keyof Required<JsonNullableWithAggregatesFilterBase<$PrismaModel>>, 'path'>>,
+        Required<JsonNullableWithAggregatesFilterBase<$PrismaModel>>
+      >
+    | OptionalFlat<Omit<Required<JsonNullableWithAggregatesFilterBase<$PrismaModel>>, 'path'>>
+
+  export type JsonNullableWithAggregatesFilterBase<$PrismaModel = never> = {
+    equals?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
+    path?: string[]
+    string_contains?: string | StringFieldRefInput<$PrismaModel>
+    string_starts_with?: string | StringFieldRefInput<$PrismaModel>
+    string_ends_with?: string | StringFieldRefInput<$PrismaModel>
+    array_contains?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    array_starts_with?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    array_ends_with?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    lt?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    lte?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    gt?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    gte?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    not?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _min?: NestedJsonNullableFilter<$PrismaModel>
+    _max?: NestedJsonNullableFilter<$PrismaModel>
+  }
+
+  export type SesionUsuarioCountOrderByAggregateInput = {
+    id?: SortOrder
+    userId?: SortOrder
+    inicio?: SortOrder
+    fin?: SortOrder
+    duracionSeg?: SortOrder
+    ip?: SortOrder
+    userAgent?: SortOrder
+    dispositivo?: SortOrder
+    navegador?: SortOrder
+    sistemaOp?: SortOrder
+  }
+
+  export type SesionUsuarioAvgOrderByAggregateInput = {
+    id?: SortOrder
+    duracionSeg?: SortOrder
+  }
+
+  export type SesionUsuarioMaxOrderByAggregateInput = {
+    id?: SortOrder
+    userId?: SortOrder
+    inicio?: SortOrder
+    fin?: SortOrder
+    duracionSeg?: SortOrder
+    ip?: SortOrder
+    userAgent?: SortOrder
+    dispositivo?: SortOrder
+    navegador?: SortOrder
+    sistemaOp?: SortOrder
+  }
+
+  export type SesionUsuarioMinOrderByAggregateInput = {
+    id?: SortOrder
+    userId?: SortOrder
+    inicio?: SortOrder
+    fin?: SortOrder
+    duracionSeg?: SortOrder
+    ip?: SortOrder
+    userAgent?: SortOrder
+    dispositivo?: SortOrder
+    navegador?: SortOrder
+    sistemaOp?: SortOrder
+  }
+
+  export type SesionUsuarioSumOrderByAggregateInput = {
+    id?: SortOrder
+    duracionSeg?: SortOrder
+  }
 
   export type UserCreateNestedOneWithoutAccountsInput = {
     create?: XOR<UserCreateWithoutAccountsInput, UserUncheckedCreateWithoutAccountsInput>
@@ -26502,6 +29335,20 @@ export namespace Prisma {
     connect?: NotificacionWhereUniqueInput | NotificacionWhereUniqueInput[]
   }
 
+  export type ActividadUsuarioCreateNestedManyWithoutUserInput = {
+    create?: XOR<ActividadUsuarioCreateWithoutUserInput, ActividadUsuarioUncheckedCreateWithoutUserInput> | ActividadUsuarioCreateWithoutUserInput[] | ActividadUsuarioUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: ActividadUsuarioCreateOrConnectWithoutUserInput | ActividadUsuarioCreateOrConnectWithoutUserInput[]
+    createMany?: ActividadUsuarioCreateManyUserInputEnvelope
+    connect?: ActividadUsuarioWhereUniqueInput | ActividadUsuarioWhereUniqueInput[]
+  }
+
+  export type SesionUsuarioCreateNestedManyWithoutUserInput = {
+    create?: XOR<SesionUsuarioCreateWithoutUserInput, SesionUsuarioUncheckedCreateWithoutUserInput> | SesionUsuarioCreateWithoutUserInput[] | SesionUsuarioUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: SesionUsuarioCreateOrConnectWithoutUserInput | SesionUsuarioCreateOrConnectWithoutUserInput[]
+    createMany?: SesionUsuarioCreateManyUserInputEnvelope
+    connect?: SesionUsuarioWhereUniqueInput | SesionUsuarioWhereUniqueInput[]
+  }
+
   export type AccountUncheckedCreateNestedManyWithoutUserInput = {
     create?: XOR<AccountCreateWithoutUserInput, AccountUncheckedCreateWithoutUserInput> | AccountCreateWithoutUserInput[] | AccountUncheckedCreateWithoutUserInput[]
     connectOrCreate?: AccountCreateOrConnectWithoutUserInput | AccountCreateOrConnectWithoutUserInput[]
@@ -26549,6 +29396,20 @@ export namespace Prisma {
     connectOrCreate?: NotificacionCreateOrConnectWithoutUserInput | NotificacionCreateOrConnectWithoutUserInput[]
     createMany?: NotificacionCreateManyUserInputEnvelope
     connect?: NotificacionWhereUniqueInput | NotificacionWhereUniqueInput[]
+  }
+
+  export type ActividadUsuarioUncheckedCreateNestedManyWithoutUserInput = {
+    create?: XOR<ActividadUsuarioCreateWithoutUserInput, ActividadUsuarioUncheckedCreateWithoutUserInput> | ActividadUsuarioCreateWithoutUserInput[] | ActividadUsuarioUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: ActividadUsuarioCreateOrConnectWithoutUserInput | ActividadUsuarioCreateOrConnectWithoutUserInput[]
+    createMany?: ActividadUsuarioCreateManyUserInputEnvelope
+    connect?: ActividadUsuarioWhereUniqueInput | ActividadUsuarioWhereUniqueInput[]
+  }
+
+  export type SesionUsuarioUncheckedCreateNestedManyWithoutUserInput = {
+    create?: XOR<SesionUsuarioCreateWithoutUserInput, SesionUsuarioUncheckedCreateWithoutUserInput> | SesionUsuarioCreateWithoutUserInput[] | SesionUsuarioUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: SesionUsuarioCreateOrConnectWithoutUserInput | SesionUsuarioCreateOrConnectWithoutUserInput[]
+    createMany?: SesionUsuarioCreateManyUserInputEnvelope
+    connect?: SesionUsuarioWhereUniqueInput | SesionUsuarioWhereUniqueInput[]
   }
 
   export type NullableDateTimeFieldUpdateOperationsInput = {
@@ -26653,6 +29514,34 @@ export namespace Prisma {
     deleteMany?: NotificacionScalarWhereInput | NotificacionScalarWhereInput[]
   }
 
+  export type ActividadUsuarioUpdateManyWithoutUserNestedInput = {
+    create?: XOR<ActividadUsuarioCreateWithoutUserInput, ActividadUsuarioUncheckedCreateWithoutUserInput> | ActividadUsuarioCreateWithoutUserInput[] | ActividadUsuarioUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: ActividadUsuarioCreateOrConnectWithoutUserInput | ActividadUsuarioCreateOrConnectWithoutUserInput[]
+    upsert?: ActividadUsuarioUpsertWithWhereUniqueWithoutUserInput | ActividadUsuarioUpsertWithWhereUniqueWithoutUserInput[]
+    createMany?: ActividadUsuarioCreateManyUserInputEnvelope
+    set?: ActividadUsuarioWhereUniqueInput | ActividadUsuarioWhereUniqueInput[]
+    disconnect?: ActividadUsuarioWhereUniqueInput | ActividadUsuarioWhereUniqueInput[]
+    delete?: ActividadUsuarioWhereUniqueInput | ActividadUsuarioWhereUniqueInput[]
+    connect?: ActividadUsuarioWhereUniqueInput | ActividadUsuarioWhereUniqueInput[]
+    update?: ActividadUsuarioUpdateWithWhereUniqueWithoutUserInput | ActividadUsuarioUpdateWithWhereUniqueWithoutUserInput[]
+    updateMany?: ActividadUsuarioUpdateManyWithWhereWithoutUserInput | ActividadUsuarioUpdateManyWithWhereWithoutUserInput[]
+    deleteMany?: ActividadUsuarioScalarWhereInput | ActividadUsuarioScalarWhereInput[]
+  }
+
+  export type SesionUsuarioUpdateManyWithoutUserNestedInput = {
+    create?: XOR<SesionUsuarioCreateWithoutUserInput, SesionUsuarioUncheckedCreateWithoutUserInput> | SesionUsuarioCreateWithoutUserInput[] | SesionUsuarioUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: SesionUsuarioCreateOrConnectWithoutUserInput | SesionUsuarioCreateOrConnectWithoutUserInput[]
+    upsert?: SesionUsuarioUpsertWithWhereUniqueWithoutUserInput | SesionUsuarioUpsertWithWhereUniqueWithoutUserInput[]
+    createMany?: SesionUsuarioCreateManyUserInputEnvelope
+    set?: SesionUsuarioWhereUniqueInput | SesionUsuarioWhereUniqueInput[]
+    disconnect?: SesionUsuarioWhereUniqueInput | SesionUsuarioWhereUniqueInput[]
+    delete?: SesionUsuarioWhereUniqueInput | SesionUsuarioWhereUniqueInput[]
+    connect?: SesionUsuarioWhereUniqueInput | SesionUsuarioWhereUniqueInput[]
+    update?: SesionUsuarioUpdateWithWhereUniqueWithoutUserInput | SesionUsuarioUpdateWithWhereUniqueWithoutUserInput[]
+    updateMany?: SesionUsuarioUpdateManyWithWhereWithoutUserInput | SesionUsuarioUpdateManyWithWhereWithoutUserInput[]
+    deleteMany?: SesionUsuarioScalarWhereInput | SesionUsuarioScalarWhereInput[]
+  }
+
   export type AccountUncheckedUpdateManyWithoutUserNestedInput = {
     create?: XOR<AccountCreateWithoutUserInput, AccountUncheckedCreateWithoutUserInput> | AccountCreateWithoutUserInput[] | AccountUncheckedCreateWithoutUserInput[]
     connectOrCreate?: AccountCreateOrConnectWithoutUserInput | AccountCreateOrConnectWithoutUserInput[]
@@ -26749,6 +29638,34 @@ export namespace Prisma {
     update?: NotificacionUpdateWithWhereUniqueWithoutUserInput | NotificacionUpdateWithWhereUniqueWithoutUserInput[]
     updateMany?: NotificacionUpdateManyWithWhereWithoutUserInput | NotificacionUpdateManyWithWhereWithoutUserInput[]
     deleteMany?: NotificacionScalarWhereInput | NotificacionScalarWhereInput[]
+  }
+
+  export type ActividadUsuarioUncheckedUpdateManyWithoutUserNestedInput = {
+    create?: XOR<ActividadUsuarioCreateWithoutUserInput, ActividadUsuarioUncheckedCreateWithoutUserInput> | ActividadUsuarioCreateWithoutUserInput[] | ActividadUsuarioUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: ActividadUsuarioCreateOrConnectWithoutUserInput | ActividadUsuarioCreateOrConnectWithoutUserInput[]
+    upsert?: ActividadUsuarioUpsertWithWhereUniqueWithoutUserInput | ActividadUsuarioUpsertWithWhereUniqueWithoutUserInput[]
+    createMany?: ActividadUsuarioCreateManyUserInputEnvelope
+    set?: ActividadUsuarioWhereUniqueInput | ActividadUsuarioWhereUniqueInput[]
+    disconnect?: ActividadUsuarioWhereUniqueInput | ActividadUsuarioWhereUniqueInput[]
+    delete?: ActividadUsuarioWhereUniqueInput | ActividadUsuarioWhereUniqueInput[]
+    connect?: ActividadUsuarioWhereUniqueInput | ActividadUsuarioWhereUniqueInput[]
+    update?: ActividadUsuarioUpdateWithWhereUniqueWithoutUserInput | ActividadUsuarioUpdateWithWhereUniqueWithoutUserInput[]
+    updateMany?: ActividadUsuarioUpdateManyWithWhereWithoutUserInput | ActividadUsuarioUpdateManyWithWhereWithoutUserInput[]
+    deleteMany?: ActividadUsuarioScalarWhereInput | ActividadUsuarioScalarWhereInput[]
+  }
+
+  export type SesionUsuarioUncheckedUpdateManyWithoutUserNestedInput = {
+    create?: XOR<SesionUsuarioCreateWithoutUserInput, SesionUsuarioUncheckedCreateWithoutUserInput> | SesionUsuarioCreateWithoutUserInput[] | SesionUsuarioUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: SesionUsuarioCreateOrConnectWithoutUserInput | SesionUsuarioCreateOrConnectWithoutUserInput[]
+    upsert?: SesionUsuarioUpsertWithWhereUniqueWithoutUserInput | SesionUsuarioUpsertWithWhereUniqueWithoutUserInput[]
+    createMany?: SesionUsuarioCreateManyUserInputEnvelope
+    set?: SesionUsuarioWhereUniqueInput | SesionUsuarioWhereUniqueInput[]
+    disconnect?: SesionUsuarioWhereUniqueInput | SesionUsuarioWhereUniqueInput[]
+    delete?: SesionUsuarioWhereUniqueInput | SesionUsuarioWhereUniqueInput[]
+    connect?: SesionUsuarioWhereUniqueInput | SesionUsuarioWhereUniqueInput[]
+    update?: SesionUsuarioUpdateWithWhereUniqueWithoutUserInput | SesionUsuarioUpdateWithWhereUniqueWithoutUserInput[]
+    updateMany?: SesionUsuarioUpdateManyWithWhereWithoutUserInput | SesionUsuarioUpdateManyWithWhereWithoutUserInput[]
+    deleteMany?: SesionUsuarioScalarWhereInput | SesionUsuarioScalarWhereInput[]
   }
 
   export type FrenteCreateNestedManyWithoutProyectoInput = {
@@ -27465,6 +30382,34 @@ export namespace Prisma {
     update?: XOR<XOR<UserUpdateToOneWithWhereWithoutNotificacionesInput, UserUpdateWithoutNotificacionesInput>, UserUncheckedUpdateWithoutNotificacionesInput>
   }
 
+  export type UserCreateNestedOneWithoutActividadesInput = {
+    create?: XOR<UserCreateWithoutActividadesInput, UserUncheckedCreateWithoutActividadesInput>
+    connectOrCreate?: UserCreateOrConnectWithoutActividadesInput
+    connect?: UserWhereUniqueInput
+  }
+
+  export type UserUpdateOneRequiredWithoutActividadesNestedInput = {
+    create?: XOR<UserCreateWithoutActividadesInput, UserUncheckedCreateWithoutActividadesInput>
+    connectOrCreate?: UserCreateOrConnectWithoutActividadesInput
+    upsert?: UserUpsertWithoutActividadesInput
+    connect?: UserWhereUniqueInput
+    update?: XOR<XOR<UserUpdateToOneWithWhereWithoutActividadesInput, UserUpdateWithoutActividadesInput>, UserUncheckedUpdateWithoutActividadesInput>
+  }
+
+  export type UserCreateNestedOneWithoutSesionesInput = {
+    create?: XOR<UserCreateWithoutSesionesInput, UserUncheckedCreateWithoutSesionesInput>
+    connectOrCreate?: UserCreateOrConnectWithoutSesionesInput
+    connect?: UserWhereUniqueInput
+  }
+
+  export type UserUpdateOneRequiredWithoutSesionesNestedInput = {
+    create?: XOR<UserCreateWithoutSesionesInput, UserUncheckedCreateWithoutSesionesInput>
+    connectOrCreate?: UserCreateOrConnectWithoutSesionesInput
+    upsert?: UserUpsertWithoutSesionesInput
+    connect?: UserWhereUniqueInput
+    update?: XOR<XOR<UserUpdateToOneWithWhereWithoutSesionesInput, UserUpdateWithoutSesionesInput>, UserUncheckedUpdateWithoutSesionesInput>
+  }
+
   export type NestedStringFilter<$PrismaModel = never> = {
     equals?: string | StringFieldRefInput<$PrismaModel>
     in?: string[] | ListStringFieldRefInput<$PrismaModel>
@@ -27705,6 +30650,28 @@ export namespace Prisma {
     _min?: NestedBoolNullableFilter<$PrismaModel>
     _max?: NestedBoolNullableFilter<$PrismaModel>
   }
+  export type NestedJsonNullableFilter<$PrismaModel = never> = 
+    | PatchUndefined<
+        Either<Required<NestedJsonNullableFilterBase<$PrismaModel>>, Exclude<keyof Required<NestedJsonNullableFilterBase<$PrismaModel>>, 'path'>>,
+        Required<NestedJsonNullableFilterBase<$PrismaModel>>
+      >
+    | OptionalFlat<Omit<Required<NestedJsonNullableFilterBase<$PrismaModel>>, 'path'>>
+
+  export type NestedJsonNullableFilterBase<$PrismaModel = never> = {
+    equals?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
+    path?: string[]
+    string_contains?: string | StringFieldRefInput<$PrismaModel>
+    string_starts_with?: string | StringFieldRefInput<$PrismaModel>
+    string_ends_with?: string | StringFieldRefInput<$PrismaModel>
+    array_contains?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    array_starts_with?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    array_ends_with?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    lt?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    lte?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    gt?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    gte?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    not?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
+  }
 
   export type UserCreateWithoutAccountsInput = {
     id?: string
@@ -27732,6 +30699,8 @@ export namespace Prisma {
     historial?: HistorialSolicitudCreateNestedManyWithoutUsuarioInput
     frentesAsignados?: FrenteUsuarioCreateNestedManyWithoutUserInput
     notificaciones?: NotificacionCreateNestedManyWithoutUserInput
+    actividades?: ActividadUsuarioCreateNestedManyWithoutUserInput
+    sesiones?: SesionUsuarioCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutAccountsInput = {
@@ -27760,6 +30729,8 @@ export namespace Prisma {
     historial?: HistorialSolicitudUncheckedCreateNestedManyWithoutUsuarioInput
     frentesAsignados?: FrenteUsuarioUncheckedCreateNestedManyWithoutUserInput
     notificaciones?: NotificacionUncheckedCreateNestedManyWithoutUserInput
+    actividades?: ActividadUsuarioUncheckedCreateNestedManyWithoutUserInput
+    sesiones?: SesionUsuarioUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutAccountsInput = {
@@ -27804,6 +30775,8 @@ export namespace Prisma {
     historial?: HistorialSolicitudUpdateManyWithoutUsuarioNestedInput
     frentesAsignados?: FrenteUsuarioUpdateManyWithoutUserNestedInput
     notificaciones?: NotificacionUpdateManyWithoutUserNestedInput
+    actividades?: ActividadUsuarioUpdateManyWithoutUserNestedInput
+    sesiones?: SesionUsuarioUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutAccountsInput = {
@@ -27832,6 +30805,8 @@ export namespace Prisma {
     historial?: HistorialSolicitudUncheckedUpdateManyWithoutUsuarioNestedInput
     frentesAsignados?: FrenteUsuarioUncheckedUpdateManyWithoutUserNestedInput
     notificaciones?: NotificacionUncheckedUpdateManyWithoutUserNestedInput
+    actividades?: ActividadUsuarioUncheckedUpdateManyWithoutUserNestedInput
+    sesiones?: SesionUsuarioUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type UserCreateWithoutSessionsInput = {
@@ -27860,6 +30835,8 @@ export namespace Prisma {
     historial?: HistorialSolicitudCreateNestedManyWithoutUsuarioInput
     frentesAsignados?: FrenteUsuarioCreateNestedManyWithoutUserInput
     notificaciones?: NotificacionCreateNestedManyWithoutUserInput
+    actividades?: ActividadUsuarioCreateNestedManyWithoutUserInput
+    sesiones?: SesionUsuarioCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutSessionsInput = {
@@ -27888,6 +30865,8 @@ export namespace Prisma {
     historial?: HistorialSolicitudUncheckedCreateNestedManyWithoutUsuarioInput
     frentesAsignados?: FrenteUsuarioUncheckedCreateNestedManyWithoutUserInput
     notificaciones?: NotificacionUncheckedCreateNestedManyWithoutUserInput
+    actividades?: ActividadUsuarioUncheckedCreateNestedManyWithoutUserInput
+    sesiones?: SesionUsuarioUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutSessionsInput = {
@@ -27932,6 +30911,8 @@ export namespace Prisma {
     historial?: HistorialSolicitudUpdateManyWithoutUsuarioNestedInput
     frentesAsignados?: FrenteUsuarioUpdateManyWithoutUserNestedInput
     notificaciones?: NotificacionUpdateManyWithoutUserNestedInput
+    actividades?: ActividadUsuarioUpdateManyWithoutUserNestedInput
+    sesiones?: SesionUsuarioUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutSessionsInput = {
@@ -27960,6 +30941,8 @@ export namespace Prisma {
     historial?: HistorialSolicitudUncheckedUpdateManyWithoutUsuarioNestedInput
     frentesAsignados?: FrenteUsuarioUncheckedUpdateManyWithoutUserNestedInput
     notificaciones?: NotificacionUncheckedUpdateManyWithoutUserNestedInput
+    actividades?: ActividadUsuarioUncheckedUpdateManyWithoutUserNestedInput
+    sesiones?: SesionUsuarioUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type AccountCreateWithoutUserInput = {
@@ -28334,6 +31317,68 @@ export namespace Prisma {
     skipDuplicates?: boolean
   }
 
+  export type ActividadUsuarioCreateWithoutUserInput = {
+    tipo: string
+    descripcion?: string | null
+    metadata?: NullableJsonNullValueInput | InputJsonValue
+    ip?: string | null
+    userAgent?: string | null
+    creadoEn?: Date | string
+  }
+
+  export type ActividadUsuarioUncheckedCreateWithoutUserInput = {
+    id?: number
+    tipo: string
+    descripcion?: string | null
+    metadata?: NullableJsonNullValueInput | InputJsonValue
+    ip?: string | null
+    userAgent?: string | null
+    creadoEn?: Date | string
+  }
+
+  export type ActividadUsuarioCreateOrConnectWithoutUserInput = {
+    where: ActividadUsuarioWhereUniqueInput
+    create: XOR<ActividadUsuarioCreateWithoutUserInput, ActividadUsuarioUncheckedCreateWithoutUserInput>
+  }
+
+  export type ActividadUsuarioCreateManyUserInputEnvelope = {
+    data: ActividadUsuarioCreateManyUserInput | ActividadUsuarioCreateManyUserInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type SesionUsuarioCreateWithoutUserInput = {
+    inicio?: Date | string
+    fin?: Date | string | null
+    duracionSeg?: number | null
+    ip?: string | null
+    userAgent?: string | null
+    dispositivo?: string | null
+    navegador?: string | null
+    sistemaOp?: string | null
+  }
+
+  export type SesionUsuarioUncheckedCreateWithoutUserInput = {
+    id?: number
+    inicio?: Date | string
+    fin?: Date | string | null
+    duracionSeg?: number | null
+    ip?: string | null
+    userAgent?: string | null
+    dispositivo?: string | null
+    navegador?: string | null
+    sistemaOp?: string | null
+  }
+
+  export type SesionUsuarioCreateOrConnectWithoutUserInput = {
+    where: SesionUsuarioWhereUniqueInput
+    create: XOR<SesionUsuarioCreateWithoutUserInput, SesionUsuarioUncheckedCreateWithoutUserInput>
+  }
+
+  export type SesionUsuarioCreateManyUserInputEnvelope = {
+    data: SesionUsuarioCreateManyUserInput | SesionUsuarioCreateManyUserInput[]
+    skipDuplicates?: boolean
+  }
+
   export type AccountUpsertWithWhereUniqueWithoutUserInput = {
     where: AccountWhereUniqueInput
     update: XOR<AccountUpdateWithoutUserInput, AccountUncheckedUpdateWithoutUserInput>
@@ -28564,6 +31609,68 @@ export namespace Prisma {
     creadoEn?: DateTimeFilter<"Notificacion"> | Date | string
   }
 
+  export type ActividadUsuarioUpsertWithWhereUniqueWithoutUserInput = {
+    where: ActividadUsuarioWhereUniqueInput
+    update: XOR<ActividadUsuarioUpdateWithoutUserInput, ActividadUsuarioUncheckedUpdateWithoutUserInput>
+    create: XOR<ActividadUsuarioCreateWithoutUserInput, ActividadUsuarioUncheckedCreateWithoutUserInput>
+  }
+
+  export type ActividadUsuarioUpdateWithWhereUniqueWithoutUserInput = {
+    where: ActividadUsuarioWhereUniqueInput
+    data: XOR<ActividadUsuarioUpdateWithoutUserInput, ActividadUsuarioUncheckedUpdateWithoutUserInput>
+  }
+
+  export type ActividadUsuarioUpdateManyWithWhereWithoutUserInput = {
+    where: ActividadUsuarioScalarWhereInput
+    data: XOR<ActividadUsuarioUpdateManyMutationInput, ActividadUsuarioUncheckedUpdateManyWithoutUserInput>
+  }
+
+  export type ActividadUsuarioScalarWhereInput = {
+    AND?: ActividadUsuarioScalarWhereInput | ActividadUsuarioScalarWhereInput[]
+    OR?: ActividadUsuarioScalarWhereInput[]
+    NOT?: ActividadUsuarioScalarWhereInput | ActividadUsuarioScalarWhereInput[]
+    id?: IntFilter<"ActividadUsuario"> | number
+    userId?: StringFilter<"ActividadUsuario"> | string
+    tipo?: StringFilter<"ActividadUsuario"> | string
+    descripcion?: StringNullableFilter<"ActividadUsuario"> | string | null
+    metadata?: JsonNullableFilter<"ActividadUsuario">
+    ip?: StringNullableFilter<"ActividadUsuario"> | string | null
+    userAgent?: StringNullableFilter<"ActividadUsuario"> | string | null
+    creadoEn?: DateTimeFilter<"ActividadUsuario"> | Date | string
+  }
+
+  export type SesionUsuarioUpsertWithWhereUniqueWithoutUserInput = {
+    where: SesionUsuarioWhereUniqueInput
+    update: XOR<SesionUsuarioUpdateWithoutUserInput, SesionUsuarioUncheckedUpdateWithoutUserInput>
+    create: XOR<SesionUsuarioCreateWithoutUserInput, SesionUsuarioUncheckedCreateWithoutUserInput>
+  }
+
+  export type SesionUsuarioUpdateWithWhereUniqueWithoutUserInput = {
+    where: SesionUsuarioWhereUniqueInput
+    data: XOR<SesionUsuarioUpdateWithoutUserInput, SesionUsuarioUncheckedUpdateWithoutUserInput>
+  }
+
+  export type SesionUsuarioUpdateManyWithWhereWithoutUserInput = {
+    where: SesionUsuarioScalarWhereInput
+    data: XOR<SesionUsuarioUpdateManyMutationInput, SesionUsuarioUncheckedUpdateManyWithoutUserInput>
+  }
+
+  export type SesionUsuarioScalarWhereInput = {
+    AND?: SesionUsuarioScalarWhereInput | SesionUsuarioScalarWhereInput[]
+    OR?: SesionUsuarioScalarWhereInput[]
+    NOT?: SesionUsuarioScalarWhereInput | SesionUsuarioScalarWhereInput[]
+    id?: IntFilter<"SesionUsuario"> | number
+    userId?: StringFilter<"SesionUsuario"> | string
+    inicio?: DateTimeFilter<"SesionUsuario"> | Date | string
+    fin?: DateTimeNullableFilter<"SesionUsuario"> | Date | string | null
+    duracionSeg?: IntNullableFilter<"SesionUsuario"> | number | null
+    ip?: StringNullableFilter<"SesionUsuario"> | string | null
+    userAgent?: StringNullableFilter<"SesionUsuario"> | string | null
+    dispositivo?: StringNullableFilter<"SesionUsuario"> | string | null
+    navegador?: StringNullableFilter<"SesionUsuario"> | string | null
+    sistemaOp?: StringNullableFilter<"SesionUsuario"> | string | null
+  }
+
   export type FrenteCreateWithoutProyectoInput = {
     nombre: string
     etapa?: number | null
@@ -28767,6 +31874,8 @@ export namespace Prisma {
     aprobaciones?: SolicitudCreateNestedManyWithoutAprobadorInput
     historial?: HistorialSolicitudCreateNestedManyWithoutUsuarioInput
     notificaciones?: NotificacionCreateNestedManyWithoutUserInput
+    actividades?: ActividadUsuarioCreateNestedManyWithoutUserInput
+    sesiones?: SesionUsuarioCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutFrentesAsignadosInput = {
@@ -28795,6 +31904,8 @@ export namespace Prisma {
     aprobaciones?: SolicitudUncheckedCreateNestedManyWithoutAprobadorInput
     historial?: HistorialSolicitudUncheckedCreateNestedManyWithoutUsuarioInput
     notificaciones?: NotificacionUncheckedCreateNestedManyWithoutUserInput
+    actividades?: ActividadUsuarioUncheckedCreateNestedManyWithoutUserInput
+    sesiones?: SesionUsuarioUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutFrentesAsignadosInput = {
@@ -28859,6 +31970,8 @@ export namespace Prisma {
     aprobaciones?: SolicitudUpdateManyWithoutAprobadorNestedInput
     historial?: HistorialSolicitudUpdateManyWithoutUsuarioNestedInput
     notificaciones?: NotificacionUpdateManyWithoutUserNestedInput
+    actividades?: ActividadUsuarioUpdateManyWithoutUserNestedInput
+    sesiones?: SesionUsuarioUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutFrentesAsignadosInput = {
@@ -28887,6 +32000,8 @@ export namespace Prisma {
     aprobaciones?: SolicitudUncheckedUpdateManyWithoutAprobadorNestedInput
     historial?: HistorialSolicitudUncheckedUpdateManyWithoutUsuarioNestedInput
     notificaciones?: NotificacionUncheckedUpdateManyWithoutUserNestedInput
+    actividades?: ActividadUsuarioUncheckedUpdateManyWithoutUserNestedInput
+    sesiones?: SesionUsuarioUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type FrenteUpsertWithoutUsuariosInput = {
@@ -29268,6 +32383,8 @@ export namespace Prisma {
     historial?: HistorialSolicitudCreateNestedManyWithoutUsuarioInput
     frentesAsignados?: FrenteUsuarioCreateNestedManyWithoutUserInput
     notificaciones?: NotificacionCreateNestedManyWithoutUserInput
+    actividades?: ActividadUsuarioCreateNestedManyWithoutUserInput
+    sesiones?: SesionUsuarioCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutSolicitudesInput = {
@@ -29296,6 +32413,8 @@ export namespace Prisma {
     historial?: HistorialSolicitudUncheckedCreateNestedManyWithoutUsuarioInput
     frentesAsignados?: FrenteUsuarioUncheckedCreateNestedManyWithoutUserInput
     notificaciones?: NotificacionUncheckedCreateNestedManyWithoutUserInput
+    actividades?: ActividadUsuarioUncheckedCreateNestedManyWithoutUserInput
+    sesiones?: SesionUsuarioUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutSolicitudesInput = {
@@ -29407,6 +32526,8 @@ export namespace Prisma {
     historial?: HistorialSolicitudCreateNestedManyWithoutUsuarioInput
     frentesAsignados?: FrenteUsuarioCreateNestedManyWithoutUserInput
     notificaciones?: NotificacionCreateNestedManyWithoutUserInput
+    actividades?: ActividadUsuarioCreateNestedManyWithoutUserInput
+    sesiones?: SesionUsuarioCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutAprobacionesInput = {
@@ -29435,6 +32556,8 @@ export namespace Prisma {
     historial?: HistorialSolicitudUncheckedCreateNestedManyWithoutUsuarioInput
     frentesAsignados?: FrenteUsuarioUncheckedCreateNestedManyWithoutUserInput
     notificaciones?: NotificacionUncheckedCreateNestedManyWithoutUserInput
+    actividades?: ActividadUsuarioUncheckedCreateNestedManyWithoutUserInput
+    sesiones?: SesionUsuarioUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutAprobacionesInput = {
@@ -29741,6 +32864,8 @@ export namespace Prisma {
     historial?: HistorialSolicitudUpdateManyWithoutUsuarioNestedInput
     frentesAsignados?: FrenteUsuarioUpdateManyWithoutUserNestedInput
     notificaciones?: NotificacionUpdateManyWithoutUserNestedInput
+    actividades?: ActividadUsuarioUpdateManyWithoutUserNestedInput
+    sesiones?: SesionUsuarioUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutSolicitudesInput = {
@@ -29769,6 +32894,8 @@ export namespace Prisma {
     historial?: HistorialSolicitudUncheckedUpdateManyWithoutUsuarioNestedInput
     frentesAsignados?: FrenteUsuarioUncheckedUpdateManyWithoutUserNestedInput
     notificaciones?: NotificacionUncheckedUpdateManyWithoutUserNestedInput
+    actividades?: ActividadUsuarioUncheckedUpdateManyWithoutUserNestedInput
+    sesiones?: SesionUsuarioUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type TerceroUpsertWithoutSolicitudesInput = {
@@ -29898,6 +33025,8 @@ export namespace Prisma {
     historial?: HistorialSolicitudUpdateManyWithoutUsuarioNestedInput
     frentesAsignados?: FrenteUsuarioUpdateManyWithoutUserNestedInput
     notificaciones?: NotificacionUpdateManyWithoutUserNestedInput
+    actividades?: ActividadUsuarioUpdateManyWithoutUserNestedInput
+    sesiones?: SesionUsuarioUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutAprobacionesInput = {
@@ -29926,6 +33055,8 @@ export namespace Prisma {
     historial?: HistorialSolicitudUncheckedUpdateManyWithoutUsuarioNestedInput
     frentesAsignados?: FrenteUsuarioUncheckedUpdateManyWithoutUserNestedInput
     notificaciones?: NotificacionUncheckedUpdateManyWithoutUserNestedInput
+    actividades?: ActividadUsuarioUncheckedUpdateManyWithoutUserNestedInput
+    sesiones?: SesionUsuarioUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type HistorialSolicitudUpsertWithWhereUniqueWithoutSolicitudInput = {
@@ -30224,6 +33355,8 @@ export namespace Prisma {
     aprobaciones?: SolicitudCreateNestedManyWithoutAprobadorInput
     frentesAsignados?: FrenteUsuarioCreateNestedManyWithoutUserInput
     notificaciones?: NotificacionCreateNestedManyWithoutUserInput
+    actividades?: ActividadUsuarioCreateNestedManyWithoutUserInput
+    sesiones?: SesionUsuarioCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutHistorialInput = {
@@ -30252,6 +33385,8 @@ export namespace Prisma {
     aprobaciones?: SolicitudUncheckedCreateNestedManyWithoutAprobadorInput
     frentesAsignados?: FrenteUsuarioUncheckedCreateNestedManyWithoutUserInput
     notificaciones?: NotificacionUncheckedCreateNestedManyWithoutUserInput
+    actividades?: ActividadUsuarioUncheckedCreateNestedManyWithoutUserInput
+    sesiones?: SesionUsuarioUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutHistorialInput = {
@@ -30418,6 +33553,8 @@ export namespace Prisma {
     aprobaciones?: SolicitudUpdateManyWithoutAprobadorNestedInput
     frentesAsignados?: FrenteUsuarioUpdateManyWithoutUserNestedInput
     notificaciones?: NotificacionUpdateManyWithoutUserNestedInput
+    actividades?: ActividadUsuarioUpdateManyWithoutUserNestedInput
+    sesiones?: SesionUsuarioUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutHistorialInput = {
@@ -30446,6 +33583,8 @@ export namespace Prisma {
     aprobaciones?: SolicitudUncheckedUpdateManyWithoutAprobadorNestedInput
     frentesAsignados?: FrenteUsuarioUncheckedUpdateManyWithoutUserNestedInput
     notificaciones?: NotificacionUncheckedUpdateManyWithoutUserNestedInput
+    actividades?: ActividadUsuarioUncheckedUpdateManyWithoutUserNestedInput
+    sesiones?: SesionUsuarioUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type SolicitudCreateWithoutCronogramaInput = {
@@ -31024,6 +34163,8 @@ export namespace Prisma {
     aprobaciones?: SolicitudCreateNestedManyWithoutAprobadorInput
     historial?: HistorialSolicitudCreateNestedManyWithoutUsuarioInput
     frentesAsignados?: FrenteUsuarioCreateNestedManyWithoutUserInput
+    actividades?: ActividadUsuarioCreateNestedManyWithoutUserInput
+    sesiones?: SesionUsuarioCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutNotificacionesInput = {
@@ -31052,6 +34193,8 @@ export namespace Prisma {
     aprobaciones?: SolicitudUncheckedCreateNestedManyWithoutAprobadorInput
     historial?: HistorialSolicitudUncheckedCreateNestedManyWithoutUsuarioInput
     frentesAsignados?: FrenteUsuarioUncheckedCreateNestedManyWithoutUserInput
+    actividades?: ActividadUsuarioUncheckedCreateNestedManyWithoutUserInput
+    sesiones?: SesionUsuarioUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutNotificacionesInput = {
@@ -31096,6 +34239,8 @@ export namespace Prisma {
     aprobaciones?: SolicitudUpdateManyWithoutAprobadorNestedInput
     historial?: HistorialSolicitudUpdateManyWithoutUsuarioNestedInput
     frentesAsignados?: FrenteUsuarioUpdateManyWithoutUserNestedInput
+    actividades?: ActividadUsuarioUpdateManyWithoutUserNestedInput
+    sesiones?: SesionUsuarioUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutNotificacionesInput = {
@@ -31124,6 +34269,280 @@ export namespace Prisma {
     aprobaciones?: SolicitudUncheckedUpdateManyWithoutAprobadorNestedInput
     historial?: HistorialSolicitudUncheckedUpdateManyWithoutUsuarioNestedInput
     frentesAsignados?: FrenteUsuarioUncheckedUpdateManyWithoutUserNestedInput
+    actividades?: ActividadUsuarioUncheckedUpdateManyWithoutUserNestedInput
+    sesiones?: SesionUsuarioUncheckedUpdateManyWithoutUserNestedInput
+  }
+
+  export type UserCreateWithoutActividadesInput = {
+    id?: string
+    nombre: string
+    cargo?: string | null
+    email: string
+    emailVerified?: Date | string | null
+    password?: string | null
+    telefono?: string | null
+    rol?: string
+    roles?: string
+    activo?: boolean
+    image?: string | null
+    funcionalidadesAdicionales?: string
+    microsoftId?: string | null
+    microsoftEmail?: string | null
+    ultimaConexion?: Date | string | null
+    ultimaActividad?: Date | string | null
+    presenciaEstado?: string | null
+    creadoEn?: Date | string
+    actualizadoEn?: Date | string
+    accounts?: AccountCreateNestedManyWithoutUserInput
+    sessions?: SessionCreateNestedManyWithoutUserInput
+    solicitudes?: SolicitudCreateNestedManyWithoutSolicitanteInput
+    aprobaciones?: SolicitudCreateNestedManyWithoutAprobadorInput
+    historial?: HistorialSolicitudCreateNestedManyWithoutUsuarioInput
+    frentesAsignados?: FrenteUsuarioCreateNestedManyWithoutUserInput
+    notificaciones?: NotificacionCreateNestedManyWithoutUserInput
+    sesiones?: SesionUsuarioCreateNestedManyWithoutUserInput
+  }
+
+  export type UserUncheckedCreateWithoutActividadesInput = {
+    id?: string
+    nombre: string
+    cargo?: string | null
+    email: string
+    emailVerified?: Date | string | null
+    password?: string | null
+    telefono?: string | null
+    rol?: string
+    roles?: string
+    activo?: boolean
+    image?: string | null
+    funcionalidadesAdicionales?: string
+    microsoftId?: string | null
+    microsoftEmail?: string | null
+    ultimaConexion?: Date | string | null
+    ultimaActividad?: Date | string | null
+    presenciaEstado?: string | null
+    creadoEn?: Date | string
+    actualizadoEn?: Date | string
+    accounts?: AccountUncheckedCreateNestedManyWithoutUserInput
+    sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
+    solicitudes?: SolicitudUncheckedCreateNestedManyWithoutSolicitanteInput
+    aprobaciones?: SolicitudUncheckedCreateNestedManyWithoutAprobadorInput
+    historial?: HistorialSolicitudUncheckedCreateNestedManyWithoutUsuarioInput
+    frentesAsignados?: FrenteUsuarioUncheckedCreateNestedManyWithoutUserInput
+    notificaciones?: NotificacionUncheckedCreateNestedManyWithoutUserInput
+    sesiones?: SesionUsuarioUncheckedCreateNestedManyWithoutUserInput
+  }
+
+  export type UserCreateOrConnectWithoutActividadesInput = {
+    where: UserWhereUniqueInput
+    create: XOR<UserCreateWithoutActividadesInput, UserUncheckedCreateWithoutActividadesInput>
+  }
+
+  export type UserUpsertWithoutActividadesInput = {
+    update: XOR<UserUpdateWithoutActividadesInput, UserUncheckedUpdateWithoutActividadesInput>
+    create: XOR<UserCreateWithoutActividadesInput, UserUncheckedCreateWithoutActividadesInput>
+    where?: UserWhereInput
+  }
+
+  export type UserUpdateToOneWithWhereWithoutActividadesInput = {
+    where?: UserWhereInput
+    data: XOR<UserUpdateWithoutActividadesInput, UserUncheckedUpdateWithoutActividadesInput>
+  }
+
+  export type UserUpdateWithoutActividadesInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    nombre?: StringFieldUpdateOperationsInput | string
+    cargo?: NullableStringFieldUpdateOperationsInput | string | null
+    email?: StringFieldUpdateOperationsInput | string
+    emailVerified?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    password?: NullableStringFieldUpdateOperationsInput | string | null
+    telefono?: NullableStringFieldUpdateOperationsInput | string | null
+    rol?: StringFieldUpdateOperationsInput | string
+    roles?: StringFieldUpdateOperationsInput | string
+    activo?: BoolFieldUpdateOperationsInput | boolean
+    image?: NullableStringFieldUpdateOperationsInput | string | null
+    funcionalidadesAdicionales?: StringFieldUpdateOperationsInput | string
+    microsoftId?: NullableStringFieldUpdateOperationsInput | string | null
+    microsoftEmail?: NullableStringFieldUpdateOperationsInput | string | null
+    ultimaConexion?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    ultimaActividad?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    presenciaEstado?: NullableStringFieldUpdateOperationsInput | string | null
+    creadoEn?: DateTimeFieldUpdateOperationsInput | Date | string
+    actualizadoEn?: DateTimeFieldUpdateOperationsInput | Date | string
+    accounts?: AccountUpdateManyWithoutUserNestedInput
+    sessions?: SessionUpdateManyWithoutUserNestedInput
+    solicitudes?: SolicitudUpdateManyWithoutSolicitanteNestedInput
+    aprobaciones?: SolicitudUpdateManyWithoutAprobadorNestedInput
+    historial?: HistorialSolicitudUpdateManyWithoutUsuarioNestedInput
+    frentesAsignados?: FrenteUsuarioUpdateManyWithoutUserNestedInput
+    notificaciones?: NotificacionUpdateManyWithoutUserNestedInput
+    sesiones?: SesionUsuarioUpdateManyWithoutUserNestedInput
+  }
+
+  export type UserUncheckedUpdateWithoutActividadesInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    nombre?: StringFieldUpdateOperationsInput | string
+    cargo?: NullableStringFieldUpdateOperationsInput | string | null
+    email?: StringFieldUpdateOperationsInput | string
+    emailVerified?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    password?: NullableStringFieldUpdateOperationsInput | string | null
+    telefono?: NullableStringFieldUpdateOperationsInput | string | null
+    rol?: StringFieldUpdateOperationsInput | string
+    roles?: StringFieldUpdateOperationsInput | string
+    activo?: BoolFieldUpdateOperationsInput | boolean
+    image?: NullableStringFieldUpdateOperationsInput | string | null
+    funcionalidadesAdicionales?: StringFieldUpdateOperationsInput | string
+    microsoftId?: NullableStringFieldUpdateOperationsInput | string | null
+    microsoftEmail?: NullableStringFieldUpdateOperationsInput | string | null
+    ultimaConexion?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    ultimaActividad?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    presenciaEstado?: NullableStringFieldUpdateOperationsInput | string | null
+    creadoEn?: DateTimeFieldUpdateOperationsInput | Date | string
+    actualizadoEn?: DateTimeFieldUpdateOperationsInput | Date | string
+    accounts?: AccountUncheckedUpdateManyWithoutUserNestedInput
+    sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
+    solicitudes?: SolicitudUncheckedUpdateManyWithoutSolicitanteNestedInput
+    aprobaciones?: SolicitudUncheckedUpdateManyWithoutAprobadorNestedInput
+    historial?: HistorialSolicitudUncheckedUpdateManyWithoutUsuarioNestedInput
+    frentesAsignados?: FrenteUsuarioUncheckedUpdateManyWithoutUserNestedInput
+    notificaciones?: NotificacionUncheckedUpdateManyWithoutUserNestedInput
+    sesiones?: SesionUsuarioUncheckedUpdateManyWithoutUserNestedInput
+  }
+
+  export type UserCreateWithoutSesionesInput = {
+    id?: string
+    nombre: string
+    cargo?: string | null
+    email: string
+    emailVerified?: Date | string | null
+    password?: string | null
+    telefono?: string | null
+    rol?: string
+    roles?: string
+    activo?: boolean
+    image?: string | null
+    funcionalidadesAdicionales?: string
+    microsoftId?: string | null
+    microsoftEmail?: string | null
+    ultimaConexion?: Date | string | null
+    ultimaActividad?: Date | string | null
+    presenciaEstado?: string | null
+    creadoEn?: Date | string
+    actualizadoEn?: Date | string
+    accounts?: AccountCreateNestedManyWithoutUserInput
+    sessions?: SessionCreateNestedManyWithoutUserInput
+    solicitudes?: SolicitudCreateNestedManyWithoutSolicitanteInput
+    aprobaciones?: SolicitudCreateNestedManyWithoutAprobadorInput
+    historial?: HistorialSolicitudCreateNestedManyWithoutUsuarioInput
+    frentesAsignados?: FrenteUsuarioCreateNestedManyWithoutUserInput
+    notificaciones?: NotificacionCreateNestedManyWithoutUserInput
+    actividades?: ActividadUsuarioCreateNestedManyWithoutUserInput
+  }
+
+  export type UserUncheckedCreateWithoutSesionesInput = {
+    id?: string
+    nombre: string
+    cargo?: string | null
+    email: string
+    emailVerified?: Date | string | null
+    password?: string | null
+    telefono?: string | null
+    rol?: string
+    roles?: string
+    activo?: boolean
+    image?: string | null
+    funcionalidadesAdicionales?: string
+    microsoftId?: string | null
+    microsoftEmail?: string | null
+    ultimaConexion?: Date | string | null
+    ultimaActividad?: Date | string | null
+    presenciaEstado?: string | null
+    creadoEn?: Date | string
+    actualizadoEn?: Date | string
+    accounts?: AccountUncheckedCreateNestedManyWithoutUserInput
+    sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
+    solicitudes?: SolicitudUncheckedCreateNestedManyWithoutSolicitanteInput
+    aprobaciones?: SolicitudUncheckedCreateNestedManyWithoutAprobadorInput
+    historial?: HistorialSolicitudUncheckedCreateNestedManyWithoutUsuarioInput
+    frentesAsignados?: FrenteUsuarioUncheckedCreateNestedManyWithoutUserInput
+    notificaciones?: NotificacionUncheckedCreateNestedManyWithoutUserInput
+    actividades?: ActividadUsuarioUncheckedCreateNestedManyWithoutUserInput
+  }
+
+  export type UserCreateOrConnectWithoutSesionesInput = {
+    where: UserWhereUniqueInput
+    create: XOR<UserCreateWithoutSesionesInput, UserUncheckedCreateWithoutSesionesInput>
+  }
+
+  export type UserUpsertWithoutSesionesInput = {
+    update: XOR<UserUpdateWithoutSesionesInput, UserUncheckedUpdateWithoutSesionesInput>
+    create: XOR<UserCreateWithoutSesionesInput, UserUncheckedCreateWithoutSesionesInput>
+    where?: UserWhereInput
+  }
+
+  export type UserUpdateToOneWithWhereWithoutSesionesInput = {
+    where?: UserWhereInput
+    data: XOR<UserUpdateWithoutSesionesInput, UserUncheckedUpdateWithoutSesionesInput>
+  }
+
+  export type UserUpdateWithoutSesionesInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    nombre?: StringFieldUpdateOperationsInput | string
+    cargo?: NullableStringFieldUpdateOperationsInput | string | null
+    email?: StringFieldUpdateOperationsInput | string
+    emailVerified?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    password?: NullableStringFieldUpdateOperationsInput | string | null
+    telefono?: NullableStringFieldUpdateOperationsInput | string | null
+    rol?: StringFieldUpdateOperationsInput | string
+    roles?: StringFieldUpdateOperationsInput | string
+    activo?: BoolFieldUpdateOperationsInput | boolean
+    image?: NullableStringFieldUpdateOperationsInput | string | null
+    funcionalidadesAdicionales?: StringFieldUpdateOperationsInput | string
+    microsoftId?: NullableStringFieldUpdateOperationsInput | string | null
+    microsoftEmail?: NullableStringFieldUpdateOperationsInput | string | null
+    ultimaConexion?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    ultimaActividad?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    presenciaEstado?: NullableStringFieldUpdateOperationsInput | string | null
+    creadoEn?: DateTimeFieldUpdateOperationsInput | Date | string
+    actualizadoEn?: DateTimeFieldUpdateOperationsInput | Date | string
+    accounts?: AccountUpdateManyWithoutUserNestedInput
+    sessions?: SessionUpdateManyWithoutUserNestedInput
+    solicitudes?: SolicitudUpdateManyWithoutSolicitanteNestedInput
+    aprobaciones?: SolicitudUpdateManyWithoutAprobadorNestedInput
+    historial?: HistorialSolicitudUpdateManyWithoutUsuarioNestedInput
+    frentesAsignados?: FrenteUsuarioUpdateManyWithoutUserNestedInput
+    notificaciones?: NotificacionUpdateManyWithoutUserNestedInput
+    actividades?: ActividadUsuarioUpdateManyWithoutUserNestedInput
+  }
+
+  export type UserUncheckedUpdateWithoutSesionesInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    nombre?: StringFieldUpdateOperationsInput | string
+    cargo?: NullableStringFieldUpdateOperationsInput | string | null
+    email?: StringFieldUpdateOperationsInput | string
+    emailVerified?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    password?: NullableStringFieldUpdateOperationsInput | string | null
+    telefono?: NullableStringFieldUpdateOperationsInput | string | null
+    rol?: StringFieldUpdateOperationsInput | string
+    roles?: StringFieldUpdateOperationsInput | string
+    activo?: BoolFieldUpdateOperationsInput | boolean
+    image?: NullableStringFieldUpdateOperationsInput | string | null
+    funcionalidadesAdicionales?: StringFieldUpdateOperationsInput | string
+    microsoftId?: NullableStringFieldUpdateOperationsInput | string | null
+    microsoftEmail?: NullableStringFieldUpdateOperationsInput | string | null
+    ultimaConexion?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    ultimaActividad?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    presenciaEstado?: NullableStringFieldUpdateOperationsInput | string | null
+    creadoEn?: DateTimeFieldUpdateOperationsInput | Date | string
+    actualizadoEn?: DateTimeFieldUpdateOperationsInput | Date | string
+    accounts?: AccountUncheckedUpdateManyWithoutUserNestedInput
+    sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
+    solicitudes?: SolicitudUncheckedUpdateManyWithoutSolicitanteNestedInput
+    aprobaciones?: SolicitudUncheckedUpdateManyWithoutAprobadorNestedInput
+    historial?: HistorialSolicitudUncheckedUpdateManyWithoutUsuarioNestedInput
+    frentesAsignados?: FrenteUsuarioUncheckedUpdateManyWithoutUserNestedInput
+    notificaciones?: NotificacionUncheckedUpdateManyWithoutUserNestedInput
+    actividades?: ActividadUsuarioUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type AccountCreateManyUserInput = {
@@ -31271,6 +34690,28 @@ export namespace Prisma {
     leida?: boolean
     url?: string | null
     creadoEn?: Date | string
+  }
+
+  export type ActividadUsuarioCreateManyUserInput = {
+    id?: number
+    tipo: string
+    descripcion?: string | null
+    metadata?: NullableJsonNullValueInput | InputJsonValue
+    ip?: string | null
+    userAgent?: string | null
+    creadoEn?: Date | string
+  }
+
+  export type SesionUsuarioCreateManyUserInput = {
+    id?: number
+    inicio?: Date | string
+    fin?: Date | string | null
+    duracionSeg?: number | null
+    ip?: string | null
+    userAgent?: string | null
+    dispositivo?: string | null
+    navegador?: string | null
+    sistemaOp?: string | null
   }
 
   export type AccountUpdateWithoutUserInput = {
@@ -31720,6 +35161,70 @@ export namespace Prisma {
     leida?: BoolFieldUpdateOperationsInput | boolean
     url?: NullableStringFieldUpdateOperationsInput | string | null
     creadoEn?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type ActividadUsuarioUpdateWithoutUserInput = {
+    tipo?: StringFieldUpdateOperationsInput | string
+    descripcion?: NullableStringFieldUpdateOperationsInput | string | null
+    metadata?: NullableJsonNullValueInput | InputJsonValue
+    ip?: NullableStringFieldUpdateOperationsInput | string | null
+    userAgent?: NullableStringFieldUpdateOperationsInput | string | null
+    creadoEn?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type ActividadUsuarioUncheckedUpdateWithoutUserInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    tipo?: StringFieldUpdateOperationsInput | string
+    descripcion?: NullableStringFieldUpdateOperationsInput | string | null
+    metadata?: NullableJsonNullValueInput | InputJsonValue
+    ip?: NullableStringFieldUpdateOperationsInput | string | null
+    userAgent?: NullableStringFieldUpdateOperationsInput | string | null
+    creadoEn?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type ActividadUsuarioUncheckedUpdateManyWithoutUserInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    tipo?: StringFieldUpdateOperationsInput | string
+    descripcion?: NullableStringFieldUpdateOperationsInput | string | null
+    metadata?: NullableJsonNullValueInput | InputJsonValue
+    ip?: NullableStringFieldUpdateOperationsInput | string | null
+    userAgent?: NullableStringFieldUpdateOperationsInput | string | null
+    creadoEn?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type SesionUsuarioUpdateWithoutUserInput = {
+    inicio?: DateTimeFieldUpdateOperationsInput | Date | string
+    fin?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    duracionSeg?: NullableIntFieldUpdateOperationsInput | number | null
+    ip?: NullableStringFieldUpdateOperationsInput | string | null
+    userAgent?: NullableStringFieldUpdateOperationsInput | string | null
+    dispositivo?: NullableStringFieldUpdateOperationsInput | string | null
+    navegador?: NullableStringFieldUpdateOperationsInput | string | null
+    sistemaOp?: NullableStringFieldUpdateOperationsInput | string | null
+  }
+
+  export type SesionUsuarioUncheckedUpdateWithoutUserInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    inicio?: DateTimeFieldUpdateOperationsInput | Date | string
+    fin?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    duracionSeg?: NullableIntFieldUpdateOperationsInput | number | null
+    ip?: NullableStringFieldUpdateOperationsInput | string | null
+    userAgent?: NullableStringFieldUpdateOperationsInput | string | null
+    dispositivo?: NullableStringFieldUpdateOperationsInput | string | null
+    navegador?: NullableStringFieldUpdateOperationsInput | string | null
+    sistemaOp?: NullableStringFieldUpdateOperationsInput | string | null
+  }
+
+  export type SesionUsuarioUncheckedUpdateManyWithoutUserInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    inicio?: DateTimeFieldUpdateOperationsInput | Date | string
+    fin?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    duracionSeg?: NullableIntFieldUpdateOperationsInput | number | null
+    ip?: NullableStringFieldUpdateOperationsInput | string | null
+    userAgent?: NullableStringFieldUpdateOperationsInput | string | null
+    dispositivo?: NullableStringFieldUpdateOperationsInput | string | null
+    navegador?: NullableStringFieldUpdateOperationsInput | string | null
+    sistemaOp?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type FrenteCreateManyProyectoInput = {
@@ -32538,6 +36043,14 @@ export namespace Prisma {
      * @deprecated Use ContadorConsecutivoDefaultArgs instead
      */
     export type ContadorConsecutivoArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = ContadorConsecutivoDefaultArgs<ExtArgs>
+    /**
+     * @deprecated Use ActividadUsuarioDefaultArgs instead
+     */
+    export type ActividadUsuarioArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = ActividadUsuarioDefaultArgs<ExtArgs>
+    /**
+     * @deprecated Use SesionUsuarioDefaultArgs instead
+     */
+    export type SesionUsuarioArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = SesionUsuarioDefaultArgs<ExtArgs>
 
   /**
    * Batch Payload for updateMany & deleteMany & createMany

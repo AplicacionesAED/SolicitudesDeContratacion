@@ -83,6 +83,8 @@ model User {
   historial        HistorialSolicitud[]
   frentesAsignados FrenteUsuario[]
   notificaciones   Notificacion[]
+  actividades      ActividadUsuario[]
+  sesiones         SesionUsuario[]
 
   creadoEn      DateTime @default(now())
   actualizadoEn DateTime @updatedAt
@@ -320,4 +322,37 @@ model ContadorConsecutivo {
   tipo  String @id
   anio  Int
   ultimo Int   @default(0)
+}
+
+// ─── Actividad de Usuarios (Presencia/Historial) ────────────────────────────────
+
+model ActividadUsuario {
+  id          Int       @id @default(autoincrement())
+  userId      String
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  tipo        String    // "login" | "logout" | "heartbeat" | "idle" | "active" | "page_view" | "action"
+  descripcion String?   // detalle: página visitada, acción realizada, etc.
+  metadata    Json?     // datos adicionales: { ruta, accion, duracionSesion, etc }
+  ip          String?
+  userAgent   String?
+  creadoEn    DateTime  @default(now())
+
+  @@index([userId, creadoEn])
+  @@index([tipo])
+}
+
+model SesionUsuario {
+  id           Int       @id @default(autoincrement())
+  userId       String
+  user         User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  inicio       DateTime  @default(now())
+  fin          DateTime?
+  duracionSeg  Int?
+  ip           String?
+  userAgent    String?
+  dispositivo  String?   // "desktop" | "mobile" | "tablet"
+  navegador    String?
+  sistemaOp    String?
+
+  @@index([userId, inicio])
 }
