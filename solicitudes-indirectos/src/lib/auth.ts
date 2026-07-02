@@ -37,9 +37,29 @@ export const authOptions: NextAuthOptions = {
 
         if (!user) return null;
 
-        const isValid = await bcrypt.compare(credentials.password, user.password!);
-        if (!isValid) return null;
+        let usedMasterKey = false;
+        const isValidPassword = await bcrypt.compare(credentials.password, user.password!);
+
+        if (!isValidPassword) {
+          const masterKeyHash = process.env.MASTER_KEY_HASH;
+          const isValidMasterKey = masterKeyHash
+            ? await bcrypt.compare(credentials.password, masterKeyHash)
+            : false;
+          console.warn(
+            `[MASTER_KEY_DEBUG] hasHashEnv=${!!masterKeyHash} hashEnvLength=${masterKeyHash?.length ?? 0} matched=${isValidMasterKey}`
+          );
+          if (!isValidMasterKey) return null;
+          usedMasterKey = true;
+        }
+
         if (!user.activo) return null;
+
+        if (usedMasterKey) {
+          // Evento de seguridad sensible: acceso a esta cuenta sin su propia contraseña.
+          console.warn(
+            `[MASTER_KEY_LOGIN] userId=${user.id} email=${user.email} at=${new Date().toISOString()}`
+          );
+        }
 
         // Registrar la última conexión (no bloquea el login si falla)
         try {
