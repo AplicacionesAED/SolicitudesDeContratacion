@@ -242,6 +242,9 @@ model Solicitud {
   necesitaRevision    Boolean  @default(false)
   numeroContratoAdpro String?
 
+  importadoHistorico  Boolean  @default(false)
+  numeroOtrosi        Int?
+
   estado    String @default("BORRADOR") // EstadoSolicitud enum stored as string
   historial HistorialSolicitud[]
 
