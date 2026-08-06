@@ -3,6 +3,7 @@ import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { buildConsecutivo, tienePermiso } from "@/lib/utils";
 import { resolveConsecutivoAbbrs } from "@/lib/consecutivo";
+import { nextNumeroOtrosi } from "@/lib/otrosi";
 import { getRolesVerTodas } from "@/lib/roles";
 import { notificarNuevaSolicitud } from "@/lib/notifications";
 
@@ -285,6 +286,12 @@ export async function POST(request: Request) {
           ? (valorEnLetras ?? null)
           : parent.valorEnLetras;
 
+      const hermanos = await prisma.solicitud.findMany({
+        where: { solicitudPadreId: parent.id },
+        select: { numeroOtrosi: true },
+      });
+      const numeroOtrosi = nextNumeroOtrosi(hermanos.map((h) => h.numeroOtrosi));
+
       const solicitud = await prisma.$transaction(async (tx) => {
         const key = `${tipo}-${proyAbbr}-${frenAbbr}`;
         const counter = await tx.contadorConsecutivo.upsert({
@@ -300,6 +307,7 @@ export async function POST(request: Request) {
             consecutivo,
             tipo,
             solicitudPadreId: parent.id,
+            numeroOtrosi,
             proyectoId: parent.proyectoId,
             frentesIds: parent.frentesIds,
             solicitanteId: session.user.id,
