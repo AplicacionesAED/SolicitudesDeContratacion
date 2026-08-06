@@ -3,7 +3,7 @@ import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { buildConsecutivo, tienePermiso } from "@/lib/utils";
 import { resolveConsecutivoAbbrs } from "@/lib/consecutivo";
-import { nextNumeroOtrosi } from "@/lib/otrosi";
+import { nextNumeroOtrosi, pickMostRecentOtrosi } from "@/lib/otrosi";
 import { getRolesVerTodas } from "@/lib/roles";
 import { notificarNuevaSolicitud } from "@/lib/notifications";
 
@@ -217,9 +217,7 @@ export async function POST(request: Request) {
           cronograma: { select: { fechaFin: true } },
           otrosis: {
             where: { estado: "COMPLETADA" },
-            select: { creadoEn: true, cronograma: { select: { fechaFin: true } } },
-            orderBy: { creadoEn: "desc" },
-            take: 1,
+            select: { numeroOtrosi: true, creadoEn: true, cronograma: { select: { fechaFin: true } } },
           },
         },
       });
@@ -250,8 +248,11 @@ export async function POST(request: Request) {
         );
       }
 
-      // Fecha efectiva de fin: otrosí completado más reciente, o cronograma del padre
-      const effectiveFechaFin = parent.otrosis[0]?.cronograma?.fechaFin ?? parent.cronograma?.fechaFin;
+      // Fecha efectiva de fin: la del otrosí completado vigente (mayor numeroOtrosi,
+      // no necesariamente el más reciente en creadoEn — los históricos se importan
+      // todos "hoy"), o el cronograma del padre si no hay otrosís.
+      const baselineOtrosi = pickMostRecentOtrosi(parent.otrosis);
+      const effectiveFechaFin = baselineOtrosi?.cronograma?.fechaFin ?? parent.cronograma?.fechaFin;
       if (effectiveFechaFin) {
         const todayBogota = new Date(new Date().toLocaleString("en-US", { timeZone: "America/Bogota" }));
         todayBogota.setHours(0, 0, 0, 0);

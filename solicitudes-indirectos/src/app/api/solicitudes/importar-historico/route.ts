@@ -3,6 +3,7 @@ import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { tienePermiso, buildConsecutivo, numeroALetras } from "@/lib/utils";
 import { resolveConsecutivoAbbrs } from "@/lib/consecutivo";
+import { pickMostRecentOtrosi } from "@/lib/otrosi";
 
 const TIPOS_CONTRATO_HISTORICO = [
   "CONTRATO",
@@ -76,7 +77,7 @@ export async function POST(request: Request) {
         return Response.json({ error: "solicitudPadreId es obligatorio en modo OTROSI" }, { status: 400 });
       }
       const numeroOtrosiManual = Number(numeroOtrosiInput);
-      if (!numeroOtrosiInput || isNaN(numeroOtrosiManual) || numeroOtrosiManual <= 0) {
+      if (!numeroOtrosiInput || !Number.isInteger(numeroOtrosiManual) || numeroOtrosiManual <= 0) {
         return Response.json({ error: "numeroOtrosi debe ser un entero positivo" }, { status: 400 });
       }
 
@@ -107,12 +108,11 @@ export async function POST(request: Request) {
         );
       }
 
-      const lastCompletedOtrosi = await prisma.solicitud.findFirst({
+      const completedOtrosis = await prisma.solicitud.findMany({
         where: { solicitudPadreId: parent.id, estado: "COMPLETADA" },
-        orderBy: { creadoEn: "desc" },
-        select: { valorFinal: true, valorEnLetras: true },
+        select: { valorFinal: true, valorEnLetras: true, numeroOtrosi: true, creadoEn: true },
       });
-      const baseline = lastCompletedOtrosi ?? parent;
+      const baseline = pickMostRecentOtrosi(completedOtrosis) ?? parent;
 
       const finalValorFinal =
         tipo === "OTROSI_TIEMPO_CANTIDAD" && valorFinal != null ? Number(valorFinal) : baseline.valorFinal;
@@ -199,6 +199,55 @@ export async function POST(request: Request) {
     }
 
     const firstFrenteId = frentesIds[0];
+
+    const [frente, tercero] = await Promise.all([
+      prisma.frente.findUnique({ where: { id: Number(firstFrenteId) }, select: { id: true, proyectoId: true } }),
+      prisma.tercero.findUnique({ where: { id: Number(terceroId) }, select: { id: true } }),
+    ]);
+    if (!frente) {
+      return Response.json({ error: "Frente no encontrado" }, { status: 404 });
+    }
+    if (frente.proyectoId !== Number(proyectoId)) {
+      return Response.json(
+        { error: "El frente seleccionado no pertenece al proyecto indicado" },
+        { status: 400 }
+      );
+    }
+    if (!tercero) {
+      return Response.json({ error: "Tercero no encontrado" }, { status: 404 });
+    }
+
+    // Resolver aprobador/responsables igual que la creación normal, para que
+    // los otrosís reales que se creen después sobre este contrato queden
+    // asignados y notifiquen a alguien.
+    const aprobadorConfig = await prisma.aprobadorFrente.findUnique({
+      where: { frenteId: Number(firstFrenteId) },
+    });
+    const parseIdsField = (json: string | null | undefined): string[] => {
+      try { return JSON.parse(json ?? "[]"); } catch { return []; }
+    };
+
+    let aprobadorId: string | null = parseIdsField(aprobadorConfig?.aprobadorIds)[0] ?? null;
+    if (!aprobadorId) {
+      if (userRoles.includes("DIRECTOR_PROYECTO")) {
+        aprobadorId = session.user.id;
+      } else {
+        const frenteUsers = await prisma.frenteUsuario.findMany({
+          where: { frenteId: Number(firstFrenteId) },
+          include: { user: { select: { id: true, roles: true, activo: true } } },
+        });
+        const aprobadorUser = frenteUsers.find((fu) => {
+          try {
+            const r: string[] = JSON.parse(fu.user.roles || "[]");
+            return r.includes("DIRECTOR_PROYECTO") && fu.user.activo;
+          } catch {
+            return false;
+          }
+        });
+        aprobadorId = aprobadorUser?.user.id ?? null;
+      }
+    }
+
     const { proyAbbr, frenAbbr } = await resolveConsecutivoAbbrs(Number(proyectoId), Number(firstFrenteId));
     const valorEnLetras = valorFinal != null ? numeroALetras(Number(valorFinal)) : null;
 
@@ -218,6 +267,11 @@ export async function POST(request: Request) {
           proyectoId: Number(proyectoId),
           frentesIds: JSON.stringify(frentesIds),
           solicitanteId: session.user.id,
+          aprobadorId: aprobadorId ?? null,
+          responsableContratosTramiteId: parseIdsField(aprobadorConfig?.contratosTramiteIds)[0] ?? null,
+          responsableContratosMinutaId: parseIdsField(aprobadorConfig?.contratosMinutaIds)[0] ?? null,
+          coordinadorControlesId: aprobadorConfig?.controlesId ?? null,
+          directorControlesId: parseIdsField(aprobadorConfig?.directorControlesIds)[0] ?? null,
           estado: "COMPLETADA",
           importadoHistorico: true,
           terceroId: Number(terceroId),

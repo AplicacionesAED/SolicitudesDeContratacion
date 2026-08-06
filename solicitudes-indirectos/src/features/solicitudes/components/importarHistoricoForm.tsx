@@ -128,8 +128,10 @@ export function ImportarHistoricoForm() {
       if (!terceroId) next.terceroId = "Selecciona el tercero.";
     } else {
       if (!selectedPadre) next.selectedPadre = "Selecciona el contrato al que pertenece.";
-      const n = parseInt(numeroOtrosi, 10);
-      if (!numeroOtrosi || isNaN(n) || n <= 0) next.numeroOtrosi = "Ingresa un número de otrosí válido.";
+      const n = Number(numeroOtrosi);
+      if (!numeroOtrosi || !Number.isInteger(n) || n <= 0) {
+        next.numeroOtrosi = "Ingresa un número entero de otrosí válido.";
+      }
       if (tipoOtrosi === "OTROSI_TIEMPO_CANTIDAD" && !valorFinal) {
         next.valorFinal = "Ingresa el nuevo valor del contrato.";
       }
