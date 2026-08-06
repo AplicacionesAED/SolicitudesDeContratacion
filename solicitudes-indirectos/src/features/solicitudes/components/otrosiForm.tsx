@@ -295,6 +295,12 @@ export function OtrosiForm({ tipo }: OtrosiFormProps) {
           <p className="text-sm text-gray-500 mt-0.5">
             Selecciona el contrato base al que se aplica este otrosí.
           </p>
+          <Link
+            href="/solicitudes/importar-historico"
+            className="inline-block mt-2 text-xs text-blue-600 hover:underline"
+          >
+            ¿El contrato o el otrosí es anterior a este sistema? Impórtalo aquí →
+          </Link>
         </div>
 
         <div className="bg-white border border-gray-200 rounded-xl overflow-hidden">
