@@ -231,6 +231,7 @@ export const ACCION_LABELS: Record<string, string> = {
   REGISTRAR_ADPRO: "Número de contrato Adpro registrado",
   APROBAR_FINAL: "Aprobación definitiva por Director de Controles",
   REENVIAR: "Solicitud reenviada para aprobación",
+  IMPORTAR_HISTORICO: "Registro histórico importado",
 };
 
 // Color del indicador según el tipo de acción
@@ -246,6 +247,7 @@ export const ACCION_COLOR: Record<string, string> = {
   REGISTRAR_ADPRO: "bg-indigo-400",
   APROBAR_FINAL: "bg-green-600",
   REENVIAR: "bg-blue-400",
+  IMPORTAR_HISTORICO: "bg-gray-400",
 };
 
 // Estado al que queda la solicitud después de cada acción
@@ -261,6 +263,7 @@ export const ACCION_ESTADO_DESTINO: Record<string, string> = {
   REGISTRAR_ADPRO: "APROBACION_FINAL",
   APROBAR_FINAL: "COMPLETADA",
   REENVIAR: "ENVIADA",
+  IMPORTAR_HISTORICO: "COMPLETADA",
 };
 
 export const FUNCIONALIDADES_DISPONIBLES: Record<string, { nombre: string; descripcion: string }> = {
