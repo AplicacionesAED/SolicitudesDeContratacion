@@ -10,6 +10,7 @@ import {
   Eye,
   UserCheck,
   Minus,
+  History,
 } from "lucide-react";
 import { ESTADO_LABELS, formatDate } from "@/lib/utils";
 
@@ -24,6 +25,8 @@ interface HistorialEntry {
 interface EstadoTimelineProps {
   estadoActual: string;
   historial?: HistorialEntry[];
+  importadoHistorico?: boolean;
+  numeroOtrosi?: number | null;
 }
 
 // ─── Workflow definition ──────────────────────────────────────────────────────
@@ -104,7 +107,25 @@ const SIDE_STATES = ["DEVUELTA", "EN_REVISION", "BORRADOR"];
 export function EstadoTimeline({
   estadoActual,
   historial = [],
+  importadoHistorico = false,
+  numeroOtrosi,
 }: EstadoTimelineProps) {
+  if (importadoHistorico) {
+    return (
+      <div className="bg-white border border-gray-200 rounded-xl p-5">
+        <h3 className="text-sm font-semibold text-gray-900 mb-3">Progreso del flujo</h3>
+        <div className="flex items-center gap-2 rounded-lg border border-amber-200 bg-amber-50 px-4 py-2.5 text-sm font-medium text-amber-700">
+          <History size={14} />
+          <span>
+            {numeroOtrosi
+              ? `Otrosí histórico #${numeroOtrosi} — importado sin flujo de aprobación.`
+              : "Contrato histórico — importado sin flujo de aprobación."}
+          </span>
+        </div>
+      </div>
+    );
+  }
+
   const isSideState = SIDE_STATES.includes(estadoActual);
 
   return (
