@@ -19,6 +19,7 @@ import {
   ExternalLink,
 } from "lucide-react";
 import { SolicitudBadge } from "@/features/solicitudes/components/solicitudBadge";
+import { HistoricoBadge } from "@/features/solicitudes/components/historicoBadge";
 import { SolicitudActions } from "@/features/solicitudes/components/solicitudActions";
 import { EstadoTimeline } from "@/features/solicitudes/components/estadoTimeline";
 import { ResumenLicitacionButton } from "@/features/solicitudes/components/resumenLicitacionButton";
@@ -208,6 +209,7 @@ export default async function SolicitudDetallePage({ params }: PageProps) {
               {solicitud.consecutivo}
             </h1>
             <SolicitudBadge estado={solicitud.estado} />
+            {solicitud.importadoHistorico && <HistoricoBadge numeroOtrosi={solicitud.numeroOtrosi} />}
             <span className="text-sm text-gray-500">
               {TIPO_SOLICITUD_LABELS[solicitud.tipo] ?? solicitud.tipo}
             </span>
@@ -216,7 +218,12 @@ export default async function SolicitudDetallePage({ params }: PageProps) {
       </div>
 
       {/* Timeline */}
-      <EstadoTimeline estadoActual={solicitud.estado} historial={historial} />
+      <EstadoTimeline
+        estadoActual={solicitud.estado}
+        historial={historial}
+        importadoHistorico={solicitud.importadoHistorico}
+        numeroOtrosi={solicitud.numeroOtrosi}
+      />
 
       {/* Action buttons */}
       <SolicitudActions

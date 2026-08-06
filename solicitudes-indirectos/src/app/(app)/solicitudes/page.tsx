@@ -9,6 +9,7 @@ import {
   GitMerge,
 } from "lucide-react";
 import { SolicitudBadge } from "@/features/solicitudes/components/solicitudBadge";
+import { HistoricoBadge } from "@/features/solicitudes/components/historicoBadge";
 import { Button } from "@/shared/ui/button";
 import { Spinner } from "@/shared/ui/spinner";
 import {
@@ -32,6 +33,8 @@ interface SolicitudRow {
   estado: string;
   fechaSolicitud: string;
   _count?: { otrosis: number };
+  importadoHistorico?: boolean;
+  numeroOtrosi?: number | null;
 }
 
 interface Proyecto {
@@ -459,7 +462,10 @@ export default function SolicitudesPage() {
                           {sol.valorFinal ? formatCurrency(sol.valorFinal) : "—"}
                         </td>
                         <td className="px-4 py-3 whitespace-nowrap">
-                          <SolicitudBadge estado={sol.estado} />
+                          <div className="flex items-center gap-1.5">
+                            <SolicitudBadge estado={sol.estado} />
+                            {sol.importadoHistorico && <HistoricoBadge numeroOtrosi={sol.numeroOtrosi} />}
+                          </div>
                         </td>
                         <td className="px-4 py-3 text-sm text-gray-500 whitespace-nowrap">
                           {formatDate(sol.fechaSolicitud)}
@@ -520,7 +526,12 @@ export default function SolicitudesPage() {
                                 {child.valorFinal ? formatCurrency(child.valorFinal) : "—"}
                               </td>
                               <td className="px-4 py-2.5 whitespace-nowrap">
-                                <SolicitudBadge estado={child.estado} />
+                                <div className="flex items-center gap-1.5">
+                                  <SolicitudBadge estado={child.estado} />
+                                  {child.importadoHistorico && (
+                                    <HistoricoBadge numeroOtrosi={child.numeroOtrosi} />
+                                  )}
+                                </div>
                               </td>
                               <td className="px-4 py-2.5 text-xs text-gray-400 whitespace-nowrap">
                                 {formatDate(child.fechaSolicitud)}
