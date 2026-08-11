@@ -114,8 +114,10 @@ function parseExcel(buffer: Buffer): ExcelRow[] {
       return {
         razonSocial:               String(row["CONTRATISTA"] ?? "").trim(),
         tipoContrato:              String(row["AREA"] ?? "").trim().toUpperCase(),
-        aprobadoDD:                Boolean(row["DEBIDA DILIGENCIA"]),
-        confidencialidad:          Boolean(row["CONFIDENCIALIDAD"]),
+        // La hoja renombró estas columnas a "DD" y "AC" — se mantiene el nombre
+        // viejo como respaldo por si se vuelve a renombrar.
+        aprobadoDD:                Boolean(row["DD"] ?? row["DEBIDA DILIGENCIA"]),
+        confidencialidad:          Boolean(row["AC"] ?? row["CONFIDENCIALIDAD"]),
         fechaVencimientoSagrilaft,
       };
     });
