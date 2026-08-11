@@ -289,6 +289,8 @@ exports.Prisma.SolicitudScalarFieldEnum = {
   notaContratacion: 'notaContratacion',
   necesitaRevision: 'necesitaRevision',
   numeroContratoAdpro: 'numeroContratoAdpro',
+  importadoHistorico: 'importadoHistorico',
+  numeroOtrosi: 'numeroOtrosi',
   estado: 'estado',
   solicitudPadreId: 'solicitudPadreId',
   creadoEn: 'creadoEn',

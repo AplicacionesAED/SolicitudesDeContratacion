@@ -14210,6 +14210,7 @@ export namespace Prisma {
     proyectoId: number | null
     terceroId: number | null
     valorFinal: Decimal | null
+    numeroOtrosi: number | null
     solicitudPadreId: number | null
   }
 
@@ -14218,6 +14219,7 @@ export namespace Prisma {
     proyectoId: number | null
     terceroId: number | null
     valorFinal: Decimal | null
+    numeroOtrosi: number | null
     solicitudPadreId: number | null
   }
 
@@ -14269,6 +14271,8 @@ export namespace Prisma {
     notaContratacion: string | null
     necesitaRevision: boolean | null
     numeroContratoAdpro: string | null
+    importadoHistorico: boolean | null
+    numeroOtrosi: number | null
     estado: string | null
     solicitudPadreId: number | null
     creadoEn: Date | null
@@ -14323,6 +14327,8 @@ export namespace Prisma {
     notaContratacion: string | null
     necesitaRevision: boolean | null
     numeroContratoAdpro: string | null
+    importadoHistorico: boolean | null
+    numeroOtrosi: number | null
     estado: string | null
     solicitudPadreId: number | null
     creadoEn: Date | null
@@ -14377,6 +14383,8 @@ export namespace Prisma {
     notaContratacion: number
     necesitaRevision: number
     numeroContratoAdpro: number
+    importadoHistorico: number
+    numeroOtrosi: number
     estado: number
     solicitudPadreId: number
     creadoEn: number
@@ -14390,6 +14398,7 @@ export namespace Prisma {
     proyectoId?: true
     terceroId?: true
     valorFinal?: true
+    numeroOtrosi?: true
     solicitudPadreId?: true
   }
 
@@ -14398,6 +14407,7 @@ export namespace Prisma {
     proyectoId?: true
     terceroId?: true
     valorFinal?: true
+    numeroOtrosi?: true
     solicitudPadreId?: true
   }
 
@@ -14449,6 +14459,8 @@ export namespace Prisma {
     notaContratacion?: true
     necesitaRevision?: true
     numeroContratoAdpro?: true
+    importadoHistorico?: true
+    numeroOtrosi?: true
     estado?: true
     solicitudPadreId?: true
     creadoEn?: true
@@ -14503,6 +14515,8 @@ export namespace Prisma {
     notaContratacion?: true
     necesitaRevision?: true
     numeroContratoAdpro?: true
+    importadoHistorico?: true
+    numeroOtrosi?: true
     estado?: true
     solicitudPadreId?: true
     creadoEn?: true
@@ -14557,6 +14571,8 @@ export namespace Prisma {
     notaContratacion?: true
     necesitaRevision?: true
     numeroContratoAdpro?: true
+    importadoHistorico?: true
+    numeroOtrosi?: true
     estado?: true
     solicitudPadreId?: true
     creadoEn?: true
@@ -14698,6 +14714,8 @@ export namespace Prisma {
     notaContratacion: string | null
     necesitaRevision: boolean
     numeroContratoAdpro: string | null
+    importadoHistorico: boolean
+    numeroOtrosi: number | null
     estado: string
     solicitudPadreId: number | null
     creadoEn: Date
@@ -14771,6 +14789,8 @@ export namespace Prisma {
     notaContratacion?: boolean
     necesitaRevision?: boolean
     numeroContratoAdpro?: boolean
+    importadoHistorico?: boolean
+    numeroOtrosi?: boolean
     estado?: boolean
     solicitudPadreId?: boolean
     creadoEn?: boolean
@@ -14833,6 +14853,8 @@ export namespace Prisma {
     notaContratacion?: boolean
     necesitaRevision?: boolean
     numeroContratoAdpro?: boolean
+    importadoHistorico?: boolean
+    numeroOtrosi?: boolean
     estado?: boolean
     solicitudPadreId?: boolean
     creadoEn?: boolean
@@ -14911,6 +14933,8 @@ export namespace Prisma {
       notaContratacion: string | null
       necesitaRevision: boolean
       numeroContratoAdpro: string | null
+      importadoHistorico: boolean
+      numeroOtrosi: number | null
       estado: string
       solicitudPadreId: number | null
       creadoEn: Date
@@ -15395,6 +15419,8 @@ export namespace Prisma {
     readonly notaContratacion: FieldRef<"Solicitud", 'String'>
     readonly necesitaRevision: FieldRef<"Solicitud", 'Boolean'>
     readonly numeroContratoAdpro: FieldRef<"Solicitud", 'String'>
+    readonly importadoHistorico: FieldRef<"Solicitud", 'Boolean'>
+    readonly numeroOtrosi: FieldRef<"Solicitud", 'Int'>
     readonly estado: FieldRef<"Solicitud", 'String'>
     readonly solicitudPadreId: FieldRef<"Solicitud", 'Int'>
     readonly creadoEn: FieldRef<"Solicitud", 'DateTime'>
@@ -24143,6 +24169,8 @@ export namespace Prisma {
     notaContratacion: 'notaContratacion',
     necesitaRevision: 'necesitaRevision',
     numeroContratoAdpro: 'numeroContratoAdpro',
+    importadoHistorico: 'importadoHistorico',
+    numeroOtrosi: 'numeroOtrosi',
     estado: 'estado',
     solicitudPadreId: 'solicitudPadreId',
     creadoEn: 'creadoEn',
@@ -25259,6 +25287,8 @@ export namespace Prisma {
     notaContratacion?: StringNullableFilter<"Solicitud"> | string | null
     necesitaRevision?: BoolFilter<"Solicitud"> | boolean
     numeroContratoAdpro?: StringNullableFilter<"Solicitud"> | string | null
+    importadoHistorico?: BoolFilter<"Solicitud"> | boolean
+    numeroOtrosi?: IntNullableFilter<"Solicitud"> | number | null
     estado?: StringFilter<"Solicitud"> | string
     solicitudPadreId?: IntNullableFilter<"Solicitud"> | number | null
     creadoEn?: DateTimeFilter<"Solicitud"> | Date | string
@@ -25320,6 +25350,8 @@ export namespace Prisma {
     notaContratacion?: SortOrderInput | SortOrder
     necesitaRevision?: SortOrder
     numeroContratoAdpro?: SortOrderInput | SortOrder
+    importadoHistorico?: SortOrder
+    numeroOtrosi?: SortOrderInput | SortOrder
     estado?: SortOrder
     solicitudPadreId?: SortOrderInput | SortOrder
     creadoEn?: SortOrder
@@ -25384,6 +25416,8 @@ export namespace Prisma {
     notaContratacion?: StringNullableFilter<"Solicitud"> | string | null
     necesitaRevision?: BoolFilter<"Solicitud"> | boolean
     numeroContratoAdpro?: StringNullableFilter<"Solicitud"> | string | null
+    importadoHistorico?: BoolFilter<"Solicitud"> | boolean
+    numeroOtrosi?: IntNullableFilter<"Solicitud"> | number | null
     estado?: StringFilter<"Solicitud"> | string
     solicitudPadreId?: IntNullableFilter<"Solicitud"> | number | null
     creadoEn?: DateTimeFilter<"Solicitud"> | Date | string
@@ -25445,6 +25479,8 @@ export namespace Prisma {
     notaContratacion?: SortOrderInput | SortOrder
     necesitaRevision?: SortOrder
     numeroContratoAdpro?: SortOrderInput | SortOrder
+    importadoHistorico?: SortOrder
+    numeroOtrosi?: SortOrderInput | SortOrder
     estado?: SortOrder
     solicitudPadreId?: SortOrderInput | SortOrder
     creadoEn?: SortOrder
@@ -25507,6 +25543,8 @@ export namespace Prisma {
     notaContratacion?: StringNullableWithAggregatesFilter<"Solicitud"> | string | null
     necesitaRevision?: BoolWithAggregatesFilter<"Solicitud"> | boolean
     numeroContratoAdpro?: StringNullableWithAggregatesFilter<"Solicitud"> | string | null
+    importadoHistorico?: BoolWithAggregatesFilter<"Solicitud"> | boolean
+    numeroOtrosi?: IntNullableWithAggregatesFilter<"Solicitud"> | number | null
     estado?: StringWithAggregatesFilter<"Solicitud"> | string
     solicitudPadreId?: IntNullableWithAggregatesFilter<"Solicitud"> | number | null
     creadoEn?: DateTimeWithAggregatesFilter<"Solicitud"> | Date | string
@@ -26984,6 +27022,8 @@ export namespace Prisma {
     notaContratacion?: string | null
     necesitaRevision?: boolean
     numeroContratoAdpro?: string | null
+    importadoHistorico?: boolean
+    numeroOtrosi?: number | null
     estado?: string
     creadoEn?: Date | string
     actualizadoEn?: Date | string
@@ -27044,6 +27084,8 @@ export namespace Prisma {
     notaContratacion?: string | null
     necesitaRevision?: boolean
     numeroContratoAdpro?: string | null
+    importadoHistorico?: boolean
+    numeroOtrosi?: number | null
     estado?: string
     solicitudPadreId?: number | null
     creadoEn?: Date | string
@@ -27097,6 +27139,8 @@ export namespace Prisma {
     notaContratacion?: NullableStringFieldUpdateOperationsInput | string | null
     necesitaRevision?: BoolFieldUpdateOperationsInput | boolean
     numeroContratoAdpro?: NullableStringFieldUpdateOperationsInput | string | null
+    importadoHistorico?: BoolFieldUpdateOperationsInput | boolean
+    numeroOtrosi?: NullableIntFieldUpdateOperationsInput | number | null
     estado?: StringFieldUpdateOperationsInput | string
     creadoEn?: DateTimeFieldUpdateOperationsInput | Date | string
     actualizadoEn?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -27157,6 +27201,8 @@ export namespace Prisma {
     notaContratacion?: NullableStringFieldUpdateOperationsInput | string | null
     necesitaRevision?: BoolFieldUpdateOperationsInput | boolean
     numeroContratoAdpro?: NullableStringFieldUpdateOperationsInput | string | null
+    importadoHistorico?: BoolFieldUpdateOperationsInput | boolean
+    numeroOtrosi?: NullableIntFieldUpdateOperationsInput | number | null
     estado?: StringFieldUpdateOperationsInput | string
     solicitudPadreId?: NullableIntFieldUpdateOperationsInput | number | null
     creadoEn?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -27214,6 +27260,8 @@ export namespace Prisma {
     notaContratacion?: string | null
     necesitaRevision?: boolean
     numeroContratoAdpro?: string | null
+    importadoHistorico?: boolean
+    numeroOtrosi?: number | null
     estado?: string
     solicitudPadreId?: number | null
     creadoEn?: Date | string
@@ -27264,6 +27312,8 @@ export namespace Prisma {
     notaContratacion?: NullableStringFieldUpdateOperationsInput | string | null
     necesitaRevision?: BoolFieldUpdateOperationsInput | boolean
     numeroContratoAdpro?: NullableStringFieldUpdateOperationsInput | string | null
+    importadoHistorico?: BoolFieldUpdateOperationsInput | boolean
+    numeroOtrosi?: NullableIntFieldUpdateOperationsInput | number | null
     estado?: StringFieldUpdateOperationsInput | string
     creadoEn?: DateTimeFieldUpdateOperationsInput | Date | string
     actualizadoEn?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -27317,6 +27367,8 @@ export namespace Prisma {
     notaContratacion?: NullableStringFieldUpdateOperationsInput | string | null
     necesitaRevision?: BoolFieldUpdateOperationsInput | boolean
     numeroContratoAdpro?: NullableStringFieldUpdateOperationsInput | string | null
+    importadoHistorico?: BoolFieldUpdateOperationsInput | boolean
+    numeroOtrosi?: NullableIntFieldUpdateOperationsInput | number | null
     estado?: StringFieldUpdateOperationsInput | string
     solicitudPadreId?: NullableIntFieldUpdateOperationsInput | number | null
     creadoEn?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -28689,6 +28741,8 @@ export namespace Prisma {
     notaContratacion?: SortOrder
     necesitaRevision?: SortOrder
     numeroContratoAdpro?: SortOrder
+    importadoHistorico?: SortOrder
+    numeroOtrosi?: SortOrder
     estado?: SortOrder
     solicitudPadreId?: SortOrder
     creadoEn?: SortOrder
@@ -28700,6 +28754,7 @@ export namespace Prisma {
     proyectoId?: SortOrder
     terceroId?: SortOrder
     valorFinal?: SortOrder
+    numeroOtrosi?: SortOrder
     solicitudPadreId?: SortOrder
   }
 
@@ -28751,6 +28806,8 @@ export namespace Prisma {
     notaContratacion?: SortOrder
     necesitaRevision?: SortOrder
     numeroContratoAdpro?: SortOrder
+    importadoHistorico?: SortOrder
+    numeroOtrosi?: SortOrder
     estado?: SortOrder
     solicitudPadreId?: SortOrder
     creadoEn?: SortOrder
@@ -28805,6 +28862,8 @@ export namespace Prisma {
     notaContratacion?: SortOrder
     necesitaRevision?: SortOrder
     numeroContratoAdpro?: SortOrder
+    importadoHistorico?: SortOrder
+    numeroOtrosi?: SortOrder
     estado?: SortOrder
     solicitudPadreId?: SortOrder
     creadoEn?: SortOrder
@@ -28816,6 +28875,7 @@ export namespace Prisma {
     proyectoId?: SortOrder
     terceroId?: SortOrder
     valorFinal?: SortOrder
+    numeroOtrosi?: SortOrder
     solicitudPadreId?: SortOrder
   }
 
@@ -31049,6 +31109,8 @@ export namespace Prisma {
     notaContratacion?: string | null
     necesitaRevision?: boolean
     numeroContratoAdpro?: string | null
+    importadoHistorico?: boolean
+    numeroOtrosi?: number | null
     estado?: string
     creadoEn?: Date | string
     actualizadoEn?: Date | string
@@ -31107,6 +31169,8 @@ export namespace Prisma {
     notaContratacion?: string | null
     necesitaRevision?: boolean
     numeroContratoAdpro?: string | null
+    importadoHistorico?: boolean
+    numeroOtrosi?: number | null
     estado?: string
     solicitudPadreId?: number | null
     creadoEn?: Date | string
@@ -31170,6 +31234,8 @@ export namespace Prisma {
     notaContratacion?: string | null
     necesitaRevision?: boolean
     numeroContratoAdpro?: string | null
+    importadoHistorico?: boolean
+    numeroOtrosi?: number | null
     estado?: string
     creadoEn?: Date | string
     actualizadoEn?: Date | string
@@ -31228,6 +31294,8 @@ export namespace Prisma {
     notaContratacion?: string | null
     necesitaRevision?: boolean
     numeroContratoAdpro?: string | null
+    importadoHistorico?: boolean
+    numeroOtrosi?: number | null
     estado?: string
     solicitudPadreId?: number | null
     creadoEn?: Date | string
@@ -31506,6 +31574,8 @@ export namespace Prisma {
     notaContratacion?: StringNullableFilter<"Solicitud"> | string | null
     necesitaRevision?: BoolFilter<"Solicitud"> | boolean
     numeroContratoAdpro?: StringNullableFilter<"Solicitud"> | string | null
+    importadoHistorico?: BoolFilter<"Solicitud"> | boolean
+    numeroOtrosi?: IntNullableFilter<"Solicitud"> | number | null
     estado?: StringFilter<"Solicitud"> | string
     solicitudPadreId?: IntNullableFilter<"Solicitud"> | number | null
     creadoEn?: DateTimeFilter<"Solicitud"> | Date | string
@@ -32120,6 +32190,8 @@ export namespace Prisma {
     notaContratacion?: string | null
     necesitaRevision?: boolean
     numeroContratoAdpro?: string | null
+    importadoHistorico?: boolean
+    numeroOtrosi?: number | null
     estado?: string
     creadoEn?: Date | string
     actualizadoEn?: Date | string
@@ -32178,6 +32250,8 @@ export namespace Prisma {
     notaContratacion?: string | null
     necesitaRevision?: boolean
     numeroContratoAdpro?: string | null
+    importadoHistorico?: boolean
+    numeroOtrosi?: number | null
     estado?: string
     solicitudPadreId?: number | null
     creadoEn?: Date | string
@@ -32634,6 +32708,8 @@ export namespace Prisma {
     notaContratacion?: string | null
     necesitaRevision?: boolean
     numeroContratoAdpro?: string | null
+    importadoHistorico?: boolean
+    numeroOtrosi?: number | null
     estado?: string
     creadoEn?: Date | string
     actualizadoEn?: Date | string
@@ -32693,6 +32769,8 @@ export namespace Prisma {
     notaContratacion?: string | null
     necesitaRevision?: boolean
     numeroContratoAdpro?: string | null
+    importadoHistorico?: boolean
+    numeroOtrosi?: number | null
     estado?: string
     solicitudPadreId?: number | null
     creadoEn?: Date | string
@@ -32750,6 +32828,8 @@ export namespace Prisma {
     notaContratacion?: string | null
     necesitaRevision?: boolean
     numeroContratoAdpro?: string | null
+    importadoHistorico?: boolean
+    numeroOtrosi?: number | null
     estado?: string
     creadoEn?: Date | string
     actualizadoEn?: Date | string
@@ -32809,6 +32889,8 @@ export namespace Prisma {
     notaContratacion?: string | null
     necesitaRevision?: boolean
     numeroContratoAdpro?: string | null
+    importadoHistorico?: boolean
+    numeroOtrosi?: number | null
     estado?: string
     creadoEn?: Date | string
     actualizadoEn?: Date | string
@@ -33130,6 +33212,8 @@ export namespace Prisma {
     notaContratacion?: NullableStringFieldUpdateOperationsInput | string | null
     necesitaRevision?: BoolFieldUpdateOperationsInput | boolean
     numeroContratoAdpro?: NullableStringFieldUpdateOperationsInput | string | null
+    importadoHistorico?: BoolFieldUpdateOperationsInput | boolean
+    numeroOtrosi?: NullableIntFieldUpdateOperationsInput | number | null
     estado?: StringFieldUpdateOperationsInput | string
     creadoEn?: DateTimeFieldUpdateOperationsInput | Date | string
     actualizadoEn?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -33189,6 +33273,8 @@ export namespace Prisma {
     notaContratacion?: NullableStringFieldUpdateOperationsInput | string | null
     necesitaRevision?: BoolFieldUpdateOperationsInput | boolean
     numeroContratoAdpro?: NullableStringFieldUpdateOperationsInput | string | null
+    importadoHistorico?: BoolFieldUpdateOperationsInput | boolean
+    numeroOtrosi?: NullableIntFieldUpdateOperationsInput | number | null
     estado?: StringFieldUpdateOperationsInput | string
     solicitudPadreId?: NullableIntFieldUpdateOperationsInput | number | null
     creadoEn?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -33257,6 +33343,8 @@ export namespace Prisma {
     notaContratacion?: string | null
     necesitaRevision?: boolean
     numeroContratoAdpro?: string | null
+    importadoHistorico?: boolean
+    numeroOtrosi?: number | null
     estado?: string
     creadoEn?: Date | string
     actualizadoEn?: Date | string
@@ -33316,6 +33404,8 @@ export namespace Prisma {
     notaContratacion?: string | null
     necesitaRevision?: boolean
     numeroContratoAdpro?: string | null
+    importadoHistorico?: boolean
+    numeroOtrosi?: number | null
     estado?: string
     solicitudPadreId?: number | null
     creadoEn?: Date | string
@@ -33449,6 +33539,8 @@ export namespace Prisma {
     notaContratacion?: NullableStringFieldUpdateOperationsInput | string | null
     necesitaRevision?: BoolFieldUpdateOperationsInput | boolean
     numeroContratoAdpro?: NullableStringFieldUpdateOperationsInput | string | null
+    importadoHistorico?: BoolFieldUpdateOperationsInput | boolean
+    numeroOtrosi?: NullableIntFieldUpdateOperationsInput | number | null
     estado?: StringFieldUpdateOperationsInput | string
     creadoEn?: DateTimeFieldUpdateOperationsInput | Date | string
     actualizadoEn?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -33508,6 +33600,8 @@ export namespace Prisma {
     notaContratacion?: NullableStringFieldUpdateOperationsInput | string | null
     necesitaRevision?: BoolFieldUpdateOperationsInput | boolean
     numeroContratoAdpro?: NullableStringFieldUpdateOperationsInput | string | null
+    importadoHistorico?: BoolFieldUpdateOperationsInput | boolean
+    numeroOtrosi?: NullableIntFieldUpdateOperationsInput | number | null
     estado?: StringFieldUpdateOperationsInput | string
     solicitudPadreId?: NullableIntFieldUpdateOperationsInput | number | null
     creadoEn?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -33631,6 +33725,8 @@ export namespace Prisma {
     notaContratacion?: string | null
     necesitaRevision?: boolean
     numeroContratoAdpro?: string | null
+    importadoHistorico?: boolean
+    numeroOtrosi?: number | null
     estado?: string
     creadoEn?: Date | string
     actualizadoEn?: Date | string
@@ -33690,6 +33786,8 @@ export namespace Prisma {
     notaContratacion?: string | null
     necesitaRevision?: boolean
     numeroContratoAdpro?: string | null
+    importadoHistorico?: boolean
+    numeroOtrosi?: number | null
     estado?: string
     solicitudPadreId?: number | null
     creadoEn?: Date | string
@@ -33812,6 +33910,8 @@ export namespace Prisma {
     notaContratacion?: NullableStringFieldUpdateOperationsInput | string | null
     necesitaRevision?: BoolFieldUpdateOperationsInput | boolean
     numeroContratoAdpro?: NullableStringFieldUpdateOperationsInput | string | null
+    importadoHistorico?: BoolFieldUpdateOperationsInput | boolean
+    numeroOtrosi?: NullableIntFieldUpdateOperationsInput | number | null
     estado?: StringFieldUpdateOperationsInput | string
     creadoEn?: DateTimeFieldUpdateOperationsInput | Date | string
     actualizadoEn?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -33871,6 +33971,8 @@ export namespace Prisma {
     notaContratacion?: NullableStringFieldUpdateOperationsInput | string | null
     necesitaRevision?: BoolFieldUpdateOperationsInput | boolean
     numeroContratoAdpro?: NullableStringFieldUpdateOperationsInput | string | null
+    importadoHistorico?: BoolFieldUpdateOperationsInput | boolean
+    numeroOtrosi?: NullableIntFieldUpdateOperationsInput | number | null
     estado?: StringFieldUpdateOperationsInput | string
     solicitudPadreId?: NullableIntFieldUpdateOperationsInput | number | null
     creadoEn?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -34612,6 +34714,8 @@ export namespace Prisma {
     notaContratacion?: string | null
     necesitaRevision?: boolean
     numeroContratoAdpro?: string | null
+    importadoHistorico?: boolean
+    numeroOtrosi?: number | null
     estado?: string
     solicitudPadreId?: number | null
     creadoEn?: Date | string
@@ -34665,6 +34769,8 @@ export namespace Prisma {
     notaContratacion?: string | null
     necesitaRevision?: boolean
     numeroContratoAdpro?: string | null
+    importadoHistorico?: boolean
+    numeroOtrosi?: number | null
     estado?: string
     solicitudPadreId?: number | null
     creadoEn?: Date | string
@@ -34818,6 +34924,8 @@ export namespace Prisma {
     notaContratacion?: NullableStringFieldUpdateOperationsInput | string | null
     necesitaRevision?: BoolFieldUpdateOperationsInput | boolean
     numeroContratoAdpro?: NullableStringFieldUpdateOperationsInput | string | null
+    importadoHistorico?: BoolFieldUpdateOperationsInput | boolean
+    numeroOtrosi?: NullableIntFieldUpdateOperationsInput | number | null
     estado?: StringFieldUpdateOperationsInput | string
     creadoEn?: DateTimeFieldUpdateOperationsInput | Date | string
     actualizadoEn?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -34876,6 +34984,8 @@ export namespace Prisma {
     notaContratacion?: NullableStringFieldUpdateOperationsInput | string | null
     necesitaRevision?: BoolFieldUpdateOperationsInput | boolean
     numeroContratoAdpro?: NullableStringFieldUpdateOperationsInput | string | null
+    importadoHistorico?: BoolFieldUpdateOperationsInput | boolean
+    numeroOtrosi?: NullableIntFieldUpdateOperationsInput | number | null
     estado?: StringFieldUpdateOperationsInput | string
     solicitudPadreId?: NullableIntFieldUpdateOperationsInput | number | null
     creadoEn?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -34932,6 +35042,8 @@ export namespace Prisma {
     notaContratacion?: NullableStringFieldUpdateOperationsInput | string | null
     necesitaRevision?: BoolFieldUpdateOperationsInput | boolean
     numeroContratoAdpro?: NullableStringFieldUpdateOperationsInput | string | null
+    importadoHistorico?: BoolFieldUpdateOperationsInput | boolean
+    numeroOtrosi?: NullableIntFieldUpdateOperationsInput | number | null
     estado?: StringFieldUpdateOperationsInput | string
     solicitudPadreId?: NullableIntFieldUpdateOperationsInput | number | null
     creadoEn?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -34982,6 +35094,8 @@ export namespace Prisma {
     notaContratacion?: NullableStringFieldUpdateOperationsInput | string | null
     necesitaRevision?: BoolFieldUpdateOperationsInput | boolean
     numeroContratoAdpro?: NullableStringFieldUpdateOperationsInput | string | null
+    importadoHistorico?: BoolFieldUpdateOperationsInput | boolean
+    numeroOtrosi?: NullableIntFieldUpdateOperationsInput | number | null
     estado?: StringFieldUpdateOperationsInput | string
     creadoEn?: DateTimeFieldUpdateOperationsInput | Date | string
     actualizadoEn?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -35040,6 +35154,8 @@ export namespace Prisma {
     notaContratacion?: NullableStringFieldUpdateOperationsInput | string | null
     necesitaRevision?: BoolFieldUpdateOperationsInput | boolean
     numeroContratoAdpro?: NullableStringFieldUpdateOperationsInput | string | null
+    importadoHistorico?: BoolFieldUpdateOperationsInput | boolean
+    numeroOtrosi?: NullableIntFieldUpdateOperationsInput | number | null
     estado?: StringFieldUpdateOperationsInput | string
     solicitudPadreId?: NullableIntFieldUpdateOperationsInput | number | null
     creadoEn?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -35096,6 +35212,8 @@ export namespace Prisma {
     notaContratacion?: NullableStringFieldUpdateOperationsInput | string | null
     necesitaRevision?: BoolFieldUpdateOperationsInput | boolean
     numeroContratoAdpro?: NullableStringFieldUpdateOperationsInput | string | null
+    importadoHistorico?: BoolFieldUpdateOperationsInput | boolean
+    numeroOtrosi?: NullableIntFieldUpdateOperationsInput | number | null
     estado?: StringFieldUpdateOperationsInput | string
     solicitudPadreId?: NullableIntFieldUpdateOperationsInput | number | null
     creadoEn?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -35317,6 +35435,8 @@ export namespace Prisma {
     notaContratacion?: string | null
     necesitaRevision?: boolean
     numeroContratoAdpro?: string | null
+    importadoHistorico?: boolean
+    numeroOtrosi?: number | null
     estado?: string
     solicitudPadreId?: number | null
     creadoEn?: Date | string
@@ -35367,6 +35487,8 @@ export namespace Prisma {
     notaContratacion?: NullableStringFieldUpdateOperationsInput | string | null
     necesitaRevision?: BoolFieldUpdateOperationsInput | boolean
     numeroContratoAdpro?: NullableStringFieldUpdateOperationsInput | string | null
+    importadoHistorico?: BoolFieldUpdateOperationsInput | boolean
+    numeroOtrosi?: NullableIntFieldUpdateOperationsInput | number | null
     estado?: StringFieldUpdateOperationsInput | string
     creadoEn?: DateTimeFieldUpdateOperationsInput | Date | string
     actualizadoEn?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -35425,6 +35547,8 @@ export namespace Prisma {
     notaContratacion?: NullableStringFieldUpdateOperationsInput | string | null
     necesitaRevision?: BoolFieldUpdateOperationsInput | boolean
     numeroContratoAdpro?: NullableStringFieldUpdateOperationsInput | string | null
+    importadoHistorico?: BoolFieldUpdateOperationsInput | boolean
+    numeroOtrosi?: NullableIntFieldUpdateOperationsInput | number | null
     estado?: StringFieldUpdateOperationsInput | string
     solicitudPadreId?: NullableIntFieldUpdateOperationsInput | number | null
     creadoEn?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -35481,6 +35605,8 @@ export namespace Prisma {
     notaContratacion?: NullableStringFieldUpdateOperationsInput | string | null
     necesitaRevision?: BoolFieldUpdateOperationsInput | boolean
     numeroContratoAdpro?: NullableStringFieldUpdateOperationsInput | string | null
+    importadoHistorico?: BoolFieldUpdateOperationsInput | boolean
+    numeroOtrosi?: NullableIntFieldUpdateOperationsInput | number | null
     estado?: StringFieldUpdateOperationsInput | string
     solicitudPadreId?: NullableIntFieldUpdateOperationsInput | number | null
     creadoEn?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -35639,6 +35765,8 @@ export namespace Prisma {
     notaContratacion?: string | null
     necesitaRevision?: boolean
     numeroContratoAdpro?: string | null
+    importadoHistorico?: boolean
+    numeroOtrosi?: number | null
     estado?: string
     creadoEn?: Date | string
     actualizadoEn?: Date | string
@@ -35711,6 +35839,8 @@ export namespace Prisma {
     notaContratacion?: NullableStringFieldUpdateOperationsInput | string | null
     necesitaRevision?: BoolFieldUpdateOperationsInput | boolean
     numeroContratoAdpro?: NullableStringFieldUpdateOperationsInput | string | null
+    importadoHistorico?: BoolFieldUpdateOperationsInput | boolean
+    numeroOtrosi?: NullableIntFieldUpdateOperationsInput | number | null
     estado?: StringFieldUpdateOperationsInput | string
     creadoEn?: DateTimeFieldUpdateOperationsInput | Date | string
     actualizadoEn?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -35770,6 +35900,8 @@ export namespace Prisma {
     notaContratacion?: NullableStringFieldUpdateOperationsInput | string | null
     necesitaRevision?: BoolFieldUpdateOperationsInput | boolean
     numeroContratoAdpro?: NullableStringFieldUpdateOperationsInput | string | null
+    importadoHistorico?: BoolFieldUpdateOperationsInput | boolean
+    numeroOtrosi?: NullableIntFieldUpdateOperationsInput | number | null
     estado?: StringFieldUpdateOperationsInput | string
     creadoEn?: DateTimeFieldUpdateOperationsInput | Date | string
     actualizadoEn?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -35826,6 +35958,8 @@ export namespace Prisma {
     notaContratacion?: NullableStringFieldUpdateOperationsInput | string | null
     necesitaRevision?: BoolFieldUpdateOperationsInput | boolean
     numeroContratoAdpro?: NullableStringFieldUpdateOperationsInput | string | null
+    importadoHistorico?: BoolFieldUpdateOperationsInput | boolean
+    numeroOtrosi?: NullableIntFieldUpdateOperationsInput | number | null
     estado?: StringFieldUpdateOperationsInput | string
     creadoEn?: DateTimeFieldUpdateOperationsInput | Date | string
     actualizadoEn?: DateTimeFieldUpdateOperationsInput | Date | string
