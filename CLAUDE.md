@@ -3749,6 +3749,11 @@ usando HRMS y Cartera (ya migrada) como referencia. Esto reemplaza lo de la plan
   calcado de `NAV_GROUPS`, más "Otros permisos"). Backend: `GET /roles` ahora incluye `total_usuarios`. Se sigue
   identificando el rol por `:nombre` en la URL (Solicitudes no tiene `GET /roles/:id`) y NO se agregó borrar roles
   (el backend no lo soporta; no se pidió).
+- **Eliminar roles y usuarios inactivos (2026-10-09, pedido del usuario, en Solicitudes/Cartera/HRMS):**
+  `DELETE /roles/:nombre` (solo roles no `es_admin`, sin cuentas, sin uso en aprobadores de frente ni desvíos de
+  Workflows: se rechaza con 409, no se limpia en silencio) y `DELETE /usuarios/:id/definitivo` (solo cuentas
+  inactivas, no la propia; si tiene solicitudes u otros registros por llave foránea → 409 y queda inactiva).
+  Botones con confirmación en `RolDetallePage` y `UsuarioFormPage`.
 - **Pendiente (siguientes pasos, mismo orden que en Cartera):** 4c) Proyectos/Frentes, 4d) Workflows, 5) Terceros, 6) Solicitudes (lista, detalle, formularios), 7)
   Dashboard/Actividad.
 - **Repositorio:** el proyecto se movió al repositorio nuevo `https://github.com/Gestion-servicios-TI-AED/SolicitudesDeContratacion` (2026-10-09). El historial se reescribió (147 commits, autor y committer `GEliasDev <GEliasDev@users.noreply.github.com>`, sin trailers de Claude), la plantilla ya no es submódulo y las capturas sueltas de la raíz y la carpeta `files/` quedan ignoradas. Commits en español, sin atribución a Claude; el push lo hace el usuario.
