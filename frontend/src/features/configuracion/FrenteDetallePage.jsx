@@ -11,6 +11,7 @@
 // frente configurable.
 import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
+import { Layers } from 'lucide-react';
 import { useAuth } from '../../auth/AuthContext.jsx';
 import { getFrente, updateFrente, setFrenteUsuarios, getAprobadorFrente, updateAprobadorFrente } from '../../api/frentes.js';
 import { listUsuarios } from '../../api/usuarios.js';
@@ -23,7 +24,10 @@ import { Button } from '../../components/ui/Button.jsx';
 import { Field, TextInput, Select } from '../../components/ui/Field.jsx';
 import { CheckboxListSelect } from '../../components/ui/CheckboxListSelect.jsx';
 import { CheckboxGroup } from '../../components/ui/CheckboxGroup.jsx';
-import styles from './Configuracion.module.css';
+import { Badge } from '../../components/ui/Badge.jsx';
+import layoutStyles from '../../components/layout/WizardLayout.module.css';
+import styles from './Usuarios.module.css';
+import extra from './Estructura.module.css';
 
 // Mismo orden que el flujo real de aprobación (ver EstadoTimeline.jsx#WORKFLOW_STEPS
 // y solicitud.autorizacion.js#ACCION_SLOT_FIJO/SLOT_POR_ESTADO_ORIGEN), no el
@@ -87,7 +91,7 @@ const SLOTS = [
 function SelectorUsuarios({ label, usuarios, seleccionados, onChange }) {
   return (
     <div>
-      <p style={{ fontSize: 'var(--text-label-size)', fontWeight: 600, textTransform: 'uppercase', letterSpacing: 'var(--text-label-tracking)', color: 'var(--color-ink-secondary)', margin: '0 0 6px' }}>{label}</p>
+      <p className={extra.fieldLabel}>{label}</p>
       <CheckboxListSelect
         searchPlaceholder="Buscar usuario..."
         options={usuarios.map((u) => ({ id: u.id, label: u.nombre }))}
@@ -98,20 +102,17 @@ function SelectorUsuarios({ label, usuarios, seleccionados, onChange }) {
   );
 }
 
-// Un slot de AprobadorFrente califica a alguien por persona específica O por
-// rol de sistema -- ambos controles lado a lado bajo el mismo label.
-// `rolOpciones` viene de la tabla real (GET /roles), no de un mapa fijo --
-// ver la nota de esta fecha en CLAUDE.md.
-function SelectorSlot({ label, usuarios, slot, rolOpciones, onChangeUsuarios, onChangeRoles }) {
+// Un slot de AprobadorFrente califica a alguien por persona especifica O por rol de sistema. `rolOpciones` viene
+// de la tabla real (GET /roles), no de un mapa fijo.
+function SelectorSlot({ numero, label, usuarios, slot, rolOpciones, onChangeUsuarios, onChangeRoles }) {
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-sm)', paddingBottom: 'var(--space-md)', borderBottom: '1px solid var(--color-border)' }}>
-      <SelectorUsuarios label={label} usuarios={usuarios} seleccionados={slot.usuarios} onChange={onChangeUsuarios} />
-      <CheckboxGroup
-        label="O cualquiera con estos roles"
-        options={rolOpciones}
-        value={slot.roles}
-        onChange={onChangeRoles}
-      />
+    <div className={extra.slot}>
+      <p className={extra.slotLabel}>
+        <span className={extra.slotNum}>{numero}</span>
+        {label}
+      </p>
+      <SelectorUsuarios label="Personas" usuarios={usuarios} seleccionados={slot.usuarios} onChange={onChangeUsuarios} />
+      <CheckboxGroup label="O cualquiera con estos roles" options={rolOpciones} value={slot.roles} onChange={onChangeRoles} />
     </div>
   );
 }
@@ -222,122 +223,128 @@ export function FrenteDetallePage() {
   if (!frente || !aprobadores.DIRECTA || !aprobadores.INDIRECTA) return null;
   const aprobador = aprobadores[categoriaTab];
 
+  const proyectoNombre = proyectos.find((pr) => pr.id === frente.proyecto_id)?.nombre ?? frente.proyecto?.nombre;
+  const slotsVisibles = SLOTS.filter(({ campo, soloDirecta, soloIndirecta }) => {
+    if (campo === 'director_tecnico') return tecnicoActivoPara(categoriaTab);
+    if (soloDirecta) return categoriaTab === 'DIRECTA';
+    if (soloIndirecta) return categoriaTab === 'INDIRECTA';
+    return true;
+  });
+
   return (
-    <>
+    <div className={styles.page}>
       <BackLink to="/configuracion/frentes">Frentes</BackLink>
-      <div className={styles.header}>
-        <h1 className={styles.title}>{frente.nombre}</h1>
+
+      <section className={layoutStyles.hero}>
+        <div className={layoutStyles.heroAvatar}>
+          <Layers size={34} strokeWidth={1.5} aria-hidden="true" />
+        </div>
+        <div className={layoutStyles.heroInfo}>
+          <h1 className={layoutStyles.heroName}>{frente.nombre}</h1>
+          <p className={layoutStyles.heroRole}>{proyectoNombre}</p>
+          <p className={layoutStyles.heroMeta}>{frente.etapa != null ? `Etapa ${frente.etapa} · ` : ''}{frente.usuarios.length} persona(s) asignada(s)</p>
+        </div>
+        <div className={layoutStyles.heroSide}>
+          <Badge variant="info">{frente.usuarios.length} persona(s)</Badge>
+        </div>
+      </section>
+
+      {error && (
+        <div className={styles.formError} role="alert">
+          {error}
+        </div>
+      )}
+
+      <div className={styles.formStack}>
+        <form className={styles.sectionCard} onSubmit={guardarDatos}>
+          <div>
+            <h2 className={styles.sectionTitle}>Datos del frente</h2>
+            <p className={styles.sectionHint}>Nombre, proyecto al que pertenece y etapa.</p>
+          </div>
+          <div className={styles.row}>
+            <Field className="fieldMd" label="Nombre" required>
+              {(p) => <TextInput {...p} value={datosForm.nombre} onChange={(e) => setDatosForm({ ...datosForm, nombre: e.target.value })} required />}
+            </Field>
+            <Field className="fieldMd" label="Proyecto" required>
+              {(p) => (
+                <Select {...p} value={datosForm.proyecto_id} onChange={(e) => setDatosForm({ ...datosForm, proyecto_id: e.target.value })} required>
+                  {proyectos.map((pr) => (
+                    <option key={pr.id} value={pr.id}>
+                      {pr.nombre}
+                    </option>
+                  ))}
+                </Select>
+              )}
+            </Field>
+            <Field className="fieldMd" label="Etapa">
+              {(p) => <TextInput {...p} type="number" value={datosForm.etapa} onChange={(e) => setDatosForm({ ...datosForm, etapa: e.target.value })} />}
+            </Field>
+          </div>
+          <div className={styles.actions}>
+            <span />
+            <Button type="submit" variant="primary" disabled={guardando === 'datos'}>
+              {guardando === 'datos' ? 'Guardando...' : 'Guardar datos'}
+            </Button>
+          </div>
+        </form>
+
+        <section className={styles.sectionCard}>
+          <div>
+            <h2 className={styles.sectionTitle}>Personas asignadas al frente</h2>
+            <p className={styles.sectionHint}>Solo ellas podrán elegirse como aprobadores de abajo.</p>
+          </div>
+          <SelectorUsuarios label="Personas" usuarios={usuarios} seleccionados={usuarioIds} onChange={setUsuarioIds} />
+          <div className={styles.actions}>
+            <span />
+            <Button type="button" variant="primary" onClick={guardarUsuarios} disabled={guardando === 'usuarios'}>
+              {guardando === 'usuarios' ? 'Guardando...' : 'Guardar asignación'}
+            </Button>
+          </div>
+        </section>
+
+        <section className={styles.sectionCard}>
+          <div>
+            <h2 className={styles.sectionTitle}>Aprobadores del frente</h2>
+            <p className={styles.sectionHint}>Cada paso lo puede ejecutar una persona específica, cualquiera con un rol marcado, o ambos. Las solicitudes Directas e Indirectas se configuran por separado.</p>
+          </div>
+          <div className={extra.tabs} role="tablist">
+            {['INDIRECTA', 'DIRECTA'].map((cat) => (
+              <button key={cat} type="button" role="tab" aria-selected={categoriaTab === cat} className={`${extra.tab} ${categoriaTab === cat ? extra.tabActive : ''}`} onClick={() => setCategoriaTab(cat)}>
+                {cat === 'DIRECTA' ? 'Directa' : 'Indirecta'}
+              </button>
+            ))}
+          </div>
+          <div className={extra.slots}>
+            {slotsVisibles.map(({ campo, label, labelDirecta, codigo }, index) => {
+              const labelEfectivo = categoriaTab === 'DIRECTA' && labelDirecta ? labelDirecta : label;
+              const slot = aprobador[campo];
+              // Nombre ACTUAL del rol de sistema esperado para este slot (resuelto por codigo estable, un admin puede
+              // haber renombrado el rol). Solo se ofrece a quien ya esta asignado al frente Y tiene ese rol, mas
+              // quien YA estaba elegido en el slot, para no esconder en silencio una seleccion guardada.
+              const rolActual = rolesPorCodigo[codigo] ?? codigo;
+              const usuariosElegibles = usuarios.filter((u) => (usuarioIds.includes(u.id) && (u.roles ?? []).includes(rolActual)) || slot.usuarios.includes(u.id));
+              return (
+                <SelectorSlot
+                  key={campo}
+                  numero={index + 1}
+                  label={labelEfectivo}
+                  usuarios={usuariosElegibles}
+                  slot={slot}
+                  rolOpciones={rolOpciones}
+                  onChangeUsuarios={(ids) => actualizarSlot(campo, { usuarios: ids })}
+                  onChangeRoles={(roles) => actualizarSlot(campo, { roles })}
+                />
+              );
+            })}
+          </div>
+          <div className={styles.actions}>
+            <span />
+            <Button type="button" variant="primary" onClick={guardarAprobador} disabled={guardando === 'aprobador'}>
+              {guardando === 'aprobador' ? 'Guardando...' : `Guardar aprobadores (${categoriaTab === 'DIRECTA' ? 'Directa' : 'Indirecta'})`}
+            </Button>
+          </div>
+        </section>
       </div>
-
-      {error && <p className={styles.errorBanner}>{error}</p>}
-
-      <form className={styles.card} style={{ padding: 'var(--space-lg)', display: 'flex', flexDirection: 'column', gap: 'var(--space-md)' }} onSubmit={guardarDatos}>
-        <strong style={{ fontFamily: 'var(--font-body)', fontSize: 'var(--text-title-size)' }}>Datos del frente</strong>
-        <div className={styles.row}>
-          <Field className="fieldMd" label="Nombre" required>
-            {(p) => <TextInput {...p} value={datosForm.nombre} onChange={(e) => setDatosForm({ ...datosForm, nombre: e.target.value })} required />}
-          </Field>
-          <Field className="fieldMd" label="Proyecto" required>
-            {(p) => (
-              <Select {...p} value={datosForm.proyecto_id} onChange={(e) => setDatosForm({ ...datosForm, proyecto_id: e.target.value })} required>
-                {proyectos.map((pr) => (
-                  <option key={pr.id} value={pr.id}>{pr.nombre}</option>
-                ))}
-              </Select>
-            )}
-          </Field>
-          <Field className="fieldSm" label="Etapa">
-            {(p) => <TextInput {...p} type="number" value={datosForm.etapa} onChange={(e) => setDatosForm({ ...datosForm, etapa: e.target.value })} />}
-          </Field>
-        </div>
-        <div>
-          <Button type="submit" disabled={guardando === 'datos'}>{guardando === 'datos' ? 'Guardando…' : 'Guardar datos'}</Button>
-        </div>
-      </form>
-
-      <div className={styles.card} style={{ padding: 'var(--space-lg)', display: 'flex', flexDirection: 'column', gap: 'var(--space-md)' }}>
-        <strong style={{ fontFamily: 'var(--font-body)', fontSize: 'var(--text-title-size)' }}>Usuarios asignados al frente</strong>
-        <SelectorUsuarios label="Usuarios" usuarios={usuarios} seleccionados={usuarioIds} onChange={setUsuarioIds} />
-        <div>
-          <Button type="button" onClick={guardarUsuarios} disabled={guardando === 'usuarios'}>{guardando === 'usuarios' ? 'Guardando…' : 'Guardar asignación'}</Button>
-        </div>
-      </div>
-
-      <div className={styles.card} style={{ padding: 'var(--space-lg)', display: 'flex', flexDirection: 'column', gap: 'var(--space-md)' }}>
-        <strong style={{ fontFamily: 'var(--font-body)', fontSize: 'var(--text-title-size)' }}>Aprobadores del frente</strong>
-        <p style={{ margin: 0, color: 'var(--color-ink-muted)', fontSize: 'var(--text-data-size)' }}>
-          Cada rol de responsabilidad califica a una persona específica, a cualquiera con un rol de sistema marcado, o ambos.
-        </p>
-        {/* Un mismo frente puede tener aprobadores distintos para directas
-            que para indirectas -- pestañas simples (2 opciones, ver DESIGN.md
-            "horizontal underline tabs for short sets") en vez de duplicar
-            toda la sección. */}
-        <div style={{ display: 'flex', gap: 'var(--space-md)', borderBottom: '1px solid var(--color-border)' }}>
-          {['INDIRECTA', 'DIRECTA'].map((cat) => (
-            <button
-              key={cat}
-              type="button"
-              onClick={() => setCategoriaTab(cat)}
-              style={{
-                background: 'none',
-                border: 'none',
-                cursor: 'pointer',
-                padding: '8px 4px',
-                fontSize: 'var(--text-body-size)',
-                fontWeight: categoriaTab === cat ? 600 : 400,
-                color: categoriaTab === cat ? 'var(--color-primary)' : 'var(--color-ink-muted)',
-                borderBottom: categoriaTab === cat ? '2px solid var(--color-primary)' : '2px solid transparent',
-                marginBottom: -1,
-              }}
-            >
-              {cat === 'DIRECTA' ? 'Directa' : 'Indirecta'}
-            </button>
-          ))}
-        </div>
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-md)' }}>
-          {SLOTS.filter(({ campo, soloDirecta, soloIndirecta }) => {
-            if (campo === 'director_tecnico') return tecnicoActivoPara(categoriaTab);
-            if (soloDirecta) return categoriaTab === 'DIRECTA';
-            if (soloIndirecta) return categoriaTab === 'INDIRECTA';
-            return true;
-          }).map(({ campo, label, labelDirecta, codigo }, index) => {
-            const labelEfectivo = categoriaTab === 'DIRECTA' && labelDirecta ? labelDirecta : label;
-            const slot = aprobador[campo];
-            // Nombre ACTUAL del rol de sistema esperado para este slot --
-            // resuelto contra `rolesPorCodigo` (2026-09-18), nunca el
-            // string original a secas, porque un admin puede haberlo
-            // renombrado desde /configuracion/roles.
-            const rolActual = rolesPorCodigo[codigo] ?? codigo;
-            // Solo se puede elegir como aprobador a alguien YA asignado a
-            // este frente (`usuarioIds`, la sección de arriba) Y que además
-            // tenga el rol de sistema esperado para este slot (`rolActual`,
-            // ver SLOTS arriba) -- antes se ofrecía cualquier usuario del
-            // frente sin mirar su rol, lo que permitía elegir por ejemplo
-            // un SOLICITANTE como "Director Técnico". Se conserva en la
-            // lista a quien YA esté elegido en este slot aunque ya no
-            // cumpla ninguna de las dos condiciones (`slot.usuarios`) --
-            // para no hacer desaparecer en silencio una selección real ya
-            // guardada (ej. cambió de rol o salió del frente después).
-            const usuariosElegibles = usuarios.filter(
-              (u) => (usuarioIds.includes(u.id) && (u.roles ?? []).includes(rolActual)) || slot.usuarios.includes(u.id)
-            );
-            return (
-              <SelectorSlot
-                key={campo}
-                label={`${index + 1}. ${labelEfectivo}`}
-                usuarios={usuariosElegibles}
-                slot={slot}
-                rolOpciones={rolOpciones}
-                onChangeUsuarios={(ids) => actualizarSlot(campo, { usuarios: ids })}
-                onChangeRoles={(roles) => actualizarSlot(campo, { roles })}
-              />
-            );
-          })}
-        </div>
-        <div>
-          <Button type="button" onClick={guardarAprobador} disabled={guardando === 'aprobador'}>{guardando === 'aprobador' ? 'Guardando…' : 'Guardar aprobadores'}</Button>
-        </div>
-      </div>
-    </>
+    </div>
   );
 }

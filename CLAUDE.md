@@ -3754,6 +3754,13 @@ usando HRMS y Cartera (ya migrada) como referencia. Esto reemplaza lo de la plan
   Workflows: se rechaza con 409, no se limpia en silencio) y `DELETE /usuarios/:id/definitivo` (solo cuentas
   inactivas, no la propia; si tiene solicitudes u otros registros por llave foránea → 409 y queda inactiva).
   Botones con confirmación en `RolDetallePage` y `UsuarioFormPage`.
-- **Pendiente (siguientes pasos, mismo orden que en Cartera):** 4c) Proyectos/Frentes, 4d) Workflows, 5) Terceros, 6) Solicitudes (lista, detalle, formularios), 7)
+- **Paso 4c, Configuración → Proyectos y Frentes (hecho):** `ProyectosPage` con tarjetas (Proyectos/Activos/Inactivos),
+  tabla con edición inline y tarjeta "Nuevo proyecto". `FrentesPage` con tarjetas, filtros (búsqueda y proyecto),
+  paginación, columna "Personas" (`usuarioIds` que ya devolvía `GET /frentes`) y tarjeta para crear.
+  `FrenteDetallePage` con banner de detalle y secciones Datos / Personas asignadas / Aprobadores; los pasos de
+  aprobación se muestran como bloques numerados bajo pestañas Indirecta/Directa. La lógica (SLOTS, filtro por frente y
+  rol, Director Técnico dinámico según desvíos) no cambió, solo la presentación. Estilos nuevos en
+  `Estructura.module.css`; el resto reutiliza `Usuarios.module.css`.
+- **Pendiente (siguientes pasos, mismo orden que en Cartera):** 4d) Workflows, 5) Terceros, 6) Solicitudes (lista, detalle, formularios), 7)
   Dashboard/Actividad.
 - **Repositorio:** el proyecto se movió al repositorio nuevo `https://github.com/Gestion-servicios-TI-AED/SolicitudesDeContratacion` (2026-10-09). El historial se reescribió (147 commits, autor y committer `GEliasDev <GEliasDev@users.noreply.github.com>`, sin trailers de Claude), la plantilla ya no es submódulo y las capturas sueltas de la raíz y la carpeta `files/` quedan ignoradas. Commits en español, sin atribución a Claude; el push lo hace el usuario.
