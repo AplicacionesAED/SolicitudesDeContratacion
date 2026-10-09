@@ -3,7 +3,7 @@ const express = require('express');
 const validate = require('../../middlewares/validate');
 const { requireAuth, requirePermiso } = require('../../middlewares/auth');
 const controller = require('./usuario.controller');
-const { createSchema, updateSchema } = require('./usuario.schema');
+const { createSchema, updateSchema, masivoSchema } = require('./usuario.schema');
 
 const router = express.Router();
 
@@ -18,7 +18,11 @@ router.get('/me', requireAuth, controller.getMe);
 router.get('/', requireAuth, requirePermiso('ver_usuarios'), controller.list);
 router.post('/', requireAuth, requirePermiso('ver_usuarios'), validate(createSchema, 'body'), controller.create);
 
+// Estaticas ANTES de "/:id" (si no, Express las tomaria como un id literal).
+router.post('/masivo', requireAuth, requirePermiso('ver_usuarios'), validate(masivoSchema, 'body'), controller.accionMasiva);
+
 router.get('/:id', requireAuth, requirePermiso('ver_usuarios'), controller.getById);
+router.post('/:id/generar-password', requireAuth, requirePermiso('ver_usuarios'), controller.regenerarPassword);
 router.put('/:id', requireAuth, requirePermiso('ver_usuarios'), validate(updateSchema, 'body'), controller.update);
 router.delete('/:id', requireAuth, requirePermiso('ver_usuarios'), controller.remove);
 

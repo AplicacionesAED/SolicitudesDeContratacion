@@ -1,56 +1,78 @@
-// Accesos: ruta normal con su propio nav vertical (mismo patrón que
-// cualquier detalle con Section Navigation), nunca un panel flotante/drawer/
-// modal ni una categoría del sidebar principal -- ver la regla de Accesos en
-// ARQUITECTURA-FRONTEND.md. `.contentInner` trae su propio gap (a diferencia
-// del `.content` compartido del perfil, que solo envuelve una sola card).
-//
-// 2026-09-02: tuvo una prop `fullHeight` para intentar que
-// WorkflowDiagramaPage.jsx llenara el alto de pantalla vía cascada de
-// `height:100%` -- se retiró: `<ReactLenis>` (AppShell.jsx#.scrollArea)
-// envuelve su contenido en un `<div>` INTERNO propio (el "content" de
-// Lenis, sin className/style expuesto por la librería) cuyo alto real es
-// el de SU CONTENIDO, no el del wrapper visible -- ninguna cascada de
-// `height:100%` de un hijo puede atravesar ese div para llegar al alto
-// real de `.scrollArea`. La solución real terminó siendo medir el alto
-// disponible con JS directamente en WorkflowDiagramaPage.jsx, sin depender
-// de esta cascada -- ver el comentario ahí.
-import { NavLink } from 'react-router-dom';
+// Mismo diseno que el menu de Configuracion del HRMS y Cartera (migracion de diseno 2026-10-09): nav
+// vertical a la izquierda con secciones agrupadas (titulo + icono + texto de ayuda), siempre visible
+// -- "donde estoy" nunca se pierde. Configuracion es una ruta normal, nunca un drawer/panel flotante.
+// App.jsx envuelve cada pantalla de /configuracion/* en este layout (las pantallas no lo importan).
+import { NavLink, useLocation } from 'react-router-dom';
+import { FolderKanban, GitBranch, Layers, ShieldCheck, Users } from 'lucide-react';
 import { useAuth } from '../../auth/AuthContext.jsx';
 import { usuarioTienePermiso } from '../../utils/permisos.js';
+import layoutStyles from '../../components/layout/WizardLayout.module.css';
 import styles from './AccesosLayout.module.css';
 
-// Usuarios/Roles: gateadas por permiso granular ('ver_usuarios'/'ver_roles',
-// puerto de HRMS, 2026-09-18) -- una cuenta a la que se le dio solo uno de
-// los dos no debe ver un link al otro que igual la rebotaria via
-// ProtectedRoute. Workflows/Proyectos/Frentes no se pidio desglosarlas,
-// siguen 100% soloAdmin -- se ocultan con `soloAdmin: true` en vez de un
-// permiso que no existe.
-const SECCIONES = [
-  { label: 'Usuarios', to: '/configuracion/usuarios', permiso: 'ver_usuarios' },
-  { label: 'Roles', to: '/configuracion/roles', permiso: 'ver_roles' },
-  { label: 'Workflows', to: '/configuracion/workflows', soloAdmin: true },
-  { label: 'Proyectos', to: '/configuracion/proyectos', soloAdmin: true },
-  { label: 'Frentes', to: '/configuracion/frentes', soloAdmin: true },
+// Usuarios/Roles: gateadas por permiso granular ('ver_usuarios'/'ver_roles') -- una cuenta con solo uno
+// de los dos no debe ver un link al otro que igual la rebotaria via ProtectedRoute. Workflows, Proyectos
+// y Frentes siguen 100% soloAdmin.
+export const CONFIG_GRUPOS = [
+  {
+    titulo: 'Accesos',
+    secciones: [
+      { key: 'usuarios', label: 'Usuarios', hint: 'Cuentas y roles', to: '/configuracion/usuarios', permiso: 'ver_usuarios', icon: Users },
+      { key: 'roles', label: 'Roles', hint: 'Permisos y alcance', to: '/configuracion/roles', permiso: 'ver_roles', icon: ShieldCheck },
+    ],
+  },
+  {
+    titulo: 'Flujo',
+    secciones: [{ key: 'workflows', label: 'Workflows', hint: 'Desvíos y diagrama del flujo', to: '/configuracion/workflows', soloAdmin: true, icon: GitBranch }],
+  },
+  {
+    titulo: 'Estructura',
+    secciones: [
+      { key: 'proyectos', label: 'Proyectos', hint: 'Proyectos de obra', to: '/configuracion/proyectos', soloAdmin: true, icon: FolderKanban },
+      { key: 'frentes', label: 'Frentes', hint: 'Frentes y aprobadores', to: '/configuracion/frentes', soloAdmin: true, icon: Layers },
+    ],
+  },
 ];
 
-export function AccesosLayout({ children }) {
+export function AccesosLayout({ children, className = '' }) {
   const { usuario } = useAuth();
-  const secciones = SECCIONES.filter((s) => {
-    if (s.soloAdmin) return usuario?.esAdmin;
-    if (s.permiso) return usuario?.esAdmin || usuarioTienePermiso(usuario, s.permiso);
+  const { pathname } = useLocation();
+  const visible = (seccion) => {
+    if (seccion.soloAdmin) return usuario?.esAdmin;
+    if (seccion.permiso) return usuario?.esAdmin || usuarioTienePermiso(usuario, seccion.permiso);
     return true;
-  });
+  };
+  const gruposVisibles = CONFIG_GRUPOS.map((grupo) => ({ ...grupo, secciones: grupo.secciones.filter(visible) })).filter((grupo) => grupo.secciones.length > 0);
+  // El diagrama de workflows necesita todo el ancho para el canvas: el contenido no se centra ni se limita.
+  const esDiagrama = /\/configuracion\/workflows\/[^/]+$/.test(pathname) && !/\/configuracion\/workflows\/[^/]+\/[^/]+$/.test(pathname);
 
   return (
-    <div className={styles.wrap}>
-      <nav className={styles.nav} aria-label="Secciones de Accesos">
-        {secciones.map((s) => (
-          <NavLink key={s.to} to={s.to} className={({ isActive }) => `${styles.navItem} ${isActive ? styles.navItemActive : ''}`}>
-            {s.label}
-          </NavLink>
+    <div className={`${styles.body} ${className}`}>
+      <nav className={styles.nav} aria-label="Secciones de Configuración">
+        <p className={styles.navHeading}>Configuración</p>
+        {gruposVisibles.map((grupo) => (
+          <div key={grupo.titulo} className={styles.navGroup}>
+            <span className={styles.navGroupTitle}>{grupo.titulo}</span>
+            {grupo.secciones.map((seccion) => {
+              const Icono = seccion.icon;
+              return (
+                <NavLink key={seccion.key} to={seccion.to} className={({ isActive }) => `${styles.navLink} ${isActive ? styles.navLinkActive : ''}`}>
+                  <span className={styles.navIcon}>
+                    <Icono size={17} strokeWidth={1.75} aria-hidden="true" />
+                  </span>
+                  <span className={styles.navText}>
+                    <span className={styles.navLabel}>{seccion.label}</span>
+                    <span className={styles.navHint}>{seccion.hint}</span>
+                  </span>
+                </NavLink>
+              );
+            })}
+          </div>
         ))}
       </nav>
-      <div className={styles.contentInner}>{children}</div>
+
+      <div className={`${layoutStyles.content} ${styles.content}`} data-diagrama={esDiagrama ? 'true' : undefined}>
+        <div className={styles.contentInner}>{children}</div>
+      </div>
     </div>
   );
 }

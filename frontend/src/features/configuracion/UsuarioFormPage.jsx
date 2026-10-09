@@ -1,19 +1,23 @@
-// El id especial 'nueva' activa modo creación en el mismo componente (sin
-// fetch, campos siempre editables) -- ver "Cuándo SÍ vale una página de
-// edición dedicada" en ARQUITECTURA-FRONTEND.md. Edición real: un solo botón
-// Guardar en el header, sin distinción Ver/Editar (a diferencia del patrón de
-// Vista/Edición de un registro con muchas secciones, este form es chico).
-import { useEffect, useState } from 'react';
+// Ficha de usuario con el mismo diseno que la del HRMS y Cartera (migracion de diseno 2026-10-09):
+// banner de detalle al editar, secciones en tarjetas (Cuenta / Roles y acceso / Microsoft / Contrasena) y
+// barra de acciones. El id especial 'nueva' activa modo creacion en el mismo componente.
+import { useEffect, useMemo, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { createUsuario, listUsuarios, updateUsuario } from '../../api/usuarios.js';
-import { listRoles, listFuncionalidadesDisponibles } from '../../api/roles.js';
-import { ROL_LABELS } from '../../utils/permisos.js';
 import { BackLink } from '../../components/ui/BackLink.jsx';
 import { Button } from '../../components/ui/Button.jsx';
 import { Field, TextInput } from '../../components/ui/Field.jsx';
+import { Badge } from '../../components/ui/Badge.jsx';
 import { Checkbox } from '../../components/ui/Checkbox.jsx';
 import { CheckboxGroup } from '../../components/ui/CheckboxGroup.jsx';
-import styles from './Configuracion.module.css';
+import { createUsuario, generarPasswordUsuario, getUsuario, updateUsuario } from '../../api/usuarios.js';
+import { listRoles, listFuncionalidadesDisponibles } from '../../api/roles.js';
+import { ROL_LABELS } from '../../utils/permisos.js';
+import { useAuth } from '../../auth/AuthContext.jsx';
+import layoutStyles from '../../components/layout/WizardLayout.module.css';
+import { iniciales, fmtFecha, fmtAcceso } from './usuarioUtils.js';
+import styles from './Usuarios.module.css';
+
+const PASSWORD_HELP = 'Mínimo 8 caracteres, incluye una mayúscula, un número y un carácter especial (!@#$%…).';
 
 const VACIO = { nombre: '', email: '', password: '', roles: [], funcionalidades_adicionales: [], cargo: '', telefono: '', activo: true };
 
@@ -21,31 +25,71 @@ export function UsuarioFormPage() {
   const { id } = useParams();
   const esNuevo = id === 'nueva';
   const navigate = useNavigate();
+  const { usuario: usuarioActual } = useAuth();
+
   const [form, setForm] = useState(VACIO);
-  // Lista de roles REAL (tabla `roles`, GET /roles) -- antes era un array
-  // fijo de los 9 roles sembrados originalmente; un rol creado desde
-  // RolesPage.jsx nunca aparecía acá porque ese array no se volvía a leer
-  // de ningún lado. Ver la nota de esta fecha en CLAUDE.md.
+  const [usuarioEditado, setUsuarioEditado] = useState(null);
+  // Roles y funcionalidades REALES (tablas en vivo): un rol creado desde Roles queda asignable de inmediato.
   const [roles, setRoles] = useState([]);
   const [funcionalidades, setFuncionalidades] = useState({});
-  const [error, setError] = useState(null);
+  const [loading, setLoading] = useState(!esNuevo);
   const [guardando, setGuardando] = useState(false);
+  const [error, setError] = useState(null);
+  const [fieldErrors, setFieldErrors] = useState({});
+  const [requisitosFaltantes, setRequisitosFaltantes] = useState(null);
+  const [generando, setGenerando] = useState(false);
+  const [passwordGenerada, setPasswordGenerada] = useState(null);
 
   useEffect(() => {
-    listRoles().then((res) => setRoles(res.data));
-    listFuncionalidadesDisponibles().then((res) => setFuncionalidades(res.data));
+    listRoles().then((res) => setRoles(res.data)).catch(() => {});
+    listFuncionalidadesDisponibles().then((res) => setFuncionalidades(res.data)).catch(() => {});
     if (esNuevo) return;
-    // No hay GET /usuarios/:id individual expuesto aparte de la lista --
-    // reusar la lista es suficiente para este volumen de usuarios.
-    listUsuarios().then((res) => {
-      const usuario = res.data.find((u) => String(u.id) === id);
-      if (usuario) setForm({ ...VACIO, ...usuario, password: '' });
-    });
+    getUsuario(id)
+      .then((res) => {
+        setUsuarioEditado(res.data);
+        setForm({ ...VACIO, ...res.data, cargo: res.data.cargo ?? '', telefono: res.data.telefono ?? '', password: '' });
+      })
+      .catch((err) => setError(err.message))
+      .finally(() => setLoading(false));
   }, [id, esNuevo]);
 
-  async function handleSubmit(e) {
-    e.preventDefault();
+  function setField(key, value) {
+    setForm((prev) => ({ ...prev, [key]: value }));
+  }
+
+  const opcionesRoles = useMemo(() => roles.map((rol) => ({ value: rol.nombre, label: ROL_LABELS[rol.nombre] ?? rol.nombre })), [roles]);
+  const opcionesFuncionalidades = useMemo(() => Object.entries(funcionalidades).map(([slug, info]) => ({ value: slug, label: info.nombre })), [funcionalidades]);
+  const permisosPorRol = useMemo(() => Object.fromEntries(roles.map((rol) => [rol.nombre, rol.permisos ?? []])), [roles]);
+
+  const esAdminRol = roles.some((rol) => rol.es_admin && form.roles.includes(rol.nombre));
+  // Lo que PODRA hacer: permisos de los roles elegidos + las funcionalidades concedidas a mano.
+  const permisosEfectivos = useMemo(
+    () => [...new Set([...form.roles.flatMap((rol) => permisosPorRol[rol] ?? []), ...form.funcionalidades_adicionales])],
+    [form.roles, form.funcionalidades_adicionales, permisosPorRol]
+  );
+  const esMismaCuenta = Number(usuarioActual?.id) === Number(usuarioEditado?.id);
+
+  async function handleGenerarPassword() {
+    setGenerando(true);
     setError(null);
+    setPasswordGenerada(null);
+    try {
+      const res = await generarPasswordUsuario(id);
+      setPasswordGenerada(res.data.password);
+      setField('password', '');
+      setUsuarioEditado((prev) => ({ ...prev, debe_cambiar_password: true }));
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setGenerando(false);
+    }
+  }
+
+  async function handleSubmit(event) {
+    event.preventDefault();
+    setError(null);
+    setFieldErrors({});
+    setRequisitosFaltantes(null);
     if (form.roles.length === 0) {
       setError('Selecciona al menos un rol');
       return;
@@ -59,77 +103,198 @@ export function UsuarioFormPage() {
         cargo: form.cargo || null,
         telefono: form.telefono || null,
       };
-      if (esNuevo) {
-        await createUsuario({ ...payload, email: form.email, password: form.password });
-      } else {
-        await updateUsuario(id, { ...payload, activo: form.activo, ...(form.password ? { password: form.password } : {}) });
-      }
+      if (esNuevo) await createUsuario({ ...payload, email: form.email, password: form.password });
+      else await updateUsuario(id, { ...payload, activo: form.activo, ...(form.password ? { password: form.password } : {}) });
       navigate('/configuracion/usuarios');
     } catch (err) {
       setError(err.details?.formErrors?.join(', ') ?? err.message);
-    } finally {
+      setFieldErrors(err.details?.fieldErrors ?? {});
+      setRequisitosFaltantes(err.details?.requisitos_faltantes ?? null);
       setGuardando(false);
     }
   }
 
+  if (loading) return <div className={styles.loadingState}>Cargando...</div>;
+
   return (
-    <>
+    <div className={styles.page}>
       <BackLink to="/configuracion/usuarios">Usuarios</BackLink>
-      <div className={styles.header}>
-        <h1 className={styles.title}>{esNuevo ? 'Crear usuario' : form.nombre}</h1>
-      </div>
 
-      {error && <p className={styles.errorBanner}>{error}</p>}
+      {!esNuevo && usuarioEditado ? (
+        <section className={layoutStyles.hero}>
+          <div className={layoutStyles.heroAvatar}>{iniciales(usuarioEditado.nombre)}</div>
+          <div className={layoutStyles.heroInfo}>
+            <h1 className={layoutStyles.heroName}>{usuarioEditado.nombre}</h1>
+            <p className={layoutStyles.heroRole}>{usuarioEditado.cargo ? `${usuarioEditado.cargo} · ${usuarioEditado.email}` : usuarioEditado.email}</p>
+            <p className={layoutStyles.heroMeta}>
+              Cuenta creada el {fmtFecha(usuarioEditado.creado_en)} · Último acceso: {fmtAcceso(usuarioEditado.ultima_conexion) ?? 'nunca ha iniciado sesión'}
+            </p>
+          </div>
+          <div className={layoutStyles.heroSide}>
+            <Badge variant={usuarioEditado.activo ? 'success' : 'neutral'} dot={usuarioEditado.activo}>
+              {usuarioEditado.activo ? 'Activo' : 'Inactivo'}
+            </Badge>
+            <Badge variant={usuarioEditado.debe_cambiar_password ? 'warning' : 'success'}>
+              {usuarioEditado.debe_cambiar_password ? 'Primer ingreso pendiente' : 'Primer ingreso completado'}
+            </Badge>
+          </div>
+        </section>
+      ) : (
+        <div>
+          <h1 className={styles.title}>Crear usuario</h1>
+          <p className={styles.subtitle}>Da acceso al sistema a una persona y elige los roles que definen qué puede hacer.</p>
+        </div>
+      )}
 
-      <form className={styles.card} style={{ padding: 'var(--space-lg)', display: 'flex', flexDirection: 'column', gap: 'var(--space-md)' }} onSubmit={handleSubmit}>
-        <div className={styles.row}>
-          <Field className="fieldMd" label="Nombre" required>
-            {(p) => <TextInput {...p} value={form.nombre} onChange={(e) => setForm({ ...form, nombre: e.target.value })} required />}
-          </Field>
-          <Field className="fieldMd" label="Correo" required>
-            {(p) => (
-              <TextInput {...p} type="email" value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} required disabled={!esNuevo} />
+      {error && (
+        <div className={styles.formError} role="alert">
+          <div>
+            {error}
+            {requisitosFaltantes && (
+              <ul>
+                {requisitosFaltantes.map((req) => (
+                  <li key={req}>{req}</li>
+                ))}
+              </ul>
             )}
-          </Field>
+          </div>
         </div>
+      )}
 
-        <div className={styles.row}>
-          <Field className="fieldSm" label="Cargo">
-            {(p) => <TextInput {...p} value={form.cargo ?? ''} onChange={(e) => setForm({ ...form, cargo: e.target.value })} />}
-          </Field>
-          <Field className="fieldSm" label="Teléfono">
-            {(p) => <TextInput {...p} value={form.telefono ?? ''} onChange={(e) => setForm({ ...form, telefono: e.target.value })} />}
-          </Field>
-          <Field className="fieldSm" label={esNuevo ? 'Contraseña' : 'Nueva contraseña'} required={esNuevo} helper={esNuevo ? undefined : 'Déjalo vacío para no cambiarla'}>
-            {(p) => <TextInput {...p} type="password" value={form.password} onChange={(e) => setForm({ ...form, password: e.target.value })} required={esNuevo} />}
-          </Field>
-        </div>
+      <form className={styles.formStack} onSubmit={handleSubmit}>
+        <section className={styles.sectionCard}>
+          <div>
+            <h2 className={styles.sectionTitle}>Cuenta</h2>
+            <p className={styles.sectionHint}>{esNuevo ? 'Datos con los que la persona inicia sesión.' : 'El correo no se puede cambiar.'}</p>
+          </div>
+          <div className={styles.row}>
+            <Field className={styles.fieldLg} label="Nombre" required error={fieldErrors.nombre?.[0]}>
+              {(fp) => <TextInput {...fp} value={form.nombre} onChange={(e) => setField('nombre', e.target.value)} required />}
+            </Field>
+            <Field className={styles.fieldLg} label="Correo" required={esNuevo} error={fieldErrors.email?.[0]}>
+              {(fp) => <TextInput {...fp} type="email" value={form.email} onChange={(e) => setField('email', e.target.value)} required={esNuevo} disabled={!esNuevo} />}
+            </Field>
+          </div>
+          <div className={styles.row}>
+            <Field className={styles.fieldLg} label="Cargo">
+              {(fp) => <TextInput {...fp} value={form.cargo} onChange={(e) => setField('cargo', e.target.value)} />}
+            </Field>
+            <Field className={styles.fieldLg} label="Teléfono">
+              {(fp) => <TextInput {...fp} value={form.telefono} onChange={(e) => setField('telefono', e.target.value)} />}
+            </Field>
+          </div>
+        </section>
 
-        <CheckboxGroup
-          label="Roles"
-          options={roles.map((rol) => ({ value: rol.nombre, label: ROL_LABELS[rol.nombre] ?? rol.nombre }))}
-          value={form.roles}
-          onChange={(nuevos) => setForm((prev) => ({ ...prev, roles: nuevos }))}
-        />
+        <section className={styles.sectionCard}>
+          <div>
+            <h2 className={styles.sectionTitle}>Roles y acceso</h2>
+            <p className={styles.sectionHint}>Los roles definen qué puede hacer esta cuenta; las funcionalidades adicionales suman permisos solo para ella.</p>
+          </div>
+          <CheckboxGroup label="Roles" options={opcionesRoles} value={form.roles} onChange={(valor) => setField('roles', valor)} />
+          {fieldErrors.roles?.[0] && <p className={styles.formError}>{fieldErrors.roles[0]}</p>}
 
-        <CheckboxGroup
-          label="Funcionalidades adicionales"
-          hint="Permisos concedidos a mano a este usuario, por encima de los que ya le da su rol."
-          options={Object.entries(funcionalidades).map(([slug, info]) => ({ value: slug, label: info.nombre }))}
-          value={form.funcionalidades_adicionales}
-          onChange={(nuevos) => setForm((prev) => ({ ...prev, funcionalidades_adicionales: nuevos }))}
-        />
+          <CheckboxGroup
+            label="Funcionalidades adicionales"
+            hint="Permisos concedidos a mano a este usuario, por encima de los que ya le dan sus roles."
+            options={opcionesFuncionalidades}
+            value={form.funcionalidades_adicionales}
+            onChange={(valor) => setField('funcionalidades_adicionales', valor)}
+          />
 
-        {!esNuevo && (
-          <Checkbox label="Activo" checked={form.activo} onChange={(e) => setForm({ ...form, activo: e.target.checked })} />
+          <div>
+            <p className={styles.permisosTitulo}>Lo que podrá hacer con la selección actual</p>
+            {esAdminRol ? (
+              <p className={styles.permisosVacio}>Acceso total al sistema (rol de administrador).</p>
+            ) : permisosEfectivos.length > 0 ? (
+              <div className={styles.permisosChips}>
+                {permisosEfectivos.map((slug) => (
+                  <Badge key={slug} variant="info">
+                    {funcionalidades[slug]?.nombre ?? slug}
+                  </Badge>
+                ))}
+              </div>
+            ) : (
+              <p className={styles.permisosVacio}>Ninguna funcionalidad con los roles actuales.</p>
+            )}
+          </div>
+
+          {!esNuevo && (
+            <Checkbox
+              label="Cuenta activa"
+              checked={form.activo}
+              disabled={esMismaCuenta && form.activo}
+              title={esMismaCuenta && form.activo ? 'No puedes desactivarte a ti mismo' : undefined}
+              onChange={(e) => setField('activo', e.target.checked)}
+            />
+          )}
+        </section>
+
+        {!esNuevo && usuarioEditado && (
+          <section className={styles.sectionCard}>
+            <div>
+              <h2 className={styles.sectionTitle}>Cuenta de Microsoft</h2>
+              <p className={styles.sectionHint}>La persona vincula su cuenta desde su perfil; desde aquí solo se consulta.</p>
+            </div>
+            {usuarioEditado.microsoft_id ? (
+              <div className={styles.permisosChips}>
+                <Badge variant="success" dot>
+                  Vinculada
+                </Badge>
+                <span className={styles.sectionHint}>{usuarioEditado.microsoft_email ?? 'Cuenta vinculada'}</span>
+              </div>
+            ) : (
+              <p className={styles.permisosVacio}>Todavía no vinculó su cuenta de Microsoft; entra con correo y contraseña.</p>
+            )}
+          </section>
         )}
 
-        <div>
-          <Button type="submit" disabled={guardando}>
-            {guardando ? 'Guardando…' : 'Guardar'}
+        <section className={styles.sectionCard}>
+          <div>
+            <h2 className={styles.sectionTitle}>Contraseña</h2>
+            <p className={styles.sectionHint}>
+              {esNuevo
+                ? PASSWORD_HELP
+                : usuarioEditado?.debe_cambiar_password
+                  ? 'Esta persona aún no ha cambiado su contraseña inicial.'
+                  : 'Deja el campo en blanco para conservar la contraseña actual.'}
+            </p>
+          </div>
+
+          {passwordGenerada && (
+            <div className={styles.passwordBanner} role="status">
+              Contraseña temporal generada: <span className={styles.passwordValue}>{passwordGenerada}</span> — cópiala ahora, no se volverá a mostrar. Se le pedirá cambiarla en el primer inicio de sesión.
+            </div>
+          )}
+
+          <div className={styles.row}>
+            <Field className={styles.fieldLg} label={esNuevo ? 'Contraseña' : 'Nueva contraseña'} required={esNuevo} error={fieldErrors.password?.[0]} helper={esNuevo ? undefined : PASSWORD_HELP}>
+              {(fp) => <TextInput {...fp} type="password" value={form.password} onChange={(e) => setField('password', e.target.value)} required={esNuevo} />}
+            </Field>
+
+            {!esNuevo && (
+              <div className={styles.actionRow}>
+                <span className={styles.actionRowSpacer} aria-hidden="true">
+                  &nbsp;
+                </span>
+                <Button type="button" variant="secondary" onClick={handleGenerarPassword} disabled={generando}>
+                  {generando ? 'Generando...' : 'Generar contraseña aleatoria'}
+                </Button>
+              </div>
+            )}
+          </div>
+        </section>
+
+        <div className={styles.actions}>
+          <Button type="button" variant="secondary" onClick={() => navigate('/configuracion/usuarios')}>
+            Cancelar
           </Button>
+          <div className={styles.actionsEnd}>
+            <Button type="submit" variant="primary" disabled={guardando}>
+              {guardando ? 'Guardando...' : esNuevo ? 'Crear usuario' : 'Guardar cambios'}
+            </Button>
+          </div>
         </div>
       </form>
-    </>
+    </div>
   );
 }

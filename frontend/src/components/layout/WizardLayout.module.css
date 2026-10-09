@@ -1,0 +1,551 @@
+.page {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-lg);
+  width: 100%;
+}
+
+.header {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+}
+
+.headerRow {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-md);
+}
+
+.editControls {
+  display: flex;
+  gap: var(--space-sm);
+  flex-shrink: 0;
+}
+
+.title {
+  font-family: var(--font-display);
+  font-size: var(--text-headline-size);
+  font-weight: var(--text-headline-weight);
+  margin: 0;
+}
+
+.subtitle {
+  color: var(--color-ink-muted);
+  font-size: var(--text-data-size);
+}
+
+.stepper {
+  display: flex;
+  gap: 6px;
+  margin: 6px 0 0;
+  padding: 0;
+  list-style: none;
+  overflow-x: auto;
+}
+
+.stepperItem {
+  flex: 1 1 0;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 8px;
+  background: #fff;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  color: var(--color-ink-muted);
+  font-size: var(--text-data-size);
+  font-weight: 500;
+}
+
+.stepperDot {
+  flex: 0 0 24px;
+  height: 24px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: var(--color-surface-hover);
+  color: var(--color-ink-secondary);
+  font-size: 0.75rem;
+  font-weight: 700;
+}
+
+.stepperLabel {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.stepperDone .stepperDot {
+  background: var(--color-success-surface);
+  color: var(--color-success-ink);
+}
+
+.stepperCurrent {
+  border-color: var(--color-primary);
+  color: var(--color-ink);
+  font-weight: 600;
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-primary) 12%, transparent);
+}
+
+.stepperCurrent .stepperDot {
+  background: var(--color-primary);
+  color: #fff;
+}
+
+.step {
+  flex: 1;
+  height: 4px;
+  border-radius: var(--radius-full);
+  background: var(--color-border);
+  transition: background-color var(--duration-standard) var(--ease-standard);
+}
+
+.stepDone {
+  background: var(--color-brand-deep);
+}
+
+.stepCurrent {
+  background: var(--color-primary);
+}
+
+/* --- Perfil (mode="edit"): menu vertical + contenido, en vez de tabs --- */
+
+.body {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-xl);
+}
+
+.nav {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+  width: 272px;
+  flex-shrink: 0;
+  position: sticky;
+  top: 0;
+  align-self: flex-start;
+  padding: 14px 12px;
+  background: #fff;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  /* alto de la pantalla menos topbar (68), enlace de volver y paddings del contenido */
+  max-height: calc(100dvh - 194px);
+  overflow-y: auto;
+}
+
+.navGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+/* Titulo de grupo: boton con texto en negrita y flecha -- se distingue de los
+   items (indentados, con linea guia y peso normal). */
+.navGroupButton {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  margin-top: 6px;
+  padding: 10px 12px;
+  border: none;
+  border-radius: var(--radius-md);
+  background: var(--color-surface-sunken);
+  color: var(--color-ink);
+  font-family: var(--font-display);
+  font-size: var(--text-body-size);
+  font-weight: 700;
+  text-align: left;
+  cursor: pointer;
+  transition: background-color var(--duration-fast) var(--ease-standard);
+}
+
+.navGroupButton:hover {
+  background: var(--color-surface-hover);
+}
+
+.navGroupButtonActive {
+  color: var(--color-primary);
+}
+
+.navGroupButton svg {
+  color: var(--color-ink-muted);
+  transition: transform var(--duration-fast) var(--ease-standard);
+}
+
+.navChevronOpen {
+  transform: rotate(90deg);
+}
+
+/* Items del grupo: sangria y una linea guia a la izquierda. */
+.navItems {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  margin: 4px 0 6px 18px;
+  padding-left: 8px;
+  border-left: 2px solid var(--color-border);
+}
+
+.navSearchWrap {
+  position: relative;
+  margin-bottom: var(--space-xs);
+}
+
+.navSearchIcon {
+  position: absolute;
+  left: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--color-ink-muted);
+  pointer-events: none;
+}
+
+.navSearchInput {
+  width: 100%;
+  font-family: var(--font-body);
+  font-size: var(--text-data-size);
+  color: var(--color-ink);
+  background: var(--color-surface-sunken);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  padding: 8px 10px 8px 30px;
+  transition: border-color var(--duration-fast) var(--ease-standard);
+}
+
+.navSearchInput:hover {
+  border-color: var(--color-border-strong);
+}
+
+.navSearchInput:focus {
+  outline: none;
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--color-primary) 25%, transparent);
+}
+
+.navSearchEmpty {
+  display: block;
+  padding: 9px 12px;
+  color: var(--color-ink-muted);
+  font-size: var(--text-data-size);
+}
+
+.navItem {
+  font-family: var(--font-body);
+  font-weight: 500;
+  font-size: var(--text-body-size);
+  color: var(--color-ink-secondary);
+  text-decoration: none;
+  padding: 8px 12px;
+  border-radius: var(--radius-md);
+  transition: background-color var(--duration-fast) var(--ease-standard), color var(--duration-fast) var(--ease-standard);
+}
+
+/* Debajo del nombre de la pestaña, solo cuando el resultado vino de un
+   campo (no del nombre de la pestaña misma) -- ver WizardLayout.jsx#
+   filtrarSecciones. */
+.navItemMatch {
+  display: block;
+  font-size: 0.7rem;
+  font-weight: 400;
+  color: var(--color-ink-muted);
+  margin-top: 1px;
+}
+
+.navItem:hover {
+  background: var(--color-surface-hover);
+  color: var(--color-ink);
+}
+
+.navItemActive,
+.navItemActive:hover {
+  background: var(--color-info-surface);
+  color: var(--color-primary);
+  font-weight: 600;
+}
+
+.content {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-lg);
+}
+
+/* Salto directo al campo desde el buscador (WizardLayout.jsx#resaltar) --
+   se agrega por JS via classList al `<div class="field">` que envuelve al
+   <label> que matcheo, encontrado por texto (Field.jsx no tiene forma de
+   recibir esta clase como prop sin tocar los 23 componentes que lo usan).
+   @keyframes en vez de transition -- una transition normal solo anima
+   mientras la clase esta puesta; el fade-out (lo que se ve al desaparecer)
+   necesitaria que la transition siguiera activa en el momento de sacar la
+   clase, que es justo lo que la limpieza por JS hace despues. Con una
+   animation autocontenida no hace falta sincronizar eso -- el setTimeout
+   que saca la clase en WizardLayout.jsx es solo limpieza del nombre de
+   clase, no responsable de que se vea bien. Solo color/outline, nada que
+   "se mueva" -- no hace falta guardia de prefers-reduced-motion. */
+.campoResaltado {
+  border-radius: var(--radius-sm);
+  animation: campoResaltadoPulso 2.4s ease-out;
+}
+
+@keyframes campoResaltadoPulso {
+  0%,
+  15% {
+    background: color-mix(in srgb, var(--color-primary) 16%, transparent);
+    outline: 2px solid var(--color-primary);
+    outline-offset: 2px;
+  }
+  100% {
+    background: transparent;
+    outline: 2px solid transparent;
+    outline-offset: 2px;
+  }
+}
+
+@media (max-width: 900px) {
+  .body {
+    flex-direction: column;
+    gap: var(--space-md);
+  }
+
+  /* Los grupos desplegables no caben bien como fila horizontal (un
+     acordeon no tiene a donde desplegarse en una columna angosta, mismo
+     motivo que el flyout del sidebar principal en AppShell.module.css) --
+     se quedan en columna, solo se suelta el sticky. */
+  .nav {
+    width: 100%;
+    position: static;
+    padding-bottom: var(--space-sm);
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  .content {
+    width: 100%;
+  }
+}
+
+.card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xl);
+  background: #fff;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: var(--space-xl);
+}
+
+/* Perfil del empleado (rediseno 2026-10-03): el contenedor deja de ser una
+   tarjeta unica; cada .section de WizardForm.module.css pasa a ser su propia
+   tarjeta (ver `[data-perfil]` alli). */
+.cardPerfil {
+  background: none;
+  border: none;
+  padding: 0;
+}
+
+/* ---------- Cabecera de identidad del perfil ---------- */
+.hero {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 20px;
+  padding: 22px 28px;
+  border-radius: var(--radius-lg);
+  color: #fff;
+  background:
+    radial-gradient(circle at 92% -30%, color-mix(in srgb, var(--color-gradient-mid) 50%, transparent) 0%, transparent 50%),
+    linear-gradient(120deg, var(--color-brand-deep) 0%, #14308f 60%, var(--color-primary) 100%);
+  box-shadow: 0 10px 28px color-mix(in srgb, var(--color-brand-deep) 22%, transparent);
+}
+
+.heroAvatar {
+  flex: 0 0 72px;
+  width: 72px;
+  height: 72px;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  border-radius: 50%;
+  border: 3px solid rgba(255, 255, 255, 0.85);
+  background: rgba(255, 255, 255, 0.14);
+  font-family: var(--font-display);
+  font-size: 1.5rem;
+  font-weight: 600;
+}
+
+.heroAvatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.heroInfo {
+  flex: 1 1 260px;
+  min-width: 0;
+}
+
+.heroName {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: 1.5rem;
+  font-weight: 600;
+  line-height: 1.2;
+}
+
+.heroRole {
+  margin: 4px 0 0;
+  opacity: 0.92;
+}
+
+.heroMeta {
+  margin: 2px 0 0;
+  font-size: var(--text-data-size);
+  opacity: 0.7;
+}
+
+.heroSide {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 10px;
+}
+
+.heroCompany {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  font-size: var(--text-label-size);
+  font-weight: 600;
+  letter-spacing: var(--text-label-tracking);
+  text-transform: uppercase;
+  opacity: 0.95;
+}
+
+.heroCompany img {
+  height: 32px;
+  max-width: 100px;
+  object-fit: contain;
+  padding: 4px 8px;
+  border-radius: var(--radius-md);
+  background: #fff;
+}
+
+/* ---------- Encabezado de la seccion activa ---------- */
+.contentHeader {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: var(--space-md);
+}
+
+.contentTitle {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: var(--text-headline-size);
+  font-weight: 600;
+  color: var(--color-ink);
+}
+
+.contentSub {
+  margin: 2px 0 0;
+  font-size: var(--text-data-size);
+  color: var(--color-ink-muted);
+}
+
+@media (max-width: 900px) {
+  .heroSide {
+    align-items: flex-start;
+  }
+}
+
+.loadingState {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  color: var(--color-ink-muted);
+  padding: var(--space-2xl) 0;
+  justify-content: center;
+}
+
+/* Perfil del empleado: el area completa tiene la altura de la pantalla (menos
+   topbar y paddings) y NO se desplaza. Solo se desplazan, cada uno por su
+   cuenta, el menu de secciones (izquierda) y el contenido (derecha); el boton
+   de volver queda fijo arriba. */
+.pageFija {
+  height: calc(100dvh - 68px - 64px);
+  overflow: hidden;
+}
+
+.pageFija .body {
+  flex: 1;
+  min-height: 0;
+  align-items: stretch;
+}
+
+.pageFija .nav {
+  position: static;
+  align-self: stretch;
+  max-height: none;
+  overflow-y: auto;
+}
+
+.pageFija .content {
+  min-height: 0;
+  overflow-y: auto;
+  padding-right: 6px;
+}
+
+.pageFija .content > * {
+  flex-shrink: 0;
+}
+
+@media (max-width: 900px) {
+  .pageFija {
+    height: auto;
+    overflow: visible;
+  }
+
+  .pageFija .nav {
+    max-height: 280px;
+  }
+
+  .pageFija .content {
+    overflow: visible;
+    padding-right: 0;
+  }
+}
+
+/* Cabecera de empresa (Organizacion): igual que la del empleado pero con el
+   logo sobre un recuadro blanco. */
+.heroLogo {
+  flex: 0 0 88px;
+  width: 88px;
+  height: 72px;
+  display: grid;
+  place-items: center;
+  border-radius: var(--radius-md);
+  background: #fff;
+  color: var(--color-brand-deep);
+  font-family: var(--font-display);
+  font-size: 1.75rem;
+  font-weight: 700;
+  overflow: hidden;
+}
+
+.heroLogo img {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+  padding: 6px;
+}
+
+/* Aire entre la cabecera de empresa y el encabezado de la seccion. */
+.header .hero + .headerRow {
+  margin-top: var(--space-md);
+}

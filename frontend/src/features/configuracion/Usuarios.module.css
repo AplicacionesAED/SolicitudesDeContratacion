@@ -1,0 +1,541 @@
+/* Estilos propios de Usuarios (Accesos). La lista es un clon estructural
+   exacto de la de Solicitudes de Contratación (pedido explícito del
+   usuario, 2026-09-05) -- mismos tokens que el resto del producto, valores
+   copiados tal cual de su Configuracion.module.css donde no hay token
+   equivalente ya definido (ej. el padding de celda 10px 16px). */
+
+.page {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-lg);
+  width: 100%;
+}
+
+/* Fila simple titulo + boton "Crear usuario" -- usada por la lista. */
+.listHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-md);
+}
+
+/* El formulario (crear/editar) agrega un BackLink arriba, por eso necesita
+   layout en columna -- ver .headerRow para la fila titulo+acciones que va
+   debajo del BackLink en ese caso. */
+.header {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+}
+
+.headerRow {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-md);
+}
+
+.title {
+  font-family: var(--font-display);
+  font-size: var(--text-headline-size);
+  font-weight: var(--text-headline-weight);
+  margin: 0;
+}
+
+.subtitle {
+  color: var(--color-ink-muted);
+  font-size: var(--text-data-size);
+  margin-top: 2px;
+}
+
+.searchInput {
+  width: 100%;
+  box-sizing: border-box;
+  font-family: var(--font-body);
+  font-size: var(--text-body-size);
+  color: var(--color-ink);
+  background: var(--color-surface-sunken);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  padding: 9px 12px;
+  transition: border-color var(--duration-fast) var(--ease-standard), box-shadow var(--duration-fast) var(--ease-standard);
+}
+
+.searchInput:hover {
+  border-color: var(--color-border-strong);
+}
+
+.searchInput:focus {
+  outline: none;
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--color-primary) 25%, transparent);
+}
+
+/* --- tabla --- */
+
+.tableWrap {
+  background: #fff;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  overflow: auto;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+/* Borde inferior en Azul Vibrante (2px) en vez del neutro -- pedido
+   explicito del usuario (2026-09-17): "acentos de color en
+   encabezados/secciones" tambien para las tablas. */
+.table thead th {
+  text-align: left;
+  font-family: var(--font-body);
+  font-size: var(--text-label-size);
+  font-weight: var(--text-label-weight);
+  letter-spacing: var(--text-label-tracking);
+  text-transform: uppercase;
+  color: var(--color-ink-muted);
+  background: var(--color-surface);
+  padding: 12px var(--space-md);
+  border-bottom: 1px solid var(--color-border);
+  white-space: nowrap;
+}
+
+.table tbody td {
+  padding: 12px var(--space-md);
+  font-size: var(--text-data-size);
+  color: var(--color-ink);
+  border-bottom: 1px solid var(--color-border);
+  vertical-align: middle;
+}
+
+.table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.table tbody tr:hover {
+  background: var(--color-surface-sunken);
+}
+
+.clickableRow {
+  cursor: pointer;
+}
+
+.emptyState {
+  padding: var(--space-lg);
+  color: var(--color-ink-muted);
+  font-size: var(--text-body-size);
+  text-align: center;
+}
+
+.errorBanner {
+  background: var(--color-danger-surface);
+  color: var(--color-danger-ink);
+  border-radius: var(--radius-sm);
+  padding: var(--space-sm) var(--space-md);
+  font-size: var(--text-data-size);
+}
+
+/* --- formulario (crear/editar) --- */
+
+/* Sin max-width a proposito -- Full-Width Rule de DESIGN.md: un formulario
+   usa todo el ancho de contenido disponible, nunca una columna angosta
+   centrada. Un max-width acá era lo que forzaba filas como Nombre+Email a
+   cortarse en vertical en vez de quedar lado a lado. */
+.card {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: var(--space-xl);
+}
+
+.loadingState {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  color: var(--color-ink-muted);
+  padding: var(--space-2xl) 0;
+  justify-content: center;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xl);
+}
+
+.section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+}
+
+/* Sin align-items -- mismo criterio que WizardForm.module.css (el resto del
+   producto). El stretch por defecto es lo que mantiene alineados los inputs
+   de una fila (todos arrancan justo despues de su label) sin importar si
+   alguno de los campos tiene texto de ayuda/error debajo y otro no -- un
+   align-items:flex-end ata la posicion al final de la fila MAS ALTA
+   (incluyendo ese texto de ayuda), corriendo el resto de los controles hacia
+   abajo. Ver .actionRow para un boton suelto (sin Field) que necesita
+   alinearse con el input de al lado. */
+.row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-md) var(--space-lg);
+}
+
+/* Boton suelto (no un Field) al lado de un input en la misma fila -- ej.
+   "Generar contraseña aleatoria" junto al campo Contraseña. Reusa el label
+   y el gap de Field.module.css (mismo alto que el label real de al lado,
+   vacio/oculto) para que el boton arranque a la misma altura que el input,
+   sin importar cuanto texto de ayuda tenga el campo debajo. */
+.actionRow {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.actionRowSpacer {
+  font-size: var(--text-label-size);
+  line-height: 1.3;
+  visibility: hidden;
+}
+
+.fieldMd {
+  flex: 1 1 200px;
+}
+
+.fieldLg {
+  flex: 1.5 1 260px;
+}
+
+.formError {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-sm);
+  background: var(--color-danger-surface);
+  color: var(--color-danger-ink);
+  border-radius: var(--radius-sm);
+  padding: var(--space-sm) var(--space-md);
+  font-size: var(--text-data-size);
+}
+
+.formError ul {
+  margin: var(--space-xs) 0 0;
+  padding-left: 1.1em;
+}
+
+.passwordBanner {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  background: var(--color-success-surface);
+  color: var(--color-success-ink);
+  border-radius: var(--radius-sm);
+  padding: var(--space-sm) var(--space-md);
+  font-size: var(--text-data-size);
+}
+
+.passwordValue {
+  font-family: var(--font-mono);
+  font-size: var(--text-body-size);
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+
+.actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--space-sm);
+  padding-top: var(--space-xl);
+  border-top: 1px solid var(--color-border);
+}
+
+.actionsEnd {
+  display: flex;
+  gap: var(--space-sm);
+}
+
+/* --- lista: resumen, filtros y celdas --- */
+
+.kpiRow {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+  gap: var(--space-md);
+}
+
+.kpiCard {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 16px 20px;
+  background: #fff;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+}
+
+.kpiValor {
+  font-family: var(--font-display);
+  font-size: 1.75rem;
+  font-weight: 600;
+  line-height: 1.1;
+  color: var(--color-ink);
+  font-variant-numeric: tabular-nums;
+}
+
+.kpiLabel {
+  font-size: var(--text-data-size);
+  color: var(--color-ink-muted);
+}
+
+.filters {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
+  gap: var(--space-md);
+  align-items: end;
+}
+
+.filterField {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 0;
+}
+
+.filterField > span {
+  font-size: var(--text-label-size);
+  font-weight: 600;
+  color: var(--color-ink-muted);
+}
+
+.filterSearch {
+  grid-column: span 2;
+}
+
+.control {
+  width: 100%;
+  min-height: 44px;
+  box-sizing: border-box;
+  font-family: var(--font-body);
+  font-size: var(--text-body-size);
+  color: var(--color-ink);
+  background: var(--color-surface-sunken);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: 9px 12px;
+}
+
+.control:focus {
+  outline: none;
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--color-primary) 25%, transparent);
+}
+
+.clearBtn {
+  min-height: 44px;
+  border: 1px dashed var(--color-border-strong);
+  border-radius: var(--radius-md);
+  background: transparent;
+  color: var(--color-ink-secondary);
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.clearBtn:hover {
+  background: var(--color-surface-sunken);
+  color: var(--color-ink);
+}
+
+.personaCell {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+}
+
+.avatar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: var(--radius-full);
+  background: var(--color-info-surface);
+  color: var(--color-primary);
+  font-size: 0.75rem;
+  font-weight: 600;
+  flex-shrink: 0;
+}
+
+.personaTexto {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  min-width: 220px;
+}
+
+.personaNombre {
+  font-weight: 600;
+  color: var(--color-ink);
+}
+
+.personaDoc {
+  font-size: var(--text-label-size);
+  color: var(--color-ink-muted);
+}
+
+.rolesCell {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+.dateCell {
+  font-variant-numeric: tabular-nums;
+  /* Se deja partir en dos lineas (fecha / hora): con 1440px de pantalla la tabla
+     no cabia y la columna Estado quedaba oculta tras el scroll horizontal. */
+  min-width: 92px;
+  max-width: 120px;
+}
+
+/* --- ficha: secciones en tarjeta --- */
+
+.formStack {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-lg);
+}
+
+.sectionCard {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+  padding: var(--space-xl);
+  background: #fff;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+}
+
+.sectionTitle {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: var(--text-title-size);
+  font-weight: 600;
+  color: var(--color-ink);
+}
+
+.sectionHint {
+  margin: 2px 0 0;
+  font-size: var(--text-data-size);
+  color: var(--color-ink-muted);
+}
+
+.vinculo {
+  margin: 0;
+  font-size: var(--text-data-size);
+  color: var(--color-ink-secondary);
+}
+
+.permisosTitulo {
+  margin: 0 0 8px;
+  font-size: var(--text-label-size);
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-ink-muted);
+}
+
+.permisosChips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.permisosVacio {
+  margin: 0;
+  font-size: var(--text-data-size);
+  color: var(--color-ink-muted);
+}
+
+.vinculo a {
+  color: var(--color-primary);
+  font-weight: 600;
+}
+
+/* --- acciones masivas --- */
+
+.checkCell {
+  width: 36px;
+  padding-right: 0 !important;
+}
+
+.muted {
+  color: var(--color-ink-muted);
+}
+
+.bulkBar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-sm);
+  padding: 10px 14px;
+  background: var(--color-info-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+}
+
+.bulkCount {
+  margin-right: var(--space-sm);
+  font-weight: 700;
+  color: var(--color-primary);
+}
+
+.bulkClear {
+  margin-left: auto;
+  border: none;
+  background: none;
+  color: var(--color-ink-secondary);
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+  text-decoration: underline;
+}
+
+.resultadoModal {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+  max-height: 60vh;
+  overflow-y: auto;
+}
+
+.resultadoTabla {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: var(--text-data-size);
+}
+
+.resultadoTabla th {
+  text-align: left;
+  padding: 6px 8px;
+  font-size: var(--text-label-size);
+  text-transform: uppercase;
+  color: var(--color-ink-muted);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.resultadoTabla td {
+  padding: 6px 8px;
+  border-bottom: 1px solid var(--color-border);
+}
+
+/* Aviso bajo el ultimo acceso: reemplaza a la columna "Primer ingreso", que
+   dejaba la tabla mas ancha que el contenedor y ocultaba la columna Estado. */
+.primerIngreso {
+  display: block;
+  margin-top: 2px;
+  font-size: var(--text-label-size);
+  color: var(--color-warning-ink);
+}

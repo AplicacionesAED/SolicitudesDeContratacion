@@ -3,7 +3,7 @@
 // expone `hashed_password` en la respuesta (`_enrich`).
 const ApiError = require('../../utils/ApiError');
 const { hashPassword } = require('../../utils/security');
-const { validatePassword } = require('../../utils/passwordRules');
+const { validatePassword, generateRandomPassword } = require('../../utils/passwordRules');
 const { getRolesFuncionalidades, getRolesPorCodigo } = require('../../utils/permisos');
 const Usuario = require('./usuario.model');
 
@@ -132,7 +132,49 @@ async function registrarConexion(usuario) {
   }
 }
 
+// Genera y GUARDA una contrasena temporal nueva (se devuelve una sola vez) y obliga a cambiarla al
+// entrar. Para las cuentas que se crean con una clave que el admin no quiere inventar a mano.
+async function regenerarPassword(id) {
+  const usuario = await Usuario.findByPk(id);
+  if (!usuario) throw new ApiError(404, 'Usuario no encontrado');
+  const password = generateRandomPassword();
+  await usuario.update({ hashed_password: await hashPassword(password), debe_cambiar_password: true });
+  return { password };
+}
+
+// Acciones masivas sobre varias cuentas desde la lista de Usuarios. La cuenta de quien ejecuta la
+// accion nunca se toca. Para 'generar-password' devuelve ademas las contrasenas temporales, UNA sola vez.
+async function accionMasiva({ ids, accion }, actorId) {
+  const unicos = [...new Set(ids)];
+  const usuarios = await Usuario.findAll({ where: { id: unicos } });
+  const encontrados = new Map(usuarios.map((u) => [u.id, u]));
+  const omitidos = [];
+  const objetivo = [];
+  for (const id of unicos) {
+    const usuario = encontrados.get(id);
+    if (!usuario) omitidos.push({ id, motivo: 'No existe' });
+    else if (id === Number(actorId)) omitidos.push({ id, email: usuario.email, motivo: 'Es tu propia cuenta' });
+    else objetivo.push(usuario);
+  }
+
+  if (accion === 'generar-password') {
+    const resultados = [];
+    for (const usuario of objetivo) {
+      const password = generateRandomPassword();
+      await usuario.update({ hashed_password: await hashPassword(password), debe_cambiar_password: true });
+      resultados.push({ id: usuario.id, nombre: usuario.nombre, email: usuario.email, password });
+    }
+    return { procesados: resultados.length, omitidos, resultados };
+  }
+
+  const activo = accion === 'activar';
+  for (const usuario of objetivo) await usuario.update({ activo });
+  return { procesados: objetivo.length, omitidos };
+}
+
 module.exports = {
+  regenerarPassword,
+  accionMasiva,
   getMe,
   list,
   create,

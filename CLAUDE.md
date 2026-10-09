@@ -3733,7 +3733,15 @@ usando HRMS y Cartera (ya migrada) como referencia. Esto reemplaza lo de la plan
   EN_REVISION); "Pendientes de mi aprobación" ahora sale de la misma lista de atención. Para un ADMIN la
   lista de atención muestra todo lo que está en el flujo (puede actuar sobre cualquier solicitud). Los
   accesos rápidos del Inicio anterior se retiraron (el menú lateral ya cubre eso).
-- **Pendiente (siguientes pasos, mismo orden que en Cartera):** 4) Configuración (Usuarios, Roles,
-  Proyectos, Frentes, Workflows), 5) Terceros, 6) Solicitudes (lista, detalle, formularios), 7)
+- **Paso 4a, Configuración → Usuarios (hecho):** `AccesosLayout.jsx` ahora agrupa el menú (Accesos: Usuarios/Roles;
+  Flujo: Workflows; Estructura: Proyectos/Frentes) con icono + texto de ayuda, filtrado por permiso/`soloAdmin`.
+  `UsuariosPage.jsx`: tarjetas (Cuentas/Activas/Inactivas/Sin primer ingreso/Con Microsoft), filtros con etiqueta,
+  acciones masivas (generar contraseñas temporales con CSV, activar, inactivar) y tabla con avatar.
+  `UsuarioFormPage.jsx`: banner de detalle al editar, secciones Cuenta / Roles y acceso (chips con los permisos
+  efectivos) / Cuenta de Microsoft / Contraseña con "Generar contraseña aleatoria". Backend nuevo:
+  `POST /usuarios/masivo` (máx. 50 ids, nunca toca la cuenta propia) y `POST /usuarios/:id/generar-password`
+  (`generateRandomPassword` en `utils/passwordRules.js`); las contraseñas generadas se muestran UNA sola vez.
+  No hay eliminación física de usuarios (solo inactivar), a propósito.
+- **Pendiente (siguientes pasos, mismo orden que en Cartera):** 4b) Roles, 4c) Proyectos/Frentes, 4d) Workflows, 5) Terceros, 6) Solicitudes (lista, detalle, formularios), 7)
   Dashboard/Actividad.
 - **Repositorio:** el proyecto se movió al repositorio nuevo `https://github.com/Gestion-servicios-TI-AED/SolicitudesDeContratacion` (2026-10-09). El historial se reescribió (147 commits, autor y committer `GEliasDev <GEliasDev@users.noreply.github.com>`, sin trailers de Claude), la plantilla ya no es submódulo y las capturas sueltas de la raíz y la carpeta `files/` quedan ignoradas. Commits en español, sin atribución a Claude; el push lo hace el usuario.
