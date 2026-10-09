@@ -370,7 +370,40 @@ async function puedeEditarSolicitud(solicitud, usuario) {
   return true;
 }
 
+// Estado -> la acción de APROBACIÓN que corresponde a ese paso (nunca
+// DEVOLVER/REVISAR/ANULAR/REENVIAR -- esas son vías alternas, no "lo que
+// este usuario debe aprobar ahora"). Usado por contarPendientesMiAprobacion
+// para saber, por cada solicitud candidata, contra qué acción preguntarle
+// a puedeEjecutarAccion.
+const ACCION_PRINCIPAL_POR_ESTADO = {
+  PENDIENTE_DIRECTOR_TECNICO: 'APROBAR_DIRECTOR_TECNICO',
+  ENVIADA: 'APROBAR_DIRECTOR',
+  // Doble paso del Residente Administrativo en Directa (2026-09-21): entre la
+  // aprobación del Director de Obra y la proyección de Controles, la
+  // solicitud queda acá y quien debe actuar es el Residente Administrativo
+  // (mismo slot que REGISTRAR_ADPRO). No entra a ESTADOS_ACTIVOS a propósito
+  // -- es un paso intermedio del flujo Directa, igual que
+  // PENDIENTE_DIRECTOR_TECNICO para las aprobaciones previas. El contador
+  // "pendientes por mi aprobación" del Residente Administrativo se arma con
+  // Object.keys(ACCION_PRINCIPAL_POR_ESTADO) + CAMPOS_PENDIENTES (que ya
+  // incluye responsable_residente_administrativo_id), así cae gratis.
+  PENDIENTE_RESIDENTE_ADMINISTRATIVO: 'APROBAR_RESIDENTE_ADMINISTRATIVO',
+  EN_PROYECCION_CONTROLES: 'APROBAR_PROYECCION',
+  APROBADA_DIRECTOR: 'TRAMITAR_OK',
+  EN_TRAMITE_CONTRATOS: 'TRAMITAR_OK',
+  CREACION_MINUTA: 'AVANZAR_CONTRATOS',
+  EN_CONTROLES: 'REGISTRAR_ADPRO',
+  APROBACION_FINAL: 'APROBAR_FINAL',
+  // Paso nuevo AL FINAL del flujo Directa (2026-10-09) -- mismo criterio
+  // que PENDIENTE_RESIDENTE_ADMINISTRATIVO: cae gratis vía
+  // Object.keys(ACCION_PRINCIPAL_POR_ESTADO) + CAMPOS_PENDIENTES (que ya
+  // incluye responsable_gerente_compras_id).
+  PENDIENTE_GERENTE_COMPRAS: 'APROBAR_GERENTE_COMPRAS',
+};
+
 module.exports = {
+  ACCION_PRINCIPAL_POR_ESTADO,
+  SNAPSHOT_POR_SLOT,
   ESTADOS_ORIGEN,
   ESTADO_DESTINO,
   resolverSlot,

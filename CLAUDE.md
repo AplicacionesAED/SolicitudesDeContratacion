@@ -3774,5 +3774,17 @@ usando HRMS y Cartera (ya migrada) como referencia. Esto reemplaza lo de la plan
   `Modal`). Sin cambios de lógica ni de backend. `Terceros.module.css` queda solo con lo específico (vencimiento,
   infoGrid, chips); lo demás reutiliza `Usuarios.module.css`. Verificado en navegador con sesión simulada (lista,
   ficha, nuevo y especialidades, sin errores de la app).
-- **Pendiente (siguientes pasos):** 6) Solicitudes (lista, detalle, formularios), 7) Actividad y Perfil.
+- **Paso 6a, bandeja de Solicitudes (hecho; reforma de verdad, no solo estilo):** `SolicitudesPage` deja de ser una tabla
+  con filtros y pasa a ser una bandeja de trabajo: vistas con contador (Requieren tu acción / En trámite / Por corregir /
+  Borradores / Completadas / Anuladas / Todas; abre en la primera si hay algo), 4 tarjetas accionables (incluye
+  "8+ días en el mismo paso" y el valor en trámite), por fila la etapa con barra de avance, EN PODER DE QUIÉN está y
+  cuántos días lleva en ese paso (semáforo: 4+ atención, 8+ crítico), las que le tocan al usuario destacadas y primero,
+  y exportar a CSV. Backend (`solicitud.service.js#list`) ahora devuelve por solicitud `diasEnPaso` (desde el último
+  movimiento del historial), `enPoderDe` ({id, nombre} del responsable snapshot del paso actual, null si el paso se
+  resuelve solo por el frente) y `requiereMiAccion` (misma `puedeEjecutarAccion` del detalle), todo en lote.
+  `ACCION_PRINCIPAL_POR_ESTADO` se movió de `dashboard.service.js` a `solicitud.autorizacion.js` (fuente única, exportada
+  junto con `SNAPSHOT_POR_SLOT`). El "paso N de M" de la barra es solo visual (`RECORRIDO` en la página), no gobierna el
+  flujo. El filtro por estado de la API sigue existiendo pero la página ya no lo usa (las vistas filtran en el cliente).
+  Verificado: `list()` contra la base real de dev y la pantalla en navegador con datos simulados de cada caso.
+- **Pendiente (siguientes pasos):** 6b) detalle de la solicitud y formularios, 7) Actividad y Perfil.
 - **Repositorio:** el proyecto se movió al repositorio nuevo `https://github.com/Gestion-servicios-TI-AED/SolicitudesDeContratacion` (2026-10-09). El historial se reescribió (147 commits, autor y committer `GEliasDev <GEliasDev@users.noreply.github.com>`, sin trailers de Claude), la plantilla ya no es submódulo y las capturas sueltas de la raíz y la carpeta `files/` quedan ignoradas. Commits en español, sin atribución a Claude; el push lo hace el usuario.

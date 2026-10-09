@@ -1,0 +1,196 @@
+/* Bandeja de solicitudes (rediseno 2026-10-09): vistas con contador, seguimiento por etapa y antiguedad. */
+.tabs {
+  display: flex;
+  gap: var(--space-xs);
+  flex-wrap: wrap;
+  padding: 4px;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+}
+
+.tab {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  font: inherit;
+  font-size: var(--text-data-size);
+  font-weight: 500;
+  color: var(--color-ink-secondary);
+  padding: 8px 14px;
+  border-radius: var(--radius-sm);
+  transition: background 120ms ease, color 120ms ease;
+}
+
+.tab:hover {
+  background: var(--color-surface-hover);
+  color: var(--color-ink);
+}
+
+.tabActive {
+  background: color-mix(in srgb, var(--color-primary) 12%, var(--color-surface));
+  color: var(--color-primary);
+  font-weight: 600;
+}
+
+.tabCount {
+  min-width: 22px;
+  padding: 1px 7px;
+  border-radius: var(--radius-full);
+  font-size: 12px;
+  font-weight: 600;
+  text-align: center;
+  background: var(--color-surface-sunken);
+  color: var(--color-ink-secondary);
+}
+
+.tabActive .tabCount {
+  background: var(--color-primary);
+  color: #fff;
+}
+
+.tabAlert .tabCount {
+  background: var(--color-warning-surface);
+  color: var(--color-warning-ink);
+}
+
+.tabAlert.tabActive .tabCount {
+  background: var(--color-warning-ink);
+  color: #fff;
+}
+
+.kpiClickable {
+  cursor: pointer;
+  text-align: left;
+  font: inherit;
+  transition: border-color 120ms ease, box-shadow 120ms ease;
+}
+
+.kpiClickable:hover {
+  border-color: var(--color-primary);
+}
+
+.kpiHint {
+  font-size: 12px;
+  color: var(--color-ink-muted);
+}
+
+.solicitudCell {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.consecutivo {
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-weight: 600;
+  font-size: var(--text-data-size);
+  color: var(--color-ink);
+}
+
+.subLine {
+  font-size: 12px;
+  color: var(--color-ink-muted);
+}
+
+.tocaTi {
+  display: inline-block;
+  margin-left: 8px;
+  padding: 1px 8px;
+  border-radius: var(--radius-full);
+  font-size: 11px;
+  font-weight: 600;
+  background: var(--color-warning-surface);
+  color: var(--color-warning-ink);
+  vertical-align: middle;
+}
+
+.etapaCell {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 150px;
+}
+
+.progress {
+  position: relative;
+  height: 4px;
+  border-radius: 2px;
+  background: var(--color-surface-sunken);
+  overflow: hidden;
+}
+
+.progressFill {
+  position: absolute;
+  inset: 0 auto 0 0;
+  border-radius: 2px;
+  background: var(--color-primary);
+}
+
+.progressDone {
+  background: var(--color-success-ink);
+}
+
+.paso {
+  font-size: 12px;
+  color: var(--color-ink-muted);
+}
+
+.poderCell {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.dias {
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.diasOk {
+  color: var(--color-ink-muted);
+}
+
+.diasAtencion {
+  color: var(--color-warning-ink);
+}
+
+.diasCritico {
+  color: var(--color-danger-ink);
+}
+
+.filaCritica {
+  box-shadow: inset 3px 0 0 var(--color-danger-ink);
+}
+
+.filaAtencion {
+  box-shadow: inset 3px 0 0 var(--color-warning-ink);
+}
+
+.filaTocaTi {
+  background: color-mix(in srgb, var(--color-primary) 5%, var(--color-surface));
+}
+
+.avanzados {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+  gap: var(--space-md);
+  padding: var(--space-md);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+}
+
+.resultCount {
+  font-size: var(--text-data-size);
+  color: var(--color-ink-muted);
+  margin: 0;
+}
+
+.valorTotal {
+  font-weight: 600;
+}

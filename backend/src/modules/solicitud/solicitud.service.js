@@ -25,7 +25,7 @@ const MemoriaFila = require('./memoriaFila.model');
 const { getRolesAlcanceSolicitudes, resolverAlcanceSolicitudes, getRolesFuncionalidades, getRolesPorCodigo } = require('../../utils/permisos');
 const { generarConsecutivo } = require('./solicitud.consecutivo');
 const { nextNumeroOtrosi, pickMostRecentOtrosi } = require('./solicitud.otrosi');
-const { puedeGestionarSolicitud, getAccionesDisponibles, puedeEditarSolicitud } = require('./solicitud.autorizacion');
+const { puedeGestionarSolicitud, getAccionesDisponibles, puedeEditarSolicitud, puedeEjecutarAccion, resolverSlot, ACCION_PRINCIPAL_POR_ESTADO, SNAPSHOT_POR_SLOT } = require('./solicitud.autorizacion');
 
 const CAMPO_DB = {
   proyectoId: 'proyecto_id',
@@ -223,13 +223,59 @@ async function list(filtros, usuario) {
     attributes: ['solicitud_padre_id', 'consecutivo'],
   });
 
-  return solicitudes.map((s) => {
+  // Seguimiento de la bandeja (rediseno 2026-10-09): en poder de quien esta cada solicitud, hace cuantos dias
+  // se movio por ultima vez y si ESTE usuario puede actuar ahora. Todo en lote (una query de historial y una de
+  // nombres) para no multiplicar consultas por fila.
+  const ultimoMovimiento = new Map();
+  if (parentIds.length > 0) {
+    const movimientos = await HistorialSolicitud.findAll({
+      where: { solicitud_id: { [Op.in]: parentIds } },
+      attributes: ['solicitud_id', [sequelize.fn('MAX', sequelize.col('fecha')), 'ultima']],
+      group: ['solicitud_id'],
+      raw: true,
+    });
+    for (const m of movimientos) ultimoMovimiento.set(m.solicitud_id, m.ultima);
+  }
+  const idsResponsables = new Set();
+  const enPoder = new Map();
+  for (const s of solicitudes) {
+    const accion = ACCION_PRINCIPAL_POR_ESTADO[s.estado];
+    if (!accion) continue;
+    const slot = resolverSlot(accion, s.estado, s.categoria);
+    const campo = slot ? SNAPSHOT_POR_SLOT[slot] : null;
+    const usuarioId = campo ? s[campo] : null;
+    enPoder.set(s.id, usuarioId ?? null);
+    if (usuarioId) idsResponsables.add(usuarioId);
+  }
+  const nombres = new Map();
+  if (idsResponsables.size > 0) {
+    const usuariosResp = await Usuario.findAll({ where: { id: { [Op.in]: [...idsResponsables] } }, attributes: ['id', 'nombre'] });
+    for (const u of usuariosResp) nombres.set(u.id, u.nombre);
+  }
+  const ahora = Date.now();
+  const funcionalidadesPorRol = await getRolesFuncionalidades();
+
+  const resultado = [];
+  for (const s of solicitudes) {
     const enriched = _enrichBase(s);
     const activo = activeOtrosis.find((ao) => ao.solicitud_padre_id === s.id);
     enriched.activeOtrosi = activo ? { consecutivo: activo.consecutivo } : null;
     enriched.tieneOtrosis = (s.otrosis ?? []).length > 0;
-    return enriched;
-  });
+    const accion = ACCION_PRINCIPAL_POR_ESTADO[s.estado];
+    if (accion) {
+      const desde = ultimoMovimiento.get(s.id) ?? s.actualizado_en ?? s.creado_en;
+      enriched.diasEnPaso = Math.max(0, Math.floor((ahora - new Date(desde).getTime()) / 86400000));
+      const usuarioId = enPoder.get(s.id);
+      enriched.enPoderDe = usuarioId ? { id: usuarioId, nombre: nombres.get(usuarioId) ?? null } : null;
+      enriched.requiereMiAccion = await puedeEjecutarAccion(s, usuario, accion, funcionalidadesPorRol);
+    } else {
+      enriched.diasEnPaso = null;
+      enriched.enPoderDe = null;
+      enriched.requiereMiAccion = false;
+    }
+    resultado.push(enriched);
+  }
+  return resultado;
 }
 
 // Cronograma con fases (ordenadas) + sus actividades, y las actividades
