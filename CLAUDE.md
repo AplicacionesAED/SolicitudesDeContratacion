@@ -3692,7 +3692,17 @@ usando HRMS y Cartera (ya migrada) como referencia. Esto reemplaza lo de la plan
   Verificado en navegador (escritorio y móvil 390 px, error de SSO, credenciales incorrectas,
   mostrar contraseña, pantalla de cambio de contraseña con sesión simulada) y el resto de la app
   (Inicio, Solicitudes, Terceros, Roles) renderiza sin errores con los tokens nuevos.
-- **Pendiente (siguientes pasos, mismo orden que en Cartera):** 2) sidebar y topbar, 3) componentes
+- **Paso 2 — menú lateral y barra superior (hecho):** `AppShell.module.css` y `UserMenu.module.css`
+  copiados tal cual del HRMS (idénticos a los de Cartera). `AppShell.jsx`: etiqueta "Menú", entrada fija
+  "Inicio", migas de pan (grupo > pantalla, derivadas de `NAV_GROUPS`; el detalle `/solicitudes/:id` →
+  "Solicitudes > Detalle de la solicitud", `/configuracion/*` → "Configuración"), item activo por la
+  ruta más específica (`encontrarItemActivo`: "Todas las solicitudes" y "Nueva solicitud" ya no se
+  encienden a la vez) y divisor antes del menú de usuario. Se conservan `NAV_GROUPS` con permisos
+  (`navModulos.jsx`), el engranaje de Configuración y la presencia. `UserMenu.jsx` con flecha y "Mi perfil"
+  para todos. `NotificacionesBell` rediseñada con el CSS de la campana del HRMS (contador, "Marcar todas
+  como leídas", pestañas Todas/Sin leer, icono por tipo según el título, hora relativa, punto de "sin leer",
+  estado "Estás al día") y SIN tocar su lógica (SSE en vivo, marcar leída y navegar).
+- **Pendiente (siguientes pasos, mismo orden que en Cartera):** 3) componentes
   base (`Button`, `Badge`, `Field`, `Pagination`, `Modal`…), 4) Configuración (Usuarios, Roles,
   Proyectos, Frentes, Workflows), 5) Terceros, 6) Solicitudes (lista, detalle, formularios), 7)
   Dashboard/Actividad.

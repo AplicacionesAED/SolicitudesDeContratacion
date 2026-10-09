@@ -1,35 +1,54 @@
-// Puerto de src/shared/layout/notificacionesBell.tsx -- mismo patrón de
-// dropdown que UserMenu.jsx (containerRef + onBlurCapture), pero con SSE en
-// vez de polling para el badge de no-leídas.
+// Campana de notificaciones con el mismo diseno que la del HRMS (migracion de diseno
+// 2026-10-09): contador sobre la campana, panel con titulo + "Marcar todas como leidas",
+// pestanas Todas / Sin leer, items con icono por tipo, hora relativa y punto de "sin leer".
+// Lo propio de Solicitudes se conserva: el badge de no leidas llega en vivo por SSE (en vez
+// del polling del HRMS) y cada item marca como leida y navega a la solicitud.
 //
-// El backend está en otro origen (:3021 vs :5193 en dev), así que a
-// diferencia del original (`new EventSource("/api/notificaciones/stream")`,
-// mismo origen que Next.js) hace falta la URL absoluta + `withCredentials:
-// true` para que la cookie de sesión httpOnly viaje con la conexión SSE.
+// El backend esta en otro origen (:3021 vs :5193 en dev), asi que hace falta la URL absoluta
+// + `withCredentials: true` para que la cookie de sesion httpOnly viaje con la conexion SSE.
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Bell, CheckCheck } from 'lucide-react';
+import { Bell, CheckCircle2, ClipboardList, XCircle } from 'lucide-react';
 import { listarNotificaciones, marcarLeida, marcarTodasLeidas } from '../../api/notificaciones.js';
 import { API_BASE_URL } from '../../api/client.js';
 import styles from './NotificacionesBell.module.css';
 
-function formatRelative(dateStr) {
-  const diff = Date.now() - new Date(dateStr).getTime();
-  const mins = Math.floor(diff / 60_000);
-  if (mins < 1) return 'Ahora';
-  if (mins < 60) return `Hace ${mins} min`;
-  const horas = Math.floor(mins / 60);
+const TABS = [
+  { key: 'todas', label: 'Todas' },
+  { key: 'sin-leer', label: 'Sin leer' },
+];
+
+function haceCuanto(iso) {
+  const min = Math.max(0, Math.floor((Date.now() - new Date(iso).getTime()) / 60000));
+  if (min < 1) return 'Ahora';
+  if (min < 60) return `Hace ${min} min`;
+  const horas = Math.floor(min / 60);
   if (horas < 24) return `Hace ${horas} h`;
   const dias = Math.floor(horas / 24);
-  return `Hace ${dias} día${dias !== 1 ? 's' : ''}`;
+  return dias === 1 ? 'Ayer' : `Hace ${dias} días`;
 }
+
+// Icono segun el titulo que genera el backend (notificacion.service.js): lo que devuelve o
+// anula una solicitud llama la atencion (rojo), lo aprobado/completado es positivo (verde) y
+// el resto -- pendientes de tu decision, nuevas en tramite, comentarios -- es informativo.
+function tipoDe(notif) {
+  if (/devuelt|anulad|requiere revisi/i.test(notif.titulo)) return 'rechazo';
+  if (/aprobad|completad/i.test(notif.titulo)) return 'ok';
+  return 'info';
+}
+
+const ICONO_POR_TIPO = {
+  rechazo: { Icono: XCircle, clase: 'iconoRechazo' },
+  ok: { Icono: CheckCircle2, clase: 'iconoOk' },
+  info: { Icono: ClipboardList, clase: 'iconoInfo' },
+};
 
 export function NotificacionesBell() {
   const navigate = useNavigate();
   const [open, setOpen] = useState(false);
+  const [tab, setTab] = useState('todas');
   const [notificaciones, setNotificaciones] = useState([]);
   const [totalNoLeidas, setTotalNoLeidas] = useState(0);
-  const [marcandoTodas, setMarcandoTodas] = useState(false);
   const [pulso, setPulso] = useState(false);
 
   const containerRef = useRef(null);
@@ -107,7 +126,6 @@ export function NotificacionesBell() {
   }
 
   async function handleMarcarTodas() {
-    setMarcandoTodas(true);
     try {
       await marcarTodasLeidas();
       setNotificaciones((prev) => prev.map((n) => ({ ...n, leida: true })));
@@ -115,10 +133,11 @@ export function NotificacionesBell() {
       prevCountRef.current = 0;
     } catch {
       // ignore
-    } finally {
-      setMarcandoTodas(false);
     }
   }
+
+  const visibles = tab === 'sin-leer' ? notificaciones.filter((n) => !n.leida) : notificaciones;
+  const mensajeVacio = tab === 'sin-leer' ? 'No tienes notificaciones sin leer.' : 'No tienes notificaciones pendientes.';
 
   return (
     <div ref={containerRef} className={styles.container} onBlurCapture={closeIfFocusLeft}>
@@ -130,42 +149,78 @@ export function NotificacionesBell() {
         aria-label={`Notificaciones${totalNoLeidas > 0 ? ` (${totalNoLeidas} sin leer)` : ''}`}
         onClick={() => setOpen((v) => !v)}
       >
-        <Bell size={18} strokeWidth={1.75} className={pulso ? styles.bellPulse : undefined} aria-hidden="true" />
-        {totalNoLeidas > 0 && <span className={`${styles.badge} ${pulso ? styles.badgePulse : ''}`}>{totalNoLeidas > 99 ? '99+' : totalNoLeidas}</span>}
+        <Bell size={20} strokeWidth={1.75} aria-hidden="true" />
+        {totalNoLeidas > 0 && <span className={`${styles.count} ${pulso ? styles.countPulse : ''}`}>{totalNoLeidas > 9 ? '9+' : totalNoLeidas}</span>}
       </button>
 
       {open && (
         <div className={styles.panel} role="menu">
           <div className={styles.panelHeader}>
-            <span className={styles.panelTitle}>Notificaciones</span>
+            <div className={styles.panelTitulo}>
+              <span>Notificaciones</span>
+              {totalNoLeidas > 0 && <span className={styles.contador}>{totalNoLeidas}</span>}
+            </div>
             {totalNoLeidas > 0 && (
-              <button type="button" className={styles.marcarTodas} disabled={marcandoTodas} onClick={handleMarcarTodas}>
-                <CheckCheck size={13} strokeWidth={1.75} aria-hidden="true" />
-                Marcar todas
+              <button type="button" className={styles.readAll} onClick={handleMarcarTodas}>
+                Marcar todas como leídas
               </button>
             )}
           </div>
 
-          {/* data-lenis-prevent -- el <ReactLenis> de AppShell.jsx captura
-              el wheel sobre toda el area de scroll; sin esto, hacer scroll
-              sobre esta lista mueve la página de fondo en vez de a sí misma. */}
-          <div className={styles.list} data-lenis-prevent>
-            {notificaciones.length === 0 ? (
-              <div className={styles.empty}>
-                <Bell size={26} strokeWidth={1.5} aria-hidden="true" />
-                <p>No tienes notificaciones</p>
+          <div className={styles.tabs} role="tablist" aria-label="Filtrar notificaciones">
+            {TABS.map((t) => (
+              <button
+                key={t.key}
+                type="button"
+                role="tab"
+                aria-selected={tab === t.key}
+                className={`${styles.tab} ${tab === t.key ? styles.tabActive : ''}`}
+                onClick={() => setTab(t.key)}
+              >
+                {t.label}
+              </button>
+            ))}
+          </div>
+
+          {/* data-lenis-prevent -- el <ReactLenis> de AppShell.jsx captura el wheel sobre toda el
+              area de scroll; sin esto, hacer scroll sobre esta lista mueve la pagina de fondo. */}
+          <div className={styles.cuerpo} data-lenis-prevent>
+            {visibles.length === 0 ? (
+              <div className={styles.vacio}>
+                <span className={styles.vacioIcono}>
+                  <Bell size={22} strokeWidth={1.5} aria-hidden="true" />
+                </span>
+                <strong>Estás al día</strong>
+                <span>{mensajeVacio}</span>
               </div>
             ) : (
-              notificaciones.map((notif) => (
-                <button key={notif.id} type="button" className={`${styles.item} ${!notif.leida ? styles.itemNoLeida : ''}`} onClick={() => handleClick(notif)}>
-                  {!notif.leida && <span className={styles.dot} aria-hidden="true" />}
-                  <span className={styles.itemBody}>
-                    <span className={styles.itemTitulo}>{notif.titulo}</span>
-                    <span className={styles.itemMensaje}>{notif.mensaje}</span>
-                    <span className={styles.itemFecha}>{formatRelative(notif.creadoEn)}</span>
-                  </span>
-                </button>
-              ))
+              <section className={styles.grupo}>
+                <ul className={styles.list}>
+                  {visibles.map((notif) => {
+                    const { Icono, clase } = ICONO_POR_TIPO[tipoDe(notif)];
+                    return (
+                      <li key={notif.id}>
+                        <button
+                          type="button"
+                          role="menuitem"
+                          className={`${styles.itemLink} ${notif.leida ? styles.leida : ''}`}
+                          onClick={() => handleClick(notif)}
+                        >
+                          <span className={`${styles.icono} ${styles[clase]}`}>
+                            <Icono size={18} strokeWidth={1.75} aria-hidden="true" />
+                          </span>
+                          <span className={styles.texto}>
+                            <span className={styles.titulo}>{notif.titulo}</span>
+                            {notif.mensaje && <span className={styles.detalle}>{notif.mensaje}</span>}
+                            <span className={styles.meta}>{haceCuanto(notif.creadoEn)}</span>
+                          </span>
+                          {!notif.leida && <span className={styles.puntoNoLeida} aria-label="Sin leer" />}
+                        </button>
+                      </li>
+                    );
+                  })}
+                </ul>
+              </section>
             )}
           </div>
         </div>
