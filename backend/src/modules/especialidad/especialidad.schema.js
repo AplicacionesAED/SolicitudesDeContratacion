@@ -11,4 +11,6 @@ const importSchema = z.object({
   nombres: z.array(z.string()).min(1),
 });
 
-module.exports = { createSchema, updateSchema, importSchema };
+const fusionarSchema = z.object({ destino_id: z.coerce.number().int().positive() });
+
+module.exports = { createSchema, updateSchema, importSchema, fusionarSchema };

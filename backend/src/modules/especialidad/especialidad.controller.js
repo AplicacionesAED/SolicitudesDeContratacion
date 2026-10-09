@@ -9,6 +9,8 @@ const remove = asyncHandler(async (req, res) => {
   await service.remove(req.params.id);
   noContent(res);
 });
+const listTerceros = asyncHandler(async (req, res) => ok(res, await service.listTerceros(req.params.id)));
+const fusionar = asyncHandler(async (req, res) => ok(res, await service.fusionar(req.params.id, req.body.destino_id)));
 const importar = asyncHandler(async (req, res) => ok(res, await service.importarNombres(req.body.nombres)));
 
-module.exports = { list, create, update, remove, importar };
+module.exports = { list, listTerceros, fusionar, create, update, remove, importar };

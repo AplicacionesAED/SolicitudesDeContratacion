@@ -10,7 +10,7 @@ const express = require('express');
 const validate = require('../../middlewares/validate');
 const { requireAuth, requirePermiso } = require('../../middlewares/auth');
 const controller = require('./especialidad.controller');
-const { createSchema, updateSchema, importSchema } = require('./especialidad.schema');
+const { createSchema, updateSchema, importSchema, fusionarSchema } = require('./especialidad.schema');
 
 const router = express.Router();
 const requireGestionar = requirePermiso('gestionar_especialidades');
@@ -19,6 +19,8 @@ const requireVer = requirePermiso('ver_especialidades');
 router.get('/', requireAuth, requireVer, controller.list);
 router.post('/', requireAuth, requireGestionar, validate(createSchema, 'body'), controller.create);
 router.post('/import', requireAuth, requireGestionar, validate(importSchema, 'body'), controller.importar);
+router.get('/:id/terceros', requireAuth, requireVer, controller.listTerceros);
+router.post('/:id/fusionar', requireAuth, requireGestionar, validate(fusionarSchema, 'body'), controller.fusionar);
 router.put('/:id', requireAuth, requireGestionar, validate(updateSchema, 'body'), controller.update);
 router.delete('/:id', requireAuth, requireGestionar, controller.remove);
 

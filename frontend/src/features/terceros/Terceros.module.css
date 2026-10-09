@@ -115,3 +115,98 @@
   color: var(--color-success-ink);
   font-size: var(--text-data-size);
 }
+
+/* Especialidades: uso por tercero, posibles duplicadas y listado de terceros. */
+.usoCell {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 140px;
+}
+
+.usoNum {
+  min-width: 22px;
+  font-weight: 600;
+  text-align: right;
+}
+
+.usoBar {
+  flex: 1;
+  height: 6px;
+  border-radius: 3px;
+  background: var(--color-surface-sunken);
+  overflow: hidden;
+}
+
+.usoFill {
+  height: 100%;
+  border-radius: 3px;
+  background: var(--color-primary);
+}
+
+.usoLink {
+  background: none;
+  border: none;
+  padding: 0;
+  font: inherit;
+  cursor: pointer;
+  color: var(--color-primary);
+}
+
+.dupBanner {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+  padding: var(--space-md);
+  border-radius: var(--radius-md);
+  background: var(--color-warning-surface);
+  color: var(--color-ink);
+  border: 1px solid color-mix(in srgb, var(--color-warning-ink) 30%, transparent);
+}
+
+.dupTitle {
+  margin: 0;
+  font-weight: 600;
+  color: var(--color-warning-ink);
+}
+
+.dupRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-md);
+  flex-wrap: wrap;
+  font-size: var(--text-data-size);
+}
+
+.listaTerceros {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  max-height: 320px;
+  overflow-y: auto;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.listaTerceros a {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--space-md);
+  padding: 8px 10px;
+  border-radius: var(--radius-sm);
+  color: var(--color-ink);
+  text-decoration: none;
+}
+
+.listaTerceros a:hover {
+  background: var(--color-surface-hover);
+}
+
+.agregar {
+  display: flex;
+  align-items: flex-end;
+  gap: var(--space-md);
+  flex-wrap: wrap;
+}

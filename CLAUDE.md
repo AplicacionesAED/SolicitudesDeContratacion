@@ -3786,5 +3786,13 @@ usando HRMS y Cartera (ya migrada) como referencia. Esto reemplaza lo de la plan
   junto con `SNAPSHOT_POR_SLOT`). El "paso N de M" de la barra es solo visual (`RECORRIDO` en la página), no gobierna el
   flujo. El filtro por estado de la API sigue existiendo pero la página ya no lo usa (las vistas filtran en el cliente).
   Verificado: `list()` contra la base real de dev y la pantalla en navegador con datos simulados de cada caso.
+- **Especialidades, reforma real (2026-10-09, corrige al paso 5 que solo había cambiado el estilo):** ahora muestra el USO
+  del catálogo. `GET /especialidades` devuelve `total_terceros` por especialidad; `GET /especialidades/:id/terceros`
+  lista a quiénes la tienen; `POST /especialidades/:id/fusionar {destino_id}` mueve los terceros a otra especialidad
+  (sin duplicar) y elimina la de origen, en una transacción. `DELETE` ya NO borra una especialidad en uso (409): hay que
+  fusionarla primero. La pantalla muestra tarjetas (total / en uso / sin usar / grupos con nombres parecidos), un aviso de
+  posibles duplicadas ("Estructura" / "Estructuras", detectadas sin tildes ni plural) con botón para fusionar, barra de
+  uso por fila, lista de terceros en un modal y alta rápida arriba. Dato real al probar: de 66 especialidades solo 3 están
+  asignadas a algún tercero. Verificado contra la base de dev (con fixtures `ZTEST_*`, ya borrados) y en navegador.
 - **Pendiente (siguientes pasos):** 6b) detalle de la solicitud y formularios, 7) Actividad y Perfil.
 - **Repositorio:** el proyecto se movió al repositorio nuevo `https://github.com/Gestion-servicios-TI-AED/SolicitudesDeContratacion` (2026-10-09). El historial se reescribió (147 commits, autor y committer `GEliasDev <GEliasDev@users.noreply.github.com>`, sin trailers de Claude), la plantilla ya no es submódulo y las capturas sueltas de la raíz y la carpeta `files/` quedan ignoradas. Commits en español, sin atribución a Claude; el push lo hace el usuario.
