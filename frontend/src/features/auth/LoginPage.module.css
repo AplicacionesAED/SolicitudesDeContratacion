@@ -1,64 +1,90 @@
 /* Layout de dos columnas de LoginPage -- CambiarPasswordPage.jsx sigue
-   usando .wrap/.card (mas abajo) sin el panel de marca, porque ya viene
-   despues del login, el momento de "esta es la marca" ya paso. */
+   usando .wrap/.card/.brand/.error (al final del archivo) sin el panel de
+   marca, porque ya viene despues del login. */
 .splitWrap {
   position: relative;
   min-height: 100vh;
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: 1.05fr 1fr;
 }
 
-/* Franja de "Gradacion aed" (tokens.css) en el borde superior de toda la
-   pantalla -- portado desde HRMS aed (2026-09-17). Vive en `.splitWrap`,
-   no en `.brandPanel`, para cruzar tambien por encima del panel de
-   formulario -- cortarla a la mitad se ve asimetrico. */
+/* Franja fina con el degradado de marca en el borde superior de toda la
+   pantalla. */
 .splitWrap::before {
   content: '';
   position: absolute;
   top: 0;
   left: 0;
   right: 0;
-  height: 6px;
+  height: 5px;
   background: var(--gradient-aed);
   z-index: 1;
 }
 
-/* Foto representativa (`/login-hero.jpg` en frontend/public/, contenido del
-   proyecto nuevo -- nunca un stock generico de "oficina random" sin
-   relacion con el dominio real) + scrim Azul Profundo superpuesto de abajo
-   hacia arriba (mas oscuro donde vive el texto) para que el titular pase
-   contraste sin importar que parte de la foto quede detras -- nunca
-   depender de que la foto misma tenga una zona oscura ahi. */
+/* Panel de marca: foto + velo azul (las dos capas van en el inline style de
+   LoginPage.jsx, ver el comentario alli). Logo en blanco arriba, mensaje
+   abajo. */
 .brandPanel {
   position: relative;
   display: flex;
   flex-direction: column;
-  justify-content: flex-end;
-  padding: var(--space-2xl);
-  background: linear-gradient(to top, rgba(11, 45, 77, 0.92) 0%, rgba(11, 45, 77, 0.55) 45%, rgba(11, 45, 77, 0.15) 75%),
-    url('/login-hero.jpg') center / cover no-repeat;
+  justify-content: space-between;
+  padding: 44px 56px;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  color: #fff;
+}
+
+.brandLogo {
+  height: 34px;
+  width: auto;
+  align-self: flex-start;
+  filter: brightness(0) invert(1);
 }
 
 .brandTextBlock {
-  max-width: 460px;
+  max-width: 520px;
 }
 
 .brandHeadline {
-  font-family: var(--font-display);
-  font-size: clamp(1.75rem, 1.3rem + 2vw, 2.75rem);
-  font-weight: var(--text-display-weight);
-  line-height: 1.2;
-  color: var(--color-primary-ink-on);
   margin: 0;
+  font-family: var(--font-display);
+  font-size: clamp(2rem, 1.3rem + 2.4vw, 3.25rem);
+  font-weight: var(--text-display-weight);
+  line-height: 1.12;
+  letter-spacing: -0.02em;
 }
 
 .brandSubtext {
   margin: var(--space-md) 0 0;
-  font-family: var(--font-body);
   font-size: var(--text-title-size);
-  color: rgba(255, 255, 255, 0.85);
+  line-height: 1.5;
+  color: rgba(255, 255, 255, 0.82);
 }
 
+.benefits {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin: 28px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.benefits li {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 14px;
+  border-radius: var(--radius-full);
+  border: 1px solid rgba(255, 255, 255, 0.28);
+  background: rgba(255, 255, 255, 0.1);
+  font-size: var(--text-data-size);
+  font-weight: 500;
+}
+
+/* Lado del formulario: fondo suave y una tarjeta blanca centrada. */
 .formPanel {
   display: flex;
   align-items: center;
@@ -67,40 +93,208 @@
   background: var(--color-bg);
 }
 
-/* Sin caja: nada de fondo/borde/sombra propios -- los campos viven
-   directamente sobre .formPanel, anchos (480px, no el .card angosto de
-   360px que usa CambiarPasswordPage mas abajo). */
-.formInner {
+.formCard {
   width: 100%;
-  max-width: 480px;
+  max-width: 440px;
   display: flex;
   flex-direction: column;
-  gap: var(--space-md);
+  gap: 18px;
+  padding: 40px 36px 32px;
+  background: #fff;
+  border: 1px solid var(--color-border);
+  border-radius: 20px;
+  box-shadow: 0 20px 50px color-mix(in srgb, var(--color-brand-deep) 12%, transparent);
 }
 
-/* El logo real va centrado arriba del formulario -- .formPanel ya es un
-   fondo claro (apto para un logo pensado para fondo claro), no hace falta
-   ningun badge/scrim como el que si necesitaria sobre la foto del panel de
-   marca. Si la marca del proyecto nuevo SI tiene una version blanca/mono
-   del logo, tambien podria ir en el panel de marca -- esta es la opcion
-   segura que funciona sin esa version. */
 .formLogo {
   align-self: center;
-  height: 64px;
+  height: 44px;
   width: auto;
-  margin-bottom: var(--space-sm);
+}
+
+.formHead {
+  text-align: center;
 }
 
 .formTitle {
+  margin: 6px 0 0;
   font-family: var(--font-display);
-  font-size: var(--text-headline-size);
-  font-weight: var(--text-headline-weight);
+  font-size: 1.5rem;
+  font-weight: 600;
   color: var(--color-ink);
-  margin: 0 0 var(--space-sm);
+}
+
+.formSubtitle {
+  margin: 6px 0 0;
+  font-size: var(--text-data-size);
+  color: var(--color-ink-muted);
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.label {
+  font-size: var(--text-label-size);
+  font-weight: var(--text-label-weight);
+  letter-spacing: var(--text-label-tracking);
+  text-transform: uppercase;
+  color: var(--color-ink-secondary);
+}
+
+.inputWrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.inputIcon {
+  position: absolute;
+  left: 14px;
+  color: var(--color-ink-muted);
+  pointer-events: none;
+}
+
+.input {
+  width: 100%;
+  height: 48px;
+  padding: 0 44px 0 44px;
+  border: 1px solid var(--color-border-strong);
+  border-radius: var(--radius-md);
+  background: var(--color-surface);
+  font-family: var(--font-body);
+  font-size: var(--text-body-size);
+  color: var(--color-ink);
+  transition: border-color var(--duration-fast) var(--ease-standard), box-shadow var(--duration-fast) var(--ease-standard),
+    background-color var(--duration-fast) var(--ease-standard);
+}
+
+.input::placeholder {
+  color: var(--color-ink-muted);
+  opacity: 0.7;
+}
+
+.input:focus {
+  outline: none;
+  border-color: var(--color-primary);
+  background: #fff;
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-primary) 16%, transparent);
+}
+
+.toggle {
+  position: absolute;
+  right: 6px;
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  border: none;
+  border-radius: var(--radius-sm);
+  background: none;
+  color: var(--color-ink-muted);
+  cursor: pointer;
+}
+
+.toggle:hover {
+  background: var(--color-surface-hover);
+  color: var(--color-ink);
+}
+
+.alert {
+  margin: 0;
+  padding: 10px 14px;
+  border-radius: var(--radius-md);
+  background: var(--color-danger-surface);
+  color: var(--color-danger-ink);
+  font-size: var(--text-data-size);
+}
+
+.submit {
+  height: 50px;
+  margin-top: 4px;
+  border: none;
+  border-radius: var(--radius-md);
+  background: var(--color-primary);
+  color: var(--color-primary-ink-on);
+  font-family: var(--font-body);
+  font-size: var(--text-body-size);
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0 6px 18px color-mix(in srgb, var(--color-primary) 35%, transparent);
+  transition: background-color var(--duration-fast) var(--ease-standard), transform var(--duration-fast) var(--ease-standard);
+}
+
+.submit:hover:not(:disabled) {
+  background: var(--color-primary-hover);
+}
+
+.submit:active:not(:disabled) {
+  transform: translateY(1px);
+}
+
+.submit:disabled {
+  opacity: 0.65;
+  cursor: progress;
+}
+
+.footnote {
+  margin: 0;
+  text-align: center;
+  font-size: var(--text-label-size);
+  color: var(--color-ink-muted);
+}
+
+/* Inicio de sesion con Microsoft (SSO de Azure AD) -- Solicitudes lo tiene y el HRMS no. Mismo alto,
+   radio y tipografia que `.submit`, pero secundario (contorno) para que el boton principal siga siendo
+   el de correo y contrasena. */
+.divider {
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+  margin: 0;
+  color: var(--color-ink-muted);
+  font-size: var(--text-label-size);
+}
+
+.divider::before,
+.divider::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--color-border);
+}
+
+.sso {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  height: 50px;
+  border: 1px solid var(--color-border-strong);
+  border-radius: var(--radius-md);
+  background: var(--color-surface);
+  color: var(--color-ink);
+  font-family: var(--font-body);
+  font-size: var(--text-body-size);
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color var(--duration-fast) var(--ease-standard), border-color var(--duration-fast) var(--ease-standard);
+}
+
+.sso:hover:not(:disabled) {
+  background: var(--color-surface-hover);
+  border-color: var(--color-primary);
+}
+
+.sso:disabled {
+  opacity: 0.65;
+  cursor: progress;
 }
 
 /* El panel de marca es decorativo -- en pantallas angostas se prioriza que
-   el formulario use todo el ancho, no que la foto compita por espacio. */
+   el formulario use todo el ancho. */
 @media (max-width: 900px) {
   .splitWrap {
     grid-template-columns: 1fr;
@@ -111,39 +305,82 @@
   }
 }
 
-/* Usado por CambiarPasswordPage.jsx (formulario centrado en una caja, sin
-   panel de marca) -- LoginPage.jsx ya no usa .wrap/.card, ver arriba. */
-.wrap {
+@media (max-width: 480px) {
+  .formPanel {
+    padding: var(--space-md);
+  }
+
+  .formCard {
+    padding: 28px 20px 24px;
+  }
+}
+
+/* CambiarPasswordPage.jsx: la misma tarjeta del login centrada sobre el lienzo, sin
+   panel de marca (se llega justo despues de iniciar sesion). */
+.soloPanel {
   min-height: 100vh;
   display: flex;
   align-items: center;
   justify-content: center;
+  padding: var(--space-xl);
   background: var(--color-bg);
 }
 
-.card {
-  width: 360px;
-  background: var(--color-surface);
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-md);
-  padding: var(--space-xl);
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-md);
-  box-shadow: var(--shadow-floating);
-}
-
-.brand {
-  font-family: var(--font-display);
-  font-size: var(--text-headline-size);
-  font-weight: var(--text-headline-weight);
-  color: var(--color-brand-deep);
-  margin: 0;
-  text-align: center;
-}
-
-.error {
-  color: var(--color-danger-ink);
+/* Requisitos de la contrasena: se marcan en vivo. */
+.requisitos {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px 12px;
+  margin: -4px 0 2px;
+  padding: 0;
+  list-style: none;
   font-size: var(--text-data-size);
-  text-align: center;
+  color: var(--color-ink-muted);
+}
+
+.requisitos li {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.requisitos li svg {
+  flex-shrink: 0;
+}
+
+.requisitoOk {
+  color: var(--color-success-ink);
+  font-weight: 600;
+}
+
+.coincide,
+.noCoincide {
+  font-size: var(--text-label-size);
+}
+
+.coincide {
+  color: var(--color-success-ink);
+}
+
+.noCoincide {
+  color: var(--color-danger-ink);
+}
+
+.srOnly {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+@media (max-width: 480px) {
+  .soloPanel {
+    padding: var(--space-md);
+  }
+
+  .requisitos {
+    grid-template-columns: 1fr;
+  }
 }

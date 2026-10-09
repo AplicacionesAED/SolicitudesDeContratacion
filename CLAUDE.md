@@ -3672,3 +3672,28 @@ password `Abc123!` excepto admin:
 - `ljimenez@baiak.com` — CONTROLES
 - `msuarez@baiak.com` — DIRECTOR_CONTROLES
 - `avargas@baiak.com` — SOLICITANTE (KALA 1, KALA 2)
+
+## Migración de diseño a la identidad del HRMS (2026-10-09)
+
+Objetivo (pedido del usuario: "una reforma drástica, exactamente igual"): que Solicitudes quede
+visualmente idéntica al HRMS, copiando JSX/CSS del HRMS y adaptando solo textos y datos, por pasos y
+usando HRMS y Cartera (ya migrada) como referencia. Esto reemplaza lo de la plantilla en cuanto a UI.
+
+- **Paso 1 — base + login (hecho):** `tokens.css` copiado tal cual del HRMS (los nombres de token
+  que usaba Solicitudes están todos definidos ahí; cambian los valores). `index.css` = el del HRMS +
+  `#root{height:100%}` + las clases globales `.fieldMd`/`.fieldLg` (siguen aquí: se usan como string
+  literal, no pueden vivir en un CSS module). Inter variable alojada (`@fontsource-variable/inter`,
+  importada en `main.jsx`); se quitó Raleway/Google Fonts de `index.html`.
+  `LoginPage.module.css` = el del HRMS + estilos del botón de Microsoft (`.divider`, `.sso`).
+  `CambiarPasswordPage.jsx` copiada del HRMS (requisitos de contraseña en vivo, llama a
+  `refrescarPerfil()` antes de navegar). `LoginPage.jsx` = el del HRMS con textos de Solicitudes y
+  **se conserva el SSO de Azure AD** (`?error=` → mensajes, botón "Continuar con Microsoft"). Se
+  conserva la foto propia `public/login-hero.jpg`.
+  Verificado en navegador (escritorio y móvil 390 px, error de SSO, credenciales incorrectas,
+  mostrar contraseña, pantalla de cambio de contraseña con sesión simulada) y el resto de la app
+  (Inicio, Solicitudes, Terceros, Roles) renderiza sin errores con los tokens nuevos.
+- **Pendiente (siguientes pasos, mismo orden que en Cartera):** 2) sidebar y topbar, 3) componentes
+  base (`Button`, `Badge`, `Field`, `Pagination`, `Modal`…), 4) Configuración (Usuarios, Roles,
+  Proyectos, Frentes, Workflows), 5) Terceros, 6) Solicitudes (lista, detalle, formularios), 7)
+  Dashboard/Actividad.
+- **Repositorio:** el proyecto se movió al repositorio nuevo `https://github.com/Gestion-servicios-TI-AED/SolicitudesDeContratacion` (2026-10-09). El historial se reescribió (147 commits, autor y committer `GEliasDev <GEliasDev@users.noreply.github.com>`, sin trailers de Claude), la plantilla ya no es submódulo y las capturas sueltas de la raíz y la carpeta `files/` quedan ignoradas. Commits en español, sin atribución a Claude; el push lo hace el usuario.

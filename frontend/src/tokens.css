@@ -1,7 +1,5 @@
 /* Design tokens -- generated from DESIGN.md. Keep this file and DESIGN.md's
-   frontmatter in sync; this is the single source of truth consumed by CSS.
-   Va en frontend/src/tokens.css del proyecto nuevo, importado una sola vez
-   (ej. en frontend/src/main.jsx o index.css) antes que cualquier otro CSS. */
+   frontmatter in sync; this is the single source of truth consumed by CSS. */
 :root {
   /* Colors -- brand */
   --color-primary: #232bed;
@@ -11,37 +9,51 @@
   --color-accent-vibrant: #23ff55;
   --color-accent-deep: #014145;
 
-  /* "Gradacion aed" -- degradado de firma del manual de marca, 3 paradas
-     reales: Azul Vibrante -> un verde-azul intermedio propio del manual ->
-     un verde final tambien propio del manual (distinto de Verde Vibrante).
-     Portado desde HRMS aed (2026-09-17) -- ver "The Gradacion aed Rule" en
-     DESIGN.md: un acento de linea puntual (sidebar/topbar, login, estados
-     vacios), nunca un fondo. */
+  /* "Gradacion aed" -- el degradado de firma del manual de marca, 3 paradas
+     reales (no una aproximacion de 2 puntos): Azul Vibrante -> un verde-azul
+     intermedio propio del manual (no es Verde Vibrante, es su propio valor)
+     -> un verde final tambien propio del manual (distinto de Verde
+     Vibrante). Antes solo vivia "horneado" en el PNG del logo -- pedido
+     explicito del usuario (2026-09-17): que el degradado real tambien
+     aparezca como color utilizable en la interfaz, no solo en el logo.
+     Igual que Azul/Verde Vibrante, es un momento de identidad puntual
+     (Rationed Brand Rule) -- ver "The Gradacion aed Rule" en DESIGN.md para
+     los 3 lugares donde esta autorizado, no un fondo de uso libre. */
   --color-gradient-mid: #20a7a1;
   --color-gradient-end: #22e76a;
   --gradient-aed: linear-gradient(135deg, var(--color-primary) 0%, var(--color-gradient-mid) 50%, var(--color-gradient-end) 100%);
+  /* Variante vertical -- para contenedores altos y angostos (el sidebar)
+     donde el degradado diagonal de 135deg se lee menos limpio que uno de
+     arriba hacia abajo. Mismas 3 paradas, mismo orden. */
   --gradient-aed-vertical: linear-gradient(180deg, var(--color-primary) 0%, var(--color-gradient-mid) 50%, var(--color-gradient-end) 100%);
 
   /* Off-white aed -- neutro calido del manual de marca, pensado para
-     impresos (ver "The No-Cream Rule" en DESIGN.md). Sin ningun uso
-     sancionado en pantalla por ahora (se probo y se revirtio en HRMS aed). */
+     impresos (ver "The No-Cream Rule" mas abajo: nunca el canvas de la app,
+     sigue siendo azul-frio). Pedido explicito del usuario (2026-09-17) para
+     que tambien aparezca en la interfaz -- autorizado en un solo lugar
+     puntual y contenido (el panel de formulario del login, ver
+     LoginPage.module.css), no como fondo general. */
   --color-offwhite: #f0ece6;
 
   /* Colors -- neutral (cool-tinted, never warm -- ver "The No-Cream Rule" en
      DESIGN.md: sigue siendo azul, nunca el Off-white calido del manual de
-     marca). TODA la escala (Bg -> Surface -> Sunken -> Hover -> Hover
-     Strong) es la misma mezcla de marca en distinta intensidad -- nunca un
-     blanco puro aislado junto a un azul fuerte, eso se sentia como un corte
-     en vez de un degradado. Via color-mix() en vez de hex fijo, para que el
-     % de marca mezclado quede documentado en el propio valor -- ver "The
-     Brand-Tinted Neutral Rule" en DESIGN.md. Puerto de la plantilla
-     compartida (2026-09-10) -- Solicitudes venía con hex planos sin tinte
-     de marca, la escala completa nunca se había aplicado acá. Porcentajes
-     actualizados 2026-09-17 (5ta calibracion en HRMS aed, portada aca): la
-     version anterior (8%/5%/12%/20%/26%/18%/30%) tiñe TODAS las superficies
-     grandes (fondo, tarjetas, inputs) con el mismo tono a la vez sin ningun
-     area neutra de por medio, y termina leyendose "todo azul" aunque cada
-     valor individual sea bajo -- bajado a ~60% de esa intensidad. */
+     marca). Intensificado 2026-09-10 (pedido explicito del usuario -- "muy
+     gris") de un tinte casi imperceptible a uno visible, calibrado en 4
+     pasadas ese mismo dia. **Quinta pasada, 2026-09-17** (pedido explicito
+     del usuario -- "el fondo es todo azul... practicamente todo es azul"):
+     la 4ta pasada (Bg 8% / Surface 5% / Sunken 12% / Hover 20% / Hover
+     Strong 26% / Border 18% / Border Strong 30%) se paso para el otro lado
+     -- al tintar TODAS las superficies grandes (fondo de pagina, inputs,
+     tablas) con el mismo tono a la vez, sin ningun area realmente neutra de
+     por medio, el conjunto se lee como "todo azul" aunque cada valor
+     individual sea tecnicamente bajo. Bajado a ~60% de la intensidad
+     anterior en toda la escala (mismo orden relativo, mismo criterio de
+     degradado unico Surface -> Bg -> Sunken -> Border -> Hover -> Hover
+     Strong -> Border Strong) -- sigue siendo un tinte de marca deliberado,
+     no gris plano (eso ya se probo y se rechazo el 2026-09-10), pero ya no
+     compite visualmente con el azul vibrante de las acciones reales. Via
+     color-mix(), no hex fijo, para que el porcentaje de marca quede
+     documentado en el propio valor. */
   --color-bg: color-mix(in srgb, var(--color-primary) 5%, white);
   --color-surface: color-mix(in srgb, var(--color-primary) 3%, white);
   --color-surface-sunken: color-mix(in srgb, var(--color-primary) 8%, white);
@@ -49,7 +61,7 @@
   /* Un paso mas oscuro que surface-hover, solo para el hover de una fila que
      YA tenia el rayado zebra (surface-sunken) -- sin esto, esa fila se veia
      "resetear" al mismo tono de hover que una fila blanca en vez de
-     oscurecerse un poco mas. */
+     oscurecerse un poco mas (pedido explicito del usuario, 2026-09-10). */
   --color-surface-hover-strong: color-mix(in srgb, var(--color-primary) 17%, white);
   --color-border: color-mix(in srgb, var(--color-primary) 11%, white);
   --color-border-strong: color-mix(in srgb, var(--color-primary) 20%, white);
@@ -68,8 +80,13 @@
   --color-info-surface: #e8e9fd;
 
   /* Typography */
-  --font-display: 'TT Firs Neue', Inter, system-ui, sans-serif;
-  --font-body: Raleway, system-ui, sans-serif;
+  /* Inter para todo (2026-10-03): legible a 12-14 px y con cifras tabulares para
+     tablas y reportes. Titulos y cuerpo comparten familia; la jerarquia sale del
+     peso y el tamano. Alojada en el proyecto via @fontsource-variable/inter
+     (ver main.jsx). `--font-mono` solo para contrasenas temporales y codigos. */
+  --font-display: 'Inter Variable', Inter, system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-body: 'Inter Variable', Inter, system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-mono: ui-monospace, 'SF Mono', 'Cascadia Mono', Consolas, 'Liberation Mono', monospace;
 
   --text-display-size: clamp(1.5rem, 1.2rem + 1vw, 2rem);
   --text-display-weight: 600;
@@ -104,7 +121,7 @@
   --radius-full: 999px;
 
   /* Spacing */
-  --space-xs: 4px;
+  --space-xs: 2px;
   --space-sm: 8px;
   --space-md: 16px;
   --space-lg: 24px;

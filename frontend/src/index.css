@@ -1,64 +1,71 @@
 @import './tokens.css';
 
-/* TT Firs Neue es la tipografia de marca licenciada de aed; los archivos de
-   fuente no estan disponibles todavia. Cuando existan, ponerlos en
-   /public/fonts y descomentar esto -- nada mas cambia, el stack de
-   --font-display ya empieza con "TT Firs Neue" y cae a Inter (via
-   coincidencia de fuentes del sistema) mientras tanto. */
-/*
-@font-face {
-  font-family: 'TT Firs Neue';
-  src: url('/fonts/tt-firs-neue-semibold.woff2') format('woff2');
-  font-weight: 600;
-  font-display: swap;
-}
-*/
-
-* {
+*,
+*::before,
+*::after {
   box-sizing: border-box;
 }
 
-html,
-body,
-#root {
+html {
+  -webkit-text-size-adjust: 100%;
   height: 100%;
-  /* El único scroll real vive en AppShell.module.css#.scrollArea (la Fluid
-     Scroll Rule de DESIGN.md -- Lenis necesita ser dueño de ESE contenedor).
-     Sin este overflow:hidden, un layout de 100dvh que se pasa por
-     sub-pixels del viewport (redondeo del navegador, barra de
-     direcciones móvil, etc.) hace que <html>/<body> también aparezcan
-     scrolleables -- un segundo scrollbar nativo al borde de la ventana,
-     además del de .scrollArea, aunque ambos muevan el mismo contenido. */
   overflow: hidden;
 }
 
+/* `height: 100dvh` + `overflow: hidden` (no `min-height`) a proposito -- el
+   unico pane que se puede desplazar en toda la app es `.scrollArea` en
+   AppShell.module.css (envuelto en Lenis, ver la Fluid Scroll Rule de
+   DESIGN.md). Sin esto, `body` crecia con `min-height` para acomodar
+   cualquier contenido que se escapara de `.scrollArea` (ej. un
+   AppShell.module.css#.main/.scrollArea que no logre contener del todo un
+   contenido muy alto por un min-height:0 faltante en algun punto de la
+   cadena flex/grid) -- eso hacia scrollear el DOCUMENTO entero, arrastrando
+   sidebar y topbar con el contenido (bug real reportado por el usuario:
+   "doble scroll... se va la pantalla hacia abajo", visible en
+   EmpleadosListPage.jsx con el panel de filtro avanzado abierto). Fijar
+   `body` a la altura exacta del viewport y ocultar su overflow hace que
+   CUALQUIER contenido que se escape quede recortado ahi en vez de arrastrar
+   toda la pagina -- el sintoma correcto en ese caso es "algo se corta", no
+   "toda la app se desplaza", mucho mas facil de notar y corregir en el
+   lugar real del problema.
+*/
 body {
   margin: 0;
-  min-height: 100dvh;
+  height: 100%;
+  overflow: hidden;
   background: var(--color-bg);
   color: var(--color-ink);
   font-family: var(--font-body);
   font-size: var(--text-body-size);
-  /* 2026-09-04: faltaba -- sin esto, cualquier elemento que no fije su
-     propio line-height (ej. .navGroupButton en AppShell.module.css) cae al
-     "normal" del navegador para Raleway (~1.17), no al --text-body-line de
-     tokens.css (1.55), y termina con una altura de fila medible distinta a
-     la del HRMS con el mismo padding declarado -- bug real encontrado
-     comparando el sidebar contra el HRMS pixel por pixel via devtools. */
   line-height: var(--text-body-line);
   font-variant-numeric: tabular-nums;
   -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  /* Inter: tamano optico automatico (cortes de texto y de titulo) y kerning. */
+  font-optical-sizing: auto;
+  font-kerning: normal;
+  /* Tracking dinamico recomendado para Inter en texto de 14-16 px. */
+  letter-spacing: -0.006em;
 }
 
-/* 2026-09-06: faltaba también esto -- sin `font: inherit`, un <input>/
-   <button>/<select>/<textarea> NO hereda el line-height del body (es la
-   única propiedad que el UA stylesheet de estos elementos resetea a
-   "normal" en vez de heredarla como el resto del texto), así que terminan
-   ~5-6px más bajos que en HRMS con el MISMO padding declarado (39px acá vs
-   44.8px en HRMS para un input con padding 9px 12px) -- mismo tipo de bug
-   ya documentado arriba para el line-height del body, encontrado esta vez
-   comparando el input de búsqueda de Usuarios pixel por pixel contra HRMS
-   via devtools. Copiado tal cual del reset de HRMS (index.css).  */
+h1,
+h2,
+h3,
+h4,
+p {
+  margin: 0;
+}
+
+h1,
+h2,
+h3,
+h4 {
+  font-family: var(--font-display);
+  text-wrap: balance;
+  /* Inter pide un tracking ligeramente negativo en tamanos de titulo. */
+  letter-spacing: -0.012em;
+}
+
 button,
 input,
 select,
@@ -67,28 +74,57 @@ textarea {
   color: inherit;
 }
 
-/* 2026-09-09 "compactar el formulario, dos inputs por línea en pantalla
-   ancha, uno en pantalla angosta" -- al revisar por qué esto no pasaba
-   solo, se encontró que `<Field className="fieldMd">`/`"fieldLg"` ya se
-   usaba así en MÁS DE UNA DOCENA de archivos de todo el proyecto
-   (Configuración, Terceros, Solicitudes -- ProyectosPage.jsx,
-   FrenteDetallePage.jsx, NuevoTerceroPage.jsx, CronogramaBuilder.jsx,
-   etc.), pero la clase NUNCA existió en ningún lado -- ni acá ni en
-   ningún `.module.css` -- así que era un no-op puro desde antes de esta
-   sesión: cada fila de "dos campos lado a lado" del proyecto entero
-   quedaba sin ancho controlado, sin wrap garantizado, con cada campo
-   angosto a su tamaño de contenido.
-   Van acá (CSS global, NO en un `.module.css`) porque `className="fieldMd"`
-   en cada uno de esos archivos es un STRING LITERAL -- si la clase viviera
-   en un CSS module, Vite la habría hasheado a un nombre único POR ARCHIVO
-   (ej. `_fieldMd_a1b2c_1`), y ese string literal nunca podría matchear
-   nada. Un `<Field>` con esta clase asume que su contenedor ya es un
-   `display:flex` con `flex-wrap:wrap` (cada `.row`/fila de campos del
-   proyecto ya lo es, o se le agregó acá mismo) -- `flex-basis` (200/260px)
-   es el ancho mínimo antes de bajar a la línea siguiente, `flex-grow:1`
-   reparte el espacio sobrante entre los campos de la fila en vez de
-   dejarlos angostos con hueco al lado. Mismos valores que ya usa HRMS para
-   este patrón exacto. */
+button {
+  cursor: pointer;
+}
+
+img,
+svg {
+  display: block;
+  max-width: 100%;
+}
+
+:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* <select> de toda la app: sin la flecha nativa del navegador (pegada al borde
+   derecho) sino una propia, con 16px de aire a la derecha y espacio reservado
+   para que el texto nunca la pise. Los que ya traen su propio estilo
+   (Field.module.css) usan los mismos valores. */
+select:not([multiple]):not([size]) {
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  padding-right: 44px;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 14 14' fill='none'%3E%3Cpath d='M3.5 5.25L7 8.75L10.5 5.25' stroke='%23232bed' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 16px center;
+  background-size: 14px 14px;
+  cursor: pointer;
+}
+
+#root {
+  height: 100%;
+}
+
+/* Anchos de campo para las filas de formulario de Solicitudes. Van aca (CSS global, no en un
+   `.module.css`) porque `className="fieldMd"` se usa como STRING LITERAL en mas de una docena de
+   archivos: un CSS module hashearia la clase y nunca matchearia. Un `<Field>` con esta clase asume
+   que su contenedor es `display:flex; flex-wrap:wrap`: `flex-basis` es el ancho minimo antes de
+   bajar de linea y `flex-grow:1` reparte el sobrante. Mismos valores que usa el HRMS. */
 .fieldMd {
   flex: 1 1 200px;
 }
