@@ -1,0 +1,80 @@
+.control {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  padding: 8px 12px;
+}
+
+.controlFilled {
+  background: var(--color-success-surface);
+  border-color: var(--color-success-ink);
+}
+
+.icon {
+  flex-shrink: 0;
+  color: var(--color-ink-muted);
+}
+
+.iconFilled {
+  flex-shrink: 0;
+  color: var(--color-success-ink);
+}
+
+.filename {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: var(--text-body-size);
+  color: var(--color-ink-secondary);
+}
+
+.selectLabel {
+  flex-shrink: 0;
+  cursor: pointer;
+}
+
+.selectText {
+  font-size: var(--text-data-size);
+  font-weight: 600;
+  color: var(--color-primary);
+}
+
+/* `position: fixed` (no `absolute`) a propósito -- bug real encontrado con
+   Playwright (2026-09-18): al elegir un archivo, el diálogo nativo del
+   sistema operativo devuelve el foco a este input al cerrarse, y el
+   navegador intenta hacer scroll para "traerlo a la vista". Con
+   `position: absolute` ese input queda posicionado en su lugar real dentro
+   del flujo del documento -- que puede estar muy lejos del viewport, ya que
+   este layout no usa scroll nativo de la página (Lenis, ver AppShell.jsx,
+   mueve el contenido con un `transform` en vez de `scrollTop` real). El
+   intento de scroll nativo del navegador termina moviendo el `<html>` real
+   (que sí puede recibir `scrollTop` aunque tenga `overflow: hidden`),
+   desincronizándolo del contenido ya transformado por Lenis -- efecto
+   visible: la página se "corta", la barra lateral y el topbar desaparecen.
+   `position: fixed` ancla el input a (0,0) del VIEWPORT (siempre "visible"
+   desde la perspectiva del navegador), así el intento de scroll-into-view
+   no tiene nada que mover. */
+.hiddenInput {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.uploadError {
+  margin: 4px 0 0;
+  font-size: var(--text-data-size);
+  color: var(--color-danger-ink);
+}

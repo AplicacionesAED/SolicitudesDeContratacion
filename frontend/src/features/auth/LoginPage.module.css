@@ -1,0 +1,149 @@
+/* Layout de dos columnas de LoginPage -- CambiarPasswordPage.jsx sigue
+   usando .wrap/.card (mas abajo) sin el panel de marca, porque ya viene
+   despues del login, el momento de "esta es la marca" ya paso. */
+.splitWrap {
+  position: relative;
+  min-height: 100vh;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+}
+
+/* Franja de "Gradacion aed" (tokens.css) en el borde superior de toda la
+   pantalla -- portado desde HRMS aed (2026-09-17). Vive en `.splitWrap`,
+   no en `.brandPanel`, para cruzar tambien por encima del panel de
+   formulario -- cortarla a la mitad se ve asimetrico. */
+.splitWrap::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 6px;
+  background: var(--gradient-aed);
+  z-index: 1;
+}
+
+/* Foto representativa (`/login-hero.jpg` en frontend/public/, contenido del
+   proyecto nuevo -- nunca un stock generico de "oficina random" sin
+   relacion con el dominio real) + scrim Azul Profundo superpuesto de abajo
+   hacia arriba (mas oscuro donde vive el texto) para que el titular pase
+   contraste sin importar que parte de la foto quede detras -- nunca
+   depender de que la foto misma tenga una zona oscura ahi. */
+.brandPanel {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  padding: var(--space-2xl);
+  background: linear-gradient(to top, rgba(11, 45, 77, 0.92) 0%, rgba(11, 45, 77, 0.55) 45%, rgba(11, 45, 77, 0.15) 75%),
+    url('/login-hero.jpg') center / cover no-repeat;
+}
+
+.brandTextBlock {
+  max-width: 460px;
+}
+
+.brandHeadline {
+  font-family: var(--font-display);
+  font-size: clamp(1.75rem, 1.3rem + 2vw, 2.75rem);
+  font-weight: var(--text-display-weight);
+  line-height: 1.2;
+  color: var(--color-primary-ink-on);
+  margin: 0;
+}
+
+.brandSubtext {
+  margin: var(--space-md) 0 0;
+  font-family: var(--font-body);
+  font-size: var(--text-title-size);
+  color: rgba(255, 255, 255, 0.85);
+}
+
+.formPanel {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-xl);
+  background: var(--color-bg);
+}
+
+/* Sin caja: nada de fondo/borde/sombra propios -- los campos viven
+   directamente sobre .formPanel, anchos (480px, no el .card angosto de
+   360px que usa CambiarPasswordPage mas abajo). */
+.formInner {
+  width: 100%;
+  max-width: 480px;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+}
+
+/* El logo real va centrado arriba del formulario -- .formPanel ya es un
+   fondo claro (apto para un logo pensado para fondo claro), no hace falta
+   ningun badge/scrim como el que si necesitaria sobre la foto del panel de
+   marca. Si la marca del proyecto nuevo SI tiene una version blanca/mono
+   del logo, tambien podria ir en el panel de marca -- esta es la opcion
+   segura que funciona sin esa version. */
+.formLogo {
+  align-self: center;
+  height: 64px;
+  width: auto;
+  margin-bottom: var(--space-sm);
+}
+
+.formTitle {
+  font-family: var(--font-display);
+  font-size: var(--text-headline-size);
+  font-weight: var(--text-headline-weight);
+  color: var(--color-ink);
+  margin: 0 0 var(--space-sm);
+}
+
+/* El panel de marca es decorativo -- en pantallas angostas se prioriza que
+   el formulario use todo el ancho, no que la foto compita por espacio. */
+@media (max-width: 900px) {
+  .splitWrap {
+    grid-template-columns: 1fr;
+  }
+
+  .brandPanel {
+    display: none;
+  }
+}
+
+/* Usado por CambiarPasswordPage.jsx (formulario centrado en una caja, sin
+   panel de marca) -- LoginPage.jsx ya no usa .wrap/.card, ver arriba. */
+.wrap {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--color-bg);
+}
+
+.card {
+  width: 360px;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: var(--space-xl);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+  box-shadow: var(--shadow-floating);
+}
+
+.brand {
+  font-family: var(--font-display);
+  font-size: var(--text-headline-size);
+  font-weight: var(--text-headline-weight);
+  color: var(--color-brand-deep);
+  margin: 0;
+  text-align: center;
+}
+
+.error {
+  color: var(--color-danger-ink);
+  font-size: var(--text-data-size);
+  text-align: center;
+}

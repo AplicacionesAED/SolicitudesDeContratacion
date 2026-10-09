@@ -1,0 +1,25 @@
+// Padre 1:1 con Solicitud -- mismo patrón que CuadroComparativo (un
+// borra-y-recrea transaccional entero en cada guardado, ver memoria.js).
+// Solo para categoria='DIRECTA' por ahora (gateado en el frontend,
+// SolicitudForm.jsx -- este modelo no lo restringe, nada impide guardarlo
+// para una INDIRECTA si algún día se habilita ahí también).
+const { DataTypes } = require('sequelize');
+const sequelize = require('../../config/db');
+
+const Memoria = sequelize.define(
+  'Memoria',
+  {
+    id: { type: DataTypes.INTEGER, autoIncrement: true, primaryKey: true },
+    solicitud_id: { type: DataTypes.INTEGER, allowNull: false, unique: true },
+    titulo: { type: DataTypes.STRING(300), allowNull: true },
+  },
+  { tableName: 'memorias', underscored: true, createdAt: 'creado_en', updatedAt: false }
+);
+
+Memoria.associate = (models) => {
+  Memoria.belongsTo(models.Solicitud, { foreignKey: 'solicitud_id' });
+  Memoria.hasMany(models.MemoriaColumna, { foreignKey: 'memoria_id', as: 'columnas' });
+  Memoria.hasMany(models.MemoriaFila, { foreignKey: 'memoria_id', as: 'filas' });
+};
+
+module.exports = Memoria;

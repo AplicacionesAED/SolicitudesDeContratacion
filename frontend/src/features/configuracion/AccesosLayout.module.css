@@ -1,0 +1,58 @@
+.wrap {
+  display: grid;
+  grid-template-columns: 224px minmax(0, 1fr);
+  gap: 32px;
+  align-items: start;
+}
+
+.nav {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  position: sticky;
+  top: 0;
+  margin-top: 0;
+}
+
+.navItem {
+  padding: 10px 14px;
+  border-radius: var(--radius-sm);
+  font-family: var(--font-body);
+  font-weight: 500;
+  font-size: var(--text-body-size);
+  color: var(--color-ink-secondary);
+  text-decoration: none;
+}
+
+.navItem:hover {
+  background: var(--color-surface-sunken);
+  color: var(--color-ink);
+}
+
+/* Resaltado SUAVE, nunca un fill sólido de marca como el nav principal del
+   sidebar (AppShell) -- Accesos es configuración de uso ocasional, no debe
+   competir visualmente con la navegación operativa de todos los días. */
+.navItemActive,
+.navItemActive:hover {
+  background: var(--color-surface-sunken);
+  color: var(--color-primary);
+  font-weight: 600;
+}
+
+.contentInner {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-lg);
+  min-width: 0;
+}
+
+@media (max-width: 768px) {
+  .wrap {
+    grid-template-columns: 1fr;
+  }
+  .nav {
+    position: static;
+    flex-direction: row;
+    flex-wrap: wrap;
+  }
+}

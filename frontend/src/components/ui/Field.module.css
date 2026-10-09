@@ -1,0 +1,92 @@
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.label {
+  font-family: var(--font-body);
+  font-weight: var(--text-label-weight);
+  font-size: var(--text-label-size);
+  letter-spacing: var(--text-label-tracking);
+  text-transform: uppercase;
+  color: var(--color-ink-secondary);
+}
+
+.required {
+  color: var(--color-danger-ink);
+  margin-left: 2px;
+}
+
+.control {
+  font-family: var(--font-body);
+  font-size: var(--text-body-size);
+  color: var(--color-ink);
+  background: var(--color-surface-sunken);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  padding: 9px 12px;
+  transition: border-color var(--duration-fast) var(--ease-standard),
+    box-shadow var(--duration-fast) var(--ease-standard);
+}
+
+.control:hover {
+  border-color: var(--color-border-strong);
+}
+
+.control:focus {
+  outline: none;
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--color-primary) 25%, transparent);
+}
+
+.control:disabled {
+  color: var(--color-ink-muted);
+  cursor: not-allowed;
+}
+
+.invalid {
+  border-color: var(--color-danger-ink);
+}
+
+.helper {
+  font-size: var(--text-data-size);
+  color: var(--color-ink-muted);
+}
+
+.error {
+  font-size: var(--text-data-size);
+  color: var(--color-danger-ink);
+}
+
+/* Auto-crecimiento de <Textarea> sin resize manual -- ver el comentario
+   grande en Field.jsx#Textarea (mismo truco CSS-only que
+   CuadroComparativoBuilder.jsx#.growWrap: un pseudo-elemento invisible
+   replica el texto real vía `data-replicated-value` y comparte el
+   `grid-area` del <textarea> real, así que el alto del grid termina
+   siendo el que el texto necesita). El `::after` repite el MISMO
+   padding/borde/fuente que `.control` a propósito -- si no calzan exacto,
+   el texto envuelve distinto ahí que en el textarea real y el alto medido
+   queda mal. */
+.growWrap {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+}
+
+.growWrap::after {
+  content: attr(data-replicated-value) ' ';
+  white-space: pre-wrap;
+  word-break: break-word;
+  visibility: hidden;
+  grid-area: 1 / 1 / 2 / 2;
+  font-family: var(--font-body);
+  font-size: var(--text-body-size);
+  padding: 9px 12px;
+  border: 1px solid transparent;
+}
+
+.growWrap > textarea {
+  grid-area: 1 / 1 / 2 / 2;
+  resize: none;
+  overflow: hidden;
+}

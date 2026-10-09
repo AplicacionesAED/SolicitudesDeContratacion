@@ -1,0 +1,41 @@
+.sortHeader {
+  all: unset;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  width: 100%;
+  box-sizing: border-box;
+  color: inherit;
+  font: inherit;
+  letter-spacing: inherit;
+  text-transform: inherit;
+}
+
+.sortHeader[data-align='center'] {
+  justify-content: center;
+}
+
+.sortHeader[data-align='right'] {
+  justify-content: flex-end;
+}
+
+.sortHeader:hover {
+  color: var(--color-ink);
+}
+
+.sortHeader:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+  border-radius: var(--radius-sm);
+}
+
+.arrow {
+  font-size: 0.65em;
+  opacity: 0.35;
+}
+
+.arrow[data-active] {
+  opacity: 1;
+  color: var(--color-primary);
+}

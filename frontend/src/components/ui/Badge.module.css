@@ -1,0 +1,53 @@
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--font-body);
+  font-size: var(--text-label-size);
+  font-weight: var(--text-label-weight);
+  letter-spacing: var(--text-label-tracking);
+  text-transform: uppercase;
+  padding: 3px 10px;
+  border-radius: var(--radius-full);
+  white-space: nowrap;
+}
+
+.dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  background: currentColor;
+}
+
+.success {
+  background: var(--color-success-surface);
+  color: var(--color-success-ink);
+}
+
+/* El punto SI usa el verde vibrante real de la marca (no el verde oscuro de
+   texto): es el "momento puntual" que el sistema de diseno reservo para el
+   acento vibrante -- ver la Rationed Brand Rule en DESIGN.md. */
+.success .dot {
+  background: var(--color-accent-vibrant);
+}
+
+.warning {
+  background: var(--color-warning-surface);
+  color: var(--color-warning-ink);
+}
+
+.danger {
+  background: var(--color-danger-surface);
+  color: var(--color-danger-ink);
+}
+
+.info {
+  background: var(--color-info-surface);
+  color: var(--color-info-ink);
+}
+
+.neutral {
+  background: var(--color-surface-sunken);
+  color: var(--color-ink-secondary);
+}

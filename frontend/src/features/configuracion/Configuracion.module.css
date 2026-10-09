@@ -1,0 +1,131 @@
+/* Compartido por ProyectosPage/RolesPage/FrentesPage/UsuariosPage -- Full-
+   Width Rule (nunca max-width, la columna del nav ya resta ancho). */
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-md);
+}
+
+.title {
+  font-family: var(--font-display);
+  font-size: var(--text-headline-size);
+  font-weight: var(--text-headline-weight);
+  margin: 0;
+}
+
+.card {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+/* Padding/tamaño de fuente igualado a EmpleadosListPage.module.css de HRMS
+   aed (2026-09-18, pedido explicito del usuario -- "el alto de las filas
+   no es como en HRMS"). */
+.table th,
+.table td {
+  text-align: left;
+  padding: var(--space-sm) var(--space-md);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.table td {
+  font-size: var(--text-data-size);
+  color: var(--color-ink);
+  vertical-align: middle;
+}
+
+/* Borde inferior en Azul Vibrante (2px), mas especifico que el borde
+   neutro de ".table th, .table td" de arriba -- portado desde HRMS aed
+   (2026-09-17): "acentos de color en encabezados/secciones" tambien para
+   las tablas. */
+.table th {
+  background: var(--color-surface-sunken);
+  font-family: var(--font-body);
+  font-weight: var(--text-label-weight);
+  font-size: var(--text-label-size);
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  color: var(--color-ink-secondary);
+  border-bottom: 2px solid var(--color-primary);
+}
+
+.table tr:last-child td {
+  border-bottom: none;
+}
+
+.table tbody tr:hover {
+  background: var(--color-surface-sunken);
+}
+
+/* "Row Icon Actions" (plantilla, ARQUITECTURA-FRONTEND.md) -- contenedor de
+   layout de la celda de acciones por fila (Editar/Activar-Inactivar como
+   EditIconButton/ToggleActivoIconButton, ver RowIconButtons.jsx) -- esta
+   clase es puramente del layout de ESTA tabla, no del componente. */
+.actionsCell {
+  display: flex;
+  gap: 2px;
+  justify-content: flex-end;
+}
+
+.row {
+  display: flex;
+  gap: var(--space-md);
+  /* Sin esto, los <Field className="fieldMd"> de esta fila (ahora que esa
+     clase por fin existe, ver index.css) se achicarían en pantalla angosta
+     en vez de bajar a una fila cada uno -- ver el comentario grande en
+     index.css sobre por qué era un no-op hasta ahora. */
+  flex-wrap: wrap;
+}
+
+.errorBanner {
+  background: var(--color-danger-surface, #fbe9e7);
+  color: var(--color-danger-ink);
+  border-radius: var(--radius-sm);
+  padding: var(--space-sm) var(--space-md);
+  font-size: var(--text-data-size);
+}
+
+.emptyState {
+  padding: var(--space-lg);
+  color: var(--color-ink-muted);
+  font-size: var(--text-body-size);
+  text-align: center;
+}
+
+/* Copiado tal cual de HRMS (Usuarios.module.css#.searchInput) -- pedido
+   explícito del usuario de que el buscador de Usuarios calzara exacto con
+   el de HRMS: mismo alto/padding que el resto de los `.searchBar` de este
+   proyecto (9px 12px), pero además `width:100%`+`box-sizing:border-box`
+   (acá faltaba, el input quedaba con el ancho default del navegador en vez
+   de ocupar el ancho de la columna) y el foco/hover que ningún `.searchBar`
+   de este proyecto tenía todavía. */
+.searchInput {
+  width: 100%;
+  box-sizing: border-box;
+  font-family: var(--font-body);
+  font-size: var(--text-body-size);
+  color: var(--color-ink);
+  background: var(--color-surface-sunken);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  padding: 9px 12px;
+  transition: border-color var(--duration-fast) var(--ease-standard), box-shadow var(--duration-fast) var(--ease-standard);
+}
+
+.searchInput:hover {
+  border-color: var(--color-border-strong);
+}
+
+.searchInput:focus {
+  outline: none;
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--color-primary) 25%, transparent);
+}

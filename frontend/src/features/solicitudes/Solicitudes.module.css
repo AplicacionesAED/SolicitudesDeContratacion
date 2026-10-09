@@ -1,0 +1,665 @@
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-md);
+  flex-wrap: wrap;
+}
+
+.title {
+  font-family: var(--font-display);
+  font-size: var(--text-headline-size);
+  font-weight: var(--text-headline-weight);
+  margin: 0;
+}
+
+.card {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+/* Padding/tamaño de fuente igualado a EmpleadosListPage.module.css de HRMS
+   aed (2026-09-18, pedido explicito del usuario -- "el alto de las filas
+   no es como en HRMS"). */
+.table th,
+.table td {
+  text-align: left;
+  padding: var(--space-sm) var(--space-md);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.table td {
+  font-size: var(--text-data-size);
+  color: var(--color-ink);
+  vertical-align: middle;
+}
+
+/* Borde inferior en Azul Vibrante (2px), mas especifico que el borde
+   neutro de ".table th, .table td" de arriba -- portado desde HRMS aed
+   (2026-09-17): "acentos de color en encabezados/secciones" tambien para
+   las tablas. */
+.table th {
+  background: var(--color-surface-sunken);
+  font-family: var(--font-body);
+  font-weight: var(--text-label-weight);
+  font-size: var(--text-label-size);
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  color: var(--color-ink-secondary);
+  border-bottom: 2px solid var(--color-primary);
+}
+
+.table tr:last-child td {
+  border-bottom: none;
+}
+
+.table tbody tr:hover {
+  background: var(--color-surface-sunken);
+}
+
+.emptyState {
+  padding: var(--space-lg);
+  color: var(--color-ink-muted);
+  text-align: center;
+}
+
+.filterRow {
+  display: flex;
+  gap: var(--space-md);
+  flex-wrap: wrap;
+  align-items: flex-end;
+}
+
+.searchBar {
+  padding: 9px 12px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--color-border);
+  background: var(--color-surface-sunken);
+  font-family: var(--font-body);
+  font-size: var(--text-body-size);
+  min-width: 240px;
+}
+
+.section {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: var(--space-lg);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+}
+
+/* Acento de marca a la izquierda -- portado desde HRMS aed (2026-09-17):
+   "acentos de color en encabezados/secciones", que el contenido tambien
+   cargue color de marca, no solo el chrome del shell. */
+.sectionTitle {
+  font-family: var(--font-body);
+  font-size: var(--text-title-size);
+  font-weight: 600;
+  margin: 0;
+  padding-left: var(--space-sm);
+  border-left: 3px solid var(--color-primary);
+}
+
+.infoGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: var(--space-md);
+}
+
+/* Fila de <Field> que se envuelve a una sola columna en pantalla angosta --
+   `.fieldMd`/`.fieldLg` (las clases que de verdad hacen el ancho
+   proporcional) viven en `index.css` como clases GLOBALES a propósito, no
+   acá: se usan como `className="fieldMd"` (string literal) en más de una
+   decena de archivos de TODO el proyecto (Configuración, Terceros,
+   Solicitudes) -- si vivieran en un `.module.css` como este, Vite las
+   habría hasheado a un nombre único por archivo, y un string literal nunca
+   podría matchear eso. Ver el comentario grande en `index.css` para el
+   detalle completo de este hallazgo. */
+.fieldRow {
+  display: flex;
+  gap: var(--space-md);
+  flex-wrap: wrap;
+}
+
+.infoItem {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.infoLabel {
+  font-size: var(--text-label-size);
+  font-weight: 600;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  color: var(--color-ink-muted);
+}
+
+.infoValue {
+  font-size: var(--text-body-size);
+  color: var(--color-ink);
+  white-space: pre-wrap;
+}
+
+.errorBanner {
+  background: var(--color-danger-surface, #fbe9e7);
+  color: var(--color-danger-ink);
+  border-radius: var(--radius-sm);
+  padding: var(--space-sm) var(--space-md);
+  font-size: var(--text-data-size);
+}
+
+.infoBanner {
+  background: color-mix(in srgb, var(--color-primary) 8%, var(--color-surface));
+  color: var(--color-primary);
+  border-radius: var(--radius-sm);
+  padding: var(--space-sm) var(--space-md);
+  font-size: var(--text-data-size);
+  margin: 0;
+}
+
+.actionsRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-sm);
+}
+
+/* Progreso del flujo (EstadoTimeline.jsx) -- stepper horizontal, puerto
+   literal del original (recuperado de git history, ver el comentario en
+   EstadoTimeline.jsx). Colores de círculo: gris = pendiente, azul primario =
+   en curso/completado intermedio, verde (success) = paso "Completada", gris
+   claro con un guion = paso opcional (Director Técnico) que no aplicó a
+   esta solicitud. */
+.stepperCard {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: var(--space-lg);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+}
+
+.stepperTitle {
+  font-family: var(--font-body);
+  font-size: var(--text-body-size);
+  font-weight: 600;
+  margin: 0;
+}
+
+.stepperBanner {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  border-radius: var(--radius-sm);
+  padding: 10px var(--space-md);
+  font-size: var(--text-data-size);
+  font-weight: 500;
+}
+
+.stepperBannerDanger {
+  background: var(--color-danger-surface);
+  color: var(--color-danger-ink);
+}
+
+.stepperBannerWarning {
+  background: var(--color-warning-surface);
+  color: var(--color-warning-ink);
+}
+
+.stepperBannerNeutral {
+  background: var(--color-surface-sunken);
+  color: var(--color-ink-muted);
+}
+
+.stepperWrap {
+  position: relative;
+}
+
+.stepperConnector {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  right: 20px;
+  height: 2px;
+  background: var(--color-border);
+}
+
+.stepperList {
+  position: relative;
+  display: flex;
+  justify-content: space-between;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.stepperItem {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  flex: 1;
+  min-width: 0;
+}
+
+.stepperCircle {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: var(--radius-full);
+  border: 2px solid var(--color-border);
+  background: var(--color-surface);
+  color: var(--color-ink-muted);
+  flex-shrink: 0;
+}
+
+.stepperCirclePending {
+  border-color: var(--color-border);
+  color: var(--color-ink-muted);
+}
+
+.stepperCircleCurrent {
+  border-color: var(--color-primary);
+  color: var(--color-primary);
+}
+
+.stepperCircleCompleted {
+  border-color: var(--color-primary);
+  background: var(--color-primary);
+  color: var(--color-primary-ink-on);
+}
+
+.stepperCircleDone {
+  border-color: var(--color-success-ink);
+  background: var(--color-success-ink);
+  color: var(--color-primary-ink-on);
+}
+
+.stepperCircleSkipped {
+  border-color: var(--color-border);
+  background: var(--color-surface-sunken);
+  color: var(--color-ink-muted);
+  opacity: 0.6;
+}
+
+.stepperLabel {
+  text-align: center;
+  font-size: var(--text-data-size);
+  line-height: 1.25;
+  max-width: 100px;
+}
+
+.stepperLabelPending {
+  color: var(--color-ink-muted);
+}
+
+.stepperLabelCurrent {
+  font-weight: 600;
+  color: var(--color-primary);
+}
+
+.stepperLabelCompleted {
+  font-weight: 500;
+  color: var(--color-ink);
+}
+
+.stepperLabelDone {
+  font-weight: 500;
+  color: var(--color-success-ink);
+}
+
+.stepperLabelSkipped {
+  color: var(--color-ink-muted);
+  opacity: 0.6;
+}
+
+.stepperDate {
+  font-size: var(--text-label-size);
+  color: var(--color-ink-muted);
+  text-align: center;
+  line-height: 1.25;
+}
+
+.stepperUser {
+  font-size: var(--text-label-size);
+  font-weight: 500;
+  color: var(--color-ink-secondary);
+  text-align: center;
+  line-height: 1.25;
+  max-width: 100px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Historial de Seguimiento (HistorialSeguimiento.jsx) -- lista vertical con
+   línea de tiempo, distinta del stepper de arriba (ese solo marca los 8
+   hitos principales, esta trae TODAS las entradas del historial). */
+.seguimientoList {
+  list-style: none;
+  margin: 0;
+  padding: 0 0 0 var(--space-md);
+  border-left: 2px solid var(--color-border);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-lg);
+}
+
+.seguimientoItem {
+  position: relative;
+  padding-left: var(--space-md);
+}
+
+.seguimientoDot {
+  position: absolute;
+  left: calc(-1 * var(--space-md) - 7px);
+  top: 4px;
+  width: 14px;
+  height: 14px;
+  border-radius: var(--radius-full);
+  border: 2px solid var(--color-surface);
+}
+
+.seguimientoDotPrimary { background: var(--color-primary); }
+.seguimientoDotSuccess { background: var(--color-success-ink); }
+.seguimientoDotDanger { background: var(--color-danger-ink); }
+.seguimientoDotWarning { background: var(--color-warning-ink); }
+.seguimientoDotNeutral { background: var(--color-ink-muted); }
+
+.seguimientoContent {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.seguimientoFecha {
+  font-family: monospace;
+  font-size: var(--text-label-size);
+  color: var(--color-ink-muted);
+  margin: 0;
+}
+
+.seguimientoAccion {
+  font-size: var(--text-body-size);
+  font-weight: 600;
+  color: var(--color-ink);
+  margin: 0;
+}
+
+.seguimientoAccionNegativa {
+  font-size: var(--text-body-size);
+  font-weight: 600;
+  color: var(--color-danger-ink);
+  margin: 0;
+}
+
+.seguimientoUsuario {
+  font-size: var(--text-label-size);
+  color: var(--color-ink-secondary);
+  margin: 0;
+}
+
+.seguimientoEstado {
+  font-size: var(--text-label-size);
+  color: var(--color-ink-muted);
+  margin: 2px 0 0;
+}
+
+.seguimientoEstado span {
+  font-weight: 500;
+  color: var(--color-ink-secondary);
+}
+
+.seguimientoNota {
+  font-size: var(--text-data-size);
+  color: var(--color-ink-secondary);
+  background: var(--color-surface-sunken);
+  border-left: 3px solid var(--color-border-strong);
+  border-radius: var(--radius-sm);
+  padding: 6px 10px;
+  margin: 4px 0 0;
+}
+
+.seguimientoNotaNegativa {
+  font-size: var(--text-data-size);
+  color: var(--color-danger-ink);
+  background: var(--color-danger-surface);
+  border-left: 3px solid var(--color-danger-ink);
+  border-radius: var(--radius-sm);
+  padding: 6px 10px;
+  margin: 4px 0 0;
+}
+
+/* Barra de filtros de SolicitudesPage.jsx -- puerto del filtro del original
+   (búsqueda + estado/tipo siempre visibles, panel "Filtros" plegable). */
+.filterMainRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-sm);
+  align-items: center;
+  padding: var(--space-md);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.filterSearchWrap {
+  position: relative;
+  flex: 1 1 240px;
+  min-width: 200px;
+}
+
+.filterSearchIcon {
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--color-ink-muted);
+  pointer-events: none;
+}
+
+.filterSearchInput {
+  width: 100%;
+  min-width: 0;
+  padding-left: 32px;
+}
+
+.filterSelect {
+  flex: 0 0 auto;
+  min-width: 160px;
+}
+
+.filterToggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  background: var(--color-surface);
+  color: var(--color-ink-secondary);
+  font-family: var(--font-body);
+  font-size: var(--text-data-size);
+  font-weight: 500;
+  padding: 8px 12px;
+  cursor: pointer;
+  transition: background-color var(--duration-fast) var(--ease-standard), border-color var(--duration-fast) var(--ease-standard);
+  white-space: nowrap;
+}
+
+.filterToggle:hover {
+  background: var(--color-surface-sunken);
+}
+
+.filterToggleActive {
+  border-color: var(--color-primary);
+  background: color-mix(in srgb, var(--color-primary) 8%, var(--color-surface));
+  color: var(--color-primary);
+}
+
+.filterBadge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 16px;
+  height: 16px;
+  border-radius: var(--radius-full);
+  background: var(--color-primary);
+  color: var(--color-primary-ink-on);
+  font-size: 10px;
+  font-weight: 700;
+  padding: 0 4px;
+}
+
+.filterClear {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  background: none;
+  color: var(--color-ink-muted);
+  font-family: var(--font-body);
+  font-size: var(--text-data-size);
+  padding: 8px 12px;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background-color var(--duration-fast) var(--ease-standard);
+}
+
+.filterClear:hover {
+  background: var(--color-surface-sunken);
+}
+
+.filterAdvancedGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: var(--space-md);
+  padding: var(--space-md);
+  background: var(--color-surface-sunken);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.filterResultsCount {
+  padding: var(--space-sm) var(--space-md);
+  margin: 0;
+  font-size: var(--text-label-size);
+  color: var(--color-ink-muted);
+}
+
+.tipoPicker {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: var(--space-md);
+}
+
+.tipoCard {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: var(--space-lg);
+  text-align: left;
+  cursor: pointer;
+}
+
+.tipoCard:hover {
+  border-color: var(--color-border-strong);
+  background: var(--color-surface-sunken);
+}
+
+.tipoCardTitle {
+  font-family: var(--font-body);
+  font-weight: 600;
+  font-size: var(--text-title-size);
+}
+
+.tipoCardDesc {
+  font-size: var(--text-data-size);
+  color: var(--color-ink-muted);
+}
+
+/* Botón/checkbox suelto (no un <Field>) al lado de un <Field> real en la
+   misma fila -- ej. "Proveedor seleccionado"/"Quitar proveedor" junto al
+   campo "Nombre del proveedor" en CuadroComparativoBuilder.jsx. Reusa el
+   mismo alto de label + gap que Field.module.css (`.label` a
+   `--text-label-size`, `.field { gap: 6px }`) con un spacer OCULTO en vez
+   de adivinar un padding/margin -- así el control suelto arranca exacto a
+   la misma altura que el <input> del Field de al lado, sin importar cuánto
+   texto de ayuda/error tenga ese Field debajo. Un `align-items: flex-end`
+   en el contenedor padre NO alcanza para esto: alinea los bordes de abajo
+   de toda la caja, pero un <Field> mide más alto que un control suelto (le
+   suma su propio label), así que sin este spacer el control queda más
+   arriba que el input real. */
+.actionRow {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.actionRowSpacer {
+  font-size: var(--text-label-size);
+  line-height: 1.3;
+  visibility: hidden;
+}
+
+/* Textarea que crece hacia ABAJO en vez de desbordarse hacia la derecha --
+   usada en las celdas de texto largo de CuadroComparativoBuilder.jsx
+   (Actividad/Alcance/Observaciones). Truco CSS-only ("grid + ::after
+   replicado", sin JS de medición ni refs): el `<textarea>` y el
+   pseudo-elemento `::after` ocupan el MISMO `grid-area`, así que ambos se
+   estiran al alto del más alto de los dos -- y como `::after` replica el
+   texto real vía `attr(data-replicated-value)` (invisible, solo para medir),
+   el grid termina midiendo el alto que el texto necesita para no cortarse,
+   sin flashes ni recalcular en cada tecla a mano. `data-replicated-value` se
+   arma directo desde el mismo `value` que ya tiene el textarea -- no hace
+   falta duplicar estado para esto. */
+.growWrap {
+  display: grid;
+  /* La pieza que faltaba: sin esto, la única columna del grid se mide por
+     el contenido (el ancho "preferido" del propio <textarea>, ~20
+     caracteres por default del navegador) en vez de por el ancho real de
+     la celda -- por eso crecía hacia la derecha en vez de hacer wrap. Con
+     `minmax(0, 1fr)` la columna queda forzada al ancho disponible (el
+     `1fr`) y puede achicarse por debajo del contenido (el `0` -- un `1fr`
+     solo no alcanza, sigue respetando el min-content del <textarea> como
+     piso). Recién ahí el texto larga hace wrap y el alto (calculado por
+     `::after` de abajo) es lo único que crece. */
+  grid-template-columns: minmax(0, 1fr);
+  width: 100%;
+}
+
+.growWrap::after {
+  content: attr(data-replicated-value) ' ';
+  white-space: pre-wrap;
+  word-break: break-word;
+  visibility: hidden;
+  grid-area: 1 / 1 / 2 / 2;
+  font: inherit;
+}
+
+.growWrap > textarea {
+  grid-area: 1 / 1 / 2 / 2;
+  resize: none;
+  overflow: hidden;
+  width: 100%;
+  word-break: break-word;
+  border: none;
+  background: transparent;
+  font: inherit;
+  padding: 0;
+  margin: 0;
+}

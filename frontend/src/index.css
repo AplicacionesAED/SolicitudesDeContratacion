@@ -1,0 +1,98 @@
+@import './tokens.css';
+
+/* TT Firs Neue es la tipografia de marca licenciada de aed; los archivos de
+   fuente no estan disponibles todavia. Cuando existan, ponerlos en
+   /public/fonts y descomentar esto -- nada mas cambia, el stack de
+   --font-display ya empieza con "TT Firs Neue" y cae a Inter (via
+   coincidencia de fuentes del sistema) mientras tanto. */
+/*
+@font-face {
+  font-family: 'TT Firs Neue';
+  src: url('/fonts/tt-firs-neue-semibold.woff2') format('woff2');
+  font-weight: 600;
+  font-display: swap;
+}
+*/
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+  /* El único scroll real vive en AppShell.module.css#.scrollArea (la Fluid
+     Scroll Rule de DESIGN.md -- Lenis necesita ser dueño de ESE contenedor).
+     Sin este overflow:hidden, un layout de 100dvh que se pasa por
+     sub-pixels del viewport (redondeo del navegador, barra de
+     direcciones móvil, etc.) hace que <html>/<body> también aparezcan
+     scrolleables -- un segundo scrollbar nativo al borde de la ventana,
+     además del de .scrollArea, aunque ambos muevan el mismo contenido. */
+  overflow: hidden;
+}
+
+body {
+  margin: 0;
+  min-height: 100dvh;
+  background: var(--color-bg);
+  color: var(--color-ink);
+  font-family: var(--font-body);
+  font-size: var(--text-body-size);
+  /* 2026-09-04: faltaba -- sin esto, cualquier elemento que no fije su
+     propio line-height (ej. .navGroupButton en AppShell.module.css) cae al
+     "normal" del navegador para Raleway (~1.17), no al --text-body-line de
+     tokens.css (1.55), y termina con una altura de fila medible distinta a
+     la del HRMS con el mismo padding declarado -- bug real encontrado
+     comparando el sidebar contra el HRMS pixel por pixel via devtools. */
+  line-height: var(--text-body-line);
+  font-variant-numeric: tabular-nums;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* 2026-09-06: faltaba también esto -- sin `font: inherit`, un <input>/
+   <button>/<select>/<textarea> NO hereda el line-height del body (es la
+   única propiedad que el UA stylesheet de estos elementos resetea a
+   "normal" en vez de heredarla como el resto del texto), así que terminan
+   ~5-6px más bajos que en HRMS con el MISMO padding declarado (39px acá vs
+   44.8px en HRMS para un input con padding 9px 12px) -- mismo tipo de bug
+   ya documentado arriba para el line-height del body, encontrado esta vez
+   comparando el input de búsqueda de Usuarios pixel por pixel contra HRMS
+   via devtools. Copiado tal cual del reset de HRMS (index.css).  */
+button,
+input,
+select,
+textarea {
+  font: inherit;
+  color: inherit;
+}
+
+/* 2026-09-09 "compactar el formulario, dos inputs por línea en pantalla
+   ancha, uno en pantalla angosta" -- al revisar por qué esto no pasaba
+   solo, se encontró que `<Field className="fieldMd">`/`"fieldLg"` ya se
+   usaba así en MÁS DE UNA DOCENA de archivos de todo el proyecto
+   (Configuración, Terceros, Solicitudes -- ProyectosPage.jsx,
+   FrenteDetallePage.jsx, NuevoTerceroPage.jsx, CronogramaBuilder.jsx,
+   etc.), pero la clase NUNCA existió en ningún lado -- ni acá ni en
+   ningún `.module.css` -- así que era un no-op puro desde antes de esta
+   sesión: cada fila de "dos campos lado a lado" del proyecto entero
+   quedaba sin ancho controlado, sin wrap garantizado, con cada campo
+   angosto a su tamaño de contenido.
+   Van acá (CSS global, NO en un `.module.css`) porque `className="fieldMd"`
+   en cada uno de esos archivos es un STRING LITERAL -- si la clase viviera
+   en un CSS module, Vite la habría hasheado a un nombre único POR ARCHIVO
+   (ej. `_fieldMd_a1b2c_1`), y ese string literal nunca podría matchear
+   nada. Un `<Field>` con esta clase asume que su contenedor ya es un
+   `display:flex` con `flex-wrap:wrap` (cada `.row`/fila de campos del
+   proyecto ya lo es, o se le agregó acá mismo) -- `flex-basis` (200/260px)
+   es el ancho mínimo antes de bajar a la línea siguiente, `flex-grow:1`
+   reparte el espacio sobrante entre los campos de la fila en vez de
+   dejarlos angostos con hueco al lado. Mismos valores que ya usa HRMS para
+   este patrón exacto. */
+.fieldMd {
+  flex: 1 1 200px;
+}
+
+.fieldLg {
+  flex: 1.5 1 260px;
+}

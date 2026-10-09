@@ -1,0 +1,151 @@
+.wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+}
+
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-xs);
+}
+
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--font-body);
+  font-size: var(--text-data-size);
+  font-weight: 500;
+  color: var(--color-primary);
+  background: color-mix(in srgb, var(--color-primary) 8%, var(--color-surface));
+  border: 1px solid color-mix(in srgb, var(--color-primary) 25%, transparent);
+  border-radius: var(--radius-full);
+  padding: 4px 6px 4px 12px;
+}
+
+.chipRemove {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: none;
+  border: none;
+  color: var(--color-primary);
+  font-size: 1rem;
+  line-height: 1;
+  cursor: pointer;
+  transition: background-color var(--duration-fast) var(--ease-standard);
+}
+
+.chipRemove:hover {
+  background: color-mix(in srgb, var(--color-primary) 18%, transparent);
+}
+
+.panel {
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: var(--color-surface);
+  overflow: hidden;
+}
+
+.panelHeader {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  padding: var(--space-sm);
+  border-bottom: 1px solid var(--color-border);
+  background: var(--color-surface-sunken);
+}
+
+.panelHeader .control,
+.panelHeader input[type='text'] {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.count {
+  font-size: var(--text-label-size);
+  font-weight: var(--text-label-weight);
+  letter-spacing: var(--text-label-tracking);
+  text-transform: uppercase;
+  color: var(--color-ink-muted);
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.clearButton {
+  font-family: var(--font-body);
+  font-size: var(--text-data-size);
+  font-weight: 500;
+  color: var(--color-danger-ink);
+  background: none;
+  border: none;
+  cursor: pointer;
+  white-space: nowrap;
+  flex-shrink: 0;
+  padding: 4px 6px;
+  border-radius: var(--radius-sm);
+  transition: background-color var(--duration-fast) var(--ease-standard);
+}
+
+.clearButton:hover {
+  background: var(--color-danger-surface);
+}
+
+.list {
+  max-height: 280px;
+  overflow-y: auto;
+  padding: var(--space-xs);
+}
+
+.empty {
+  padding: var(--space-md);
+  font-size: var(--text-data-size);
+  color: var(--color-ink-muted);
+  text-align: center;
+}
+
+.group + .group {
+  margin-top: var(--space-xs);
+}
+
+.groupLabel {
+  font-size: var(--text-label-size);
+  font-weight: var(--text-label-weight);
+  letter-spacing: var(--text-label-tracking);
+  text-transform: uppercase;
+  color: var(--color-ink-muted);
+  padding: var(--space-sm) var(--space-sm) 2px;
+}
+
+.option {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  padding: 8px var(--space-sm);
+  border-radius: var(--radius-sm);
+  font-family: var(--font-body);
+  font-size: var(--text-body-size);
+  color: var(--color-ink);
+  cursor: pointer;
+  transition: background-color var(--duration-fast) var(--ease-standard);
+}
+
+.option:hover {
+  background: var(--color-surface-sunken);
+}
+
+.optionChecked {
+  background: color-mix(in srgb, var(--color-primary) 6%, transparent);
+  font-weight: 500;
+}
+
+.option input[type='checkbox'] {
+  width: 16px;
+  height: 16px;
+  accent-color: var(--color-primary);
+  flex-shrink: 0;
+}

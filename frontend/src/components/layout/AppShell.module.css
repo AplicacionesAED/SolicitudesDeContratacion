@@ -1,0 +1,335 @@
+.shell {
+  display: grid;
+  grid-template-columns: 300px 1fr;
+  height: 100dvh;
+}
+
+/* Sin overflow-y:auto a proposito: el panel flotante (.flyout) escapa del
+   ancho del sidebar con position:absolute, y un ancestro con overflow
+   (incluso solo en el eje Y) lo recortaria -- ver la nota de .flyout. El
+   riel de 9 categorias es corto y no necesita scroll propio de todas formas. */
+.sidebar {
+  background: var(--color-surface);
+  border-right: 1px solid var(--color-border);
+  padding: var(--space-lg) var(--space-md);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xl);
+}
+
+/* 2026-09-02: dejó de ser un link (pedido explícito del usuario) -- volver
+   al inicio ahora es el item "Inicio" del nav, no el logo. Puramente
+   decorativo de nuevo, sin hover/foco. `padding: 0 var(--space-sm)` SÍ se
+   queda (2026-09-04, corregido -- el revert de arriba se lo había llevado
+   por error, junto con el hover/foco del hitbox): no es parte del truco de
+   hitbox del logo-botón, es la medida fija documentada en
+   ARQUITECTURA-FRONTEND.md ("Header de marca") -- idéntica en todo
+   proyecto, HRMS incluido, no una decision de este proyecto en particular. */
+.brand {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  padding: 0 var(--space-sm);
+}
+
+.brandLogo {
+  height: 24px;
+  width: auto;
+  flex-shrink: 0;
+}
+
+.brandDivider {
+  width: 1px;
+  height: 18px;
+  background: var(--color-border-strong);
+  flex-shrink: 0;
+}
+
+.brandName {
+  font-family: var(--font-body);
+  font-weight: 600;
+  font-size: var(--text-label-size);
+  letter-spacing: var(--text-label-tracking);
+  text-transform: uppercase;
+  color: var(--color-ink-muted);
+}
+
+.nav {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+/* Cada fila es la posicionador para su propio flyout (position:relative +
+   left:100% en .flyout) -- asi el panel siempre nace pegado a SU categoria
+   sin tener que calcular coordenadas en JS. */
+.navGroupRow {
+  position: relative;
+}
+
+.navGroupButton {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-sm);
+  width: 100%;
+  font-family: var(--font-body);
+  font-weight: 500;
+  font-size: var(--text-body-size);
+  color: var(--color-ink-secondary);
+  background: none;
+  border: none;
+  padding: 10px 14px;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  text-align: left;
+  /* Esta clase nació pensada solo para <button> (nunca subrayan por
+     default) -- "Inicio" (2026-09-02) la reusa sobre un <NavLink>, que SÍ
+     trae subrayado de navegador por default. */
+  text-decoration: none;
+  transition: background-color var(--duration-fast) var(--ease-standard),
+    color var(--duration-fast) var(--ease-standard);
+}
+
+.navGroupButton:hover {
+  background: var(--color-surface-sunken);
+  color: var(--color-ink);
+}
+
+/* El icono va antes del titulo, en vez del numero de orden (1..9) -- usa
+   currentColor asi que sigue el mismo color que el texto del boton en cada
+   estado (reposo/hover/activo) sin reglas aparte. */
+.navGroupLabel {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  min-width: 0;
+}
+
+.navGroupLabel svg {
+  flex-shrink: 0;
+}
+
+.navGroupButton:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}
+
+/* Fill Azul Profundo solo en la categoria que contiene la ruta actual --
+   igual con hover encima, sigue siendo la unica que lleva el fill de marca
+   (Rationed Brand Rule, DESIGN.md). */
+.navGroupButtonActive,
+.navGroupButtonActive:hover {
+  background: var(--color-brand-deep);
+  color: var(--color-primary-ink-on);
+}
+
+.chevron {
+  flex-shrink: 0;
+  color: var(--color-ink-muted);
+  transition: transform var(--duration-standard) var(--ease-standard), color var(--duration-fast) var(--ease-standard);
+}
+
+.navGroupButton:hover .chevron {
+  color: inherit;
+  transform: translateX(2px);
+}
+
+.navGroupButtonActive .chevron {
+  color: inherit;
+}
+
+/* Panel flotante con los items reales de la categoria abierta -- nunca
+   empuja el contenido principal (position:absolute), aparece pegado al
+   borde derecho de su fila (ver .navGroupRow) por encima de todo lo demas
+   (--z-dropdown, mismo nivel que un menu/dropdown normal). */
+.flyout {
+  position: absolute;
+  left: calc(100% + var(--space-sm));
+  top: 0;
+  min-width: 240px;
+  z-index: var(--z-dropdown);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-floating);
+  padding: var(--space-xs);
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  animation: flyoutIn var(--duration-standard) var(--ease-standard);
+}
+
+@keyframes flyoutIn {
+  from {
+    opacity: 0;
+    transform: translateX(-4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .flyout {
+    animation: none;
+  }
+
+  .navGroupButton:hover .chevron {
+    transform: none;
+  }
+}
+
+.navItem {
+  display: block;
+  font-family: var(--font-body);
+  font-weight: 500;
+  font-size: var(--text-body-size);
+  color: var(--color-ink-secondary);
+  padding: 10px 14px;
+  border-radius: var(--radius-sm);
+  text-decoration: none;
+  white-space: nowrap;
+  transition: background-color var(--duration-fast) var(--ease-standard),
+    color var(--duration-fast) var(--ease-standard);
+}
+
+.navItem:hover {
+  background: var(--color-surface-sunken);
+  color: var(--color-ink);
+}
+
+.navItem:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: -2px;
+}
+
+.navItemActive,
+.navItemActive:hover {
+  background: var(--color-brand-deep);
+  color: var(--color-primary-ink-on);
+}
+
+/* Lo que Buk tiene y este sistema todavia no -- mismo lugar en el arbol que
+   ocuparia el link real, pero sin interaccion (no es un boton ni un link a
+   ningun lado). */
+.navItemDisabled {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-md);
+  font-family: var(--font-body);
+  font-weight: 500;
+  font-size: var(--text-body-size);
+  color: var(--color-ink-muted);
+  padding: 10px 14px;
+  white-space: nowrap;
+  cursor: default;
+}
+
+.main {
+  min-width: 0;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Linea de "Gradacion aed" (tokens.css) en el borde inferior -- portado
+   desde HRMS aed (2026-09-17), asentado despues de probar y descartar el
+   fondo completo del topbar con el degradado (ver "The Rationed Brand
+   Rule" en DESIGN.md). Un `::after` solido, no `border-image` (un
+   border-image generado de un gradiente diagonal se corta raro al hacer
+   slice). */
+.topbar {
+  position: relative;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: var(--space-md);
+  padding: var(--space-md) var(--space-2xl);
+}
+
+.topbar::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 3px;
+  background: var(--gradient-aed);
+}
+
+/* Engranaje de Accesos -- mismo trigger de 44px/radius-md que cualquier
+   otro boton del topbar (ver UserMenu.module.css), pero es un link normal
+   (navega a una ruta real), no abre nada en este mismo lugar. Se usa recien
+   cuando el proyecto tenga una pantalla real de Accesos -- ver el
+   comentario dentro de .topbar en AppShell.jsx. */
+.topbarIconLink {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border-radius: var(--radius-md);
+  color: var(--color-ink-secondary);
+  transition: background-color var(--duration-fast) var(--ease-standard), color var(--duration-fast) var(--ease-standard);
+}
+
+.topbarIconLink:hover {
+  background: var(--color-surface-sunken);
+  color: var(--color-ink);
+}
+
+.topbarIconLink:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}
+
+/* El scroll real vive aca (adentro de <main>, no en <main> mismo) porque
+   Lenis necesita ser dueno del elemento con overflow para suavizarlo -- ver
+   la Fluid Scroll Rule en DESIGN.md. */
+.scrollArea {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  padding: var(--space-xl) var(--space-2xl);
+}
+
+.routeLoading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-ink-muted);
+  padding: var(--space-2xl) 0;
+}
+
+@media (max-width: 768px) {
+  .shell {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto 1fr;
+  }
+
+  /* Un flyout que "flota a la derecha" no tiene a donde flotar en una
+     columna angosta -- en mobile el panel se abre EN LINEA debajo de su
+     categoria (position:static) en vez de superpuesto, y el sidebar entero
+     apila con su propio scroll y un alto tope. */
+  .sidebar {
+    max-height: 60vh;
+    overflow-y: auto;
+    border-right: none;
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  .flyout {
+    position: static;
+    margin: 2px 0 var(--space-xs) 14px;
+    box-shadow: none;
+    border-color: var(--color-border);
+  }
+
+  .scrollArea {
+    padding: var(--space-lg) var(--space-md);
+  }
+}

@@ -1,0 +1,193 @@
+/* Diagrama de flujo de WorkflowDiagramaPage.jsx -- React Flow
+   (@xyflow/react): canvas real (pan/zoom/arrastre de nodos), vertical. Los
+   NODOS son estados (fijos, no editables) y las ACCIONES son píldoras sobre
+   las flechas (editables, ver EstadoNode.jsx/AccionEdge.jsx). El acomodo de
+   los nodos SÍ se persiste (2026-09-02, "dame acceso a modificar las
+   líneas") -- ver el botón "Guardar posiciones" en WorkflowDiagramaPage.jsx. */
+
+/* `.page` es un simple contenedor en flujo normal -- el alto del canvas
+   (`.diagramWrap`) NO se resuelve por cascada de CSS (`height:100%`
+   intentado primero y descartado, ver el comentario grande en
+   WorkflowDiagramaPage.jsx sobre por qué: `<ReactLenis>` interpone un
+   `<div>` interno sin className/style expuesto por la librería, que corta
+   cualquier cascada de `height:100%` que intente atravesarlo). Se mide con
+   JS (`useAltoDisponible` en WorkflowDiagramaPage.jsx) y se aplica como
+   `style` inline -- por eso `.diagramWrap` no trae ninguna propiedad de
+   alto acá, solo estética. */
+.page {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-lg);
+}
+
+.diagramWrap {
+  min-height: 420px;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+}
+
+/* @xyflow/react trae sus propios estilos base (dist/style.css) -- acá solo
+   se ajustan detalles puntuales para que calcen con los tokens del proyecto
+   en vez de la paleta default de la librería. */
+.diagramWrap :global(.react-flow__attribution) {
+  font-family: var(--font-body);
+  font-size: 10px;
+}
+
+.nodo {
+  width: 180px;
+  min-height: 50px;
+  border-radius: var(--radius-md);
+  border: 1.5px solid;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  gap: 2px;
+  padding: 8px 12px;
+  font-family: var(--font-body);
+  font-size: var(--text-data-size);
+  font-weight: 600;
+}
+
+.nodoSuccess { background: var(--color-success-surface); border-color: var(--color-success-ink); color: var(--color-success-ink); }
+.nodoWarning { background: var(--color-warning-surface); border-color: var(--color-warning-ink); color: var(--color-warning-ink); }
+.nodoDanger { background: var(--color-danger-surface); border-color: var(--color-danger-ink); color: var(--color-danger-ink); }
+.nodoInfo { background: var(--color-info-surface); border-color: var(--color-info-ink); color: var(--color-info-ink); }
+.nodoNeutral { background: var(--color-surface-sunken); border-color: var(--color-border-strong); color: var(--color-ink-secondary); }
+
+.nodoFantasma {
+  border-style: dashed;
+  opacity: 0.65;
+}
+
+.nodoNota {
+  font-size: 10px;
+  font-weight: 400;
+  font-style: italic;
+  line-height: 1.2;
+}
+
+.handle {
+  width: 8px;
+  height: 8px;
+  background: var(--color-surface);
+  border: 1.5px solid var(--color-border-strong);
+}
+
+.edgeMain { stroke: var(--color-primary); }
+.edgeDanger { stroke: var(--color-danger-ink); }
+.edgeWarning { stroke: var(--color-warning-ink); }
+.edgeMuted { stroke: var(--color-border-strong); }
+
+.pildoraAccion {
+  /* `<EdgeLabelRenderer>` (la librería) fija `pointer-events:none` en su
+     contenedor para no bloquear el canvas -- CUALQUIER hijo interactivo
+     necesita este `auto` propio o nunca recibe clics/drags (ver el
+     comentario grande al principio de AccionEdge.jsx). */
+  pointer-events: auto;
+  position: absolute;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-full);
+  padding: 4px 10px 4px 8px;
+  font-family: var(--font-body);
+  font-size: var(--text-label-size);
+  font-weight: 600;
+  color: var(--color-ink);
+  cursor: pointer;
+  white-space: nowrap;
+  box-shadow: var(--shadow-floating, 0 2px 6px rgba(16, 21, 31, 0.08));
+  transition: background-color var(--duration-fast) var(--ease-standard), border-color var(--duration-fast) var(--ease-standard);
+}
+
+.pildoraAccion:hover {
+  background: var(--color-surface-sunken);
+  border-color: var(--color-primary);
+}
+
+.pildoraDesvio {
+  color: var(--color-warning-ink);
+  flex-shrink: 0;
+}
+
+/* Handle para arrastrar el punto de quiebre de una línea (2026-09-02,
+   "¿puedo mover las líneas también?", ver AccionEdge.jsx). Chico y
+   discreto en reposo -- crece un poco al pasar el mouse/mientras se
+   arrastra para confirmar que ahí se puede agarrar, sin competir
+   visualmente con la píldora de la acción. Usa la propiedad `scale` (no
+   `transform: scale()`) a propósito -- el `transform` inline ya lo usa
+   AccionEdge.jsx para UBICAR el grip (`translate(-50%,-50%) translate(x,y)`),
+   y un inline style siempre gana sobre cualquier regla de esta hoja, así
+   que animar `transform` acá no haría nada visible. */
+.gripArista {
+  pointer-events: auto;
+  position: absolute;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--color-surface);
+  border: 1.5px solid var(--color-border-strong);
+  cursor: grab;
+  transition: scale var(--duration-fast) var(--ease-standard), border-color var(--duration-fast) var(--ease-standard);
+}
+
+.gripArista:hover,
+.gripArista:active {
+  border-color: var(--color-primary);
+  scale: 1.6;
+}
+
+.gripArista:active {
+  cursor: grabbing;
+}
+
+/* Guías de alineación mientras se arrastra un nodo (2026-09-02, "que me
+   diga que estoy alineado/centrado", ver `guiaLineas` en
+   WorkflowDiagramaPage.jsx) -- una línea punteada azul que aparece cuando
+   el nodo que se arrastra coincide (x o y) con otro. `pointer-events:none`
+   para que la guía nunca robe el drag/click de lo que tiene debajo. */
+.guiaVertical,
+.guiaHorizontal {
+  position: absolute;
+  background: var(--color-primary);
+  opacity: 0.55;
+  pointer-events: none;
+  z-index: 5;
+}
+
+.guiaVertical {
+  width: 1px;
+}
+
+.guiaHorizontal {
+  height: 1px;
+}
+
+.leyenda {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-md);
+  padding: var(--space-sm) 0 0;
+  font-size: var(--text-label-size);
+  color: var(--color-ink-muted);
+}
+
+.leyendaItem {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.leyendaSwatch {
+  width: 10px;
+  height: 10px;
+  border-radius: 3px;
+  flex-shrink: 0;
+}

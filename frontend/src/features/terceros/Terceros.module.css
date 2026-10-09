@@ -1,0 +1,233 @@
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-md);
+  flex-wrap: wrap;
+}
+
+.title {
+  font-family: var(--font-display);
+  font-size: var(--text-headline-size);
+  font-weight: var(--text-headline-weight);
+  margin: 0;
+}
+
+.actions {
+  display: flex;
+  gap: var(--space-sm);
+}
+
+.card {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+}
+
+.searchBar {
+  padding: 9px 12px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--color-border);
+  background: var(--color-surface-sunken);
+  font-family: var(--font-body);
+  font-size: var(--text-body-size);
+  width: 100%;
+  max-width: 360px;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+/* Padding/tamaño de fuente igualado a EmpleadosListPage.module.css de HRMS
+   aed (2026-09-18, pedido explicito del usuario -- "el alto de las filas
+   no es como en HRMS"): 10px+text-body-size hacia una fila mas alta que la
+   densidad compacta (~40px) que usa HRMS en sus tablas. */
+.table th,
+.table td {
+  text-align: left;
+  padding: var(--space-sm) var(--space-md);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.table td {
+  font-size: var(--text-data-size);
+  color: var(--color-ink);
+  vertical-align: middle;
+}
+
+/* Borde inferior en Azul Vibrante (2px), mas especifico que el borde
+   neutro de ".table th, .table td" de arriba -- portado desde HRMS aed
+   (2026-09-17): "acentos de color en encabezados/secciones" tambien para
+   las tablas. */
+.table th {
+  background: var(--color-surface-sunken);
+  font-family: var(--font-body);
+  font-weight: var(--text-label-weight);
+  font-size: var(--text-label-size);
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  color: var(--color-ink-secondary);
+  border-bottom: 2px solid var(--color-primary);
+}
+
+.table tr:last-child td {
+  border-bottom: none;
+}
+
+/* "Row Icon Actions" (plantilla, ARQUITECTURA-FRONTEND.md) -- contenedor de
+   layout de la celda de acciones por fila (Editar como EditIconButton, ver
+   RowIconButtons.jsx) -- esta clase es puramente del layout de ESTA tabla,
+   no del componente. */
+.actionsCell {
+  display: flex;
+  gap: 2px;
+  justify-content: flex-end;
+}
+
+/* Fila clickeable -- portado desde HRMS aed (2026-09-18, pedido explicito
+   del usuario): la fila entera navega al detalle, igual que
+   EmpleadosListPage.jsx#.clickableRow, en vez del boton "Ver detalle" que
+   tenia esta tabla antes. */
+.clickableRow {
+  cursor: pointer;
+}
+
+.rowUrgente {
+  background: var(--color-danger-surface, #fbe9e7);
+}
+
+.rowPorVencer {
+  background: #fff3d6;
+}
+
+.tablaFilaVencimiento {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.diasRestantes {
+  font-size: var(--text-label-size);
+  font-weight: 600;
+}
+
+.diasUrgente {
+  color: var(--color-danger-ink);
+}
+
+.diasPorVencer {
+  color: #8a5a00;
+}
+
+.diasNormal {
+  color: var(--color-ink-muted);
+}
+
+.emptyState {
+  padding: var(--space-lg);
+  color: var(--color-ink-muted);
+  font-size: var(--text-body-size);
+  text-align: center;
+}
+
+.errorBanner {
+  background: var(--color-danger-surface, #fbe9e7);
+  color: var(--color-danger-ink);
+  border-radius: var(--radius-sm);
+  padding: var(--space-sm) var(--space-md);
+  font-size: var(--text-data-size);
+}
+
+.section {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: var(--space-lg);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+}
+
+/* Detalle de Tercero -- pedido explicito del usuario (2026-09-18): "el
+   detalle no es exactamente igual al de HRMS". HRMS envuelve TODO el
+   contenido en una sola tarjeta (WizardLayout.module.css#.card: Surface +
+   borde + radius-md + padding-xl) y sus secciones internas viven desnudas
+   adentro (identityStyles.section: solo flex+gap, sin borde/fondo propio)
+   -- separadas por espacio, no por cajas individuales. `.section` de arriba
+   sigue igual para NuevoTerceroPage.jsx/EspecialidadesPage.jsx (no pedido,
+   no tocar); estas dos clases nuevas son solo para TerceroDetallePage.jsx. */
+.detailCard {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: var(--space-xl);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-lg);
+}
+
+.detailSection {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+}
+
+/* Headline typography (no Title) + acento de marca a la izquierda --
+   portado desde HRMS aed (2026-09-17), mismo tratamiento exacto que
+   identityStyles.sectionTitle alla: "acentos de color en encabezados/
+   secciones", que el contenido tambien cargue color de marca, no solo el
+   chrome del shell -- pedido explicito del usuario (2026-09-18) de que el
+   detalle de Tercero se vea igual que un detalle de HRMS. */
+.sectionTitle {
+  font-family: var(--font-display);
+  font-size: var(--text-headline-size);
+  font-weight: var(--text-headline-weight);
+  color: var(--color-ink);
+  margin: 0;
+  padding-left: var(--space-sm);
+  border-left: 3px solid var(--color-primary);
+}
+
+.infoGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: var(--space-md);
+}
+
+.infoItem {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.infoLabel {
+  font-size: var(--text-label-size);
+  font-weight: 600;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  color: var(--color-ink-muted);
+}
+
+.infoValue {
+  font-size: var(--text-body-size);
+  color: var(--color-ink);
+}
+
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-sm);
+}
+
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: var(--color-surface-sunken);
+  border-radius: var(--radius-full);
+  padding: 3px 10px;
+  font-size: var(--text-label-size);
+}

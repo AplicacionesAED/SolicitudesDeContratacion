@@ -1,1 +1,15 @@
-nuevo-proyecto/
+node_modules/
+.env
+dist/
+*.log
+
+# OS
+.DS_Store
+Thumbs.db
+
+.playwright-mcp/
+.impeccable/
+plantilla-arquitectura/
+files/
+# Capturas de pantalla sueltas en la raíz (verificaciones visuales)
+/*.png

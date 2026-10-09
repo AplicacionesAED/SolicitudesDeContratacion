@@ -1,0 +1,131 @@
+/* Design tokens -- generated from DESIGN.md. Keep this file and DESIGN.md's
+   frontmatter in sync; this is the single source of truth consumed by CSS.
+   Va en frontend/src/tokens.css del proyecto nuevo, importado una sola vez
+   (ej. en frontend/src/main.jsx o index.css) antes que cualquier otro CSS. */
+:root {
+  /* Colors -- brand */
+  --color-primary: #232bed;
+  --color-primary-hover: #1b21c4;
+  --color-primary-ink-on: #ffffff;
+  --color-brand-deep: #0b2d4d;
+  --color-accent-vibrant: #23ff55;
+  --color-accent-deep: #014145;
+
+  /* "Gradacion aed" -- degradado de firma del manual de marca, 3 paradas
+     reales: Azul Vibrante -> un verde-azul intermedio propio del manual ->
+     un verde final tambien propio del manual (distinto de Verde Vibrante).
+     Portado desde HRMS aed (2026-09-17) -- ver "The Gradacion aed Rule" en
+     DESIGN.md: un acento de linea puntual (sidebar/topbar, login, estados
+     vacios), nunca un fondo. */
+  --color-gradient-mid: #20a7a1;
+  --color-gradient-end: #22e76a;
+  --gradient-aed: linear-gradient(135deg, var(--color-primary) 0%, var(--color-gradient-mid) 50%, var(--color-gradient-end) 100%);
+  --gradient-aed-vertical: linear-gradient(180deg, var(--color-primary) 0%, var(--color-gradient-mid) 50%, var(--color-gradient-end) 100%);
+
+  /* Off-white aed -- neutro calido del manual de marca, pensado para
+     impresos (ver "The No-Cream Rule" en DESIGN.md). Sin ningun uso
+     sancionado en pantalla por ahora (se probo y se revirtio en HRMS aed). */
+  --color-offwhite: #f0ece6;
+
+  /* Colors -- neutral (cool-tinted, never warm -- ver "The No-Cream Rule" en
+     DESIGN.md: sigue siendo azul, nunca el Off-white calido del manual de
+     marca). TODA la escala (Bg -> Surface -> Sunken -> Hover -> Hover
+     Strong) es la misma mezcla de marca en distinta intensidad -- nunca un
+     blanco puro aislado junto a un azul fuerte, eso se sentia como un corte
+     en vez de un degradado. Via color-mix() en vez de hex fijo, para que el
+     % de marca mezclado quede documentado en el propio valor -- ver "The
+     Brand-Tinted Neutral Rule" en DESIGN.md. Puerto de la plantilla
+     compartida (2026-09-10) -- Solicitudes venía con hex planos sin tinte
+     de marca, la escala completa nunca se había aplicado acá. Porcentajes
+     actualizados 2026-09-17 (5ta calibracion en HRMS aed, portada aca): la
+     version anterior (8%/5%/12%/20%/26%/18%/30%) tiñe TODAS las superficies
+     grandes (fondo, tarjetas, inputs) con el mismo tono a la vez sin ningun
+     area neutra de por medio, y termina leyendose "todo azul" aunque cada
+     valor individual sea bajo -- bajado a ~60% de esa intensidad. */
+  --color-bg: color-mix(in srgb, var(--color-primary) 5%, white);
+  --color-surface: color-mix(in srgb, var(--color-primary) 3%, white);
+  --color-surface-sunken: color-mix(in srgb, var(--color-primary) 8%, white);
+  --color-surface-hover: color-mix(in srgb, var(--color-primary) 13%, white);
+  /* Un paso mas oscuro que surface-hover, solo para el hover de una fila que
+     YA tenia el rayado zebra (surface-sunken) -- sin esto, esa fila se veia
+     "resetear" al mismo tono de hover que una fila blanca en vez de
+     oscurecerse un poco mas. */
+  --color-surface-hover-strong: color-mix(in srgb, var(--color-primary) 17%, white);
+  --color-border: color-mix(in srgb, var(--color-primary) 11%, white);
+  --color-border-strong: color-mix(in srgb, var(--color-primary) 20%, white);
+  --color-ink: #10151f;
+  --color-ink-secondary: color-mix(in srgb, var(--color-brand-deep) 65%, #2b3341);
+  --color-ink-muted: color-mix(in srgb, var(--color-brand-deep) 58%, #545e70);
+
+  /* Colors -- semantic */
+  --color-success-ink: #014145;
+  --color-success-surface: #dff3ea;
+  --color-warning-ink: #8a5a00;
+  --color-warning-surface: #fff3d6;
+  --color-danger-ink: #9f2b25;
+  --color-danger-surface: #fbe9e7;
+  --color-info-ink: #232bed;
+  --color-info-surface: #e8e9fd;
+
+  /* Typography */
+  --font-display: 'TT Firs Neue', Inter, system-ui, sans-serif;
+  --font-body: Raleway, system-ui, sans-serif;
+
+  --text-display-size: clamp(1.5rem, 1.2rem + 1vw, 2rem);
+  --text-display-weight: 600;
+  --text-display-line: 1.2;
+  --text-display-tracking: -0.01em;
+
+  --text-headline-size: 1.25rem;
+  --text-headline-weight: 600;
+  --text-headline-line: 1.3;
+
+  --text-title-size: 1.0625rem;
+  --text-title-weight: 500;
+  --text-title-line: 1.4;
+
+  --text-body-size: 1rem;
+  --text-body-weight: 400;
+  --text-body-line: 1.55;
+
+  --text-data-size: 0.875rem;
+  --text-data-weight: 400;
+  --text-data-line: 1.4;
+
+  --text-label-size: 0.75rem;
+  --text-label-weight: 600;
+  --text-label-line: 1.3;
+  --text-label-tracking: 0.03em;
+
+  /* Radius */
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 16px;
+  --radius-full: 999px;
+
+  /* Spacing */
+  --space-xs: 4px;
+  --space-sm: 8px;
+  --space-md: 16px;
+  --space-lg: 24px;
+  --space-xl: 32px;
+  --space-2xl: 48px;
+
+  /* Elevation */
+  --shadow-floating: 0 8px 24px rgba(16, 21, 31, 0.12);
+  --shadow-modal: 0 16px 48px rgba(16, 21, 31, 0.18);
+  --shadow-toast: 0 6px 20px rgba(16, 21, 31, 0.15);
+
+  /* Motion */
+  --ease-standard: cubic-bezier(0.22, 1, 0.36, 1);
+  --duration-fast: 120ms;
+  --duration-standard: 200ms;
+
+  /* z-index scale */
+  --z-dropdown: 100;
+  --z-sticky: 200;
+  --z-modal-backdrop: 300;
+  --z-modal: 310;
+  --z-toast: 400;
+  --z-tooltip: 500;
+}

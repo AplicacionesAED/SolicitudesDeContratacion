@@ -1,0 +1,17 @@
+.backLink {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  align-self: flex-start;
+  font-family: var(--font-body);
+  font-size: var(--text-data-size);
+  font-weight: 500;
+  color: var(--color-ink-muted);
+  text-decoration: none;
+  padding: 4px 0;
+  transition: color var(--duration-fast) var(--ease-standard);
+}
+
+.backLink:hover {
+  color: var(--color-ink);
+}

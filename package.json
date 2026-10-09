@@ -1,0 +1,15 @@
+{
+  "name": "solicitudes-indirectos-aed",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Raiz del monorepo Solicitudes de Contratacion AED (nueva arquitectura) -- corre backend y frontend juntos",
+  "scripts": {
+    "dev": "concurrently -n BACKEND,FRONTEND -c blue,green \"npm run dev --prefix backend\" \"npm run dev --prefix frontend\"",
+    "install:all": "npm install --prefix backend && npm install --prefix frontend",
+    "db:migrate": "npm run db:migrate --prefix backend",
+    "db:seed": "npm run db:seed --prefix backend"
+  },
+  "devDependencies": {
+    "concurrently": "^9.2.4"
+  }
+}
