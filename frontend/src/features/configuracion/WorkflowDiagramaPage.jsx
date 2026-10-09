@@ -81,7 +81,7 @@ import { listDesvios, getLayout, saveLayout } from '../../api/workflows.js';
 import { ESTADO_LABELS, ESTADO_BADGE_VARIANT, CATEGORIA_LABELS, categoriaFromSlug } from '../../utils/solicitudes.js';
 import { BackLink } from '../../components/ui/BackLink.jsx';
 import { Button } from '../../components/ui/Button.jsx';
-import styles from './Configuracion.module.css';
+import styles from './Usuarios.module.css';
 import diagramStyles from './Workflows.module.css';
 import { EstadoNode } from './EstadoNode.jsx';
 import { AccionEdge } from './AccionEdge.jsx';
@@ -625,8 +625,13 @@ export function WorkflowDiagramaPage() {
   return (
     <div className={diagramStyles.page}>
       <BackLink to="/configuracion/workflows">Workflows</BackLink>
-      <div className={styles.header}>
-        <h1 className={styles.title}>Workflow — Solicitudes {CATEGORIA_LABELS[categoria]}s</h1>
+      <div className={styles.listHeader}>
+        <div>
+          <h1 className={styles.title}>Workflow — Solicitudes {CATEGORIA_LABELS[categoria]}s</h1>
+          <p className={styles.subtitle}>
+            Cada estado es fijo; cada acción (la píldora sobre la flecha) se puede reconfigurar con clic para ver o cambiar sus desvíos condicionales. Arrastra los nodos para acomodar el diagrama y guarda las posiciones para que quede igual para todos los admins.
+          </p>
+        </div>
         <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-sm)' }}>
           {layoutGuardadoOk && <span style={{ color: 'var(--color-success-ink)', fontSize: 'var(--text-data-size)' }}>Guardado</span>}
           <Button type="button" variant="secondary" onClick={guardarPosiciones} disabled={guardandoLayout}>
@@ -634,11 +639,12 @@ export function WorkflowDiagramaPage() {
           </Button>
         </div>
       </div>
-      <p style={{ margin: 0, color: 'var(--color-ink-muted)', fontSize: 'var(--text-data-size)' }}>
-        Cada estado es fijo, cada acción (la píldora sobre la flecha) se puede reconfigurar: clic para ver/cambiar sus desvíos condicionales para esta categoría. Arrastra los nodos para acomodar el diagrama y usa "Guardar posiciones" para que el acomodo quede así para todos los admins.
-      </p>
 
-      {error && <p className={styles.errorBanner}>{error}</p>}
+      {error && (
+        <div className={styles.errorBanner} role="alert">
+          {error}
+        </div>
+      )}
 
       <div className={diagramStyles.diagramWrap} ref={diagramWrapRef} style={altoDisponible ? { height: `${altoDisponible}px` } : undefined}>
         <ReactFlow

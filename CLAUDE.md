@@ -3761,6 +3761,10 @@ usando HRMS y Cartera (ya migrada) como referencia. Esto reemplaza lo de la plan
   aprobación se muestran como bloques numerados bajo pestañas Indirecta/Directa. La lógica (SLOTS, filtro por frente y
   rol, Director Técnico dinámico según desvíos) no cambió, solo la presentación. Estilos nuevos en
   `Estructura.module.css`; el resto reutiliza `Usuarios.module.css`.
-- **Pendiente (siguientes pasos, mismo orden que en Cartera):** 4d) Workflows, 5) Terceros, 6) Solicitudes (lista, detalle, formularios), 7)
-  Dashboard/Actividad.
+- **Paso 4d, Configuración → Workflows (hecho):** lista (una fila por categoría, con desvíos activos), detalle de
+  acción con desvíos en la tabla del nuevo diseño, y el diagrama `@xyflow/react` con encabezado nuevo; el canvas, su
+  medición de alto con JS y los nodos no cambiaron. Verificado en navegador con sesión simulada (lista, diagrama
+  Directas/Indirectas con canvas de 557 px de alto y detalle, sin errores de la app). Con esto la sección
+  Configuración queda terminada.
+- **Pendiente (siguientes pasos):** 5) Terceros, 6) Solicitudes (lista, detalle, formularios), 7) Actividad y Perfil.
 - **Repositorio:** el proyecto se movió al repositorio nuevo `https://github.com/Gestion-servicios-TI-AED/SolicitudesDeContratacion` (2026-10-09). El historial se reescribió (147 commits, autor y committer `GEliasDev <GEliasDev@users.noreply.github.com>`, sin trailers de Claude), la plantilla ya no es submódulo y las capturas sueltas de la raíz y la carpeta `files/` quedan ignoradas. Commits en español, sin atribución a Claude; el push lo hace el usuario.

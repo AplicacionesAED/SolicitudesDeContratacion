@@ -1,21 +1,18 @@
-// Listado de workflows -- pedido explícito del usuario (2026-09-02):
-// "en estos momentos existen dos, un workflow de directos y otro de
-// indirectos con sus condiciones... quiero que los separemos". Antes de
-// esto había UN solo diagrama con los desvíos de las dos categorías
-// mezclados (la única diferencia visible era una píldora ⚡ en la acción que
-// tuviera algún desvío activo, sin importar para cuál categoría). Ahora cada
-// categoría es su propia fila, con su propio diagrama en
-// WorkflowDiagramaPage.jsx (`/configuracion/workflows/:categoriaSlug`) --
-// mismo patrón lista+detalle que Roles/Frentes.
+// Lista de workflows con el diseno del HRMS y Cartera (migracion de diseno 2026-10-09): una fila por categoria
+// (Directas / Indirectas), cada una con su propio diagrama (WorkflowDiagramaPage.jsx) y su cuenta de desvios
+// condicionales activos. El motor de aprobacion es UNO solo compartido; lo que cambia por categoria son los desvios.
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { GitBranch } from 'lucide-react';
 import { listDesvios } from '../../api/workflows.js';
 import { CATEGORIA_LABELS } from '../../utils/solicitudes.js';
-import styles from './Configuracion.module.css';
+import { Badge } from '../../components/ui/Badge.jsx';
+import styles from './Usuarios.module.css';
+import roles from './Roles.module.css';
 
 const CATEGORIAS = [
-  { categoria: 'DIRECTA', slug: 'directas' },
-  { categoria: 'INDIRECTA', slug: 'indirectas' },
+  { categoria: 'DIRECTA', slug: 'directas', detalle: 'Contrato y orden de servicio de contratación directa.' },
+  { categoria: 'INDIRECTA', slug: 'indirectas', detalle: 'Contrato, orden de servicio y otrosí de contratación indirecta.' },
 ];
 
 export function WorkflowsPage() {
@@ -29,43 +26,73 @@ export function WorkflowsPage() {
       .catch((err) => setError(err.message));
   }, []);
 
-  // Un desvío con condicion_categoria=null aplica a las dos categorías --
-  // cuenta para ambas filas de esta lista, mismo criterio de filtrado que
-  // usan WorkflowDiagramaPage.jsx/WorkflowDetallePage.jsx.
-  function condicionesActivas(categoria) {
-    if (!desvios) return null;
-    return desvios.filter((d) => d.activo && (!d.condicion_categoria || d.condicion_categoria === categoria)).length;
-  }
+  // Un desvio con condicion_categoria=null aplica a las dos categorias: cuenta para ambas filas.
+  const aplicables = (categoria) => (desvios ?? []).filter((d) => !d.condicion_categoria || d.condicion_categoria === categoria);
+  const activos = (categoria) => aplicables(categoria).filter((d) => d.activo).length;
 
   return (
-    <>
-      <div className={styles.header}>
-        <h1 className={styles.title}>Workflows</h1>
+    <div className={styles.page}>
+      <div className={styles.listHeader}>
+        <div>
+          <h1 className={styles.title}>Workflows</h1>
+          <p className={styles.subtitle}>
+            El motor de aprobación es el mismo para las dos categorías; cada una puede tener sus propios desvíos condicionales. Los pasos exclusivos de Directas son la proyección de Controles, el Residente Administrativo, los comentarios y el Gerente de Compras.
+          </p>
+        </div>
       </div>
-      <p style={{ margin: 0, color: 'var(--color-ink-muted)', fontSize: 'var(--text-data-size)' }}>
-        El motor de aprobación tiene 16 acciones -- cuatro de ellas, "Aprobar Proyección (Controles)", "Aprobar (Residente Administrativo)", "Agregar comentario" y "Aprobar (Gerente de Compras)", solo aplican al flujo de Directas (Orden de Servicio). Cada categoría puede además tener sus propios desvíos condicionales -- por eso se muestran y se configuran por separado.
-      </p>
 
-      {error && <p className={styles.errorBanner}>{error}</p>}
+      {error && (
+        <div className={styles.errorBanner} role="alert">
+          {error}
+        </div>
+      )}
 
-      <div className={styles.card}>
+      <div className={styles.tableWrap}>
         <table className={styles.table}>
           <thead>
             <tr>
               <th>Workflow</th>
-              <th>Desvíos condicionales activos</th>
+              <th>Recorrido</th>
+              <th>Desvíos condicionales</th>
             </tr>
           </thead>
           <tbody>
-            {CATEGORIAS.map(({ categoria, slug }) => (
-              <tr key={slug} onClick={() => navigate(`/configuracion/workflows/${slug}`)} style={{ cursor: 'pointer' }}>
-                <td>Solicitudes {CATEGORIA_LABELS[categoria]}s</td>
-                <td>{condicionesActivas(categoria) ?? '—'}</td>
-              </tr>
-            ))}
+            {CATEGORIAS.map(({ categoria, slug, detalle }) => {
+              const total = aplicables(categoria).length;
+              const act = activos(categoria);
+              return (
+                <tr key={slug} className={styles.clickableRow} onClick={() => navigate(`/configuracion/workflows/${slug}`)}>
+                  <td>
+                    <div className={roles.rolCell}>
+                      <span className={roles.rolIcon}>
+                        <GitBranch size={18} strokeWidth={1.75} aria-hidden="true" />
+                      </span>
+                      <span className={roles.rolTexto}>
+                        <span className={roles.nameText}>Solicitudes {CATEGORIA_LABELS[categoria]}s</span>
+                        <span className={roles.rolTipo}>Diagrama y desvíos</span>
+                      </span>
+                    </div>
+                  </td>
+                  <td>
+                    <span className={styles.muted}>{detalle}</span>
+                  </td>
+                  <td>
+                    {desvios === null ? (
+                      <span className={styles.muted}>—</span>
+                    ) : total === 0 ? (
+                      <span className={styles.muted}>Ninguno</span>
+                    ) : (
+                      <Badge variant={act > 0 ? 'info' : 'neutral'}>
+                        {act} activo(s) de {total}
+                      </Badge>
+                    )}
+                  </td>
+                </tr>
+              );
+            })}
           </tbody>
         </table>
       </div>
-    </>
+    </div>
   );
 }

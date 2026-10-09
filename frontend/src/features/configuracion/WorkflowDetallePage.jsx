@@ -32,8 +32,10 @@ import { BackLink } from '../../components/ui/BackLink.jsx';
 import { Button } from '../../components/ui/Button.jsx';
 import { Field, Select } from '../../components/ui/Field.jsx';
 import { Checkbox } from '../../components/ui/Checkbox.jsx';
+import { Badge } from '../../components/ui/Badge.jsx';
 import { EditIconButton } from '../../components/ui/RowIconButtons.jsx';
-import styles from './Configuracion.module.css';
+import styles from './Usuarios.module.css';
+import extra from './Estructura.module.css';
 
 const SLUGS_VALIDOS = ['directas', 'indirectas'];
 
@@ -82,8 +84,7 @@ export function WorkflowDetallePage() {
     listRoles().then((res) => setRolOpciones(res.data.map((rol) => ({ value: rol.nombre, label: ROL_LABELS[rol.nombre] ?? rol.nombre }))));
   }, []);
 
-  if (error) return <p className={styles.errorBanner}>{error}</p>;
-  if (!desvios) return null;
+  if (!desvios) return error ? <div className={styles.errorBanner} role="alert">{error}</div> : null;
 
   function empezarEdicion(d) {
     setEditandoId(d.id);
@@ -139,131 +140,200 @@ export function WorkflowDetallePage() {
     { value: categoria, label: CATEGORIA_LABELS[categoria] },
   ];
 
+  const selectDesvio = (value, onChange, children) => (
+    <Select value={value} onChange={onChange}>
+      {children}
+    </Select>
+  );
+
   return (
-    <>
+    <div className={styles.page}>
       <BackLink to={`/configuracion/workflows/${categoriaSlug}`}>Workflow — Solicitudes {CATEGORIA_LABELS[categoria]}s</BackLink>
-      <div className={styles.header}>
+      <div>
         <h1 className={styles.title}>{ACCION_NOMBRES_CORTOS[accion] ?? accion}</h1>
+        <p className={styles.subtitle}>
+          Desvíos condicionales de esta acción para Solicitudes {CATEGORIA_LABELS[categoria]}s. Si se cumplen las condiciones, la solicitud pasa al estado destino en vez del normal.
+        </p>
       </div>
 
-      {error && <p className={styles.errorBanner}>{error}</p>}
+      {error && (
+        <div className={styles.errorBanner} role="alert">
+          {error}
+        </div>
+      )}
 
-      <div className={styles.card} style={{ padding: 'var(--space-lg)', display: 'flex', flexDirection: 'column', gap: 'var(--space-md)' }}>
-        <strong style={{ fontFamily: 'var(--font-body)', fontSize: 'var(--text-title-size)' }}>Desvíos condicionales</strong>
-        <p style={{ margin: 0, color: 'var(--color-ink-muted)', fontSize: 'var(--text-data-size)' }}>
-          Si se cumplen las condiciones marcadas, la solicitud pasa al estado destino en vez del normal. Dejar "Cualquiera" en rol/categoría significa que esa condición no aplica.
-        </p>
+      <section className={styles.sectionCard}>
+        <div>
+          <h2 className={styles.sectionTitle}>Desvíos condicionales</h2>
+          <p className={styles.sectionHint}>"Cualquiera" en rol o categoría significa que esa condición no aplica.</p>
+        </div>
 
-        <table className={styles.table}>
-          <thead>
-            <tr>
-              <th>Rol del solicitante</th>
-              <th>Categoría</th>
-              <th>Estado destino</th>
-              <th>Activo</th>
-              <th></th>
-            </tr>
-          </thead>
-          <tbody>
-            {desvios.map((d) => (
-              <tr key={d.id}>
-                {editandoId === d.id ? (
-                  <>
+        <div className={styles.tableWrap}>
+          <table className={styles.table}>
+            <thead>
+              <tr>
+                <th>Rol del solicitante</th>
+                <th>Categoría</th>
+                <th>Estado destino</th>
+                <th>Activo</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody>
+              {desvios.map((d) =>
+                editandoId === d.id ? (
+                  <tr key={d.id}>
                     <td>
-                      <Select value={form.condicion_rol} onChange={(e) => setForm({ ...form, condicion_rol: e.target.value })}>
-                        <option value="">Cualquiera</option>
-                        {rolOpciones.map((o) => (
-                          <option key={o.value} value={o.value}>{o.label}</option>
-                        ))}
-                      </Select>
+                      {selectDesvio(form.condicion_rol, (e) => setForm({ ...form, condicion_rol: e.target.value }), (
+                        <>
+                          <option value="">Cualquiera</option>
+                          {rolOpciones.map((o) => (
+                            <option key={o.value} value={o.value}>
+                              {o.label}
+                            </option>
+                          ))}
+                        </>
+                      ))}
                     </td>
                     <td>
-                      <Select value={form.condicion_categoria} onChange={(e) => setForm({ ...form, condicion_categoria: e.target.value })}>
-                        {categoriaOpciones.map((o) => (
-                          <option key={o.value} value={o.value}>{o.label}</option>
-                        ))}
-                      </Select>
+                      {selectDesvio(form.condicion_categoria, (e) => setForm({ ...form, condicion_categoria: e.target.value }), (
+                        <>
+                          {categoriaOpciones.map((o) => (
+                            <option key={o.value} value={o.value}>
+                              {o.label}
+                            </option>
+                          ))}
+                        </>
+                      ))}
                     </td>
                     <td>
-                      <Select value={form.estado_destino} onChange={(e) => setForm({ ...form, estado_destino: e.target.value })}>
-                        <option value="">Selecciona...</option>
-                        {ESTADO_OPCIONES.map((o) => (
-                          <option key={o.value} value={o.value}>{o.label}</option>
-                        ))}
-                      </Select>
+                      {selectDesvio(form.estado_destino, (e) => setForm({ ...form, estado_destino: e.target.value }), (
+                        <>
+                          <option value="">Selecciona...</option>
+                          {ESTADO_OPCIONES.map((o) => (
+                            <option key={o.value} value={o.value}>
+                              {o.label}
+                            </option>
+                          ))}
+                        </>
+                      ))}
                     </td>
                     <td>
                       <Checkbox checked={form.activo} onChange={() => setForm({ ...form, activo: !form.activo })} />
                     </td>
                     <td>
-                      <Button type="button" onClick={() => guardarDesvio(d.id)}>Guardar</Button>{' '}
-                      <Button type="button" variant="ghost" onClick={() => setEditandoId(null)}>Cancelar</Button>
-                    </td>
-                  </>
-                ) : (
-                  <>
-                    <td>{d.condicion_rol ? ROL_LABELS[d.condicion_rol] ?? d.condicion_rol : 'Cualquiera'}</td>
-                    <td>{d.condicion_categoria ? CATEGORIA_LABELS[d.condicion_categoria] ?? d.condicion_categoria : 'Cualquiera'}</td>
-                    <td>{ESTADO_LABELS[d.estado_destino] ?? d.estado_destino}</td>
-                    <td>{d.activo ? 'Sí' : 'No'}</td>
-                    <td>
-                      <div className={styles.actionsCell}>
-                        <EditIconButton label={`Editar desvío${d.condicion_rol ? ` de ${ROL_LABELS[d.condicion_rol] ?? d.condicion_rol}` : ''}`} onClick={() => empezarEdicion(d)} />
-                        <Button type="button" variant="ghost" onClick={() => eliminarDesvio(d.id)}>Eliminar</Button>
+                      <div className={extra.inlineEdit}>
+                        <Button type="button" variant="primary" onClick={() => guardarDesvio(d.id)}>
+                          Guardar
+                        </Button>
+                        <Button type="button" variant="secondary" onClick={() => setEditandoId(null)}>
+                          Cancelar
+                        </Button>
                       </div>
                     </td>
-                  </>
-                )}
-              </tr>
-            ))}
-            {desvios.length === 0 && (
-              <tr>
-                <td colSpan={5} className={styles.emptyState}>Sin desvíos configurados para esta categoría -- esta acción siempre va al estado normal.</td>
-              </tr>
-            )}
-          </tbody>
-        </table>
+                  </tr>
+                ) : (
+                  <tr key={d.id}>
+                    <td>{d.condicion_rol ? ROL_LABELS[d.condicion_rol] ?? d.condicion_rol : <span className={styles.muted}>Cualquiera</span>}</td>
+                    <td>{d.condicion_categoria ? CATEGORIA_LABELS[d.condicion_categoria] ?? d.condicion_categoria : <span className={styles.muted}>Cualquiera</span>}</td>
+                    <td>{ESTADO_LABELS[d.estado_destino] ?? d.estado_destino}</td>
+                    <td>
+                      {d.activo ? (
+                        <Badge variant="success" dot>
+                          Activo
+                        </Badge>
+                      ) : (
+                        <Badge variant="neutral" dot>
+                          Inactivo
+                        </Badge>
+                      )}
+                    </td>
+                    <td>
+                      <div className={extra.actionsCell}>
+                        <EditIconButton label={`Editar desvío${d.condicion_rol ? ` de ${ROL_LABELS[d.condicion_rol] ?? d.condicion_rol}` : ''}`} onClick={() => empezarEdicion(d)} />
+                        <Button type="button" variant="ghost" onClick={() => eliminarDesvio(d.id)}>
+                          Eliminar
+                        </Button>
+                      </div>
+                    </td>
+                  </tr>
+                )
+              )}
+              {desvios.length === 0 && (
+                <tr>
+                  <td colSpan={5} className={styles.emptyState}>
+                    Sin desvíos configurados para esta categoría: esta acción siempre va al estado normal.
+                  </td>
+                </tr>
+              )}
+            </tbody>
+          </table>
+        </div>
 
         {mostrarNuevo ? (
-          <form className={styles.row} onSubmit={agregarDesvio} style={{ alignItems: 'flex-end' }}>
-            <Field className="fieldMd" label="Rol del solicitante">
-              {(p) => (
-                <Select {...p} value={nuevo.condicion_rol} onChange={(e) => setNuevo({ ...nuevo, condicion_rol: e.target.value })}>
-                  <option value="">Cualquiera</option>
-                  {rolOpciones.map((o) => (
-                    <option key={o.value} value={o.value}>{o.label}</option>
-                  ))}
-                </Select>
-              )}
-            </Field>
-            <Field className="fieldSm" label="Categoría">
-              {(p) => (
-                <Select {...p} value={nuevo.condicion_categoria} onChange={(e) => setNuevo({ ...nuevo, condicion_categoria: e.target.value })}>
-                  {categoriaOpciones.map((o) => (
-                    <option key={o.value} value={o.value}>{o.label}</option>
-                  ))}
-                </Select>
-              )}
-            </Field>
-            <Field className="fieldMd" label="Estado destino" required>
-              {(p) => (
-                <Select {...p} value={nuevo.estado_destino} onChange={(e) => setNuevo({ ...nuevo, estado_destino: e.target.value })} required>
-                  <option value="">Selecciona...</option>
-                  {ESTADO_OPCIONES.map((o) => (
-                    <option key={o.value} value={o.value}>{o.label}</option>
-                  ))}
-                </Select>
-              )}
-            </Field>
-            <Button type="submit">Agregar desvío</Button>
-            <Button type="button" variant="ghost" onClick={() => { setMostrarNuevo(false); setNuevo({ ...DESVIO_VACIO, condicion_categoria: categoria }); }}>Cancelar</Button>
+          <form className={styles.formStack} onSubmit={agregarDesvio}>
+            <div className={styles.row}>
+              <Field className="fieldMd" label="Rol del solicitante">
+                {(p) => (
+                  <Select {...p} value={nuevo.condicion_rol} onChange={(e) => setNuevo({ ...nuevo, condicion_rol: e.target.value })}>
+                    <option value="">Cualquiera</option>
+                    {rolOpciones.map((o) => (
+                      <option key={o.value} value={o.value}>
+                        {o.label}
+                      </option>
+                    ))}
+                  </Select>
+                )}
+              </Field>
+              <Field className="fieldMd" label="Categoría">
+                {(p) => (
+                  <Select {...p} value={nuevo.condicion_categoria} onChange={(e) => setNuevo({ ...nuevo, condicion_categoria: e.target.value })}>
+                    {categoriaOpciones.map((o) => (
+                      <option key={o.value} value={o.value}>
+                        {o.label}
+                      </option>
+                    ))}
+                  </Select>
+                )}
+              </Field>
+              <Field className="fieldMd" label="Estado destino" required>
+                {(p) => (
+                  <Select {...p} value={nuevo.estado_destino} onChange={(e) => setNuevo({ ...nuevo, estado_destino: e.target.value })} required>
+                    <option value="">Selecciona...</option>
+                    {ESTADO_OPCIONES.map((o) => (
+                      <option key={o.value} value={o.value}>
+                        {o.label}
+                      </option>
+                    ))}
+                  </Select>
+                )}
+              </Field>
+            </div>
+            <div className={styles.actions}>
+              <Button
+                type="button"
+                variant="secondary"
+                onClick={() => {
+                  setMostrarNuevo(false);
+                  setNuevo({ ...DESVIO_VACIO, condicion_categoria: categoria });
+                }}
+              >
+                Cancelar
+              </Button>
+              <Button type="submit" variant="primary">
+                Agregar desvío
+              </Button>
+            </div>
           </form>
         ) : (
-          <div>
-            <Button type="button" variant="secondary" onClick={() => setMostrarNuevo(true)}>Agregar desvío</Button>
+          <div className={styles.actions}>
+            <span />
+            <Button type="button" variant="secondary" onClick={() => setMostrarNuevo(true)}>
+              Agregar desvío
+            </Button>
           </div>
         )}
-      </div>
-    </>
+      </section>
+    </div>
   );
 }
