@@ -3716,6 +3716,23 @@ usando HRMS y Cartera (ya migrada) como referencia. Esto reemplaza lo de la plan
   Verificado en navegador con una página de prueba temporal (borrada): variantes de botón y badge,
   campos, error, select, combobox, textarea que crece de 74 a 222 px sin scroll ni resize, diálogo con
   pie y cierre con Escape, paginación e iconos de fila; y un barrido de 13 pantallas sin errores.
+- **Inicio — reforma completa (hecho):** no solo estilo: la pantalla pasó de 4 contadores + una tabla a un
+  panel de situación y de atención. Backend nuevo `GET /dashboard/resumen?categoria=DIRECTA|INDIRECTA`
+  (`dashboard.service.js#resumen`, mismo criterio de visibilidad que `/solicitudes` y la MISMA
+  `puedeEjecutarAccion` que decide los botones del detalle): KPIs con contexto, solicitudes por etapa,
+  completadas por mes (6), en flujo por tipo, "Requiere tu atención" (solicitudes concretas, incluidos
+  otrosís, donde el usuario puede actuar, las más antiguas primero, con cuántos días llevan y el valor),
+  "Tus solicitudes por corregir" (propias DEVUELTA/EN_REVISION con un extracto de la nota) y las 8 más
+  recientes. Los endpoints viejos `/dashboard/stats` y `/recientes` siguen existiendo. Frontend: selector
+  Todas/Directas/Indirectas (solo si el usuario ve ambas categorías), botón "Nueva solicitud" según
+  permiso, 5 KPIs (`StatTile` con línea de contexto), gráficos con ApexCharts (copiados del HRMS:
+  `ChartCard`, `CategoryBarChart`, `DonutChart`, `OrdinalBarChart`, `palette`), tabla de recientes y
+  esqueleto de carga. **Cambios de definición a tener presentes:** "Solicitudes en el flujo" ahora SÍ cuenta
+  los pasos intermedios (Director Técnico / Residente Administrativo) que el KPI viejo dejaba fuera;
+  "Por corregir" = DEVUELTA + EN_REVISION (el KPI viejo decía "En revisión / devueltas" pero solo contaba
+  EN_REVISION); "Pendientes de mi aprobación" ahora sale de la misma lista de atención. Para un ADMIN la
+  lista de atención muestra todo lo que está en el flujo (puede actuar sobre cualquier solicitud). Los
+  accesos rápidos del Inicio anterior se retiraron (el menú lateral ya cubre eso).
 - **Pendiente (siguientes pasos, mismo orden que en Cartera):** 4) Configuración (Usuarios, Roles,
   Proyectos, Frentes, Workflows), 5) Terceros, 6) Solicitudes (lista, detalle, formularios), 7)
   Dashboard/Actividad.

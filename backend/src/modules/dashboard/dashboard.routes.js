@@ -9,5 +9,6 @@ const router = express.Router();
 
 router.get('/stats', requireAuth, controller.stats);
 router.get('/recientes', requireAuth, controller.recientes);
+router.get('/resumen', requireAuth, controller.resumen);
 
 module.exports = router;
