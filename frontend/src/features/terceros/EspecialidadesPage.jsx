@@ -11,7 +11,9 @@ import { Field, TextInput, Textarea } from '../../components/ui/Field.jsx';
 import { EditIconButton } from '../../components/ui/RowIconButtons.jsx';
 import { SortHeader } from '../../components/ui/SortHeader.jsx';
 import { useSortableTable, ariaSort } from '../../hooks/useSortableTable.js';
-import styles from './Terceros.module.css';
+import { Modal } from '../../components/ui/Modal.jsx';
+import styles from '../configuracion/Usuarios.module.css';
+import extra from './Terceros.module.css';
 
 export function EspecialidadesPage() {
   const [especialidades, setEspecialidades] = useState([]);
@@ -22,6 +24,7 @@ export function EspecialidadesPage() {
   const [nuevo, setNuevo] = useState({ nombre: '', descripcion: '' });
   const [importando, setImportando] = useState(false);
   const [textoImportar, setTextoImportar] = useState('');
+  const [aEliminar, setAEliminar] = useState(null);
 
   function cargar() {
     listEspecialidades().then((res) => setEspecialidades(res.data)).catch((err) => setError(err.message));
@@ -60,8 +63,9 @@ export function EspecialidadesPage() {
     }
   }
 
-  async function eliminar(e) {
-    if (!confirm(`¿Eliminar la especialidad "${e.nombre}"?`)) return;
+  async function eliminar() {
+    const e = aEliminar;
+    setAEliminar(null);
     setError(null);
     try {
       await removeEspecialidad(e.id);
@@ -89,86 +93,143 @@ export function EspecialidadesPage() {
   }
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-lg)' }}>
+    <div className={styles.page}>
       <BackLink to="/terceros">Terceros</BackLink>
-      <h1 className={styles.title}>Especialidades</h1>
+      <div className={styles.listHeader}>
+        <div>
+          <h1 className={styles.title}>Especialidades</h1>
+          <p className={styles.subtitle}>Catálogo de especialidades que se asignan a los terceros (hasta 3 por tercero).</p>
+        </div>
+      </div>
 
-      {error && <p className={styles.errorBanner}>{error}</p>}
-      {mensaje && <p style={{ fontSize: 'var(--text-data-size)', color: 'var(--color-ink-muted)' }}>{mensaje}</p>}
+      {error && (
+        <div className={styles.errorBanner} role="alert">
+          {error}
+        </div>
+      )}
+      {mensaje && (
+        <div className={extra.okBanner} role="status">
+          {mensaje}
+        </div>
+      )}
 
-      <div className={styles.card}>
+      <div className={styles.tableWrap}>
         <table className={styles.table}>
           <thead>
             <tr>
-              <th aria-sort={ariaSort(sort, 'nombre')}><SortHeader label="Nombre" sortKey="nombre" sort={sort} onSort={toggleSort} /></th>
-              <th aria-sort={ariaSort(sort, 'descripcion')}><SortHeader label="Descripción" sortKey="descripcion" sort={sort} onSort={toggleSort} /></th>
+              <th aria-sort={ariaSort(sort, 'nombre')}>
+                <SortHeader label="Nombre" sortKey="nombre" sort={sort} onSort={toggleSort} />
+              </th>
+              <th aria-sort={ariaSort(sort, 'descripcion')}>
+                <SortHeader label="Descripción" sortKey="descripcion" sort={sort} onSort={toggleSort} />
+              </th>
               <th></th>
             </tr>
           </thead>
           <tbody>
-            {sortedRows.map((e) => (
-              <tr key={e.id}>
-                {editandoId === e.id ? (
-                  <>
-                    <td>
-                      <Field label="Nombre">{(p) => <TextInput {...p} value={form.nombre} onChange={(ev) => setForm({ ...form, nombre: ev.target.value })} />}</Field>
-                    </td>
-                    <td>
-                      <Field label="Descripción">{(p) => <TextInput {...p} value={form.descripcion} onChange={(ev) => setForm({ ...form, descripcion: ev.target.value })} />}</Field>
-                    </td>
-                    <td>
-                      <Button type="button" onClick={() => guardarEdicion(e.id)}>Guardar</Button>{' '}
-                      <Button type="button" variant="ghost" onClick={() => setEditandoId(null)}>Cancelar</Button>
-                    </td>
-                  </>
-                ) : (
-                  <>
-                    <td>{e.nombre}</td>
-                    <td>{e.descripcion || '—'}</td>
-                    <td>
-                      <div className={styles.actionsCell}>
-                        <EditIconButton label={`Editar ${e.nombre}`} onClick={() => empezarEdicion(e)} />
-                        <Button type="button" variant="danger" onClick={() => eliminar(e)}>Eliminar</Button>
-                      </div>
-                    </td>
-                  </>
-                )}
-              </tr>
-            ))}
+            {sortedRows.map((e) =>
+              editandoId === e.id ? (
+                <tr key={e.id}>
+                  <td>
+                    <Field label="Nombre">{(p) => <TextInput {...p} value={form.nombre} onChange={(ev) => setForm({ ...form, nombre: ev.target.value })} />}</Field>
+                  </td>
+                  <td>
+                    <Field label="Descripción">{(p) => <TextInput {...p} value={form.descripcion} onChange={(ev) => setForm({ ...form, descripcion: ev.target.value })} />}</Field>
+                  </td>
+                  <td>
+                    <div style={{ display: 'flex', gap: 'var(--space-sm)' }}>
+                      <Button type="button" variant="primary" onClick={() => guardarEdicion(e.id)}>
+                        Guardar
+                      </Button>
+                      <Button type="button" variant="secondary" onClick={() => setEditandoId(null)}>
+                        Cancelar
+                      </Button>
+                    </div>
+                  </td>
+                </tr>
+              ) : (
+                <tr key={e.id}>
+                  <td>
+                    <span className={styles.personaNombre}>{e.nombre}</span>
+                  </td>
+                  <td>{e.descripcion || <span className={styles.muted}>—</span>}</td>
+                  <td>
+                    <div style={{ display: 'flex', gap: 2, justifyContent: 'flex-end', alignItems: 'center' }}>
+                      <EditIconButton label={`Editar ${e.nombre}`} onClick={() => empezarEdicion(e)} />
+                      <Button type="button" variant="ghost" onClick={() => setAEliminar(e)}>
+                        Eliminar
+                      </Button>
+                    </div>
+                  </td>
+                </tr>
+              )
+            )}
             {especialidades.length === 0 && (
               <tr>
-                <td colSpan={3} className={styles.emptyState}>Sin especialidades todavía.</td>
+                <td colSpan={3} className={styles.emptyState}>
+                  Sin especialidades todavía.
+                </td>
               </tr>
             )}
           </tbody>
         </table>
       </div>
 
-      <div className={styles.section}>
-        <h2 className={styles.sectionTitle}>Nueva especialidad</h2>
-        <form style={{ display: 'flex', gap: 'var(--space-md)', alignItems: 'flex-end', flexWrap: 'wrap' }} onSubmit={handleCrear}>
+      <form className={styles.sectionCard} onSubmit={handleCrear}>
+        <div>
+          <h2 className={styles.sectionTitle}>Nueva especialidad</h2>
+        </div>
+        <div className={styles.row}>
           <Field className="fieldMd" label="Nombre" required>
             {(p) => <TextInput {...p} value={nuevo.nombre} onChange={(e) => setNuevo({ ...nuevo, nombre: e.target.value })} required />}
           </Field>
           <Field className="fieldMd" label="Descripción">
             {(p) => <TextInput {...p} value={nuevo.descripcion} onChange={(e) => setNuevo({ ...nuevo, descripcion: e.target.value })} />}
           </Field>
-          <Button type="submit">Crear</Button>
-        </form>
-      </div>
+        </div>
+        <div className={styles.actions}>
+          <span />
+          <Button type="submit" variant="primary">
+            Crear
+          </Button>
+        </div>
+      </form>
 
-      <div className={styles.section}>
-        <h2 className={styles.sectionTitle}>Importar varias</h2>
-        <p style={{ margin: 0, fontSize: 'var(--text-data-size)', color: 'var(--color-ink-muted)' }}>Una especialidad por línea. Las que ya existan se omiten.</p>
-        <form style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-sm)' }} onSubmit={handleImportar}>
-          <Field label="Nombres">
-            {(p) => <Textarea {...p} rows={5} value={textoImportar} onChange={(e) => setTextoImportar(e.target.value)} placeholder={'Estructuras\nAcabados\nPlomería'} />}
-          </Field>
-          <div>
-            <Button type="submit" disabled={importando || !textoImportar.trim()}>{importando ? 'Importando…' : 'Importar'}</Button>
-          </div>
-        </form>
-      </div>
+      <form className={styles.sectionCard} onSubmit={handleImportar}>
+        <div>
+          <h2 className={styles.sectionTitle}>Importar varias</h2>
+          <p className={styles.sectionHint}>Una especialidad por línea. Las que ya existan se omiten.</p>
+        </div>
+        <Field label="Nombres">
+          {(p) => <Textarea {...p} rows={5} value={textoImportar} onChange={(e) => setTextoImportar(e.target.value)} placeholder={'Estructuras\nAcabados\nPlomería'} />}
+        </Field>
+        <div className={styles.actions}>
+          <span />
+          <Button type="submit" variant="primary" disabled={importando || !textoImportar.trim()}>
+            {importando ? 'Importando...' : 'Importar'}
+          </Button>
+        </div>
+      </form>
+
+      <Modal
+        open={!!aEliminar}
+        onClose={() => setAEliminar(null)}
+        title="Eliminar especialidad"
+        footer={
+          <>
+            <Button variant="secondary" onClick={() => setAEliminar(null)}>
+              Cancelar
+            </Button>
+            <Button variant="danger" onClick={eliminar}>
+              Eliminar
+            </Button>
+          </>
+        }
+      >
+        <p>
+          Se eliminará la especialidad <strong>{aEliminar?.nombre}</strong>.
+        </p>
+      </Modal>
     </div>
   );
 }

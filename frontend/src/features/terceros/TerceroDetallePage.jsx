@@ -12,10 +12,14 @@ import { listEspecialidades } from '../../api/especialidades.js';
 import { useAuth } from '../../auth/AuthContext.jsx';
 import { usuarioTienePermiso } from '../../utils/permisos.js';
 import { BackLink } from '../../components/ui/BackLink.jsx';
+import { Checkbox } from '../../components/ui/Checkbox.jsx';
 import { Button } from '../../components/ui/Button.jsx';
 import { Field, TextInput } from '../../components/ui/Field.jsx';
 import { Badge } from '../../components/ui/Badge.jsx';
-import styles from './Terceros.module.css';
+import layoutStyles from '../../components/layout/WizardLayout.module.css';
+import { iniciales } from '../configuracion/usuarioUtils.js';
+import styles from '../configuracion/Usuarios.module.css';
+import extra from './Terceros.module.css';
 
 const TIPO_CONTRATO_LABEL = { OBRA: 'Otros Servicios', DISENO: 'Diseño', SERVICIOS: 'Servicios' };
 
@@ -113,46 +117,68 @@ export function TerceroDetallePage() {
     }
   }
 
-  if (!tercero) return null;
+  if (!tercero) return <div className={styles.loadingState}>Cargando...</div>;
+
+  const diasSagrilaft = tercero.fechaVencimientoSagrilaft ? Math.ceil((new Date(tercero.fechaVencimientoSagrilaft).getTime() - Date.now()) / 86400000) : null;
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-lg)' }}>
+    <div className={styles.page}>
       <BackLink to="/terceros">Terceros</BackLink>
-      <div>
-        <h1 className={styles.title}>{tercero.razonSocial}</h1>
-        <p style={{ margin: '2px 0 0', fontFamily: 'monospace', color: 'var(--color-ink-muted)' }}>{tercero.nit}</p>
-      </div>
 
-      {error && <p className={styles.errorBanner}>{error}</p>}
-
-      <div className={styles.detailCard}>
-      <div className={styles.detailSection}>
-        <h2 className={styles.sectionTitle}>Datos del tercero</h2>
-        <div className={styles.infoGrid}>
-          <div className={styles.infoItem}>
-            <span className={styles.infoLabel}>Tipo de contrato</span>
-            <span className={styles.infoValue}>{TIPO_CONTRATO_LABEL[tercero.tipoContrato] ?? tercero.tipoContrato}</span>
-          </div>
-          <div className={styles.infoItem}>
-            <span className={styles.infoLabel}>Vcto. SAGRILAFT</span>
-            <span className={styles.infoValue}>{tercero.fechaVencimientoSagrilaft ? new Date(tercero.fechaVencimientoSagrilaft).toLocaleDateString('es-CO') : '—'}</span>
-          </div>
-          <div className={styles.infoItem}>
-            <span className={styles.infoLabel}>Confidencialidad</span>
-            <span className={styles.infoValue}>{tercero.confidencialidad ? <Badge variant="info" dot>Sí</Badge> : <Badge variant="neutral" dot>No</Badge>}</span>
-          </div>
+      <section className={layoutStyles.hero}>
+        <div className={layoutStyles.heroAvatar}>{iniciales(tercero.razonSocial)}</div>
+        <div className={layoutStyles.heroInfo}>
+          <h1 className={layoutStyles.heroName}>{tercero.razonSocial}</h1>
+          <p className={layoutStyles.heroRole}>NIT {tercero.nit || '—'}</p>
+          <p className={layoutStyles.heroMeta}>
+            {TIPO_CONTRATO_LABEL[tercero.tipoContrato] ?? tercero.tipoContrato}
+            {tercero.fechaVencimientoSagrilaft && ` · SAGRILAFT vence el ${new Date(tercero.fechaVencimientoSagrilaft).toLocaleDateString('es-CO')}${diasSagrilaft !== null ? (diasSagrilaft <= 0 ? ' (vencido)' : ` (${diasSagrilaft} días)`) : ''}`}
+          </p>
         </div>
-      </div>
-
-      <form className={styles.detailSection} onSubmit={guardarContacto}>
-        <div className={styles.header}>
-          <h2 className={styles.sectionTitle}>Representante legal y contacto</h2>
-          {!editandoContacto && <Button type="button" variant="ghost" onClick={() => { setContactoForm(tercero); setEditandoContacto(true); }}>Editar</Button>}
+        <div className={layoutStyles.heroSide}>
+          {tercero.aprobadoDebidaDiligencia ? (
+            <Badge variant="success" dot>
+              Debida diligencia aprobada
+            </Badge>
+          ) : (
+            <Badge variant="neutral" dot>
+              Debida diligencia pendiente
+            </Badge>
+          )}
+          {tercero.confidencialidad && <Badge variant="info">Confidencialidad</Badge>}
         </div>
+      </section>
 
-        {editandoContacto ? (
-          <>
-            <div style={{ display: 'flex', gap: 'var(--space-md)', flexWrap: 'wrap' }}>
+      {error && (
+        <div className={styles.errorBanner} role="alert">
+          {error}
+        </div>
+      )}
+
+      <div className={styles.formStack}>
+        <form className={styles.sectionCard} onSubmit={guardarContacto}>
+          <div className={extra.sectionHead}>
+            <div>
+              <h2 className={styles.sectionTitle}>Representante legal y contacto</h2>
+              <p className={styles.sectionHint}>Datos que se usan al armar los documentos de la solicitud.</p>
+            </div>
+            {!editandoContacto && (
+              <Button
+                type="button"
+                variant="secondary"
+                onClick={() => {
+                  setContactoForm(tercero);
+                  setEditandoContacto(true);
+                }}
+              >
+                Editar
+              </Button>
+            )}
+          </div>
+
+          {editandoContacto ? (
+            <>
+              <div className={styles.row}>
               <Field className="fieldMd" label="NIT">
                 {(p) => <TextInput {...p} value={contactoForm.nit ?? ''} onChange={(e) => setContactoForm({ ...contactoForm, nit: e.target.value })} />}
               </Field>
@@ -180,101 +206,136 @@ export function TerceroDetallePage() {
               <Field className="fieldMd" label="Correo de contacto">
                 {(p) => <TextInput {...p} type="email" value={contactoForm.correoContacto ?? ''} onChange={(e) => setContactoForm({ ...contactoForm, correoContacto: e.target.value })} />}
               </Field>
-            </div>
-            <div style={{ display: 'flex', gap: 'var(--space-sm)' }}>
-              <Button type="submit" disabled={guardando === 'contacto'}>{guardando === 'contacto' ? 'Guardando…' : 'Guardar'}</Button>
-              <Button type="button" variant="secondary" onClick={() => setEditandoContacto(false)}>Cancelar</Button>
-            </div>
-          </>
-        ) : (
-          <div className={styles.infoGrid}>
-            <div className={styles.infoItem}><span className={styles.infoLabel}>Representante legal</span><span className={styles.infoValue}>{tercero.representanteLegal || '—'}</span></div>
-            <div className={styles.infoItem}><span className={styles.infoLabel}>Cédula</span><span className={styles.infoValue}>{tercero.cedulaRepresentante || '—'}</span></div>
-            <div className={styles.infoItem}><span className={styles.infoLabel}>Correo de firma</span><span className={styles.infoValue}>{tercero.correoFirma || '—'}</span></div>
-            <div className={styles.infoItem}><span className={styles.infoLabel}>Dirección</span><span className={styles.infoValue}>{tercero.direccionRepresentante || '—'}</span></div>
-            <div className={styles.infoItem}><span className={styles.infoLabel}>Teléfono</span><span className={styles.infoValue}>{tercero.telefonoRepresentante || '—'}</span></div>
-            <div className={styles.infoItem}><span className={styles.infoLabel}>Contacto</span><span className={styles.infoValue}>{tercero.nombreContacto || '—'}</span></div>
-            <div className={styles.infoItem}><span className={styles.infoLabel}>Tel. contacto</span><span className={styles.infoValue}>{tercero.telefonoContacto || '—'}</span></div>
-            <div className={styles.infoItem}><span className={styles.infoLabel}>Correo contacto</span><span className={styles.infoValue}>{tercero.correoContacto || '—'}</span></div>
-          </div>
-        )}
-      </form>
-
-      <div className={styles.detailSection}>
-        <div className={styles.header}>
-          <h2 className={styles.sectionTitle}>Debida diligencia</h2>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-sm)' }}>
-            {tercero.aprobadoDebidaDiligencia ? <Badge variant="success" dot>Aprobado</Badge> : <Badge variant="neutral" dot>Pendiente</Badge>}
-            {puedeEditar && !editandoDd && <Button type="button" variant="ghost" onClick={() => { setDdForm(tercero); setEditandoDd(true); }}>Editar</Button>}
-          </div>
-        </div>
-        <div className={styles.infoGrid}>
-          {DD_CHECKS.map(([campo, label]) => (
-            <label key={campo} style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 'var(--text-body-size)' }}>
-              <input
-                type="checkbox"
-                disabled={!editandoDd}
-                checked={Boolean((editandoDd ? ddForm : tercero)[campo])}
-                onChange={(e) => setDdForm({ ...ddForm, [campo]: e.target.checked })}
-              />
-              {label}
-            </label>
-          ))}
-        </div>
-        {editandoDd && (
-          <div style={{ display: 'flex', gap: 'var(--space-sm)' }}>
-            <Button type="button" onClick={guardarDd} disabled={guardando === 'dd'}>{guardando === 'dd' ? 'Guardando…' : 'Guardar'}</Button>
-            <Button type="button" variant="secondary" onClick={() => setEditandoDd(false)}>Cancelar</Button>
-          </div>
-        )}
-      </div>
-
-      <div className={styles.detailSection}>
-        <div className={styles.header}>
-          <h2 className={styles.sectionTitle}>Especialidades</h2>
-          {!editandoEsp && <Button type="button" variant="ghost" onClick={() => { setEspIds(tercero.especialidades.map((e) => e.id)); setEditandoEsp(true); }}>Editar</Button>}
-        </div>
-        {editandoEsp ? (
-          <>
-            {catalogo.length === 0 ? (
-              <p style={{ fontSize: 'var(--text-data-size)', color: 'var(--color-ink-muted)' }}>
-                No hay especialidades en el catálogo. Créalas primero desde Terceros → Especialidades.
-              </p>
-            ) : (
-              <div className={styles.chips}>
-                {catalogo.map((e) => {
-                  const seleccionada = espIds.includes(e.id);
-                  const deshabilitada = !seleccionada && espIds.length >= 3;
-                  return (
-                    <label key={e.id} className={styles.chip} style={{ cursor: deshabilitada ? 'not-allowed' : 'pointer', opacity: deshabilitada ? 0.5 : 1 }}>
-                      <input
-                        type="checkbox"
-                        checked={seleccionada}
-                        disabled={deshabilitada}
-                        onChange={() => setEspIds((prev) => (seleccionada ? prev.filter((x) => x !== e.id) : [...prev, e.id]))}
-                      />
-                      {e.nombre}
-                    </label>
-                  );
-                })}
               </div>
-            )}
-            {espIds.length >= 3 && <p style={{ fontSize: 'var(--text-data-size)', color: '#8a5a00' }}>Máximo 3 especialidades</p>}
-            <div style={{ display: 'flex', gap: 'var(--space-sm)' }}>
-              <Button type="button" onClick={guardarEspecialidades} disabled={guardando === 'esp'}>{guardando === 'esp' ? 'Guardando…' : 'Guardar'}</Button>
-              <Button type="button" variant="secondary" onClick={() => setEditandoEsp(false)}>Cancelar</Button>
+              <div className={styles.actions}>
+                <Button type="button" variant="secondary" onClick={() => setEditandoContacto(false)}>
+                  Cancelar
+                </Button>
+                <Button type="submit" variant="primary" disabled={guardando === 'contacto'}>
+                  {guardando === 'contacto' ? 'Guardando...' : 'Guardar'}
+                </Button>
+              </div>
+            </>
+          ) : (
+            <div className={extra.infoGrid}>
+            <div className={extra.infoItem}><span className={extra.infoLabel}>Representante legal</span><span className={extra.infoValue}>{tercero.representanteLegal || '—'}</span></div>
+            <div className={extra.infoItem}><span className={extra.infoLabel}>Cédula</span><span className={extra.infoValue}>{tercero.cedulaRepresentante || '—'}</span></div>
+            <div className={extra.infoItem}><span className={extra.infoLabel}>Correo de firma</span><span className={extra.infoValue}>{tercero.correoFirma || '—'}</span></div>
+            <div className={extra.infoItem}><span className={extra.infoLabel}>Dirección</span><span className={extra.infoValue}>{tercero.direccionRepresentante || '—'}</span></div>
+            <div className={extra.infoItem}><span className={extra.infoLabel}>Teléfono</span><span className={extra.infoValue}>{tercero.telefonoRepresentante || '—'}</span></div>
+            <div className={extra.infoItem}><span className={extra.infoLabel}>Contacto</span><span className={extra.infoValue}>{tercero.nombreContacto || '—'}</span></div>
+            <div className={extra.infoItem}><span className={extra.infoLabel}>Tel. contacto</span><span className={extra.infoValue}>{tercero.telefonoContacto || '—'}</span></div>
+            <div className={extra.infoItem}><span className={extra.infoLabel}>Correo contacto</span><span className={extra.infoValue}>{tercero.correoContacto || '—'}</span></div>
             </div>
-          </>
-        ) : (
-          <div className={styles.chips}>
-            {tercero.especialidades.length === 0 ? (
-              <p style={{ fontSize: 'var(--text-data-size)', color: 'var(--color-ink-muted)', margin: 0 }}>Sin especialidades asignadas</p>
-            ) : (
-              tercero.especialidades.map((e) => <span key={e.id} className={styles.chip}>{e.nombre}</span>)
+          )}
+        </form>
+
+        <section className={styles.sectionCard}>
+          <div className={extra.sectionHead}>
+            <div>
+              <h2 className={styles.sectionTitle}>Debida diligencia</h2>
+              <p className={styles.sectionHint}>Se aprueba cuando las seis verificaciones están marcadas.</p>
+            </div>
+            <div className={extra.sectionHeadEnd}>
+              {tercero.aprobadoDebidaDiligencia ? (
+                <Badge variant="success" dot>
+                  Aprobado
+                </Badge>
+              ) : (
+                <Badge variant="neutral" dot>
+                  Pendiente
+                </Badge>
+              )}
+              {puedeEditar && !editandoDd && (
+                <Button
+                  type="button"
+                  variant="secondary"
+                  onClick={() => {
+                    setDdForm(tercero);
+                    setEditandoDd(true);
+                  }}
+                >
+                  Editar
+                </Button>
+              )}
+            </div>
+          </div>
+          <div className={extra.infoGrid}>
+            {DD_CHECKS.map(([campo, label]) => (
+              <Checkbox key={campo} label={label} disabled={!editandoDd} checked={Boolean((editandoDd ? ddForm : tercero)[campo])} onChange={(e) => setDdForm({ ...ddForm, [campo]: e.target.checked })} />
+            ))}
+          </div>
+          {editandoDd && (
+            <div className={styles.actions}>
+              <Button type="button" variant="secondary" onClick={() => setEditandoDd(false)}>
+                Cancelar
+              </Button>
+              <Button type="button" variant="primary" onClick={guardarDd} disabled={guardando === 'dd'}>
+                {guardando === 'dd' ? 'Guardando...' : 'Guardar'}
+              </Button>
+            </div>
+          )}
+        </section>
+
+        <section className={styles.sectionCard}>
+          <div className={extra.sectionHead}>
+            <div>
+              <h2 className={styles.sectionTitle}>Especialidades</h2>
+              <p className={styles.sectionHint}>Hasta 3 por tercero.</p>
+            </div>
+            {!editandoEsp && (
+              <Button
+                type="button"
+                variant="secondary"
+                onClick={() => {
+                  setEspIds(tercero.especialidades.map((e) => e.id));
+                  setEditandoEsp(true);
+                }}
+              >
+                Editar
+              </Button>
             )}
           </div>
-        )}
-      </div>
+          {editandoEsp ? (
+            <>
+              {catalogo.length === 0 ? (
+                <p className={styles.permisosVacio}>No hay especialidades en el catálogo. Créalas primero desde Terceros → Especialidades.</p>
+              ) : (
+                <div className={extra.chips}>
+                  {catalogo.map((e) => {
+                    const seleccionada = espIds.includes(e.id);
+                    const deshabilitada = !seleccionada && espIds.length >= 3;
+                    return (
+                      <label key={e.id} className={`${extra.chip} ${extra.chipSelectable} ${seleccionada ? extra.chipSelected : ''} ${deshabilitada ? extra.chipDisabled : ''}`}>
+                        <input type="checkbox" checked={seleccionada} disabled={deshabilitada} onChange={() => setEspIds((prev) => (seleccionada ? prev.filter((x) => x !== e.id) : [...prev, e.id]))} />
+                        {e.nombre}
+                      </label>
+                    );
+                  })}
+                </div>
+              )}
+              {espIds.length >= 3 && <p className={styles.sectionHint}>Máximo 3 especialidades.</p>}
+              <div className={styles.actions}>
+                <Button type="button" variant="secondary" onClick={() => setEditandoEsp(false)}>
+                  Cancelar
+                </Button>
+                <Button type="button" variant="primary" onClick={guardarEspecialidades} disabled={guardando === 'esp'}>
+                  {guardando === 'esp' ? 'Guardando...' : 'Guardar'}
+                </Button>
+              </div>
+            </>
+          ) : tercero.especialidades.length === 0 ? (
+            <p className={styles.permisosVacio}>Sin especialidades asignadas.</p>
+          ) : (
+            <div className={extra.chips}>
+              {tercero.especialidades.map((e) => (
+                <span key={e.id} className={extra.chip}>
+                  {e.nombre}
+                </span>
+              ))}
+            </div>
+          )}
+        </section>
       </div>
     </div>
   );

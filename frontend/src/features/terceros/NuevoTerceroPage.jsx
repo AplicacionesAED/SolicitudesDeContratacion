@@ -9,7 +9,8 @@ import { listEspecialidades } from '../../api/especialidades.js';
 import { BackLink } from '../../components/ui/BackLink.jsx';
 import { Button } from '../../components/ui/Button.jsx';
 import { Field, TextInput, Select } from '../../components/ui/Field.jsx';
-import styles from './Terceros.module.css';
+import styles from '../configuracion/Usuarios.module.css';
+import extra from './Terceros.module.css';
 
 const TIPO_CONTRATO_OPTIONS = [
   { value: 'OBRA', label: 'Otros Servicios' },
@@ -98,49 +99,60 @@ export function NuevoTerceroPage() {
   }
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-lg)' }}>
+    <div className={styles.page}>
       <BackLink to="/terceros">Terceros</BackLink>
-      <h1 className={styles.title}>Nuevo tercero</h1>
+      <div>
+        <h1 className={styles.title}>Nuevo tercero</h1>
+        <p className={styles.subtitle}>Registra un proveedor o contratista. La debida diligencia se completa después, desde su ficha.</p>
+      </div>
 
-      {error && <p className={styles.errorBanner}>{error}</p>}
+      {error && (
+        <div className={styles.errorBanner} role="alert">
+          {error}
+        </div>
+      )}
 
-      <form onSubmit={handleSubmit} noValidate style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-lg)' }}>
-        <div className={styles.section}>
-          <h2 className={styles.sectionTitle}>Datos del tercero</h2>
-          <div style={{ display: 'flex', gap: 'var(--space-md)', flexWrap: 'wrap' }}>
-            <Field className="fieldMd" label="Razón Social" required error={errores.razonSocial}>
+      <form onSubmit={handleSubmit} noValidate className={styles.formStack}>
+        <section className={styles.sectionCard}>
+          <div>
+            <h2 className={styles.sectionTitle}>Datos del tercero</h2>
+          </div>
+          <div className={styles.row}>
+            <Field className="fieldMd" label="Razón social" required error={errores.razonSocial}>
               {(p) => <TextInput {...p} value={form.razonSocial} onChange={(e) => handleChange('razonSocial', e.target.value)} />}
             </Field>
             <Field className="fieldMd" label="NIT" required error={errores.nit} helper="Formato: 900123456-7">
               {(p) => <TextInput {...p} value={form.nit} onChange={(e) => handleChange('nit', e.target.value)} />}
             </Field>
+            <Field className="fieldMd" label="Tipo de contrato" required error={errores.tipoContrato}>
+              {(p) => (
+                <Select {...p} value={form.tipoContrato} onChange={(e) => handleChange('tipoContrato', e.target.value)}>
+                  <option value="">Selecciona un tipo</option>
+                  {TIPO_CONTRATO_OPTIONS.map((o) => (
+                    <option key={o.value} value={o.value}>
+                      {o.label}
+                    </option>
+                  ))}
+                </Select>
+              )}
+            </Field>
           </div>
-          <Field className="fieldMd" label="Tipo de Contrato" required error={errores.tipoContrato}>
-            {(p) => (
-              <Select {...p} value={form.tipoContrato} onChange={(e) => handleChange('tipoContrato', e.target.value)}>
-                <option value="">Selecciona un tipo</option>
-                {TIPO_CONTRATO_OPTIONS.map((o) => (
-                  <option key={o.value} value={o.value}>{o.label}</option>
-                ))}
-              </Select>
-            )}
-          </Field>
-        </div>
+        </section>
 
-        <div className={styles.section}>
-          <h2 className={styles.sectionTitle}>Representante legal</h2>
-          <div style={{ display: 'flex', gap: 'var(--space-md)', flexWrap: 'wrap' }}>
-            <Field className="fieldMd" label="Nombre del Representante Legal" required error={errores.representanteLegal}>
+        <section className={styles.sectionCard}>
+          <div>
+            <h2 className={styles.sectionTitle}>Representante legal</h2>
+          </div>
+          <div className={styles.row}>
+            <Field className="fieldMd" label="Nombre del representante legal" required error={errores.representanteLegal}>
               {(p) => <TextInput {...p} value={form.representanteLegal} onChange={(e) => handleChange('representanteLegal', e.target.value)} />}
             </Field>
             <Field className="fieldMd" label="Cédula del RL" required error={errores.cedulaRepresentante}>
               {(p) => <TextInput {...p} value={form.cedulaRepresentante} onChange={(e) => handleChange('cedulaRepresentante', e.target.value)} />}
             </Field>
-          </div>
-          <Field label="Correo para Firma" required error={errores.correoFirma}>
-            {(p) => <TextInput {...p} type="email" value={form.correoFirma} onChange={(e) => handleChange('correoFirma', e.target.value)} />}
-          </Field>
-          <div style={{ display: 'flex', gap: 'var(--space-md)', flexWrap: 'wrap' }}>
+            <Field className="fieldMd" label="Correo para firma" required error={errores.correoFirma}>
+              {(p) => <TextInput {...p} type="email" value={form.correoFirma} onChange={(e) => handleChange('correoFirma', e.target.value)} />}
+            </Field>
             <Field className="fieldMd" label="Dirección del RL" required error={errores.direccionRepresentante}>
               {(p) => <TextInput {...p} value={form.direccionRepresentante} onChange={(e) => handleChange('direccionRepresentante', e.target.value)} />}
             </Field>
@@ -148,44 +160,55 @@ export function NuevoTerceroPage() {
               {(p) => <TextInput {...p} value={form.telefonoRepresentante} onChange={(e) => handleChange('telefonoRepresentante', e.target.value)} />}
             </Field>
           </div>
-        </div>
+        </section>
 
-        <div className={styles.section}>
+        <section className={styles.sectionCard}>
           <div>
             <h2 className={styles.sectionTitle}>Contacto comercial</h2>
-            <p style={{ margin: '2px 0 0', fontSize: 'var(--text-data-size)', color: 'var(--color-ink-muted)' }}>Información opcional de contacto.</p>
+            <p className={styles.sectionHint}>Información opcional de contacto.</p>
           </div>
-          <Field label="Nombre del Contacto">
-            {(p) => <TextInput {...p} value={form.nombreContacto} onChange={(e) => handleChange('nombreContacto', e.target.value)} />}
-          </Field>
-          <div style={{ display: 'flex', gap: 'var(--space-md)', flexWrap: 'wrap' }}>
-            <Field className="fieldMd" label="Teléfono del Contacto">
+          <div className={styles.row}>
+            <Field className="fieldMd" label="Nombre del contacto">
+              {(p) => <TextInput {...p} value={form.nombreContacto} onChange={(e) => handleChange('nombreContacto', e.target.value)} />}
+            </Field>
+            <Field className="fieldMd" label="Teléfono del contacto">
               {(p) => <TextInput {...p} value={form.telefonoContacto} onChange={(e) => handleChange('telefonoContacto', e.target.value)} />}
             </Field>
-            <Field className="fieldMd" label="Correo del Contacto">
+            <Field className="fieldMd" label="Correo del contacto">
               {(p) => <TextInput {...p} type="email" value={form.correoContacto} onChange={(e) => handleChange('correoContacto', e.target.value)} />}
             </Field>
           </div>
-        </div>
+        </section>
 
         {catalogo.length > 0 && (
-          <div className={styles.section}>
-            <h2 className={styles.sectionTitle}>Especialidades</h2>
-            <p style={{ margin: 0, fontSize: 'var(--text-data-size)', color: 'var(--color-ink-muted)' }}>Selecciona las que apliquen (opcional).</p>
-            <div className={styles.chips} style={{ flexWrap: 'wrap' }}>
-              {catalogo.map((e) => (
-                <label key={e.id} className={styles.chip} style={{ cursor: 'pointer' }}>
-                  <input type="checkbox" checked={especialidadIds.includes(e.id)} onChange={() => toggleEspecialidad(e.id)} />
-                  {e.nombre}
-                </label>
-              ))}
+          <section className={styles.sectionCard}>
+            <div>
+              <h2 className={styles.sectionTitle}>Especialidades</h2>
+              <p className={styles.sectionHint}>Selecciona las que apliquen (opcional).</p>
             </div>
-          </div>
+            <div className={extra.chips}>
+              {catalogo.map((e) => {
+                const seleccionada = especialidadIds.includes(e.id);
+                return (
+                  <label key={e.id} className={`${extra.chip} ${extra.chipSelectable} ${seleccionada ? extra.chipSelected : ''}`}>
+                    <input type="checkbox" checked={seleccionada} onChange={() => toggleEspecialidad(e.id)} />
+                    {e.nombre}
+                  </label>
+                );
+              })}
+            </div>
+          </section>
         )}
 
-        <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 'var(--space-sm)' }}>
-          <Button type="button" variant="secondary" onClick={() => navigate('/terceros')} disabled={guardando}>Cancelar</Button>
-          <Button type="submit" disabled={guardando}>{guardando ? 'Guardando…' : 'Guardar tercero'}</Button>
+        <div className={styles.actions}>
+          <Button type="button" variant="secondary" onClick={() => navigate('/terceros')} disabled={guardando}>
+            Cancelar
+          </Button>
+          <div className={styles.actionsEnd}>
+            <Button type="submit" variant="primary" disabled={guardando}>
+              {guardando ? 'Guardando...' : 'Guardar tercero'}
+            </Button>
+          </div>
         </div>
       </form>
     </div>

@@ -3766,5 +3766,13 @@ usando HRMS y Cartera (ya migrada) como referencia. Esto reemplaza lo de la plan
   medición de alto con JS y los nodos no cambiaron. Verificado en navegador con sesión simulada (lista, diagrama
   Directas/Indirectas con canvas de 557 px de alto y detalle, sin errores de la app). Con esto la sección
   Configuración queda terminada.
-- **Pendiente (siguientes pasos):** 5) Terceros, 6) Solicitudes (lista, detalle, formularios), 7) Actividad y Perfil.
+- **Paso 5, Terceros (hecho):** `TercerosPage` con tarjetas (Terceros / debida diligencia aprobada / SAGRILAFT por
+  vencer / vencido), filtros (búsqueda, debida diligencia, SAGRILAFT) y la misma resaltación de filas por vencimiento
+  (≤20 días rojo, ≤30 amarillo). `TerceroDetallePage` con banner de detalle y tarjetas Representante legal y contacto /
+  Debida diligencia / Especialidades, cada una con su propio Editar/Guardar y sus permisos de siempre.
+  `NuevoTerceroPage` y `EspecialidadesPage` con el mismo lenguaje (esta última cambia `confirm()` nativo por un
+  `Modal`). Sin cambios de lógica ni de backend. `Terceros.module.css` queda solo con lo específico (vencimiento,
+  infoGrid, chips); lo demás reutiliza `Usuarios.module.css`. Verificado en navegador con sesión simulada (lista,
+  ficha, nuevo y especialidades, sin errores de la app).
+- **Pendiente (siguientes pasos):** 6) Solicitudes (lista, detalle, formularios), 7) Actividad y Perfil.
 - **Repositorio:** el proyecto se movió al repositorio nuevo `https://github.com/Gestion-servicios-TI-AED/SolicitudesDeContratacion` (2026-10-09). El historial se reescribió (147 commits, autor y committer `GEliasDev <GEliasDev@users.noreply.github.com>`, sin trailers de Claude), la plantilla ya no es submódulo y las capturas sueltas de la raíz y la carpeta `files/` quedan ignoradas. Commits en español, sin atribución a Claude; el push lo hace el usuario.
