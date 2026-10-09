@@ -1,51 +1,8 @@
-// ============================================================================
-// PLANTILLA — sidebar principal, copiado tal cual del HRMS aed.
-//
-// Va en frontend/src/components/layout/AppShell.jsx del proyecto nuevo (junto
-// con AppShell.module.css y componentes/ui/Badge.jsx, que ya trae el mismo
-// paquete de arquitectura frontend). Requiere `lenis`, `react-router-dom` y
-// `lucide-react` como dependencias (ver ARQUITECTURA-FRONTEND.md).
-//
-// Qué se copia TAL CUAL (la mecánica, el patrón — no cambia entre proyectos):
-//   - La estructura de dos columnas: riel de categorías (botón, no navega) +
-//     panel flotante con los items reales, que aparece a la derecha con
-//     hover Y foco de teclado (nunca solo hover).
-//   - El cierre con debounce de 300ms (scheduleClose/cancelScheduledClose) --
-//     sin esto, un movimiento diagonal del mouse cierra el panel de casualidad
-//     a mitad de camino.
-//   - El header de marca (logo + separador + nombre) -- ver
-//     componentes/assets/aed-logo.png, mismo logo, mismo lugar. Es el logo
-//     degradado verde->azul, pensado para fondo claro -- sin bloque Azul
-//     Profundo detrás (no existe una versión blanca/mono del logo todavía),
-//     así que se queda sobre el fondo Surface del sidebar en TODOS los
-//     proyectos, sin excepción, hasta que exista esa versión del logo.
-//   - La convención de icono: **iconos de `lucide-react`** (ver más abajo),
-//     16px, `currentColor`, nunca un emoji o glifo unicode. Mismo criterio
-//     que usa hoy el HRMS (`DESIGN.md` y `AppShell.jsx` ya migrados).
-//   - Los items con `enDesarrollo: true` en vez de un link real -- así el
-//     mapa completo del producto queda visible en la IA aunque la pantalla
-//     todavía no exista, sin ofrecer un link muerto.
-//   - El `.topbar` dentro de `<main>` (antes del `<ReactLenis>`), con
-//     `<UserMenu />` -- sesión activa + "Cerrar sesión", ver
-//     componentes/UserMenu.jsx. Requiere el paquete de auth ya copiado. Un
-//     engranaje de Accesos (administración de cuentas/roles) va ahí también
-//     en cuanto el proyecto tenga esa pantalla -- ver el comentario dentro
-//     de `.topbar` más abajo, y la regla de Accesos en
-//     ARQUITECTURA-FRONTEND.md antes de construirla: es una RUTA NORMAL con
-//     su propio nav vertical (igual que cualquier vista de detalle con
-//     Section Navigation), nunca un panel flotante/drawer/modal.
-//
-// Qué SÍ cambia por proyecto (contenido, no mecánica):
-//   - `NAV_GROUPS` completo: los títulos, iconos por categoría, y las rutas
-//     reales de este proyecto en particular son contenido del HRMS, no del
-//     patrón. Reemplázalo por el árbol de navegación real del proyecto nuevo.
-//   - El icono de `lucide-react` asignado a cada categoría -- elige el que
-//     mejor represente esa categoría nueva (ver el catálogo en
-//     https://lucide.dev/icons), no hace falta que coincida con el del HRMS
-//     si las categorías son distintas.
-//   - `RR.HH.` en `.brandName` -- el nombre corto del módulo/producto nuevo.
-// ============================================================================
-
+// Sidebar y topbar con el mismo diseno que el HRMS (migracion de diseno
+// 2026-10-09): riel de categorias con flyout, entrada fija "Inicio", migas de
+// pan (grupo > pantalla) y divisor antes del menu de usuario. Lo propio de
+// Solicitudes: NAV_GROUPS (utils/navModulos.jsx, filtrado por permiso), la
+// campana de notificaciones, el engranaje de Configuracion y la presencia.
 import { Suspense, useEffect, useRef, useState } from 'react';
 import { NavLink, Outlet, useLocation } from 'react-router-dom';
 import { ReactLenis } from 'lenis/react';
@@ -54,17 +11,46 @@ import { useAuth } from '../../auth/AuthContext.jsx';
 import { usuarioTienePermiso } from '../../utils/permisos.js';
 import { NAV_GROUPS } from '../../utils/navModulos.jsx';
 import { usePresence } from '../../hooks/usePresence.js';
-import { Badge } from '../ui/Badge.jsx';
 import { UserMenu } from './UserMenu.jsx';
 import { NotificacionesBell } from './NotificacionesBell.jsx';
 import styles from './AppShell.module.css';
 
+const ICON_SIZE = 16;
 const ICON_STROKE_WIDTH = 1.75;
 
-// Flecha que indica "esto abre un panel a la derecha" -- mismo criterio de
-// icono que las categorias de arriba (lucide-react).
 function ChevronIcon() {
   return <ChevronRight size={10} strokeWidth={ICON_STROKE_WIDTH} aria-hidden="true" className={styles.chevron} />;
+}
+
+// El `isActive` por defecto de NavLink marca como activa cualquier ruta cuyo
+// pathname EMPIECE con su `to` -- con dos items hermanos donde uno es prefijo
+// del otro ("Todas las solicitudes" /solicitudes-directas y "Nueva solicitud"
+// /solicitudes-directas/nueva, o Directorio /terceros y Especialidades
+// /terceros/especialidades) quedarian los DOS encendidos a la vez. Se resuelve
+// buscando, entre todos los items de todos los grupos cuyo `to` calce con la
+// ruta actual, el de `to` mas largo: el mas especifico gana.
+function encontrarItemActivo(pathname) {
+  let mejor = null;
+  for (const group of NAV_GROUPS) {
+    for (const item of group.items) {
+      if (!item.to) continue;
+      if (pathname === item.to || pathname.startsWith(`${item.to}/`)) {
+        if (!mejor || item.to.length > mejor.item.to.length) mejor = { item, grupoTitulo: group.title };
+      }
+    }
+  }
+  return mejor;
+}
+
+// Rutas que no son un item del menu pero si tienen un lugar claro en la app:
+// el detalle de una solicitud (`/solicitudes/:id`, sin categoria en la URL),
+// el import historico, Configuracion y el perfil.
+function migaFueraDelMenu(path) {
+  if (path === '/solicitudes/importar-historico') return { group: 'Solicitudes', label: 'Importar histórico' };
+  if (path.startsWith('/solicitudes/')) return { group: 'Solicitudes', label: 'Detalle de la solicitud' };
+  if (path === '/configuracion' || path.startsWith('/configuracion/')) return { group: 'Configuración', label: 'Accesos y configuración' };
+  if (path === '/perfil' || path.startsWith('/perfil/')) return { group: null, label: 'Mi perfil' };
+  return null;
 }
 
 export function AppShell() {
@@ -75,20 +61,26 @@ export function AppShell() {
   const navRef = useRef(null);
   const closeTimerRef = useRef(null);
 
-  // La categoria "activa" (fill Azul Profundo permanente, ver Navigation en
-  // DESIGN.md) es la que contiene la ruta actual -- independiente de cual
-  // panel este abierto por hover/foco en este momento.
-  const activeGroupTitle = NAV_GROUPS.find((group) =>
-    group.items.some((item) => item.to && (location.pathname === item.to || location.pathname.startsWith(`${item.to}/`)))
-  )?.title;
+  const itemActivo = encontrarItemActivo(location.pathname);
+  const activeGroupTitle = itemActivo?.grupoTitulo;
 
-  // El flyout esta separado de su fila por un gap (ver .flyout en el CSS),
-  // asi que moviendo el mouse en diagonal -- sobre todo despacio -- el
-  // cursor puede pasar por un pixel que no es ni la fila ni el panel y
-  // dispara mouseleave de mitad de camino. Cerrar con un pequeno retraso en
-  // vez de al toque, cancelable apenas el mouse vuelve a entrar a CUALQUIER
-  // parte del nav, absorbe ese cruce sin que el usuario note el delay --
-  // solo se cierra de verdad si el mouse (o el foco) se va del nav en serio.
+  // Migas de pan del topbar (grupo > pantalla), derivadas del mismo NAV_GROUPS:
+  // un item nuevo aparece solo.
+  const path = location.pathname;
+  let crumb = null;
+  if (path === '/') {
+    crumb = { group: null, label: 'Inicio' };
+  } else if (itemActivo) {
+    crumb = { group: itemActivo.grupoTitulo, label: itemActivo.item.label };
+  } else {
+    crumb = migaFueraDelMenu(path);
+  }
+
+  // El flyout esta separado de su fila por un gap (ver .flyout en el CSS), asi
+  // que moviendo el mouse en diagonal el cursor puede pasar por un pixel que no
+  // es ni la fila ni el panel y dispara mouseleave a mitad de camino. Cerrar con
+  // un pequeno retraso, cancelable apenas el mouse vuelve a entrar a CUALQUIER
+  // parte del nav, absorbe ese cruce sin que se note.
   function scheduleClose() {
     closeTimerRef.current = setTimeout(() => setOpenGroup(null), 300);
   }
@@ -113,22 +105,13 @@ export function AppShell() {
 
   useEffect(() => cancelScheduledClose, []); // eslint-disable-line react-hooks/exhaustive-deps
 
-  // Defensa general contra el bug real encontrado con Playwright
-  // (2026-09-18): esta app nunca debe scrollear la página nativa -- el
-  // único scroll real vive en `.scrollArea` (Lenis, ver index.css#html,body
-  // { overflow: hidden }). `overflow: hidden` bloquea el scroll manejado
-  // por el usuario (rueda/touch/scrollbar), pero NO bloquea que el propio
-  // navegador mueva `scrollTop` de `<html>`/`<body>` -- pasa, por ejemplo,
-  // cuando un elemento recupera el foco fuera de la vista (el caso real
-  // encontrado: el input de archivo oculto al volver del diálogo nativo del
-  // SO, corregido en FileField.module.css) y también puede pasar con
-  // cualquier otro elemento enfocable (un checkbox de un dropdown, etc.)
-  // que el navegador decida "traer a la vista" por su cuenta. El resultado
-  // es que el `<html>` real queda desincronizado del contenido que Lenis ya
-  // movió con un `transform` -- la página se ve "cortada" (la barra lateral
-  // y el topbar, que viven fuera de `.scrollArea`, desaparecen). En vez de
-  // perseguir cada elemento enfocable uno por uno, esto corrige la causa de
-  // raíz: si `window` llega a moverse, se revierte al toque.
+  // Defensa contra un bug real (2026-09-18): esta app nunca debe scrollear la
+  // pagina nativa -- el unico scroll real vive en `.scrollArea` (Lenis, ver
+  // index.css#html,body { overflow: hidden }). `overflow: hidden` bloquea el
+  // scroll del usuario pero NO que el propio navegador mueva `scrollTop` de
+  // <html>/<body> (por ejemplo al devolver el foco a un elemento fuera de la
+  // vista); eso desincroniza el contenido que Lenis ya movio y la barra lateral
+  // y el topbar "desaparecen". Si `window` llega a moverse, se revierte al toque.
   useEffect(() => {
     function resetStrayScroll() {
       if (window.scrollY !== 0 || window.scrollX !== 0) window.scrollTo(0, 0);
@@ -137,25 +120,17 @@ export function AppShell() {
     return () => window.removeEventListener('scroll', resetStrayScroll);
   }, []);
 
+  const puedeVerUsuarios = usuario?.esAdmin || usuarioTienePermiso(usuario, 'ver_usuarios');
+  const puedeVerRoles = usuarioTienePermiso(usuario, 'ver_roles');
+
   return (
     <div className={styles.shell}>
       <aside className={styles.sidebar}>
-        {/* 2026-09-02: el logo dejó de ser un botón que lleva al inicio --
-            pedido explícito del usuario, "ya no quiero que mi logo del
-            sidebar sea un botón". Volver al dashboard ahora es el item
-            "Inicio" de más abajo, como cualquier otro módulo. */}
         <div className={styles.brand}>
-          <img className={styles.brandLogo} src="/aed-logo.png" alt="aed" />
+          <img className={styles.brandLogo} src={`${import.meta.env.BASE_URL}aed-logo.png`} alt="aed" />
           <span className={styles.brandDivider} aria-hidden="true" />
           <span className={styles.brandName}>CONTRATACIÓN</span>
         </div>
-        {/* Dos columnas al estilo Buk/HubSpot: esta lista es solo la
-            categoria (no navega a ningun lado), el segundo panel con los
-            items reales aparece flotando a la derecha al pasar el mouse o
-            el foco -- nunca empuja el contenido principal. "Inicio" es la
-            excepción -- un destino único, sin sub-items, así que es un
-            link directo (mismo estilo que el botón de categoría, sin
-            flecha ni panel porque no hay nada que desplegar). */}
         <nav
           ref={navRef}
           className={styles.nav}
@@ -164,6 +139,9 @@ export function AppShell() {
           onMouseLeave={scheduleClose}
           onBlurCapture={closeIfFocusLeftNav}
         >
+          <p className={styles.navSection}>Menú</p>
+          {/* Inicio: entrada fija arriba de las categorias, navega directo (nunca
+              abre flyout). `end` para que solo se marque activa en "/" exacto. */}
           <NavLink
             to="/"
             end
@@ -171,18 +149,14 @@ export function AppShell() {
             className={({ isActive }) => `${styles.navGroupButton} ${isActive ? styles.navGroupButtonActive : ''}`}
           >
             <span className={styles.navGroupLabel}>
-              <Home size={16} strokeWidth={ICON_STROKE_WIDTH} aria-hidden="true" />
+              <Home size={ICON_SIZE} strokeWidth={ICON_STROKE_WIDTH} aria-hidden="true" />
               Inicio
             </span>
           </NavLink>
           {NAV_GROUPS.map((group) => {
-            // Un item se muestra si no es soloAdmin (o el usuario es ADMIN)
-            // Y si no declara `permiso` (siempre visible, ej. Especialidades)
-            // o el usuario lo tiene -- ADMIN bypassea vía usuarioTienePermiso.
-            // Un grupo entero (ej. "Solicitudes Directas") se oculta si
-            // ningún item suyo quedó visible -- antes de este chequeo, un
-            // usuario sin acceso a Directas/Indirectas igual veía las dos
-            // categorías completas en el sidebar (el bug reportado).
+            // Un item se muestra si no es soloAdmin (o el usuario es ADMIN) y si no
+            // declara `permiso` o el usuario lo tiene (ADMIN lo bypassea). Un grupo
+            // entero se oculta si ningun item suyo quedo visible.
             const itemsVisibles = group.items.filter(
               (item) => (!item.soloAdmin || usuario?.esAdmin) && (!item.permiso || usuarioTienePermiso(usuario, item.permiso))
             );
@@ -209,35 +183,17 @@ export function AppShell() {
                 </button>
                 {isOpen && (
                   <div className={styles.flyout} role="menu">
-                    {itemsVisibles.map((item) =>
-                      item.enDesarrollo ? (
-                        <span key={item.label} className={styles.navItemDisabled} role="menuitem" aria-disabled="true">
-                          {item.label}
-                          <Badge variant="neutral">En desarrollo</Badge>
-                        </span>
-                      ) : (
-                        <NavLink
-                          key={item.label}
-                          to={item.to}
-                          // `end` obligatorio -- sin esto, NavLink matchea por
-                          // PREFIJO (comportamiento default de React Router),
-                          // así que "Directorio" (/terceros) quedaba marcado
-                          // activo también en /terceros/especialidades, y
-                          // "Todas las solicitudes" (/solicitudes) en
-                          // /solicitudes/nueva -- dos items del mismo flyout
-                          // encendidos a la vez. El resaltado de la categoría
-                          // (el botón de afuera, `activeGroupTitle` arriba) sí
-                          // debe seguir matcheando por prefijo -- por eso el
-                          // fix va acá, no ahí.
-                          end
-                          role="menuitem"
-                          onClick={closeNow}
-                          className={({ isActive }) => `${styles.navItem} ${isActive ? styles.navItemActive : ''}`}
-                        >
-                          {item.label}
-                        </NavLink>
-                      )
-                    )}
+                    {itemsVisibles.map((item) => (
+                      <NavLink
+                        key={item.label}
+                        to={item.to}
+                        role="menuitem"
+                        onClick={closeNow}
+                        className={() => `${styles.navItem} ${itemActivo?.item === item ? styles.navItemActive : ''}`}
+                      >
+                        {item.label}
+                      </NavLink>
+                    ))}
                   </div>
                 )}
               </div>
@@ -247,27 +203,35 @@ export function AppShell() {
       </aside>
       <main className={styles.main}>
         <div className={styles.topbar}>
-          {/* Engranaje de Accesos (Fase 2: Usuarios/Roles/Proyectos/Frentes) --
-              <NavLink> normal, nunca un trigger con estado propio. Visible con
-              'ver_usuarios' O 'ver_roles' (o ADMIN, que ve ademas
-              Workflows/Proyectos/Frentes) -- ya no es esAdmin puro, puerto de
-              HRMS 2026-09-18: un rol con solo uno de los dos permisos
-              granulares igual debe ver el acceso. Las rutas de abajo ya estan
-              protegidas con <ProtectedRoute permiso=.../soloAdmin>, esto es
-              solo para no mostrar un link muerto a quien no puede usarlo. Si
-              solo tiene 'ver_roles' (no 'ver_usuarios'), lleva directo a
-              /configuracion/roles en vez de /configuracion (que redirige a
-              usuarios y lo rebotaria). */}
+          {crumb && (
+            <nav className={styles.crumb} aria-label="Ubicación">
+              {crumb.group && (
+                <>
+                  <span>{crumb.group}</span>
+                  <ChevronRight size={14} strokeWidth={ICON_STROKE_WIDTH} aria-hidden="true" />
+                </>
+              )}
+              <span className={styles.crumbCurrent}>{crumb.label}</span>
+            </nav>
+          )}
           <NotificacionesBell />
-          {(usuario?.esAdmin || usuarioTienePermiso(usuario, 'ver_usuarios') || usuarioTienePermiso(usuario, 'ver_roles')) && (
+          {/* Engranaje de Configuracion (Usuarios/Roles/Proyectos/Frentes/Workflows):
+              ruta normal con su propio nav vertical (AccesosLayout), nunca un panel
+              flotante -- este boton solo navega. Visible con 'ver_usuarios' O
+              'ver_roles' (o ADMIN, que ve ademas Workflows/Proyectos/Frentes). Las
+              rutas ya estan protegidas con <ProtectedRoute>; esto solo evita un link
+              muerto. Si solo tiene 'ver_roles' lleva directo a /configuracion/roles
+              (/configuracion redirige a usuarios y lo rebotaria). */}
+          {(puedeVerUsuarios || puedeVerRoles) && (
             <NavLink
-              to={usuario?.esAdmin || usuarioTienePermiso(usuario, 'ver_usuarios') ? '/configuracion' : '/configuracion/roles'}
+              to={puedeVerUsuarios ? '/configuracion' : '/configuracion/roles'}
               className={styles.topbarIconLink}
               aria-label="Accesos y configuración"
             >
               <Settings size={20} strokeWidth={ICON_STROKE_WIDTH} aria-hidden="true" />
             </NavLink>
           )}
+          <span className={styles.topbarDivider} aria-hidden="true" />
           <UserMenu />
         </div>
         <ReactLenis root={false} className={styles.scrollArea} options={{ smoothWheel: true }}>
