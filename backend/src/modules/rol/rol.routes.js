@@ -18,5 +18,6 @@ router.get('/funcionalidades-disponibles', requireAuth, requirePermiso('ver_role
 router.get('/', requireAuth, requirePermiso('ver_roles'), controller.list);
 router.post('/', requireAuth, requirePermiso('ver_roles'), validate(createSchema, 'body'), controller.create);
 router.put('/:nombre', requireAuth, requirePermiso('ver_roles'), validate(updateSchema, 'body'), controller.update);
+router.delete('/:nombre', requireAuth, requirePermiso('ver_roles'), controller.remove);
 
 module.exports = router;

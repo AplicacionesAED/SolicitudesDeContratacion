@@ -15,6 +15,10 @@ export function updateRol(nombre, data) {
   return client.put(`/roles/${nombre}`, data);
 }
 
+export function deleteRol(nombre) {
+  return client.delete(`/roles/${encodeURIComponent(nombre)}`);
+}
+
 export function listFuncionalidadesDisponibles() {
   return client.get('/roles/funcionalidades-disponibles');
 }

@@ -99,6 +99,25 @@ async function remove(id, solicitanteId) {
   await usuario.update({ activo: false });
 }
 
+// Eliminacion fisica real, distinta del soft delete de remove(). Solo cuentas ya inactivas (nunca una activa)
+// y nunca la propia. Si la cuenta tiene registros asociados (solicitudes, historial, notificaciones...) la base
+// rechaza el borrado por llave foranea: se responde 409 y la cuenta se conserva inactiva, que es lo correcto
+// para no perder la trazabilidad de quien hizo que.
+async function removeDefinitivo(id, solicitanteId) {
+  if (Number(id) === Number(solicitanteId)) throw new ApiError(400, 'No puedes eliminarte a ti mismo');
+  const usuario = await Usuario.findByPk(id);
+  if (!usuario) throw new ApiError(404, 'Usuario no encontrado');
+  if (usuario.activo) throw new ApiError(400, 'El usuario debe estar inactivo antes de poder eliminarlo');
+  try {
+    await usuario.destroy();
+  } catch (err) {
+    if (err.name === 'SequelizeForeignKeyConstraintError') {
+      throw new ApiError(409, 'No se puede eliminar: la cuenta tiene solicitudes o registros asociados. Déjala inactiva.');
+    }
+    throw err;
+  }
+}
+
 // ── Vinculación de cuenta Microsoft (usada por modules/auth/auth.azure.js) ──
 
 async function buscarPorMicrosoftId(microsoftId) {
@@ -181,6 +200,7 @@ module.exports = {
   getById,
   update,
   remove,
+  removeDefinitivo,
   buscarPorMicrosoftId,
   vincularMicrosoft,
   desvincularMicrosoft,

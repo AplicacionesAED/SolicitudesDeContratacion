@@ -97,4 +97,25 @@ async function update(nombre, data) {
   return rol;
 }
 
-module.exports = { list, create, update };
+// Solo roles personalizados, sin cuentas y sin uso en la configuracion: usuarios.roles,
+// aprobador_frentes.<slot>.roles y workflow_desvios.condicion_rol guardan el NOMBRE del rol, asi que borrar
+// uno en uso dejaria referencias que ya no califican a nadie. Se rechaza en vez de limpiar en silencio.
+async function remove(nombre) {
+  const rol = await Rol.findOne({ where: { nombre } });
+  if (!rol) throw new ApiError(404, 'Rol no encontrado');
+  if (rol.es_admin) throw new ApiError(400, 'El rol de administrador no se puede eliminar');
+
+  const cuentas = await Usuario.count({ where: { roles: { [Op.contains]: [nombre] } } });
+  if (cuentas > 0) throw new ApiError(409, `El rol tiene ${cuentas} cuenta(s) asignada(s). Quítaselo primero.`);
+
+  const configs = await AprobadorFrente.findAll();
+  if (configs.some((c) => SLOTS_APROBADOR_FRENTE.some((slot) => c[slot]?.roles?.includes(nombre)))) {
+    throw new ApiError(409, 'El rol está configurado como aprobador en uno o más frentes. Quítalo de ahí primero.');
+  }
+  const desvios = await WorkflowDesvio.count({ where: { condicion_rol: nombre } });
+  if (desvios > 0) throw new ApiError(409, 'El rol se usa en un desvío de Workflows. Quítalo de ahí primero.');
+
+  await rol.destroy();
+}
+
+module.exports = { list, create, update, remove };

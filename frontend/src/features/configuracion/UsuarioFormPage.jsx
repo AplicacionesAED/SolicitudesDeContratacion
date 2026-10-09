@@ -7,9 +7,10 @@ import { BackLink } from '../../components/ui/BackLink.jsx';
 import { Button } from '../../components/ui/Button.jsx';
 import { Field, TextInput } from '../../components/ui/Field.jsx';
 import { Badge } from '../../components/ui/Badge.jsx';
+import { Modal } from '../../components/ui/Modal.jsx';
 import { Checkbox } from '../../components/ui/Checkbox.jsx';
 import { CheckboxGroup } from '../../components/ui/CheckboxGroup.jsx';
-import { createUsuario, generarPasswordUsuario, getUsuario, updateUsuario } from '../../api/usuarios.js';
+import { createUsuario, generarPasswordUsuario, getUsuario, removeUsuarioDefinitivo, updateUsuario } from '../../api/usuarios.js';
 import { listRoles, listFuncionalidadesDisponibles } from '../../api/roles.js';
 import { ROL_LABELS } from '../../utils/permisos.js';
 import { useAuth } from '../../auth/AuthContext.jsx';
@@ -39,6 +40,8 @@ export function UsuarioFormPage() {
   const [requisitosFaltantes, setRequisitosFaltantes] = useState(null);
   const [generando, setGenerando] = useState(false);
   const [passwordGenerada, setPasswordGenerada] = useState(null);
+  const [confirmarEliminar, setConfirmarEliminar] = useState(false);
+  const [eliminando, setEliminando] = useState(false);
 
   useEffect(() => {
     listRoles().then((res) => setRoles(res.data)).catch(() => {});
@@ -82,6 +85,18 @@ export function UsuarioFormPage() {
       setError(err.message);
     } finally {
       setGenerando(false);
+    }
+  }
+
+  async function handleEliminarDefinitivo() {
+    setEliminando(true);
+    try {
+      await removeUsuarioDefinitivo(id);
+      navigate('/configuracion/usuarios');
+    } catch (err) {
+      setConfirmarEliminar(false);
+      setError(err.message);
+      setEliminando(false);
     }
   }
 
@@ -289,12 +304,37 @@ export function UsuarioFormPage() {
             Cancelar
           </Button>
           <div className={styles.actionsEnd}>
+            {!esNuevo && usuarioEditado && !usuarioEditado.activo && !esMismaCuenta && (
+              <Button type="button" variant="danger" onClick={() => setConfirmarEliminar(true)} disabled={guardando || eliminando}>
+                Eliminar usuario
+              </Button>
+            )}
             <Button type="submit" variant="primary" disabled={guardando}>
               {guardando ? 'Guardando...' : esNuevo ? 'Crear usuario' : 'Guardar cambios'}
             </Button>
           </div>
         </div>
       </form>
+
+      <Modal
+        open={confirmarEliminar}
+        onClose={() => setConfirmarEliminar(false)}
+        title="Eliminar usuario"
+        footer={
+          <>
+            <Button variant="secondary" onClick={() => setConfirmarEliminar(false)}>
+              Cancelar
+            </Button>
+            <Button variant="danger" onClick={handleEliminarDefinitivo} disabled={eliminando}>
+              {eliminando ? 'Eliminando...' : 'Eliminar'}
+            </Button>
+          </>
+        }
+      >
+        <p>
+          Se eliminará la cuenta de <strong>{usuarioEditado?.nombre}</strong> de forma definitiva. Si ya tiene solicitudes o registros asociados no se podrá borrar y deberá quedar inactiva.
+        </p>
+      </Modal>
     </div>
   );
 }

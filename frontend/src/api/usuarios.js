@@ -17,6 +17,11 @@ export function removeUsuario(id) {
   return client.delete(`/usuarios/${id}`);
 }
 
+// Elimina la cuenta de verdad (solo si esta inactiva y sin registros asociados). Irreversible.
+export function removeUsuarioDefinitivo(id) {
+  return client.delete(`/usuarios/${id}/definitivo`);
+}
+
 export function getUsuario(id) {
   return client.get(`/usuarios/${id}`);
 }

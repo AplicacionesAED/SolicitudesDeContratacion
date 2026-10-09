@@ -7,8 +7,9 @@ import { ShieldCheck } from 'lucide-react';
 import { BackLink } from '../../components/ui/BackLink.jsx';
 import { Badge } from '../../components/ui/Badge.jsx';
 import { Button } from '../../components/ui/Button.jsx';
+import { Modal } from '../../components/ui/Modal.jsx';
 import { Field, Select, TextInput } from '../../components/ui/Field.jsx';
-import { listRoles, listFuncionalidadesDisponibles, updateRol } from '../../api/roles.js';
+import { listRoles, listFuncionalidadesDisponibles, updateRol, deleteRol } from '../../api/roles.js';
 import { ROL_LABELS, ALCANCE_SOLICITUDES_LABELS } from '../../utils/permisos.js';
 import { ModuloPermisos } from './ModuloPermisos.jsx';
 import layoutStyles from '../../components/layout/WizardLayout.module.css';
@@ -25,6 +26,7 @@ export function RolDetallePage() {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState(null);
+  const [confirmarBorrar, setConfirmarBorrar] = useState(false);
 
   useEffect(() => {
     Promise.all([listRoles(), listFuncionalidadesDisponibles()])
@@ -57,6 +59,18 @@ export function RolDetallePage() {
     }
   }
 
+  async function handleBorrar() {
+    setSaving(true);
+    try {
+      await deleteRol(nombre);
+      navigate('/configuracion/roles');
+    } catch (err) {
+      setConfirmarBorrar(false);
+      setError(err.message);
+      setSaving(false);
+    }
+  }
+
   if (loading) return <div className={styles.loadingState}>Cargando...</div>;
 
   if (!rol) {
@@ -69,6 +83,8 @@ export function RolDetallePage() {
       </div>
     );
   }
+
+  const puedeBorrar = !rol.es_admin && rol.total_usuarios === 0;
 
   return (
     <div className={styles.page}>
@@ -140,12 +156,37 @@ export function RolDetallePage() {
             Cancelar
           </Button>
           <div className={styles.actionsEnd}>
+            {puedeBorrar && (
+              <Button type="button" variant="danger" onClick={() => setConfirmarBorrar(true)} disabled={saving}>
+                Eliminar rol
+              </Button>
+            )}
             <Button type="submit" variant="primary" disabled={saving}>
               {saving ? 'Guardando...' : 'Guardar cambios'}
             </Button>
           </div>
         </div>
       </form>
+
+      <Modal
+        open={confirmarBorrar}
+        onClose={() => setConfirmarBorrar(false)}
+        title="Eliminar rol"
+        footer={
+          <>
+            <Button variant="secondary" onClick={() => setConfirmarBorrar(false)}>
+              Cancelar
+            </Button>
+            <Button variant="danger" onClick={handleBorrar} disabled={saving}>
+              Eliminar
+            </Button>
+          </>
+        }
+      >
+        <p>
+          Se eliminará el rol <strong>{rol.nombre}</strong>. Ninguna cuenta lo tiene asignado. No se puede deshacer.
+        </p>
+      </Modal>
     </div>
   );
 }

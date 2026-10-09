@@ -25,5 +25,7 @@ router.get('/:id', requireAuth, requirePermiso('ver_usuarios'), controller.getBy
 router.post('/:id/generar-password', requireAuth, requirePermiso('ver_usuarios'), controller.regenerarPassword);
 router.put('/:id', requireAuth, requirePermiso('ver_usuarios'), validate(updateSchema, 'body'), controller.update);
 router.delete('/:id', requireAuth, requirePermiso('ver_usuarios'), controller.remove);
+// Eliminacion fisica (solo cuentas inactivas); segmento literal, no colisiona con la de arriba.
+router.delete('/:id/definitivo', requireAuth, requirePermiso('ver_usuarios'), controller.removeDefinitivo);
 
 module.exports = router;
