@@ -1,0 +1,63 @@
+.wrapper {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  color: var(--color-ink-muted);
+  cursor: help;
+  border-radius: 50%;
+  transition: color var(--duration-fast) var(--ease-standard);
+}
+
+.wrapper:hover,
+.wrapper:focus-visible {
+  color: var(--color-primary);
+  outline: none;
+}
+
+.wrapper:focus-visible {
+  box-shadow: 0 0 0 2px var(--color-primary);
+  border-radius: 50%;
+}
+
+.bubble {
+  position: absolute;
+  z-index: var(--z-tooltip);
+  bottom: calc(100% + 8px);
+  left: 50%;
+  transform: translate(-50%, 4px);
+  width: max-content;
+  max-width: 220px;
+  background: var(--color-ink);
+  color: var(--color-surface);
+  font-family: var(--font-body);
+  font-size: var(--text-data-size);
+  font-weight: 400;
+  line-height: 1.45;
+  padding: var(--space-sm) var(--space-md);
+  border-radius: var(--radius-sm);
+  box-shadow: var(--shadow-floating);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity var(--duration-fast) var(--ease-standard), transform var(--duration-fast) var(--ease-standard);
+}
+
+.wrapper:hover .bubble,
+.wrapper:focus-visible .bubble {
+  opacity: 1;
+  transform: translate(-50%, 0);
+  pointer-events: auto;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .bubble {
+    transition: opacity var(--duration-fast) linear;
+    transform: translateX(-50%);
+  }
+
+  .wrapper:hover .bubble,
+  .wrapper:focus-visible .bubble {
+    transform: translateX(-50%);
+  }
+}

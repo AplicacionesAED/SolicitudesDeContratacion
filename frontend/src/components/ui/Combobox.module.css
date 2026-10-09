@@ -7,10 +7,11 @@
   font-family: var(--font-body);
   font-size: var(--text-body-size);
   color: var(--color-ink);
-  background: var(--color-surface-sunken);
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-sm);
-  padding: 9px 12px;
+  background: #fff;
+  border: 1px solid var(--color-border-strong);
+  border-radius: var(--radius-md);
+  min-height: 44px;
+  padding: 0 14px;
   transition: border-color var(--duration-fast) var(--ease-standard),
     box-shadow var(--duration-fast) var(--ease-standard);
 }
@@ -22,7 +23,7 @@
 .input:focus {
   outline: none;
   border-color: var(--color-primary);
-  box-shadow: 0 0 0 2px color-mix(in srgb, var(--color-primary) 25%, transparent);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-primary) 16%, transparent);
 }
 
 .input:disabled {
@@ -42,9 +43,9 @@
   z-index: var(--z-dropdown);
   max-height: 280px;
   overflow-y: auto;
-  border: 1px solid var(--color-border);
+  border: 1px solid var(--color-border-strong);
   border-radius: var(--radius-md);
-  background: var(--color-surface);
+  background: #fff;
   box-shadow: var(--shadow-floating);
   padding: var(--space-xs);
 }
@@ -72,7 +73,7 @@
 }
 
 .option:hover {
-  background: var(--color-surface-sunken);
+  background: var(--color-surface-hover);
 }
 
 .optionSelected {

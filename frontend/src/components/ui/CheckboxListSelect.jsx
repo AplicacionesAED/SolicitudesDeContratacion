@@ -1,25 +1,13 @@
-// PLANTILLA -- copiado tal cual del HRMS aed (ya en produccion ahi: el
-// selector de Gerencias/Procesos del formulario de Empleado). Va en
-// frontend/src/components/ui/CheckboxListSelect.jsx del proyecto nuevo
-// (junto con CheckboxListSelect.module.css y componentes/ui/Field.jsx, del
-// que reusa `.control` para el input de busqueda).
-//
-// Regla que resuelve: reemplaza un <select multiple> nativo para "asignar
-// de uno a muchos" (usuarios a un frente, aprobadores de una etapa,
-// procesos a una gerencia) cuando la lista es larga y/o conviene poder
-// buscarla -- el listbox nativo (Ctrl/Cmd+click) no es descubrible y no se
-// puede filtrar. Ver la regla "Selección de uno a muchos" en
-// ARQUITECTURA-FRONTEND.md para cuándo usar esto en vez de CheckboxGroup
-// (lista corta y fija -- ej. una matriz de permisos -- usa CheckboxGroup,
-// no esto).
-//
-// `options`: [{ id, label, groupLabel? }]; sin `groupLabel` en ninguna
-// opcion, la lista queda plana (sin encabezados de grupo) -- con
-// `groupLabel`, se agrupa (ej. Procesos agrupados por Gerencia).
 import { useEffect, useMemo, useRef, useState } from 'react';
 import fieldStyles from './Field.module.css';
 import styles from './CheckboxListSelect.module.css';
 
+// Selector multiple "profesional" (checkboxes + busqueda + chips), para
+// reemplazar un <select multiple> nativo cuando la lista es larga o hace
+// falta agrupar (ej. Procesos agrupados por Gerencia) -- pedido explicito
+// del usuario (2026-08-28): "no importa si consumes mas espacio para esa
+// seccion". `options`: [{ id, label, groupLabel? }]; sin `groupLabel` en
+// ninguna opcion, la lista queda plana (sin encabezados de grupo).
 export function CheckboxListSelect({
   options,
   selectedIds,
@@ -30,9 +18,12 @@ export function CheckboxListSelect({
 }) {
   const [query, setQuery] = useState('');
   // La lista arranca colapsada -- se despliega al hacer click/foco en el
-  // input de búsqueda (como un dropdown), en vez de mostrarse siempre
-  // expandida debajo. Se mantiene abierta mientras se marcan varias
-  // opciones (multi-select), y se cierra al hacer click afuera o Escape.
+  // input de busqueda (como un dropdown), en vez de mostrarse siempre
+  // expandida debajo (2026-09-03, pedido explicito del usuario: mismo
+  // comportamiento que en Solicitudes-Indirectos/Contratacion, que ya tenia
+  // esta version mas nueva del componente). Se mantiene abierta mientras se
+  // marcan varias opciones (multi-select), y se cierra al hacer click afuera
+  // o Escape.
   const [open, setOpen] = useState(false);
   const wrapperRef = useRef(null);
 
@@ -116,32 +107,32 @@ export function CheckboxListSelect({
           )}
         </div>
 
-        {/* La lista solo se monta cuando `open` -- colapsada por defecto,
-            se despliega al enfocar/hacer click en el input de arriba (como
-            un dropdown), no siempre visible debajo del buscador. */}
+        {/* La lista solo se monta cuando `open` -- colapsada por defecto, se
+            despliega al enfocar/hacer click en el input de arriba (como un
+            dropdown), no siempre visible debajo del buscador. */}
         {open && (
-        // data-lenis-prevent -- divergencia respecto a la plantilla: el
-        // <ReactLenis> de AppShell.jsx (este proyecto) captura el wheel
-        // sobre toda el area de scroll, incluso sobre este panel con
-        // overflow-y:auto propio. Sin esto, hacer scroll acá mueve la
-        // página entera en vez de esta lista.
-        <div className={styles.list} data-lenis-prevent>
-          {filtered.length === 0 && <div className={styles.empty}>{emptyMessage}</div>}
-          {grouped.map(([groupLabel, opts]) => (
-            <div key={groupLabel || '__ungrouped'} className={styles.group}>
-              {groupLabel && <div className={styles.groupLabel}>{groupLabel}</div>}
-              {opts.map((opt) => {
-                const checked = selectedSet.has(String(opt.id));
-                return (
-                  <label key={opt.id} className={`${styles.option} ${checked ? styles.optionChecked : ''}`}>
-                    <input type="checkbox" checked={checked} onChange={() => toggle(opt.id)} disabled={disabled} />
-                    <span>{opt.label}</span>
-                  </label>
-                );
-              })}
-            </div>
-          ))}
-        </div>
+          // data-lenis-prevent: sin esto, el <ReactLenis> de AppShell.jsx
+          // captura el wheel sobre toda el area de scroll, incluso sobre
+          // este panel con overflow-y:auto propio, y hacer scroll aca mueve
+          // la pagina entera en vez de esta lista (mismo patron ya usado en
+          // IncapacidadesTab.jsx#comboboxResults).
+          <div className={styles.list} data-lenis-prevent>
+            {filtered.length === 0 && <div className={styles.empty}>{emptyMessage}</div>}
+            {grouped.map(([groupLabel, opts]) => (
+              <div key={groupLabel || '__ungrouped'} className={styles.group}>
+                {groupLabel && <div className={styles.groupLabel}>{groupLabel}</div>}
+                {opts.map((opt) => {
+                  const checked = selectedSet.has(String(opt.id));
+                  return (
+                    <label key={opt.id} className={`${styles.option} ${checked ? styles.optionChecked : ''}`}>
+                      <input type="checkbox" checked={checked} onChange={() => toggle(opt.id)} disabled={disabled} />
+                      <span>{opt.label}</span>
+                    </label>
+                  );
+                })}
+              </div>
+            ))}
+          </div>
         )}
       </div>
     </div>

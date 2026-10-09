@@ -98,6 +98,7 @@
 .list {
   max-height: 280px;
   overflow-y: auto;
+  overscroll-behavior: contain;
   padding: var(--space-xs);
 }
 
@@ -135,7 +136,7 @@
 }
 
 .option:hover {
-  background: var(--color-surface-sunken);
+  background: var(--color-surface-hover);
 }
 
 .optionChecked {

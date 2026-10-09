@@ -12,8 +12,30 @@
 }
 
 .iconButton:hover {
-  background: var(--color-surface-sunken);
+  background: var(--color-surface-hover);
   color: var(--color-ink);
+}
+
+/* Editar es siempre la misma accion (no tiene "dos direcciones" como el
+   toggle), asi que va en Azul Vibrante en reposo, no solo al hacer hover --
+   pedido explicito del usuario (2026-09-17): "mas color en iconos". */
+.iconButtonPrimary {
+  color: var(--color-primary);
+}
+
+.iconButtonPrimary:hover {
+  background: var(--color-info-surface);
+  color: var(--color-primary-hover);
+}
+
+/* Espejo del danger de abajo, para la direccion "activar" del toggle --
+   antes solo "inactivar" tenia un color de estado al hacer hover, "activar"
+   se quedaba en el gris generico. Misma logica que el Status Dot de los
+   badges (Verde Vibrante = el estado positivo), aca como Verde Profundo
+   por ser texto/icono, no un fill grande. */
+.iconButtonSuccess:hover {
+  background: var(--color-success-surface);
+  color: var(--color-success-ink);
 }
 
 .iconButtonDanger:hover {

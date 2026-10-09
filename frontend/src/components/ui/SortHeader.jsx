@@ -1,7 +1,3 @@
-// PLANTILLA -- copiado tal cual del HRMS aed. Va en
-// frontend/src/components/ui/SortHeader.jsx del proyecto nuevo, junto con
-// hooks/useSortableTable.js (componentes/hooks/) -- se usan siempre juntos.
-// Ver "Sortable columns" en ARQUITECTURA-FRONTEND.md.
 import styles from './SortHeader.module.css';
 
 // Se coloca DENTRO de un <th> ya existente (no reemplaza al <th> en si) para

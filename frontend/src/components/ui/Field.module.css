@@ -6,10 +6,8 @@
 
 .label {
   font-family: var(--font-body);
-  font-weight: var(--text-label-weight);
-  font-size: var(--text-label-size);
-  letter-spacing: var(--text-label-tracking);
-  text-transform: uppercase;
+  font-weight: 600;
+  font-size: 0.8125rem;
   color: var(--color-ink-secondary);
 }
 
@@ -22,10 +20,11 @@
   font-family: var(--font-body);
   font-size: var(--text-body-size);
   color: var(--color-ink);
-  background: var(--color-surface-sunken);
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-sm);
-  padding: 9px 12px;
+  background: #fff;
+  border: 1px solid var(--color-border-strong);
+  border-radius: var(--radius-md);
+  min-height: 44px;
+  padding: 0 14px;
   transition: border-color var(--duration-fast) var(--ease-standard),
     box-shadow var(--duration-fast) var(--ease-standard);
 }
@@ -37,7 +36,7 @@
 .control:focus {
   outline: none;
   border-color: var(--color-primary);
-  box-shadow: 0 0 0 2px color-mix(in srgb, var(--color-primary) 25%, transparent);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-primary) 16%, transparent);
 }
 
 .control:disabled {
@@ -47,6 +46,30 @@
 
 .invalid {
   border-color: var(--color-danger-ink);
+}
+
+/* `<select>` sin esto renderiza con el chrome nativo del SO (flecha +
+   padding interno propios), que en Windows/Chrome le resta alto real al
+   control frente a un `<input>` con el mismo padding en la caja -- se veian
+   mas bajos que el resto de los campos aunque comparten `.control`. Con
+   `appearance: none` se quita ese chrome y el select queda exactamente con
+   el mismo box-model (padding+borde) que un input; la flecha se repone a
+   mano con un SVG de marca en vez de la del SO, mismo espiritu que el resto
+   del sistema de diseño (nada de gris generico del navegador). */
+select.control {
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  padding-right: 44px;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 14 14' fill='none'%3E%3Cpath d='M3.5 5.25L7 8.75L10.5 5.25' stroke='%23232bed' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 16px center;
+  cursor: pointer;
+}
+
+select.control:disabled {
+  cursor: not-allowed;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 14 14' fill='none'%3E%3Cpath d='M3.5 5.25L7 8.75L10.5 5.25' stroke='%23767f91' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
 }
 
 .helper {
@@ -59,15 +82,17 @@
   color: var(--color-danger-ink);
 }
 
-/* Auto-crecimiento de <Textarea> sin resize manual -- ver el comentario
-   grande en Field.jsx#Textarea (mismo truco CSS-only que
-   CuadroComparativoBuilder.jsx#.growWrap: un pseudo-elemento invisible
-   replica el texto real vía `data-replicated-value` y comparte el
-   `grid-area` del <textarea> real, así que el alto del grid termina
-   siendo el que el texto necesita). El `::after` repite el MISMO
-   padding/borde/fuente que `.control` a propósito -- si no calzan exacto,
-   el texto envuelve distinto ahí que en el textarea real y el alto medido
-   queda mal. */
+/* --- Propio de Solicitudes: <Textarea> que crece solo, sin resize manual ----------------------
+   El HRMS no define padding vertical para un textarea (su `.control` es `padding: 0 14px` con
+   min-height), asi que aqui se le da el mismo respiro que a un input de 44px. El `::after` repite a
+   proposito el MISMO padding/borde/fuente/interlineado que el <textarea>: si no calzan exacto, el
+   texto envuelve distinto ahi y el alto medido queda mal. */
+textarea.control {
+  padding: 11px 14px;
+  line-height: var(--text-body-line);
+  letter-spacing: inherit;
+}
+
 .growWrap {
   display: grid;
   grid-template-columns: minmax(0, 1fr);
@@ -81,7 +106,8 @@
   grid-area: 1 / 1 / 2 / 2;
   font-family: var(--font-body);
   font-size: var(--text-body-size);
-  padding: 9px 12px;
+  line-height: var(--text-body-line);
+  padding: 11px 14px;
   border: 1px solid transparent;
 }
 

@@ -282,7 +282,19 @@ export function SolicitudActions({ solicitud, usuario, onChange }) {
         </div>
       </div>
 
-      <Modal isOpen={modalType != null} onClose={cerrarModal} title={TITULOS[modalType] ?? ''}>
+      <Modal
+        open={modalType != null}
+        onClose={cerrarModal}
+        title={TITULOS[modalType] ?? ''}
+        footer={
+          <>
+            <Button type="button" variant="secondary" onClick={cerrarModal} disabled={loading}>Cancelar</Button>
+            <Button type="button" variant={['devolver', 'devolver_tecnico', 'devolver_proyeccion', 'devolver_residente_administrativo', 'anular', 'eliminar'].includes(modalType) ? 'danger' : 'primary'} onClick={confirmarModal} disabled={loading}>
+              {loading ? 'Procesando…' : 'Confirmar'}
+            </Button>
+          </>
+        }
+      >
         {modalType === 'enviar' && <p>¿Confirmas que deseas enviar la solicitud <strong>{solicitud.consecutivo}</strong> para aprobación del director?</p>}
         {modalType === 'aprobar_tecnico' && <p>¿Confirmas la aprobación como Director Técnico? Pasará al Director de Proyecto.</p>}
         {modalType === 'aprobar_residente_administrativo' && <p>¿Confirmas la aprobación como Residente Administrativo? Pasará a Controles para su proyección.</p>}
@@ -363,12 +375,6 @@ export function SolicitudActions({ solicitud, usuario, onChange }) {
           </p>
         )}
         {error && <p className={styles.errorBanner}>{error}</p>}
-        <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 'var(--space-sm)' }}>
-          <Button type="button" variant="secondary" onClick={cerrarModal} disabled={loading}>Cancelar</Button>
-          <Button type="button" variant={['devolver', 'devolver_tecnico', 'devolver_proyeccion', 'devolver_residente_administrativo', 'anular', 'eliminar'].includes(modalType) ? 'danger' : 'primary'} onClick={confirmarModal} disabled={loading}>
-            {loading ? 'Procesando…' : 'Confirmar'}
-          </Button>
-        </div>
       </Modal>
     </>
   );

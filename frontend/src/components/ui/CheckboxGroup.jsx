@@ -1,14 +1,10 @@
-// PLANTILLA -- copiado tal cual, va en frontend/src/components/ui/CheckboxGroup.jsx.
-// Requiere componentes/ui/Checkbox.jsx ya copiado.
-//
 // Grilla organizada para "muchos checkboxes independientes" (una matriz de
 // permisos por rol, un multi-rol en un formulario de usuario) -- reemplaza
 // el patron de un parrafo de checkboxes en flujo libre envueltos por ancho
 // de pantalla, que es ilegible apenas pasan de 4-5 opciones y no tiene
-// ninguna jerarquia visual (el bug real que origino este componente). Para
-// una lista LARGA o que necesita busqueda/agrupar, usa CheckboxListSelect.jsx
-// en vez de esto -- ver la regla "Selección de uno a muchos" en
-// ARQUITECTURA-FRONTEND.md para cuándo va cada uno.
+// ninguna jerarquia visual. Para una lista LARGA o que necesita
+// busqueda/agrupar, usa CheckboxListSelect.jsx en vez de esto -- ver la
+// regla "Selección de uno a muchos" en DESIGN.md.
 //
 // `options`: [{ value, label }]. `value`: array de values seleccionados.
 // `selectAllLabel`: opcional -- si se pasa, agrega un checkbox "Seleccionar

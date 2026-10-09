@@ -1,7 +1,3 @@
-// PLANTILLA -- copiado tal cual, va en frontend/src/components/ui/Checkbox.jsx
-// (junto con Checkbox.module.css). Base de CheckboxGroup.jsx -- ver la regla
-// "Selección de uno a muchos" en ARQUITECTURA-FRONTEND.md.
-//
 // El input nativo real sigue existiendo (visualmente oculto, no
 // display:none) para que el teclado/lector de pantalla lo manejen normal --
 // la caja estilizada es un hermano CSS (`input:checked + .box`), nunca un

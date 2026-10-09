@@ -3702,8 +3702,21 @@ usando HRMS y Cartera (ya migrada) como referencia. Esto reemplaza lo de la plan
   para todos. `NotificacionesBell` rediseñada con el CSS de la campana del HRMS (contador, "Marcar todas
   como leídas", pestañas Todas/Sin leer, icono por tipo según el título, hora relativa, punto de "sin leer",
   estado "Estás al día") y SIN tocar su lógica (SSE en vivo, marcar leída y navegar).
-- **Pendiente (siguientes pasos, mismo orden que en Cartera):** 3) componentes
-  base (`Button`, `Badge`, `Field`, `Pagination`, `Modal`…), 4) Configuración (Usuarios, Roles,
+- **Paso 3 — componentes base (hecho):** `Button`, `Badge`, `BackLink`, `Checkbox`, `CheckboxGroup`,
+  `CheckboxListSelect`, `Pagination`, `RowIconButtons`, `SortHeader` (JSX + CSS) y `InfoTooltip` (nuevo)
+  copiados tal cual del HRMS (en varios solo cambiaban comentarios; `Button`, `RowIconButtons` y
+  `CheckboxListSelect` ganan el estilo nuevo). `Modal` pasa al del HRMS (`<dialog>` nativo, prop `open`
+  en vez de `isOpen`, pie `footer`): su único uso, `SolicitudActions.jsx`, ahora lleva Cancelar/Confirmar
+  en el `footer`. `Field` = el del HRMS (inputs de 44 px, `#fff`, borde fuerte, radio `md`) + el `Textarea`
+  que crece solo y no se redimensiona (pedido del usuario, 2026-09-09), ajustado a las medidas nuevas
+  (`textarea.control` con `padding: 11px 14px` y `.growWrap` con el mismo padding/interlineado en el
+  `::after`): es lo ÚNICO que difiere del `Field` del HRMS, conservarlo si se vuelve a sincronizar.
+  `Modal.module.css` añade `display:flex; gap` al cuerpo (el reset global deja los `<p>` sin margen).
+  `Combobox` y `FileField` (solo de Solicitudes) se alinearon a las mismas medidas del control.
+  Verificado en navegador con una página de prueba temporal (borrada): variantes de botón y badge,
+  campos, error, select, combobox, textarea que crece de 74 a 222 px sin scroll ni resize, diálogo con
+  pie y cierre con Escape, paginación e iconos de fila; y un barrido de 13 pantallas sin errores.
+- **Pendiente (siguientes pasos, mismo orden que en Cartera):** 4) Configuración (Usuarios, Roles,
   Proyectos, Frentes, Workflows), 5) Terceros, 6) Solicitudes (lista, detalle, formularios), 7)
   Dashboard/Actividad.
 - **Repositorio:** el proyecto se movió al repositorio nuevo `https://github.com/Gestion-servicios-TI-AED/SolicitudesDeContratacion` (2026-10-09). El historial se reescribió (147 commits, autor y committer `GEliasDev <GEliasDev@users.noreply.github.com>`, sin trailers de Claude), la plantilla ya no es submódulo y las capturas sueltas de la raíz y la carpeta `files/` quedan ignoradas. Commits en español, sin atribución a Claude; el push lo hace el usuario.
