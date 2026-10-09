@@ -1,185 +1,151 @@
-// Detalle de un rol -- separado de RolesPage.jsx (que ahora es solo la
-// lista) siguiendo el mismo patrón que Frentes: fila clickeable en la lista,
-// edición completa en su propia ruta. No hay GET /roles/:nombre en el
-// backend (la lista completa son ~9 filas, no justifica un endpoint aparte)
-// -- se reusa listRoles() y se busca el rol por nombre en memoria, mismo
-// criterio que list()+find() en vez de una llamada extra.
+// Detalle de un rol con el diseno del HRMS y Cartera (migracion de diseno 2026-10-09): banner de detalle, tarjetas
+// por seccion y barra de acciones. No hay GET /roles/:nombre -- se busca en memoria sobre listRoles() (son ~10 filas).
+// El rol de administrador (es_admin) tiene acceso total: solo se puede renombrar, sus permisos no se editan.
 import { useEffect, useState } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useParams } from 'react-router-dom';
+import { ShieldCheck } from 'lucide-react';
+import { BackLink } from '../../components/ui/BackLink.jsx';
+import { Badge } from '../../components/ui/Badge.jsx';
+import { Button } from '../../components/ui/Button.jsx';
+import { Field, Select, TextInput } from '../../components/ui/Field.jsx';
 import { listRoles, listFuncionalidadesDisponibles, updateRol } from '../../api/roles.js';
 import { ROL_LABELS, ALCANCE_SOLICITUDES_LABELS } from '../../utils/permisos.js';
-import { NAV_GROUPS } from '../../utils/navModulos.jsx';
-import { BackLink } from '../../components/ui/BackLink.jsx';
-import { Button } from '../../components/ui/Button.jsx';
-import { Checkbox } from '../../components/ui/Checkbox.jsx';
-import { CheckboxGroup } from '../../components/ui/CheckboxGroup.jsx';
-import { Field, Select, TextInput } from '../../components/ui/Field.jsx';
-import styles from './Configuracion.module.css';
-
-// Un módulo del sidebar (`NAV_GROUPS`, ver navModulos.jsx) se muestra acá
-// como "padre + sub-ítems indentados" -- exactamente el mismo árbol que ve
-// el usuario en el sidebar, para que activar/desactivar un checkbox acá
-// tenga un resultado predecible y visible ahí. El checkbox del padre
-// refleja EXACTAMENTE la misma condición que usa `AppShell.jsx` para
-// mostrar/ocultar el módulo en el sidebar -- "¿al menos un sub-ítem está
-// concedido?" (`some`, no `every`) -- así el admin ve marcado el módulo
-// padre cada vez que ese módulo YA es visible para el rol, sin importar si
-// tiene todos sus sub-ítems o solo uno. No es un permiso propio -- no
-// existe un slug "acceso total a Solicitudes Directas" en la base, el
-// acceso real depende únicamente de qué sub-ítems tenga marcados; clickear
-// el padre es solo un atajo para marcar/desmarcar todos sus sub-ítems de
-// una (si ya hay alguno marcado, los desmarca todos; si no hay ninguno,
-// los marca todos). Un módulo sin ítems con `permiso` (ej. Actividad,
-// gateada por `soloAdmin`) no tiene nada que configurar por rol y no se
-// renderiza -- esto hace que agregar un módulo nuevo a `NAV_GROUPS`
-// alcance para que aparezca acá solo, sin tocar este archivo.
-function ModuloPermisos({ titulo, items, permisos, onChange }) {
-  if (items.length === 0) return null;
-  const algunoMarcado = items.some((item) => permisos.has(item.permiso));
-
-  function toggleTodos() {
-    const nuevos = new Set(permisos);
-    if (algunoMarcado) items.forEach((item) => nuevos.delete(item.permiso));
-    else items.forEach((item) => nuevos.add(item.permiso));
-    onChange(nuevos);
-  }
-
-  function toggleUno(slug) {
-    const nuevos = new Set(permisos);
-    if (nuevos.has(slug)) nuevos.delete(slug);
-    else nuevos.add(slug);
-    onChange(nuevos);
-  }
-
-  return (
-    <div>
-      <Checkbox label={titulo} checked={algunoMarcado} onChange={toggleTodos} />
-      <div style={{ display: 'flex', flexDirection: 'column', gap: 6, marginTop: 6, marginLeft: 28 }}>
-        {items.map((item) => (
-          <Checkbox key={item.permiso} label={item.label} checked={permisos.has(item.permiso)} onChange={() => toggleUno(item.permiso)} />
-        ))}
-      </div>
-    </div>
-  );
-}
+import { ModuloPermisos } from './ModuloPermisos.jsx';
+import layoutStyles from '../../components/layout/WizardLayout.module.css';
+import styles from './Roles.module.css';
 
 export function RolDetallePage() {
   const { nombre } = useParams();
   const navigate = useNavigate();
+  const [rol, setRol] = useState(null);
   const [funcionalidades, setFuncionalidades] = useState({});
-  const [borrador, setBorrador] = useState(null); // { permisos: Set, alcance_solicitudes }
+  const [nombreEditado, setNombreEditado] = useState('');
+  const [permisos, setPermisos] = useState([]);
+  const [alcance, setAlcance] = useState('FRENTE');
+  const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
   const [error, setError] = useState(null);
-  const [guardando, setGuardando] = useState(false);
 
-  function cargar() {
+  useEffect(() => {
     Promise.all([listRoles(), listFuncionalidadesDisponibles()])
       .then(([rolesRes, funcRes]) => {
-        const rol = rolesRes.data.find((r) => r.nombre === nombre);
-        if (!rol) {
-          navigate('/configuracion/roles');
-          return;
-        }
+        const encontrado = rolesRes.data.find((r) => r.nombre === nombre);
+        if (!encontrado) throw new Error('Rol no encontrado');
         setFuncionalidades(funcRes.data);
-        setBorrador({ nombre: rol.nombre, permisos: new Set(rol.permisos), alcance_solicitudes: rol.alcance_solicitudes });
+        setRol(encontrado);
+        setNombreEditado(encontrado.nombre);
+        setPermisos(encontrado.permisos);
+        setAlcance(encontrado.alcance_solicitudes);
       })
-      .catch((err) => setError(err.message));
-  }
+      .catch((err) => setError(err.message))
+      .finally(() => setLoading(false));
+  }, [nombre]);
 
-  useEffect(cargar, [nombre]); // eslint-disable-line react-hooks/exhaustive-deps
-
-  if (error) return <p className={styles.errorBanner}>{error}</p>;
-  if (!borrador) return null;
-
-  function setPermisos(nuevoSet) {
-    setBorrador((prev) => ({ ...prev, permisos: nuevoSet }));
-  }
-
-  // CheckboxGroup (usado para "Otros permisos", una lista plana sin árbol)
-  // maneja su `value`/`onChange` como array, no como Set -- este wrapper
-  // evita que el resto del archivo tenga que pensar en las dos formas.
-  function setPermisosDesdeArray(nuevoArray) {
-    setPermisos(new Set(nuevoArray));
-  }
-
-  async function guardar() {
-    setGuardando(true);
+  async function handleSubmit(event) {
+    event.preventDefault();
+    setSaving(true);
     setError(null);
     try {
-      const payload = { permisos: Array.from(borrador.permisos), alcance_solicitudes: borrador.alcance_solicitudes };
-      if (borrador.nombre.trim() !== nombre) payload.nombre = borrador.nombre.trim();
+      const payload = { alcance_solicitudes: alcance };
+      if (!rol.es_admin) payload.permisos = permisos;
+      if (nombreEditado.trim() !== rol.nombre) payload.nombre = nombreEditado.trim();
       await updateRol(nombre, payload);
       navigate('/configuracion/roles');
     } catch (err) {
       setError(err.message);
-      setGuardando(false);
+      setSaving(false);
     }
   }
 
-  // 2026-09-02 "permisos por módulo, desglosados": el acceso ya no se
-  // configura por slug suelto -- se configura módulo por módulo, calcado
-  // 1:1 del árbol real del sidebar (`NAV_GROUPS`, ver navModulos.jsx). Cada
-  // ítem con `permiso` que exista HOY o se agregue MAÑANA a ese árbol
-  // aparece acá solo, sin tocar este archivo (`ModuloPermisos` filtra
-  // `items` a los que tengan `permiso` y no renderiza el módulo si no
-  // queda ninguno -- ver su comentario arriba). Lo que sobra (slugs que no
-  // corresponden a ningún ítem del sidebar, ej. `gestionar_especialidades`,
-  // una capacidad de EDICIÓN, no de navegación) cae en "Otros permisos".
-  const slugsDeModulos = new Set(NAV_GROUPS.flatMap((g) => g.items.map((i) => i.permiso).filter(Boolean)));
-  const slugsOtros = Object.keys(funcionalidades).filter((s) => !slugsDeModulos.has(s));
-  const opcionesOtros = slugsOtros.map((slug) => ({ value: slug, label: funcionalidades[slug].nombre }));
+  if (loading) return <div className={styles.loadingState}>Cargando...</div>;
+
+  if (!rol) {
+    return (
+      <div className={styles.page}>
+        <BackLink to="/configuracion/roles">Roles</BackLink>
+        <div className={styles.errorBanner} role="alert">
+          {error ?? 'Rol no encontrado'}
+        </div>
+      </div>
+    );
+  }
 
   return (
-    <>
+    <div className={styles.page}>
       <BackLink to="/configuracion/roles">Roles</BackLink>
-      <div className={styles.header}>
-        <h1 className={styles.title}>{ROL_LABELS[nombre] ?? nombre}</h1>
-        <Button type="button" onClick={guardar} disabled={guardando}>
-          {guardando ? 'Guardando…' : 'Guardar'}
-        </Button>
-      </div>
 
-      {error && <p className={styles.errorBanner}>{error}</p>}
-
-      <div className={styles.card} style={{ padding: 'var(--space-lg)', display: 'flex', flexDirection: 'column', gap: 'var(--space-lg)' }}>
-        <Field className="fieldMd" label="Nombre" required>
-          {(p) => (
-            <TextInput
-              {...p}
-              value={borrador.nombre}
-              onChange={(e) => setBorrador((prev) => ({ ...prev, nombre: e.target.value }))}
-            />
+      <section className={layoutStyles.hero}>
+        <div className={layoutStyles.heroAvatar}>
+          <ShieldCheck size={34} strokeWidth={1.5} aria-hidden="true" />
+        </div>
+        <div className={layoutStyles.heroInfo}>
+          <h1 className={layoutStyles.heroName}>{ROL_LABELS[rol.nombre] ?? rol.nombre}</h1>
+          <p className={layoutStyles.heroRole}>{rol.es_admin ? 'Rol del sistema' : 'Rol personalizado'}</p>
+          <p className={layoutStyles.heroMeta}>{rol.es_admin ? 'Acceso total a todas las pantallas' : `${rol.permisos.length} permiso(s) concedidos`}</p>
+        </div>
+        <div className={layoutStyles.heroSide}>
+          <Badge variant="info">{rol.total_usuarios} cuenta(s)</Badge>
+          {rol.total_usuarios > 0 && (
+            <Link to={`/configuracion/usuarios?rol=${encodeURIComponent(rol.nombre)}`} className={styles.heroLink}>
+              Ver cuentas
+            </Link>
           )}
-        </Field>
+        </div>
+      </section>
 
-        <Field className="fieldMd" label="Alcance de solicitudes" helper="Dentro de una sección de Solicitudes a la que ya tiene acceso, cuáles filas puede ver.">
-          {(p) => (
-            <Select {...p} value={borrador.alcance_solicitudes} onChange={(e) => setBorrador((prev) => ({ ...prev, alcance_solicitudes: e.target.value }))}>
-              {Object.entries(ALCANCE_SOLICITUDES_LABELS).map(([value, label]) => (
-                <option key={value} value={value}>{label}</option>
-              ))}
-            </Select>
+      {error && (
+        <div className={styles.formError} role="alert">
+          {error}
+        </div>
+      )}
+
+      <form className={styles.formStack} onSubmit={handleSubmit}>
+        <section className={styles.sectionCard}>
+          <div>
+            <h2 className={styles.sectionTitle}>Datos del rol</h2>
+            <p className={styles.sectionHint}>Al renombrar, las cuentas, aprobadores de frente y desvíos que usan este rol lo conservan con el nombre nuevo.</p>
+          </div>
+          <div className={styles.row}>
+            <Field className={styles.fieldMd} label="Nombre del rol" required>
+              {(fp) => <TextInput {...fp} value={nombreEditado} onChange={(e) => setNombreEditado(e.target.value)} />}
+            </Field>
+            <Field className={styles.fieldMd} label="Solicitudes que ve" helper="Dentro de una sección de Solicitudes a la que ya tiene acceso, cuáles filas puede ver.">
+              {(fp) => (
+                <Select {...fp} value={alcance} onChange={(e) => setAlcance(e.target.value)}>
+                  {Object.entries(ALCANCE_SOLICITUDES_LABELS).map(([value, label]) => (
+                    <option key={value} value={value}>
+                      {label}
+                    </option>
+                  ))}
+                </Select>
+              )}
+            </Field>
+          </div>
+        </section>
+
+        <section className={styles.sectionCard}>
+          <div>
+            <h2 className={styles.sectionTitle}>Permisos por módulo</h2>
+            <p className={styles.sectionHint}>Marca las pantallas a las que podrán entrar las cuentas con este rol.</p>
+          </div>
+          {rol.es_admin ? (
+            <div className={styles.infoBanner}>El rol de administrador tiene acceso total y no se configura por módulos.</div>
+          ) : (
+            <ModuloPermisos value={permisos} onChange={setPermisos} funcionalidades={funcionalidades} />
           )}
-        </Field>
+        </section>
 
-        {NAV_GROUPS.map((grupo) => (
-          <ModuloPermisos
-            key={grupo.title}
-            titulo={grupo.title}
-            items={grupo.items.filter((item) => item.permiso && funcionalidades[item.permiso])}
-            permisos={borrador.permisos}
-            onChange={setPermisos}
-          />
-        ))}
-
-        {opcionesOtros.length > 0 && (
-          <CheckboxGroup
-            label="Otros permisos"
-            options={opcionesOtros}
-            value={Array.from(borrador.permisos)}
-            onChange={setPermisosDesdeArray}
-          />
-        )}
-      </div>
-    </>
+        <div className={styles.actions}>
+          <Button type="button" variant="secondary" onClick={() => navigate('/configuracion/roles')}>
+            Cancelar
+          </Button>
+          <div className={styles.actionsEnd}>
+            <Button type="submit" variant="primary" disabled={saving}>
+              {saving ? 'Guardando...' : 'Guardar cambios'}
+            </Button>
+          </div>
+        </div>
+      </form>
+    </div>
   );
 }

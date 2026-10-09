@@ -3,7 +3,7 @@
 // (generar contrasenas / activar / inactivar) y la tabla con persona + avatar. Hay pocas cuentas, asi que
 // busqueda, orden y paginacion se resuelven en el navegador sobre `GET /usuarios` completo.
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { Button } from '../../components/ui/Button.jsx';
 import { Badge } from '../../components/ui/Badge.jsx';
 import { SortHeader } from '../../components/ui/SortHeader.jsx';
@@ -40,12 +40,13 @@ const VALORES_ORDEN = {
 
 export function UsuariosPage() {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const [todos, setTodos] = useState([]);
   const [roles, setRoles] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [busqueda, setBusqueda] = useState('');
-  const [filtroRol, setFiltroRol] = useState('');
+  const [filtroRol, setFiltroRol] = useState(searchParams.get('rol') ?? ''); // ?rol= viene del enlace "Cuentas" de Roles
   const [filtroEstado, setFiltroEstado] = useState('');
   const [filtroIngreso, setFiltroIngreso] = useState('');
   const [filtroMicrosoft, setFiltroMicrosoft] = useState('');

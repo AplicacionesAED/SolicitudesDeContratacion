@@ -1,22 +1,20 @@
-// Lista de roles -- la edición de permisos (ahora un bloque grande: "ver
-// todas" + Directas/Indirectas/Terceros/Otros) vive en su propia ruta
-// (RolDetallePage.jsx), mismo patrón que Frentes: fila clickeable en la
-// lista, edición completa aparte, en vez de tener las ~7 checkboxes de
-// cada uno de los 9 roles desplegadas todas a la vez en esta pantalla.
+// Lista de roles con el mismo diseno que la del HRMS y Cartera (migracion de diseno 2026-10-09): una fila por rol
+// con su tipo (sistema / personalizado), a que pantallas da acceso, el alcance de solicitudes y cuantas cuentas lo
+// tienen (enlaza a esas cuentas). La edicion vive en su propia ruta (RolDetallePage.jsx).
 import { useEffect, useMemo, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { listRoles, listFuncionalidadesDisponibles } from '../../api/roles.js';
-import { ROL_LABELS, ALCANCE_SOLICITUDES_LABELS } from '../../utils/permisos.js';
-import { Badge } from '../../components/ui/Badge.jsx';
+import { Link, useNavigate } from 'react-router-dom';
+import { ShieldCheck } from 'lucide-react';
 import { Button } from '../../components/ui/Button.jsx';
+import { Badge } from '../../components/ui/Badge.jsx';
 import { SortHeader } from '../../components/ui/SortHeader.jsx';
 import { useSortableTable, ariaSort } from '../../hooks/useSortableTable.js';
-import styles from './Configuracion.module.css';
+import { listRoles, listFuncionalidadesDisponibles } from '../../api/roles.js';
+import { ROL_LABELS, ALCANCE_SOLICITUDES_LABELS } from '../../utils/permisos.js';
+import styles from './Roles.module.css';
 
-// Etiquetas cortas para esta tabla -- `funcionalidades[slug].nombre` (el
-// mismo texto que usa RolDetallePage.jsx) es más descriptivo ("Ver
-// Solicitudes Directas") de lo que entra cómodo en una celda repetida hasta
-// 7 veces por fila.
+const MAX_VISIBLES = 4;
+
+// Etiquetas cortas: el nombre completo de la funcionalidad ("Ver Solicitudes Directas") no cabe repetido en una celda.
 const LABEL_CORTO = {
   ver_solicitudes_directas: 'Ver Directas',
   crear_solicitudes_directas: 'Crear Directas',
@@ -28,37 +26,22 @@ const LABEL_CORTO = {
   gestionar_especialidades: 'Especialidades',
 };
 
-// Mismo orden para las badges de permisos en TODAS las filas -- antes cada
-// rol mostraba su array `permisos` tal cual venía de la base (el orden en
-// que se fueron marcando los checkboxes históricamente), así que la misma
-// badge quedaba en una columna visual distinta fila a fila. Agrupado por
-// módulo (Directas, Indirectas, Terceros, Especialidades), mismo criterio
-// que el árbol de RolDetallePage.jsx. Un slug que no esté acá (no debería
-// pasar, pero por si el admin agrega uno nuevo) se va al final, sin romper
-// el resto del orden.
-const ORDEN_PERMISOS = [
-  'ver_solicitudes_directas',
-  'crear_solicitudes_directas',
-  'ver_solicitudes_indirectas',
-  'crear_solicitudes_indirectas',
-  'ver_terceros',
-  'crear_terceros',
-  'ver_especialidades',
-  'gestionar_especialidades',
-];
-
-function ordenarPermisos(permisos) {
-  return [...permisos].sort((a, b) => {
+// Mismo orden de badges en todas las filas (agrupado por modulo); un slug desconocido va al final.
+const ORDEN_PERMISOS = Object.keys(LABEL_CORTO);
+const ordenarPermisos = (permisos) =>
+  [...permisos].sort((a, b) => {
     const ia = ORDEN_PERMISOS.indexOf(a);
     const ib = ORDEN_PERMISOS.indexOf(b);
     return (ia === -1 ? ORDEN_PERMISOS.length : ia) - (ib === -1 ? ORDEN_PERMISOS.length : ib);
   });
-}
+
+const etiquetaRol = (rol) => ROL_LABELS[rol.nombre] ?? rol.nombre;
 
 export function RolesPage() {
   const navigate = useNavigate();
   const [roles, setRoles] = useState([]);
   const [funcionalidades, setFuncionalidades] = useState({});
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
   useEffect(() => {
@@ -67,65 +50,123 @@ export function RolesPage() {
         setRoles(rolesRes.data);
         setFuncionalidades(funcRes.data);
       })
-      .catch((err) => setError(err.message));
+      .catch((err) => setError(err.message))
+      .finally(() => setLoading(false));
   }, []);
 
   const valueGetters = useMemo(
     () => ({
-      nombre: (rol) => ROL_LABELS[rol.nombre] ?? rol.nombre,
-      permisos: (rol) => rol.permisos.length,
+      nombre: (rol) => etiquetaRol(rol),
       alcance: (rol) => ALCANCE_SOLICITUDES_LABELS[rol.alcance_solicitudes] ?? rol.alcance_solicitudes,
+      usuarios: (rol) => rol.total_usuarios,
     }),
     []
   );
   const { sortedRows, sort, toggleSort } = useSortableTable(roles, valueGetters);
 
   return (
-    <>
+    <div className={styles.page}>
       <div className={styles.header}>
-        <h1 className={styles.title}>Roles y permisos</h1>
-        <Button type="button" onClick={() => navigate('/configuracion/roles/nuevo')}>
-          Crear rol
-        </Button>
+        <div className={styles.headerRow}>
+          <div>
+            <h1 className={styles.title}>Roles y permisos</h1>
+            <p className={styles.subtitle}>Un rol define a qué pantallas entra una cuenta y cuántas solicitudes ve. Aprobar depende de los aprobadores de cada frente.</p>
+          </div>
+          <div className={styles.headerActions}>
+            <Button variant="primary" onClick={() => navigate('/configuracion/roles/nuevo')}>
+              Crear rol
+            </Button>
+          </div>
+        </div>
       </div>
 
-      {error && <p className={styles.errorBanner}>{error}</p>}
+      {error && (
+        <div className={styles.errorBanner} role="alert">
+          No se pudo completar la operación: {error}
+        </div>
+      )}
 
-      <div className={styles.card}>
+      <div className={styles.tableWrap}>
         <table className={styles.table}>
           <thead>
             <tr>
-              <th aria-sort={ariaSort(sort, 'nombre')}><SortHeader label="Rol" sortKey="nombre" sort={sort} onSort={toggleSort} /></th>
-              <th aria-sort={ariaSort(sort, 'permisos')}><SortHeader label="Permisos" sortKey="permisos" sort={sort} onSort={toggleSort} /></th>
-              <th aria-sort={ariaSort(sort, 'alcance')}><SortHeader label="Alcance de solicitudes" sortKey="alcance" sort={sort} onSort={toggleSort} /></th>
+              <th aria-sort={ariaSort(sort, 'nombre')}>
+                <SortHeader label="Rol" sortKey="nombre" sort={sort} onSort={toggleSort} />
+              </th>
+              <th>Acceso</th>
+              <th aria-sort={ariaSort(sort, 'alcance')}>
+                <SortHeader label="Solicitudes que ve" sortKey="alcance" sort={sort} onSort={toggleSort} />
+              </th>
+              <th aria-sort={ariaSort(sort, 'usuarios')}>
+                <SortHeader label="Cuentas" sortKey="usuarios" sort={sort} onSort={toggleSort} />
+              </th>
             </tr>
           </thead>
           <tbody>
-            {sortedRows.map((rol) => (
-              <tr key={rol.nombre} onClick={() => navigate(`/configuracion/roles/${rol.nombre}`)} style={{ cursor: 'pointer' }}>
-                <td>{ROL_LABELS[rol.nombre] ?? rol.nombre}</td>
-                <td>
-                  {rol.permisos.length === 0 ? (
-                    <span style={{ color: 'var(--color-ink-muted)' }}>Sin permisos de módulo (aprobar depende de Aprobadores de Frente)</span>
-                  ) : (
-                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: 4 }}>
-                      {ordenarPermisos(rol.permisos).map((slug) => (
-                        <Badge key={slug} variant="neutral">{LABEL_CORTO[slug] ?? funcionalidades[slug]?.nombre ?? slug}</Badge>
-                      ))}
-                    </div>
-                  )}
-                </td>
-                <td>{ALCANCE_SOLICITUDES_LABELS[rol.alcance_solicitudes] ?? rol.alcance_solicitudes}</td>
-              </tr>
-            ))}
-            {roles.length === 0 && (
+            {loading ? (
               <tr>
-                <td colSpan={3} className={styles.emptyState}>Sin roles todavía.</td>
+                <td colSpan={4} className={styles.emptyState}>
+                  Cargando...
+                </td>
               </tr>
+            ) : roles.length === 0 ? (
+              <tr>
+                <td colSpan={4} className={styles.emptyState}>
+                  Todavía no hay roles creados.
+                </td>
+              </tr>
+            ) : (
+              sortedRows.map((rol) => {
+                const permisos = ordenarPermisos(rol.permisos);
+                const visibles = permisos.slice(0, MAX_VISIBLES);
+                return (
+                  <tr key={rol.nombre} className={styles.clickableRow} onClick={() => navigate(`/configuracion/roles/${encodeURIComponent(rol.nombre)}`)}>
+                    <td>
+                      <div className={styles.rolCell}>
+                        <span className={styles.rolIcon}>
+                          <ShieldCheck size={18} strokeWidth={1.75} aria-hidden="true" />
+                        </span>
+                        <span className={styles.rolTexto}>
+                          <span className={styles.nameText}>{etiquetaRol(rol)}</span>
+                          <span className={styles.rolTipo}>{rol.es_admin ? 'Rol del sistema' : 'Personalizado'}</span>
+                        </span>
+                      </div>
+                    </td>
+                    <td>
+                      <div className={styles.permisosCell}>
+                        {rol.es_admin ? (
+                          <Badge variant="info">Acceso total</Badge>
+                        ) : permisos.length === 0 ? (
+                          <span className={styles.muted}>Sin pantallas</span>
+                        ) : (
+                          <>
+                            {visibles.map((slug) => (
+                              <Badge key={slug} variant="neutral">
+                                {LABEL_CORTO[slug] ?? funcionalidades[slug]?.nombre ?? slug}
+                              </Badge>
+                            ))}
+                            {permisos.length > visibles.length && <Badge variant="info">+{permisos.length - visibles.length}</Badge>}
+                          </>
+                        )}
+                      </div>
+                    </td>
+                    <td>{rol.es_admin ? <span className={styles.muted}>Todas</span> : ALCANCE_SOLICITUDES_LABELS[rol.alcance_solicitudes] ?? rol.alcance_solicitudes}</td>
+                    <td onClick={(event) => event.stopPropagation()}>
+                      {rol.total_usuarios > 0 ? (
+                        <Link to={`/configuracion/usuarios?rol=${encodeURIComponent(rol.nombre)}`} className={styles.cuentasLink}>
+                          {rol.total_usuarios}
+                        </Link>
+                      ) : (
+                        <span className={styles.muted}>0</span>
+                      )}
+                    </td>
+                  </tr>
+                );
+              })
             )}
           </tbody>
         </table>
       </div>
-    </>
+    </div>
   );
 }

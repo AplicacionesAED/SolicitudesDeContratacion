@@ -25,8 +25,15 @@ const SLOTS_APROBADOR_FRENTE = [
   'director_obra',
 ];
 
+// Cada rol incluye `total_usuarios` (cuentas que lo tienen asignado) para la lista de Roles.
 async function list() {
-  return Rol.findAll({ order: [['nombre', 'ASC']] });
+  const [roles, usuarios] = await Promise.all([
+    Rol.findAll({ order: [['nombre', 'ASC']] }),
+    Usuario.findAll({ attributes: ['roles'] }),
+  ]);
+  const cuentas = new Map();
+  for (const u of usuarios) for (const r of u.roles ?? []) cuentas.set(r, (cuentas.get(r) ?? 0) + 1);
+  return roles.map((rol) => ({ ...rol.toJSON(), total_usuarios: cuentas.get(rol.nombre) ?? 0 }));
 }
 
 async function create(data) {

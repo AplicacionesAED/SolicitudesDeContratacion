@@ -3742,6 +3742,13 @@ usando HRMS y Cartera (ya migrada) como referencia. Esto reemplaza lo de la plan
   `POST /usuarios/masivo` (máx. 50 ids, nunca toca la cuenta propia) y `POST /usuarios/:id/generar-password`
   (`generateRandomPassword` en `utils/passwordRules.js`); las contraseñas generadas se muestran UNA sola vez.
   No hay eliminación física de usuarios (solo inactivar), a propósito.
-- **Pendiente (siguientes pasos, mismo orden que en Cartera):** 4b) Roles, 4c) Proyectos/Frentes, 4d) Workflows, 5) Terceros, 6) Solicitudes (lista, detalle, formularios), 7)
+- **Paso 4b, Configuración → Roles (hecho):** lista con rol + tipo (sistema/personalizado), pantallas con acceso
+  (badges, "+N"), "Solicitudes que ve" (alcance) y cuentas (enlaza a `/configuracion/usuarios?rol=`, que
+  `UsuariosPage` ya lee como filtro inicial). Detalle con banner, secciones Datos del rol / Permisos por módulo y
+  barra de acciones; crear rol igual. `ModuloPermisos.jsx` es el árbol compartido (módulo padre + pantallas,
+  calcado de `NAV_GROUPS`, más "Otros permisos"). Backend: `GET /roles` ahora incluye `total_usuarios`. Se sigue
+  identificando el rol por `:nombre` en la URL (Solicitudes no tiene `GET /roles/:id`) y NO se agregó borrar roles
+  (el backend no lo soporta; no se pidió).
+- **Pendiente (siguientes pasos, mismo orden que en Cartera):** 4c) Proyectos/Frentes, 4d) Workflows, 5) Terceros, 6) Solicitudes (lista, detalle, formularios), 7)
   Dashboard/Actividad.
 - **Repositorio:** el proyecto se movió al repositorio nuevo `https://github.com/Gestion-servicios-TI-AED/SolicitudesDeContratacion` (2026-10-09). El historial se reescribió (147 commits, autor y committer `GEliasDev <GEliasDev@users.noreply.github.com>`, sin trailers de Claude), la plantilla ya no es submódulo y las capturas sueltas de la raíz y la carpeta `files/` quedan ignoradas. Commits en español, sin atribución a Claude; el push lo hace el usuario.

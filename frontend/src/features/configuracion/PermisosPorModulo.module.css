@@ -1,0 +1,22 @@
+.tree {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-lg);
+}
+
+.group {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.children {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+  margin: 6px 0 0 28px;
+}
+
+.child {
+  font-size: var(--text-data-size);
+}
