@@ -479,6 +479,24 @@ async function getById(id, usuario) {
   // solicitud.autorizacion.js#puedeEditarSolicitud.
   enriched.puedeEditar = await puedeEditarSolicitud(solicitud, usuario);
 
+  // Seguimiento (rediseno 2026-10-09): en poder de quien esta ahora y hace cuantos dias se movio -- misma logica
+  // que la bandeja (list()), para que el detalle diga "que sigue y quien lo hace" sin que el usuario lo deduzca.
+  const accionPrincipal = ACCION_PRINCIPAL_POR_ESTADO[solicitud.estado];
+  if (accionPrincipal) {
+    const slot = resolverSlot(accionPrincipal, solicitud.estado, solicitud.categoria);
+    const campo = slot ? SNAPSHOT_POR_SLOT[slot] : null;
+    const responsableId = campo ? solicitud[campo] : null;
+    const responsable = responsableId ? await Usuario.findByPk(responsableId, { attributes: ['id', 'nombre'] }) : null;
+    const ultimo = enriched.historial[0]?.fecha ?? solicitud.actualizado_en ?? solicitud.creado_en;
+    enriched.enPoderDe = responsable ? { id: responsable.id, nombre: responsable.nombre } : null;
+    enriched.diasEnPaso = Math.max(0, Math.floor((Date.now() - new Date(ultimo).getTime()) / 86400000));
+    enriched.requiereMiAccion = enriched.accionesDisponibles.includes(accionPrincipal);
+  } else {
+    enriched.enPoderDe = null;
+    enriched.diasEnPaso = null;
+    enriched.requiereMiAccion = false;
+  }
+
   return enriched;
 }
 

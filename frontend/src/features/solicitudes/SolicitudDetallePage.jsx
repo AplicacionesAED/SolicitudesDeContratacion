@@ -8,11 +8,11 @@
 // usuario reportó como faltante.
 import { useEffect, useState } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
-import { Paperclip, Link2, ExternalLink, GitMerge } from 'lucide-react';
+import { Paperclip, Link2, ExternalLink, GitMerge, Clock, CheckCircle2, UserRound } from 'lucide-react';
 import { getSolicitud, descargarDocumento, descargarOrdenServicio, descargarCronogramaExport } from '../../api/solicitudes.js';
 import { API_BASE_URL } from '../../api/client.js';
 import { useAuth } from '../../auth/AuthContext.jsx';
-import { TIPO_SOLICITUD_LABELS, CATEGORIA_LABELS, CATEGORIA_BADGE_VARIANT, formatCurrency, numeroALetras, categoriaSlug, tipoContratoLabel } from '../../utils/solicitudes.js';
+import { TIPO_SOLICITUD_LABELS, ESTADO_LABELS, CATEGORIA_LABELS, CATEGORIA_BADGE_VARIANT, formatCurrency, numeroALetras, categoriaSlug, tipoContratoLabel } from '../../utils/solicitudes.js';
 import { Badge } from '../../components/ui/Badge.jsx';
 import { SolicitudBadge } from './SolicitudBadge.jsx';
 import { HistoricoBadge } from './HistoricoBadge.jsx';
@@ -34,6 +34,8 @@ import { calcularValorCalculada, calcularTotalColumna, ImagenAutenticada, normal
 import { BackLink } from '../../components/ui/BackLink.jsx';
 import { Button } from '../../components/ui/Button.jsx';
 import styles from './Solicitudes.module.css';
+import b from './Bandeja.module.css';
+import d from './Detalle.module.css';
 
 // Mismos 6 campos de archivo que el original mostraba en "Documentos
 // Adjuntos" -- archivoGeneradorGastos/archivoEvaluacionInicial nunca se
@@ -75,6 +77,7 @@ export function SolicitudDetallePage() {
   // calcularTotalesProveedor) -- null hasta que el usuario elige una,
   // entonces cae al primer proveedor.
   const [ccTab, setCcTab] = useState(null);
+  const [seccion, setSeccion] = useState('resumen');
 
   // "Generar Documento" produce cosas distintas según categoría -- pedido
   // explícito del usuario ("de momento solo aplícalo en directos"):
@@ -121,6 +124,16 @@ export function SolicitudDetallePage() {
   if (error) return <p className={styles.errorBanner}>{error}</p>;
   if (!solicitud) return null;
 
+  const SECCIONES = [
+    { key: 'resumen', label: 'Resumen', visible: true },
+    { key: 'cuadro', label: 'Cuadro comparativo', visible: solicitud.cuadroComparativo?.items?.length > 0 },
+    { key: 'memoria', label: 'Memoria', visible: solicitud.categoria === 'DIRECTA' && solicitud.memoria?.filas?.length > 0 },
+    { key: 'cronograma', label: 'Cronograma', visible: Boolean(solicitud.cronograma) },
+    { key: 'documentos', label: 'Documentos', visible: (ARCHIVOS_LABELS.filter(([c]) => solicitud[c]).length + (solicitud.archivosAnexos?.length ?? 0)) > 0, cuenta: ARCHIVOS_LABELS.filter(([c]) => solicitud[c]).length + (solicitud.archivosAnexos?.length ?? 0) },
+    { key: 'seguimiento', label: 'Seguimiento', visible: true, cuenta: solicitud.historial?.length ?? 0 },
+  ].filter((x) => x.visible);
+  const seccionActual = SECCIONES.some((x) => x.key === seccion) ? seccion : 'resumen';
+
   const archivos = ARCHIVOS_LABELS.filter(([campo]) => solicitud[campo]);
   const anexos = solicitud.archivosAnexos ?? [];
 
@@ -137,8 +150,21 @@ export function SolicitudDetallePage() {
   const ultimaAccionNota = solicitud.historial?.find((h) => ['DEVOLVER', 'REVISAR', 'ANULAR'].includes(h.accion))?.accion;
   const ocultarNotaPorReenvio = ultimaAccionNota === 'DEVOLVER' && solicitud.estado !== 'DEVUELTA';
 
+  // ---- "Que sigue": una frase que dice donde esta la solicitud, quien debe moverla y hace cuanto ----
+  const dias = solicitud.diasEnPaso;
+  const gravedad = dias == null ? null : dias >= 8 ? 'critico' : dias >= 4 ? 'atencion' : 'ok';
+  const estadoTexto = ESTADO_LABELS[solicitud.estado] ?? solicitud.estado;
+  const enFlujo = solicitud.diasEnPaso != null;
+  const porCorregir = ['BORRADOR', 'DEVUELTA', 'EN_REVISION'].includes(solicitud.estado);
+  let sigue;
+  if (solicitud.estado === 'COMPLETADA') sigue = { tono: 'ok', icono: 'check', titulo: 'Solicitud completada', texto: 'Terminó todo el flujo de aprobación.' };
+  else if (solicitud.estado === 'ANULADA') sigue = { tono: 'neutro', icono: 'check', titulo: 'Solicitud anulada', texto: 'Ya no sigue en el flujo.' };
+  else if (porCorregir) sigue = { tono: 'atencion', icono: 'user', titulo: solicitud.estado === 'BORRADOR' ? 'Pendiente de enviar' : 'Pendiente de corrección', texto: `${solicitud.solicitante?.nombre ?? 'El solicitante'} ${solicitud.estado === 'BORRADOR' ? 'todavía no la ha enviado.' : 'debe corregirla y reenviarla.'}` };
+  else if (enFlujo) sigue = { tono: gravedad, icono: 'clock', titulo: `Esperando: ${estadoTexto}`, texto: solicitud.enPoderDe?.nombre ? `En poder de ${solicitud.enPoderDe.nombre}` : 'La resuelve quien esté asignado en el frente' };
+  else sigue = null;
+
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-lg)' }}>
+    <div className={d.page}>
       <BackLink to={`/solicitudes-${categoriaSlug(solicitud.categoria)}`}>Solicitudes</BackLink>
 
       {solicitud.solicitudPadre && (
@@ -152,83 +178,75 @@ export function SolicitudDetallePage() {
         </p>
       )}
 
-      <div className={styles.header}>
-        <div>
-          <h1 className={styles.title} style={{ fontFamily: 'monospace' }}>{solicitud.consecutivo}</h1>
-          <p style={{ margin: '4px 0 0', color: 'var(--color-ink-muted)' }}>{TIPO_SOLICITUD_LABELS[solicitud.tipo] ?? solicitud.tipo}</p>
-        </div>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-sm)' }}>
-          <Badge variant={CATEGORIA_BADGE_VARIANT[solicitud.categoria]}>{CATEGORIA_LABELS[solicitud.categoria]}</Badge>
-          <SolicitudBadge estado={solicitud.estado} />
-          {solicitud.importadoHistorico && <HistoricoBadge numeroOtrosi={solicitud.numeroOtrosi} />}
-          <Button type="button" variant="secondary" onClick={handleDescargarDocumento} disabled={descargando != null}>
-            {descargando === 'documento' ? 'Generando…' : solicitud.categoria === 'DIRECTA' ? 'Generar orden de servicio' : 'Generar documento'}
-          </Button>
-        </div>
-      </div>
-
-      {/* Progreso del flujo -- arriba del todo, justo después del header
-          (mismo lugar que en el original); el "Historial de Seguimiento"
-          completo va al final de la página (ver HistorialSeguimiento más
-          abajo). Las acciones disponibles van justo debajo del progreso
-          (pedido explícito del usuario) -- así se ve de una el estado actual
-          y lo que se puede hacer con él, sin bajar toda la página. */}
-      <EstadoTimeline estadoActual={solicitud.estado} historial={solicitud.historial} importadoHistorico={solicitud.importadoHistorico} numeroOtrosi={solicitud.numeroOtrosi} categoria={solicitud.categoria} />
-
-      <SolicitudActions solicitud={solicitud} usuario={usuario} onChange={cargar} />
-
-      {solicitud.notaContratacion && !ocultarNotaPorReenvio && (
-        <p className={styles.errorBanner}>{solicitud.notaContratacion}</p>
-      )}
-
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: 'var(--space-lg)' }}>
-        <div className={styles.section}>
-          <h2 className={styles.sectionTitle}>Información del solicitante</h2>
-          <div className={styles.infoGrid}>
-            <div className={styles.infoItem}><span className={styles.infoLabel}>Solicitante</span><span className={styles.infoValue}>{solicitud.solicitante?.nombre ?? '—'}</span></div>
-            <div className={styles.infoItem}><span className={styles.infoLabel}>Cargo</span><span className={styles.infoValue}>{solicitud.solicitante?.cargo ?? '—'}</span></div>
-            <div className={styles.infoItem}><span className={styles.infoLabel}>Correo</span><span className={styles.infoValue}>{solicitud.solicitante?.email ?? '—'}</span></div>
-            <div className={styles.infoItem}><span className={styles.infoLabel}>Fecha de solicitud</span><span className={styles.infoValue}>{new Date(solicitud.fechaSolicitud).toLocaleDateString('es-CO')}</span></div>
-            {solicitud.fechaAprobacionDirector && (
-              <div className={styles.infoItem}><span className={styles.infoLabel}>Fecha aprobación director</span><span className={styles.infoValue}>{new Date(solicitud.fechaAprobacionDirector).toLocaleDateString('es-CO')}</span></div>
-            )}
-            {solicitud.fechaAprobacionControlesProyeccion && (
-              <div className={styles.infoItem}><span className={styles.infoLabel}>Fecha aprobación Controles (Proyección)</span><span className={styles.infoValue}>{new Date(solicitud.fechaAprobacionControlesProyeccion).toLocaleDateString('es-CO')}</span></div>
-            )}
-            {solicitud.fechaAprobacionResidenteAdministrativo && (
-              <div className={styles.infoItem}><span className={styles.infoLabel}>Fecha aprobación Residente Administrativo</span><span className={styles.infoValue}>{new Date(solicitud.fechaAprobacionResidenteAdministrativo).toLocaleDateString('es-CO')}</span></div>
-            )}
-            {solicitud.fechaAprobacionGerenteCompras && (
-              <div className={styles.infoItem}><span className={styles.infoLabel}>Fecha aprobación Gerente de Compras</span><span className={styles.infoValue}>{new Date(solicitud.fechaAprobacionGerenteCompras).toLocaleDateString('es-CO')}</span></div>
-            )}
-            {solicitud.aprobador && (
-              <div className={styles.infoItem}><span className={styles.infoLabel}>Director aprobador</span><span className={styles.infoValue}>{solicitud.aprobador.nombre}</span></div>
-            )}
+      <section className={d.hero}>
+        <div className={d.heroTop}>
+          <div className={d.heroInfo}>
+            <div className={d.heroBadges}>
+              <Badge variant={CATEGORIA_BADGE_VARIANT[solicitud.categoria]}>{CATEGORIA_LABELS[solicitud.categoria]}</Badge>
+              <SolicitudBadge estado={solicitud.estado} />
+              {solicitud.importadoHistorico && <HistoricoBadge numeroOtrosi={solicitud.numeroOtrosi} />}
+            </div>
+            <h1 className={d.consecutivo}>{solicitud.consecutivo}</h1>
+            <p className={d.heroLinea}>
+              {TIPO_SOLICITUD_LABELS[solicitud.tipo] ?? solicitud.tipo}
+              {solicitud.tercero && (
+                <>
+                  {' · '}
+                  <Link to={`/terceros/${solicitud.tercero.id}`}>{solicitud.tercero.razonSocial}</Link>
+                </>
+              )}
+            </p>
           </div>
-        </div>
-
-        <div className={styles.section}>
-          <h2 className={styles.sectionTitle}>Proyecto y frentes</h2>
-          <div className={styles.infoGrid}>
-            <div className={styles.infoItem}><span className={styles.infoLabel}>Proyecto</span><span className={styles.infoValue}>{solicitud.proyectoNombre ?? '—'}</span></div>
-            <div className={styles.infoItem}><span className={styles.infoLabel}>Frentes</span><span className={styles.infoValue}>{solicitud.frentesNombres?.length > 0 ? solicitud.frentesNombres.join(', ') : '—'}</span></div>
-            {solicitud.etapasUnicas?.length > 0 && (
-              <div className={styles.infoItem}>
-                <span className={styles.infoLabel}>Etapa</span>
-                <span className={styles.infoValue} style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
-                  {solicitud.etapasUnicas.map((e) => (
-                    <span key={e} style={{ display: 'inline-flex', padding: '2px 10px', borderRadius: 'var(--radius-full)', background: 'var(--color-surface-sunken)', fontSize: 'var(--text-label-size)' }}>Etapa {e}</span>
-                  ))}
-                </span>
+          <div className={d.heroDerecha}>
+            {solicitud.valorFinal != null && (
+              <div className={d.valor}>
+                <span className={d.valorEtiqueta}>Valor</span>
+                <span className={d.valorNumero}>{formatCurrency(solicitud.valorFinal)}</span>
               </div>
             )}
-            {solicitud.numeroContratoAdpro && (
-              <div className={styles.infoItem}><span className={styles.infoLabel}>Número Adpro</span><span className={styles.infoValue}>{solicitud.numeroContratoAdpro}</span></div>
-            )}
+            <Button type="button" variant="secondary" onClick={handleDescargarDocumento} disabled={descargando != null}>
+              {descargando === 'documento' ? 'Generando…' : solicitud.categoria === 'DIRECTA' ? 'Generar orden de servicio' : 'Generar documento'}
+            </Button>
           </div>
         </div>
+
+        {sigue && (
+          <div className={`${d.sigue} ${d[`sigue_${sigue.tono}`] ?? ''}`}>
+            <span className={d.sigueIcono}>{sigue.icono === 'check' ? <CheckCircle2 size={20} aria-hidden="true" /> : sigue.icono === 'user' ? <UserRound size={20} aria-hidden="true" /> : <Clock size={20} aria-hidden="true" />}</span>
+            <div className={d.sigueTexto}>
+              <p className={d.sigueTitulo}>
+                {sigue.titulo}
+                {solicitud.requiereMiAccion && <span className={b.tocaTi}>Te toca</span>}
+              </p>
+              <p className={d.sigueDetalle}>
+                {sigue.texto}
+                {enFlujo && <> · {dias === 0 ? 'se movió hoy' : `${dias} día${dias === 1 ? '' : 's'} en este paso`}</>}
+              </p>
+            </div>
+          </div>
+        )}
+
+        {solicitud.notaContratacion && !ocultarNotaPorReenvio && (
+          <div className={d.nota}>
+            <span className={d.notaEtiqueta}>Observación</span>
+            <p>{solicitud.notaContratacion}</p>
+          </div>
+        )}
+
+        <SolicitudActions solicitud={solicitud} usuario={usuario} onChange={cargar} />
+      </section>
+
+      <div className={d.tabs} role="tablist" aria-label="Secciones de la solicitud">
+        {SECCIONES.map((x) => (
+          <button key={x.key} type="button" role="tab" aria-selected={seccionActual === x.key} className={`${d.tab} ${seccionActual === x.key ? d.tabActive : ''}`} onClick={() => setSeccion(x.key)}>
+            {x.label}
+            {x.cuenta != null && <span className={d.tabCuenta}>{x.cuenta}</span>}
+          </button>
+        ))}
       </div>
 
+      {seccionActual === 'resumen' && (
+        <>
       <div className={styles.section}>
         <h2 className={styles.sectionTitle}>Datos de la solicitud</h2>
         <div className={styles.infoGrid}>
@@ -284,80 +302,73 @@ export function SolicitudDetallePage() {
         )}
       </div>
 
-      {solicitud.cronograma && (
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: 'var(--space-lg)' }}>
         <div className={styles.section}>
-          <div className={styles.header}>
-            <h2 className={styles.sectionTitle}>Cronograma</h2>
-            <Button type="button" variant="secondary" onClick={handleExportarCronograma} disabled={descargando != null}>
-              {descargando === 'cronograma' ? 'Generando…' : 'Exportar a Excel'}
-            </Button>
-          </div>
+          <h2 className={styles.sectionTitle}>Información del solicitante</h2>
           <div className={styles.infoGrid}>
-            <div className={styles.infoItem}><span className={styles.infoLabel}>Fecha de inicio</span><span className={styles.infoValue}>{new Date(solicitud.cronograma.fechaInicio).toLocaleDateString('es-CO')}</span></div>
-            <div className={styles.infoItem}><span className={styles.infoLabel}>Fecha de fin</span><span className={styles.infoValue}>{new Date(solicitud.cronograma.fechaFin).toLocaleDateString('es-CO')}</span></div>
-          </div>
-          <div className={styles.card}>
-            <table className={styles.table}>
-              <thead>
-                <tr><th>Actividad</th><th>Fecha inicio</th><th>Fecha fin</th></tr>
-              </thead>
-              <tbody>
-                {(solicitud.cronograma.tieneFases ? solicitud.cronograma.fases.flatMap((f) => f.actividades.map((a) => ({ ...a, fase: f.nombreFase }))) : solicitud.cronograma.actividades).map((a) => (
-                  <tr key={a.id}>
-                    <td>{a.fase ? `${a.fase} — ` : ''}{a.descripcion}</td>
-                    <td>{new Date(a.fechaInicio).toLocaleDateString('es-CO')}</td>
-                    <td>{new Date(a.fechaFin).toLocaleDateString('es-CO')}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </div>
-      )}
-
-      {(archivos.length > 0 || anexos.length > 0) && (
-        <div className={styles.section}>
-          <h2 className={styles.sectionTitle}>Documentos adjuntos</h2>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-sm)' }}>
-            {archivos.map(([campo, label]) => (
-              <div key={campo} style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-                <Paperclip size={14} style={{ color: 'var(--color-ink-muted)', flexShrink: 0 }} />
-                <span style={{ fontSize: 'var(--text-body-size)', fontWeight: 500 }}>{label}</span>
-                <a href={urlArchivo(solicitud[campo])} target="_blank" rel="noreferrer" style={{ marginLeft: 'auto', fontSize: 'var(--text-label-size)', color: 'var(--color-primary)' }}>
-                  Descargar
-                </a>
-              </div>
-            ))}
-
-            {anexos.length > 0 && (
-              <>
-                {archivos.length > 0 && (
-                  <p style={{ margin: 'var(--space-sm) 0 0', paddingTop: 'var(--space-sm)', borderTop: '1px solid var(--color-border)', fontSize: 'var(--text-label-size)', fontWeight: 600, color: 'var(--color-ink-muted)', textTransform: 'uppercase' }}>
-                    Anexos de la solicitud
-                  </p>
-                )}
-                {anexos.map((a, i) => (
-                  <a
-                    key={i}
-                    href={a.url}
-                    target="_blank"
-                    rel="noreferrer"
-                    style={{ display: 'flex', alignItems: 'center', gap: 10, border: '1px solid var(--color-border)', borderRadius: 'var(--radius-sm)', padding: '8px 12px', textDecoration: 'none', color: 'inherit' }}
-                  >
-                    <Link2 size={14} style={{ flexShrink: 0, color: 'var(--color-ink-muted)' }} />
-                    <span style={{ flex: 1, minWidth: 0 }}>
-                      <span style={{ display: 'block', fontSize: 'var(--text-body-size)', fontWeight: 600, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{a.nombre}</span>
-                      <span style={{ fontSize: 'var(--text-label-size)', color: 'var(--color-ink-muted)' }}>{detectarPlataforma(a.url)}</span>
-                    </span>
-                    <ExternalLink size={13} style={{ flexShrink: 0, color: 'var(--color-ink-muted)' }} />
-                  </a>
-                ))}
-              </>
+            <div className={styles.infoItem}><span className={styles.infoLabel}>Solicitante</span><span className={styles.infoValue}>{solicitud.solicitante?.nombre ?? '—'}</span></div>
+            <div className={styles.infoItem}><span className={styles.infoLabel}>Cargo</span><span className={styles.infoValue}>{solicitud.solicitante?.cargo ?? '—'}</span></div>
+            <div className={styles.infoItem}><span className={styles.infoLabel}>Correo</span><span className={styles.infoValue}>{solicitud.solicitante?.email ?? '—'}</span></div>
+            <div className={styles.infoItem}><span className={styles.infoLabel}>Fecha de solicitud</span><span className={styles.infoValue}>{new Date(solicitud.fechaSolicitud).toLocaleDateString('es-CO')}</span></div>
+            {solicitud.fechaAprobacionDirector && (
+              <div className={styles.infoItem}><span className={styles.infoLabel}>Fecha aprobación director</span><span className={styles.infoValue}>{new Date(solicitud.fechaAprobacionDirector).toLocaleDateString('es-CO')}</span></div>
+            )}
+            {solicitud.fechaAprobacionControlesProyeccion && (
+              <div className={styles.infoItem}><span className={styles.infoLabel}>Fecha aprobación Controles (Proyección)</span><span className={styles.infoValue}>{new Date(solicitud.fechaAprobacionControlesProyeccion).toLocaleDateString('es-CO')}</span></div>
+            )}
+            {solicitud.fechaAprobacionResidenteAdministrativo && (
+              <div className={styles.infoItem}><span className={styles.infoLabel}>Fecha aprobación Residente Administrativo</span><span className={styles.infoValue}>{new Date(solicitud.fechaAprobacionResidenteAdministrativo).toLocaleDateString('es-CO')}</span></div>
+            )}
+            {solicitud.fechaAprobacionGerenteCompras && (
+              <div className={styles.infoItem}><span className={styles.infoLabel}>Fecha aprobación Gerente de Compras</span><span className={styles.infoValue}>{new Date(solicitud.fechaAprobacionGerenteCompras).toLocaleDateString('es-CO')}</span></div>
+            )}
+            {solicitud.aprobador && (
+              <div className={styles.infoItem}><span className={styles.infoLabel}>Director aprobador</span><span className={styles.infoValue}>{solicitud.aprobador.nombre}</span></div>
             )}
           </div>
         </div>
+
+        <div className={styles.section}>
+          <h2 className={styles.sectionTitle}>Proyecto y frentes</h2>
+          <div className={styles.infoGrid}>
+            <div className={styles.infoItem}><span className={styles.infoLabel}>Proyecto</span><span className={styles.infoValue}>{solicitud.proyectoNombre ?? '—'}</span></div>
+            <div className={styles.infoItem}><span className={styles.infoLabel}>Frentes</span><span className={styles.infoValue}>{solicitud.frentesNombres?.length > 0 ? solicitud.frentesNombres.join(', ') : '—'}</span></div>
+            {solicitud.etapasUnicas?.length > 0 && (
+              <div className={styles.infoItem}>
+                <span className={styles.infoLabel}>Etapa</span>
+                <span className={styles.infoValue} style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
+                  {solicitud.etapasUnicas.map((e) => (
+                    <span key={e} style={{ display: 'inline-flex', padding: '2px 10px', borderRadius: 'var(--radius-full)', background: 'var(--color-surface-sunken)', fontSize: 'var(--text-label-size)' }}>Etapa {e}</span>
+                  ))}
+                </span>
+              </div>
+            )}
+            {solicitud.numeroContratoAdpro && (
+              <div className={styles.infoItem}><span className={styles.infoLabel}>Número Adpro</span><span className={styles.infoValue}>{solicitud.numeroContratoAdpro}</span></div>
+            )}
+          </div>
+        </div>
+      </div>
+
+      {solicitud.otrosis?.length > 0 && (
+        <div className={styles.section}>
+          <h2 className={styles.sectionTitle}>Otrosís</h2>
+          {solicitud.otrosis.map((o) => (
+            <div key={o.id} className={styles.infoItem} style={{ cursor: 'pointer' }} onClick={() => navigate(`/solicitudes/${o.id}`)}>
+              <span className={styles.infoValue} style={{ fontFamily: 'monospace', display: 'flex', alignItems: 'center', gap: 6, flexWrap: 'wrap' }}>
+                {o.consecutivo} — <SolicitudBadge estado={o.estado} />
+                {o.importadoHistorico && <HistoricoBadge numeroOtrosi={o.numeroOtrosi} />}
+              </span>
+            </div>
+          ))}
+        </div>
       )}
 
+        </>
+      )}
+
+      {seccionActual === 'cuadro' && (
+        <>
       {solicitud.cuadroComparativo?.items?.length > 0 && (
         <div className={styles.section}>
           <h2 className={styles.sectionTitle}>Cuadro Comparativo</h2>
@@ -587,6 +598,11 @@ export function SolicitudDetallePage() {
         </div>
       )}
 
+        </>
+      )}
+
+      {seccionActual === 'memoria' && (
+        <>
       {/* Solo para Directas por ahora (mismo alcance que
           SolicitudForm.jsx#categoriaEfectiva) -- normalizarMemoria() le da
           a columnas/filas el mismo `clientId` que ya usan
@@ -643,21 +659,99 @@ export function SolicitudDetallePage() {
         );
       })()}
 
-      {solicitud.otrosis?.length > 0 && (
+        </>
+      )}
+
+      {seccionActual === 'cronograma' && (
+        <>
+      {solicitud.cronograma && (
         <div className={styles.section}>
-          <h2 className={styles.sectionTitle}>Otrosís</h2>
-          {solicitud.otrosis.map((o) => (
-            <div key={o.id} className={styles.infoItem} style={{ cursor: 'pointer' }} onClick={() => navigate(`/solicitudes/${o.id}`)}>
-              <span className={styles.infoValue} style={{ fontFamily: 'monospace', display: 'flex', alignItems: 'center', gap: 6, flexWrap: 'wrap' }}>
-                {o.consecutivo} — <SolicitudBadge estado={o.estado} />
-                {o.importadoHistorico && <HistoricoBadge numeroOtrosi={o.numeroOtrosi} />}
-              </span>
-            </div>
-          ))}
+          <div className={styles.header}>
+            <h2 className={styles.sectionTitle}>Cronograma</h2>
+            <Button type="button" variant="secondary" onClick={handleExportarCronograma} disabled={descargando != null}>
+              {descargando === 'cronograma' ? 'Generando…' : 'Exportar a Excel'}
+            </Button>
+          </div>
+          <div className={styles.infoGrid}>
+            <div className={styles.infoItem}><span className={styles.infoLabel}>Fecha de inicio</span><span className={styles.infoValue}>{new Date(solicitud.cronograma.fechaInicio).toLocaleDateString('es-CO')}</span></div>
+            <div className={styles.infoItem}><span className={styles.infoLabel}>Fecha de fin</span><span className={styles.infoValue}>{new Date(solicitud.cronograma.fechaFin).toLocaleDateString('es-CO')}</span></div>
+          </div>
+          <div className={styles.card}>
+            <table className={styles.table}>
+              <thead>
+                <tr><th>Actividad</th><th>Fecha inicio</th><th>Fecha fin</th></tr>
+              </thead>
+              <tbody>
+                {(solicitud.cronograma.tieneFases ? solicitud.cronograma.fases.flatMap((f) => f.actividades.map((a) => ({ ...a, fase: f.nombreFase }))) : solicitud.cronograma.actividades).map((a) => (
+                  <tr key={a.id}>
+                    <td>{a.fase ? `${a.fase} — ` : ''}{a.descripcion}</td>
+                    <td>{new Date(a.fechaInicio).toLocaleDateString('es-CO')}</td>
+                    <td>{new Date(a.fechaFin).toLocaleDateString('es-CO')}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         </div>
       )}
 
-      <HistorialSeguimiento historial={solicitud.historial} />
+        </>
+      )}
+
+      {seccionActual === 'documentos' && (
+        <>
+      {(archivos.length > 0 || anexos.length > 0) && (
+        <div className={styles.section}>
+          <h2 className={styles.sectionTitle}>Documentos adjuntos</h2>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-sm)' }}>
+            {archivos.map(([campo, label]) => (
+              <div key={campo} style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                <Paperclip size={14} style={{ color: 'var(--color-ink-muted)', flexShrink: 0 }} />
+                <span style={{ fontSize: 'var(--text-body-size)', fontWeight: 500 }}>{label}</span>
+                <a href={urlArchivo(solicitud[campo])} target="_blank" rel="noreferrer" style={{ marginLeft: 'auto', fontSize: 'var(--text-label-size)', color: 'var(--color-primary)' }}>
+                  Descargar
+                </a>
+              </div>
+            ))}
+
+            {anexos.length > 0 && (
+              <>
+                {archivos.length > 0 && (
+                  <p style={{ margin: 'var(--space-sm) 0 0', paddingTop: 'var(--space-sm)', borderTop: '1px solid var(--color-border)', fontSize: 'var(--text-label-size)', fontWeight: 600, color: 'var(--color-ink-muted)', textTransform: 'uppercase' }}>
+                    Anexos de la solicitud
+                  </p>
+                )}
+                {anexos.map((a, i) => (
+                  <a
+                    key={i}
+                    href={a.url}
+                    target="_blank"
+                    rel="noreferrer"
+                    style={{ display: 'flex', alignItems: 'center', gap: 10, border: '1px solid var(--color-border)', borderRadius: 'var(--radius-sm)', padding: '8px 12px', textDecoration: 'none', color: 'inherit' }}
+                  >
+                    <Link2 size={14} style={{ flexShrink: 0, color: 'var(--color-ink-muted)' }} />
+                    <span style={{ flex: 1, minWidth: 0 }}>
+                      <span style={{ display: 'block', fontSize: 'var(--text-body-size)', fontWeight: 600, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{a.nombre}</span>
+                      <span style={{ fontSize: 'var(--text-label-size)', color: 'var(--color-ink-muted)' }}>{detectarPlataforma(a.url)}</span>
+                    </span>
+                    <ExternalLink size={13} style={{ flexShrink: 0, color: 'var(--color-ink-muted)' }} />
+                  </a>
+                ))}
+              </>
+            )}
+          </div>
+        </div>
+      )}
+
+        </>
+      )}
+
+      {seccionActual === 'seguimiento' && (
+        <>
+          <EstadoTimeline estadoActual={solicitud.estado} historial={solicitud.historial} importadoHistorico={solicitud.importadoHistorico} numeroOtrosi={solicitud.numeroOtrosi} categoria={solicitud.categoria} />
+          <HistorialSeguimiento historial={solicitud.historial} />
+        </>
+      )}
     </div>
   );
 }

@@ -3818,5 +3818,14 @@ usando HRMS y Cartera (ya migrada) como referencia. Esto reemplaza lo de la plan
   checks `dd_*` editables, el botón "Marcar verificaciones" y el conteo "n de 6" (y `ddCompletados` del backend): la
   debida diligencia se muestra solo como estado (aprobada / pendiente). El backend sigue aceptando los `dd_*` en
   `PATCH /terceros/:id` (y derivando `aprobado_debida_diligencia` de ellos), pero ninguna pantalla los usa.
-- **Pendiente (siguientes pasos):** 6b) detalle de la solicitud y formularios, 7) Actividad y Perfil.
+- **Paso 6b, detalle de la solicitud (hecho; reforma de estructura, no solo estilo):** `SolicitudDetallePage` ya no es una
+  página larga con todo apilado. Arriba una tarjeta de situación: consecutivo, tipo y contratista, valor, y un bloque
+  "Esperando: {etapa} · en poder de {persona} · N días en este paso" (con "Te toca" y semáforo), la observación de
+  devolución/revisión destacada, y las acciones disponibles integradas ahí (`SolicitudActions` sin cambios). Debajo,
+  pestañas: Resumen (datos, solicitante, proyecto/frentes, otrosís) / Cuadro comparativo / Memoria / Cronograma /
+  Documentos / Seguimiento (progreso del flujo + historial); solo aparecen las que tienen contenido. Los bloques
+  internos (cuadro, memoria, cronograma, documentos) se movieron tal cual, sin tocar su lógica ni sus fórmulas. Backend:
+  `getById` agrega `enPoderDe`, `diasEnPaso` y `requiereMiAccion` (misma lógica que la bandeja). Estilos nuevos en
+  `Detalle.module.css`. Verificado en navegador con una solicitud simulada y `getById` contra la base real de dev.
+- **Pendiente (siguientes pasos):** 6c) formularios de solicitud (contrato/orden/otrosí), 7) Actividad y Perfil.
 - **Repositorio:** el proyecto se movió al repositorio nuevo `https://github.com/Gestion-servicios-TI-AED/SolicitudesDeContratacion` (2026-10-09). El historial se reescribió (147 commits, autor y committer `GEliasDev <GEliasDev@users.noreply.github.com>`, sin trailers de Claude), la plantilla ya no es submódulo y las capturas sueltas de la raíz y la carpeta `files/` quedan ignoradas. Commits en español, sin atribución a Claude; el push lo hace el usuario.
