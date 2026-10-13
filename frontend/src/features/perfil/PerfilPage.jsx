@@ -54,7 +54,7 @@ export function PerfilPage() {
     return NAV_GROUPS.map((g) => ({
       titulo: g.title,
       items: g.items.filter((i) => (i.soloAdmin ? usuario.esAdmin : !i.permiso || usuario.esAdmin || usuarioTienePermiso(usuario, i.permiso))).map((i) => i.label),
-    })).filter((g) => g.items.length > 0);
+    })).filter((g) => g.items.length > 0).concat(usuario.esAdmin ? [{ titulo: 'Configuración (administrador)', items: ['Usuarios', 'Roles', 'Workflows', 'Proyectos', 'Frentes'] }] : []);
   }, [usuario]);
 
   if (!usuario) return null;

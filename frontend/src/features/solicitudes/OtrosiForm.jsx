@@ -161,7 +161,7 @@ export function OtrosiForm({ tipo, categoria }) {
                   </tr>
                 ))}
                 {filtrados.length === 0 && (
-                  <tr><td colSpan={3} className={styles.emptyState}>Sin contratos completados que coincidan.</td></tr>
+                  <tr><td colSpan={3} className={styles.emptyState}>Sin contratos completados que coincidan. Solo los contratos completados admiten otrosí; las órdenes de servicio no.</td></tr>
                 )}
               </tbody>
             </table>

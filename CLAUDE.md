@@ -3854,6 +3854,16 @@ usando HRMS y Cartera (ya migrada) como referencia. Esto reemplaza lo de la plan
   órdenes de servicio y en Directa todo es orden de servicio); ahora aparecen deshabilitadas con la razón. Además cada
   tipo lista lo que se necesita, se ofrecen los borradores propios para continuarlos y hay acceso a "Importar registro
   histórico". Estilos en `Nueva.module.css` y `PerfilPage.module.css`. Verificado en navegador con datos simulados.
-- **Pendiente (siguientes pasos):** revisar a ojo con un usuario real todas las pantallas rediseñadas (casi todo se probó
-  con datos simulados) y decidir si se borran las tablas de Actividad de la base.
+- **Revisión con usuario real (2026-10-13, Playwright contra localhost:5193, solo lectura):** se recorrieron las 26 vistas
+  sin errores de página ni respuestas HTTP >= 400. Defectos encontrados y corregidos: (1) **regresión mía** -- el reset
+  global `svg { max-width: 100% }` de `index.css` (copiado del HRMS) dejaba en 0px el SVG de las aristas de React Flow y el
+  diagrama de Workflows no mostraba ninguna flecha (arreglado en `Workflows.module.css`, y el canvas ahora mide mínimo
+  860px para que se lea); (2) tabla de Usuarios desbordaba 66px y recortaba "Estado" (padding de celdas y roles largos que
+  se parten) y la 5.ª tarjeta quedaba huérfana; (3) fecha "Cuenta creada" salía como `2026-05-08`; (4) el botón "Más
+  filtros" de la bandeja parecía un botón de limpiar; (5) solicitud anulada mostraba un check de éxito (ahora `Ban`);
+  (6) el buscador de otrosí vacío no explicaba que solo los contratos admiten otrosí; (7) el KPI de SAGRILAFT del
+  Directorio mezclaba 204 terceros vencidos y por vencer (ahora cuenta vencidos y dice cuántos vencen en 30 días); (8) el
+  Perfil de un admin no listaba Configuración. **Regla:** al copiar CSS global de otro proyecto, revisar que no rompa
+  librerías con SVG/HTML propio (React Flow, ApexCharts).
+- **Pendiente (siguientes pasos):** decidir si se borran las tablas de Actividad de la base.
 - **Repositorio:** el proyecto se movió al repositorio nuevo `https://github.com/Gestion-servicios-TI-AED/SolicitudesDeContratacion` (2026-10-09). El historial se reescribió (147 commits, autor y committer `GEliasDev <GEliasDev@users.noreply.github.com>`, sin trailers de Claude), la plantilla ya no es submódulo y las capturas sueltas de la raíz y la carpeta `files/` quedan ignoradas. Commits en español, sin atribución a Claude; el push lo hace el usuario.

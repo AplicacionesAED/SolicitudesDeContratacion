@@ -6,7 +6,9 @@ export function iniciales(nombre = '') {
 
 // "YYYY-MM-DD" desde un timestamp ISO.
 export function fmtFecha(valor) {
-  return valor ? String(valor).slice(0, 10) : '—';
+  if (!valor) return '—';
+  const f = new Date(valor);
+  return Number.isNaN(f.getTime()) ? String(valor).slice(0, 10) : f.toLocaleDateString('es-CO', { day: '2-digit', month: '2-digit', year: 'numeric' });
 }
 
 // "Nunca" si la cuenta no ha iniciado sesion; si no, fecha y hora cortas locales.

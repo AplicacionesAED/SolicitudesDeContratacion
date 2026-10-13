@@ -562,7 +562,8 @@ export function WorkflowDiagramaPage() {
       const top = diagramWrapRef.current.getBoundingClientRect().top;
       const altoLeyenda = leyendaRef.current?.offsetHeight ?? 0;
       const disponible = window.innerHeight - top - altoLeyenda - 40;
-      setAltoDisponible(Math.max(disponible, 420));
+      // Minimo 860px: con menos alto el diagrama (13 estados en vertical) se ajusta a una escala tan chica que no se lee.
+      setAltoDisponible(Math.max(disponible, 860));
     }
     medir();
     window.addEventListener('resize', medir);

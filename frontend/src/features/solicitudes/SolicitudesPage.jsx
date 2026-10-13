@@ -258,7 +258,7 @@ export function SolicitudesPage({ categoria }) {
           <span>Buscar</span>
           <input type="text" className={styles.control} placeholder="Consecutivo, contratista, NIT o solicitante..." value={busqueda} onChange={cambiar(setBusqueda)} aria-label="Buscar solicitudes" />
         </label>
-        <button type="button" className={styles.clearBtn} onClick={() => setMostrarMas((v) => !v)} aria-expanded={mostrarMas}>
+        <button type="button" className={b.masFiltros} onClick={() => setMostrarMas((v) => !v)} aria-expanded={mostrarMas}>
           <SlidersHorizontal size={13} aria-hidden="true" /> Más filtros{avanzadosActivos > 0 ? ` (${avanzadosActivos})` : ''}
         </button>
         {(busqueda || avanzadosActivos > 0) && (

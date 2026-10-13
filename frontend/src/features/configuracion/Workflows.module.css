@@ -31,6 +31,12 @@
 /* @xyflow/react trae sus propios estilos base (dist/style.css) -- acá solo
    se ajustan detalles puntuales para que calcen con los tokens del proyecto
    en vez de la paleta default de la librería. */
+/* El reset global `svg { max-width: 100% }` (index.css, copiado del HRMS) deja en 0px el SVG de las aristas de React Flow
+   (su ancho es 0 y dibuja con overflow visible): sin esta regla desaparecen todas las flechas del diagrama. */
+.diagramWrap :global(svg) {
+  max-width: none;
+}
+
 .diagramWrap :global(.react-flow__attribution) {
   font-family: var(--font-body);
   font-size: 10px;

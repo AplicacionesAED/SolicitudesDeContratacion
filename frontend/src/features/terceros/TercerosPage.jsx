@@ -133,11 +133,14 @@ export function TercerosPage() {
     ]);
   }
 
+  const diasDe = (t) => diasRestantesDe(t.fechaVencimientoSagrilaft);
+  const vencidos = terceros.filter((t) => diasDe(t) !== null && diasDe(t) <= 0).length;
+  const porVencer = terceros.filter((t) => diasDe(t) !== null && diasDe(t) > 0 && diasDe(t) <= 30).length;
   const valorTotal = terceros.reduce((sum, t) => sum + t.valorContratado, 0);
   const tarjetas = [
     { valor: terceros.length, label: 'Terceros', hint: `${conteos.contratados ?? 0} con solicitudes`, ir: 'todos' },
     { valor: conteos.disponibles ?? 0, label: 'Disponibles para contratar', hint: `${conteos.bloqueados ?? 0} no disponibles`, ir: 'disponibles' },
-    { valor: conteos.renovar ?? 0, label: 'SAGRILAFT por renovar (30 días)', hint: 'Incluye los ya vencidos', ir: 'renovar' },
+    { valor: vencidos, label: 'SAGRILAFT vencido', hint: `${porVencer} más vencen en los próximos 30 días`, ir: 'renovar' },
     { valor: conteos.datos ?? 0, label: 'Con solicitudes y datos incompletos', hint: valorTotal ? `${formatCurrency(valorTotal)} contratados en total` : 'Completa sus datos', ir: 'datos' },
   ];
 

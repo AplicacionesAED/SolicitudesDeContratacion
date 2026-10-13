@@ -8,7 +8,7 @@
 // usuario reportó como faltante.
 import { useEffect, useState } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
-import { Paperclip, Link2, ExternalLink, GitMerge, Clock, CheckCircle2, UserRound } from 'lucide-react';
+import { Paperclip, Link2, ExternalLink, GitMerge, Clock, CheckCircle2, UserRound, Ban } from 'lucide-react';
 import { getSolicitud, descargarDocumento, descargarOrdenServicio, descargarCronogramaExport } from '../../api/solicitudes.js';
 import { API_BASE_URL } from '../../api/client.js';
 import { useAuth } from '../../auth/AuthContext.jsx';
@@ -157,7 +157,7 @@ export function SolicitudDetallePage() {
   const porCorregir = ['BORRADOR', 'DEVUELTA', 'EN_REVISION'].includes(solicitud.estado);
   let sigue;
   if (solicitud.estado === 'COMPLETADA') sigue = { tono: 'ok', icono: 'check', titulo: 'Solicitud completada', texto: 'Terminó todo el flujo de aprobación.' };
-  else if (solicitud.estado === 'ANULADA') sigue = { tono: 'neutro', icono: 'check', titulo: 'Solicitud anulada', texto: 'Ya no sigue en el flujo.' };
+  else if (solicitud.estado === 'ANULADA') sigue = { tono: 'neutro', icono: 'ban', titulo: 'Solicitud anulada', texto: 'Ya no sigue en el flujo.' };
   else if (porCorregir) sigue = { tono: 'atencion', icono: 'user', titulo: solicitud.estado === 'BORRADOR' ? 'Pendiente de enviar' : 'Pendiente de corrección', texto: `${solicitud.solicitante?.nombre ?? 'El solicitante'} ${solicitud.estado === 'BORRADOR' ? 'todavía no la ha enviado.' : 'debe corregirla y reenviarla.'}` };
   else if (enFlujo) sigue = { tono: gravedad, icono: 'clock', titulo: `Esperando: ${estadoTexto}`, texto: solicitud.enPoderDe?.nombre ? `En poder de ${solicitud.enPoderDe.nombre}` : 'La resuelve quien esté asignado en el frente' };
   else sigue = null;
@@ -211,7 +211,7 @@ export function SolicitudDetallePage() {
 
         {sigue && (
           <div className={`${d.sigue} ${d[`sigue_${sigue.tono}`] ?? ''}`}>
-            <span className={d.sigueIcono}>{sigue.icono === 'check' ? <CheckCircle2 size={20} aria-hidden="true" /> : sigue.icono === 'user' ? <UserRound size={20} aria-hidden="true" /> : <Clock size={20} aria-hidden="true" />}</span>
+            <span className={d.sigueIcono}>{sigue.icono === 'check' ? <CheckCircle2 size={20} aria-hidden="true" /> : sigue.icono === 'ban' ? <Ban size={20} aria-hidden="true" /> : sigue.icono === 'user' ? <UserRound size={20} aria-hidden="true" /> : <Clock size={20} aria-hidden="true" />}</span>
             <div className={d.sigueTexto}>
               <p className={d.sigueTitulo}>
                 {sigue.titulo}
