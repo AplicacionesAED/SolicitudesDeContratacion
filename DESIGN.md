@@ -31,31 +31,31 @@ colors:
 typography:
   display:
     fontFamily: "\"TT Firs Neue\", Inter, system-ui, sans-serif"
-    fontSize: "clamp(1.5rem, 1.2rem + 1vw, 2rem)"
+    fontSize: "clamp(1.375rem, 1.1rem + 0.8vw, 1.75rem)"
     fontWeight: 600
     lineHeight: 1.2
     letterSpacing: "-0.01em"
   headline:
     fontFamily: "\"TT Firs Neue\", Inter, system-ui, sans-serif"
-    fontSize: "1.25rem"
+    fontSize: "1.125rem"
     fontWeight: 600
     lineHeight: 1.3
     letterSpacing: "normal"
   title:
     fontFamily: "\"TT Firs Neue\", Inter, system-ui, sans-serif"
-    fontSize: "1.0625rem"
+    fontSize: "1rem"
     fontWeight: 500
     lineHeight: 1.4
     letterSpacing: "normal"
   body:
     fontFamily: "Raleway, system-ui, sans-serif"
-    fontSize: "1rem"
+    fontSize: "0.9375rem"
     fontWeight: 400
     lineHeight: 1.55
     letterSpacing: "normal"
   data:
     fontFamily: "Raleway, system-ui, sans-serif"
-    fontSize: "0.875rem"
+    fontSize: "0.8125rem"
     fontWeight: 400
     lineHeight: 1.4
     letterSpacing: "normal"
@@ -315,18 +315,18 @@ actual work — long forms, dense tables, body copy. The pairing mirrors the bra
 intent (TT Firs Neue for headlines, Raleway for body) exactly.
 
 ### Hierarchy
-- **Display** (600, clamp(1.5rem, 1.2rem + 1vw, 2rem), 1.2): large standalone numbers only
+- **Display** (600, clamp(1.375rem, 1.1rem + 0.8vw, 1.75rem), 1.2): large standalone numbers only
   (a KPI tile's big figure, e.g. `StatTile.jsx`'s `.statValue`) and a login screen's
   marketing-scale brand headline (its own clamp, only reuses the weight token). Not page
   titles (see Headline, below).
-- **Headline** (600, 1.25rem, 1.3): page-level titles ("Perfil de Juan Pérez", "Empleados") AND
+- **Headline** (600, 1.125rem, 1.3): page-level titles ("Perfil de Juan Pérez", "Empleados") AND
   section/tab-panel headers within a page (e.g. "Información Laboral") — same scale for both.
   Never a marketing-scale hero — this is a tool, not a landing page.
-- **Title** (500, 1.0625rem, 1.4): card headers, modal titles, table section headers.
-- **Body** (400, 1rem, 1.55): form field values, paragraph text, modal/dialog copy. Never
+- **Title** (500, 1rem, 1.4): card headers, modal titles, table section headers.
+- **Body** (400, 0.9375rem, 1.55): form field values, paragraph text, modal/dialog copy. Never
   smaller — WCAG floor for primary reading text. Max 75ch on any prose block (help text,
   descriptions).
-- **Data** (400, 0.875rem, 1.4): dense table cells only — the "secondary UI, metadata" rung,
+- **Data** (400, 0.8125rem, 1.4): dense table cells only — the "secondary UI, metadata" rung,
   distinct from Body. Never used for form inputs or anything the user reads at length.
 - **Label** (600, 0.75rem, letter-spacing 0.03em, uppercase): table column headers and form
   field labels only — a functional micro-label, not a decorative section eyebrow.

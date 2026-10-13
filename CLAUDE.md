@@ -3878,3 +3878,7 @@ usando HRMS y Cartera (ya migrada) como referencia. Esto reemplaza lo de la plan
   consume un consecutivo: al probar contra datos reales hay que restaurar el contador a mano).
 - **Pendiente:** nada abierto de este rediseño.
 - **Repositorio:** el proyecto se movió al repositorio nuevo `https://github.com/Gestion-servicios-TI-AED/SolicitudesDeContratacion` (2026-10-09). El historial se reescribió (147 commits, autor y committer `GEliasDev <GEliasDev@users.noreply.github.com>`, sin trailers de Claude), la plantilla ya no es submódulo y las capturas sueltas de la raíz y la carpeta `files/` quedan ignoradas. Commits en español, sin atribución a Claude; el push lo hace el usuario.
+
+## Tipografía más compacta (2026-10-13)
+
+Pedido del usuario: las fuentes se veían muy grandes. Se redujo la escala en `frontend/src/tokens.css` (y se documentó en `DESIGN.md`): Display `clamp(1.375rem, 1.1rem + 0.8vw, 1.75rem)`, Headline 1.125rem, Title 1rem, Body 0.9375rem, Data 0.8125rem; Label queda en 0.75rem. Es el mismo cambio en Solicitudes, Cartera y HRMS (comparten el bloque tipográfico). Todo lo que usa los tokens se ajusta solo; los tamaños escritos a mano en px/rem en algunos CSS no cambian.
