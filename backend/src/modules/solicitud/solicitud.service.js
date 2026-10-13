@@ -159,7 +159,7 @@ async function usuarioTieneAlgunFrente(usuarioId) {
 // trae el conjunto candidato sin esa restricción y el filtro en memoria
 // aplica las dos condiciones de verdad (responsable OR frente).
 async function list(filtros, usuario) {
-  const { estado, tipo, categoria, frenteId, proyectoId, solicitanteId, fechaDesde, fechaHasta, solicitudPadreId } = filtros;
+  const { estado, tipo, categoria, frenteId, proyectoId, solicitanteId, terceroId, fechaDesde, fechaHasta, solicitudPadreId } = filtros;
   const userRoles = usuario.roles ?? [];
   const userId = usuario.id;
 
@@ -168,6 +168,7 @@ async function list(filtros, usuario) {
   if (tipo) where.tipo = tipo;
   if (categoria) where.categoria = categoria;
   if (solicitanteId) where.solicitante_id = solicitanteId;
+  if (terceroId) where.tercero_id = Number(terceroId);
   if (proyectoId) where.proyecto_id = Number(proyectoId);
   if (solicitudPadreId) where.solicitud_padre_id = Number(solicitudPadreId);
   else where.solicitud_padre_id = null; // excluye otrosís hijos del listado principal

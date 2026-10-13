@@ -6,7 +6,11 @@ const service = require('./tercero.service');
 const { CONTACT_FIELDS } = require('./tercero.schema');
 
 const list = asyncHandler(async (req, res) => ok(res, await service.list({ aprobado: req.query.aprobado })));
-const getById = asyncHandler(async (req, res) => ok(res, await service.getById(req.params.id)));
+const getById = asyncHandler(async (req, res) => {
+  const tercero = await service.getById(req.params.id);
+  tercero.solicitudes = await service.solicitudesVisibles(tercero.id, req.usuario);
+  ok(res, tercero);
+});
 
 const create = asyncHandler(async (req, res) => {
   const roles = req.usuario.roles ?? [];

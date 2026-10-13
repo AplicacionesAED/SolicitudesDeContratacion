@@ -340,3 +340,61 @@
 .filaCritica {
   box-shadow: inset 3px 0 0 var(--color-danger-ink);
 }
+
+/* Ficha: requisitos para contratar. */
+.requisitos {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.requisito {
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+  padding: var(--space-md) 0;
+  border-top: 1px solid var(--color-border);
+}
+
+.requisito:first-child {
+  border-top: none;
+}
+
+.requisito > div {
+  flex: 1;
+  min-width: 0;
+}
+
+.reqTitulo {
+  margin: 0;
+  font-weight: 600;
+  color: var(--color-ink);
+}
+
+.reqDetalle {
+  margin: 2px 0 0;
+  font-size: var(--text-data-size);
+  color: var(--color-ink-muted);
+}
+
+.reqOk {
+  color: var(--color-success-ink);
+  flex: none;
+}
+
+.reqAviso {
+  color: var(--color-warning-ink);
+  flex: none;
+}
+
+.reqFalta {
+  color: var(--color-danger-ink);
+  flex: none;
+}
+
+.faltaDato {
+  color: var(--color-warning-ink);
+  font-weight: 600;
+}

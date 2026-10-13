@@ -174,4 +174,21 @@ async function remove(id) {
   await tercero.destroy();
 }
 
-module.exports = { list, getById, create, update, remove, CAMPO_DB };
+// Solicitudes de este tercero que el usuario PUEDE ver (mismo alcance que el listado de Solicitudes: la ficha de un
+// tercero no debe filtrar solicitudes ajenas). Resumen minimo para la ficha.
+async function solicitudesVisibles(terceroId, usuario) {
+  const solicitudService = require('../solicitud/solicitud.service'); // lazy: evita el ciclo tercero <-> solicitud
+  const filas = await solicitudService.list({ terceroId }, usuario);
+  return filas.map((s) => ({
+    id: s.id,
+    consecutivo: s.consecutivo,
+    categoria: s.categoria,
+    tipo: s.tipo,
+    estado: s.estado,
+    valorFinal: s.valorFinal,
+    fechaSolicitud: s.fechaSolicitud,
+    solicitante: s.solicitante ? { nombre: s.solicitante.nombre } : null,
+  }));
+}
+
+module.exports = { list, getById, solicitudesVisibles, create, update, remove, CAMPO_DB };

@@ -6,7 +6,8 @@
 // independientes con permisos distintos: contacto es de cualquier
 // autenticado, DD y especialidades exigen permisos concretos).
 import { useEffect, useState } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, Link } from 'react-router-dom';
+import { CheckCircle2, CircleAlert } from 'lucide-react';
 import { getTercero, updateTercero } from '../../api/terceros.js';
 import { listEspecialidades } from '../../api/especialidades.js';
 import { useAuth } from '../../auth/AuthContext.jsx';
@@ -16,6 +17,8 @@ import { Checkbox } from '../../components/ui/Checkbox.jsx';
 import { Button } from '../../components/ui/Button.jsx';
 import { Field, TextInput } from '../../components/ui/Field.jsx';
 import { Badge } from '../../components/ui/Badge.jsx';
+import { SolicitudBadge } from '../solicitudes/SolicitudBadge.jsx';
+import { TIPO_SOLICITUD_LABELS, CATEGORIA_LABELS, formatCurrency } from '../../utils/solicitudes.js';
 import layoutStyles from '../../components/layout/WizardLayout.module.css';
 import { iniciales } from '../configuracion/usuarioUtils.js';
 import styles from '../configuracion/Usuarios.module.css';
@@ -30,6 +33,16 @@ const DD_CHECKS = [
   ['dd_conocimientoNegocio', 'Conocimiento del negocio'],
   ['dd_monitoreoActualizacion', 'Monitoreo y actualización'],
   ['dd_senalesAlertaReporte', 'Señales de alerta / reporte'],
+];
+
+// Datos que el documento de la solicitud necesita del tercero (los mismos 6 que cuenta el Directorio).
+const DATOS_REQUERIDOS = [
+  ['nit', 'NIT'],
+  ['representanteLegal', 'Representante legal'],
+  ['cedulaRepresentante', 'Cédula del representante'],
+  ['correoFirma', 'Correo de firma'],
+  ['direccionRepresentante', 'Dirección'],
+  ['telefonoRepresentante', 'Teléfono'],
 ];
 
 const CONTACT_FIELDS = ['nit', 'representanteLegal', 'cedulaRepresentante', 'correoFirma', 'direccionRepresentante', 'telefonoRepresentante', 'nombreContacto', 'telefonoContacto', 'correoContacto'];
@@ -119,6 +132,43 @@ export function TerceroDetallePage() {
 
   if (!tercero) return <div className={styles.loadingState}>Cargando...</div>;
 
+  // ---- Requisitos para poder contratarlo (misma regla que el selector de contratista de SolicitudForm.jsx) ----
+  const ddMarcados = DD_CHECKS.filter(([campo]) => tercero[campo]).length;
+  const datosFaltantes = DATOS_REQUERIDOS.filter(([campo]) => !tercero[campo] || !String(tercero[campo]).trim());
+  const diasVenc = tercero.fechaVencimientoSagrilaft ? Math.ceil((new Date(tercero.fechaVencimientoSagrilaft).getTime() - Date.now()) / 86400000) : null;
+  const sagrilaftOk = diasVenc === null || diasVenc > 0;
+  const requisitos = [
+    {
+      ok: tercero.aprobadoDebidaDiligencia,
+      titulo: 'Debida diligencia aprobada',
+      detalle: tercero.aprobadoDebidaDiligencia
+        ? ddMarcados === 0
+          ? 'Aprobada desde la sincronización con SharePoint; no hay verificaciones registradas aquí.'
+          : `${ddMarcados} de 6 verificaciones registradas.`
+        : `Faltan verificaciones (${ddMarcados} de 6 marcadas).`,
+      accion: !tercero.aprobadoDebidaDiligencia && puedeEditar ? { label: 'Marcar verificaciones', onClick: () => { setDdForm(tercero); setEditandoDd(true); document.getElementById('seccion-dd')?.scrollIntoView({ behavior: 'smooth', block: 'center' }); } } : null,
+    },
+    { ok: tercero.confidencialidad, titulo: 'Acuerdo de confidencialidad', detalle: tercero.confidencialidad ? 'Firmado.' : 'Sin acuerdo de confidencialidad: no aparece como contratista al crear una solicitud.', accion: null },
+    {
+      ok: sagrilaftOk,
+      titulo: 'SAGRILAFT vigente',
+      detalle: diasVenc === null ? 'Sin fecha de vencimiento registrada.' : diasVenc <= 0 ? `Venció el ${new Date(tercero.fechaVencimientoSagrilaft).toLocaleDateString('es-CO')}.` : `Vence en ${diasVenc} días (${new Date(tercero.fechaVencimientoSagrilaft).toLocaleDateString('es-CO')}).`,
+      aviso: sagrilaftOk && diasVenc !== null && diasVenc <= 30,
+      accion: null,
+    },
+  ];
+  const disponible = requisitos.every((r) => r.ok);
+
+  const solicitudes = tercero.solicitudes ?? [];
+  const valorTotal = solicitudes.filter((s) => !['ANULADA', 'BORRADOR'].includes(s.estado)).reduce((sum, s) => sum + Number(s.valorFinal ?? 0), 0);
+  const enCurso = solicitudes.filter((s) => !['COMPLETADA', 'ANULADA', 'BORRADOR'].includes(s.estado)).length;
+
+  function irACompletarDatos() {
+    setContactoForm(tercero);
+    setEditandoContacto(true);
+    setTimeout(() => document.getElementById('seccion-contacto')?.scrollIntoView({ behavior: 'smooth', block: 'center' }), 50);
+  }
+
   const diasSagrilaft = tercero.fechaVencimientoSagrilaft ? Math.ceil((new Date(tercero.fechaVencimientoSagrilaft).getTime() - Date.now()) / 86400000) : null;
 
   return (
@@ -156,7 +206,70 @@ export function TerceroDetallePage() {
       )}
 
       <div className={styles.formStack}>
-        <form className={styles.sectionCard} onSubmit={guardarContacto}>
+        <section className={styles.sectionCard}>
+          <div className={extra.sectionHead}>
+            <div>
+              <h2 className={styles.sectionTitle}>Para contratar</h2>
+              <p className={styles.sectionHint}>{disponible ? 'Cumple los requisitos: aparece como contratista al crear una solicitud.' : 'Todavía no aparece como contratista al crear una solicitud.'}</p>
+            </div>
+            {disponible ? <Badge variant="success" dot>Disponible</Badge> : <Badge variant="neutral" dot>No disponible</Badge>}
+          </div>
+          <ul className={extra.requisitos}>
+            {requisitos.map((r) => (
+              <li key={r.titulo} className={extra.requisito}>
+                {r.ok ? <CheckCircle2 size={20} className={r.aviso ? extra.reqAviso : extra.reqOk} aria-hidden="true" /> : <CircleAlert size={20} className={extra.reqFalta} aria-hidden="true" />}
+                <div>
+                  <p className={extra.reqTitulo}>{r.titulo}</p>
+                  <p className={extra.reqDetalle}>{r.detalle}</p>
+                </div>
+                {r.accion && <Button type="button" variant="secondary" onClick={r.accion.onClick}>{r.accion.label}</Button>}
+              </li>
+            ))}
+            <li className={extra.requisito}>
+              {datosFaltantes.length === 0 ? <CheckCircle2 size={20} className={extra.reqOk} aria-hidden="true" /> : <CircleAlert size={20} className={extra.reqAviso} aria-hidden="true" />}
+              <div>
+                <p className={extra.reqTitulo}>Datos para el documento de la solicitud</p>
+                <p className={extra.reqDetalle}>{datosFaltantes.length === 0 ? 'Completos.' : `Faltan: ${datosFaltantes.map(([, l]) => l).join(', ')}.`}</p>
+              </div>
+              {datosFaltantes.length > 0 && !editandoContacto && <Button type="button" variant="secondary" onClick={irACompletarDatos}>Completar datos</Button>}
+            </li>
+          </ul>
+        </section>
+
+        <div className={styles.kpiRow}>
+          <div className={styles.kpiCard}><span className={styles.kpiValor}>{solicitudes.length}</span><span className={styles.kpiLabel}>Solicitudes</span></div>
+          <div className={styles.kpiCard}><span className={styles.kpiValor}>{enCurso}</span><span className={styles.kpiLabel}>En curso</span></div>
+          <div className={styles.kpiCard}><span className={styles.kpiValor}>{formatCurrency(valorTotal)}</span><span className={styles.kpiLabel}>Valor contratado</span></div>
+        </div>
+
+        <section className={styles.sectionCard}>
+          <div>
+            <h2 className={styles.sectionTitle}>Solicitudes con este tercero</h2>
+            <p className={styles.sectionHint}>Solo las que tu rol puede ver.</p>
+          </div>
+          {solicitudes.length === 0 ? (
+            <p className={styles.permisosVacio}>Todavía no hay solicitudes con este tercero.</p>
+          ) : (
+            <div className={styles.tableWrap}>
+              <table className={styles.table}>
+                <thead><tr><th>Solicitud</th><th>Tipo</th><th>Estado</th><th>Valor</th><th>Fecha</th></tr></thead>
+                <tbody>
+                  {solicitudes.map((s) => (
+                    <tr key={s.id} className={styles.clickableRow} onClick={() => navigate(`/solicitudes/${s.id}`)}>
+                      <td><Link to={`/solicitudes/${s.id}`} onClick={(e) => e.stopPropagation()} className={extra.reqTitulo}>{s.consecutivo}</Link></td>
+                      <td>{TIPO_SOLICITUD_LABELS[s.tipo] ?? s.tipo} · {CATEGORIA_LABELS[s.categoria] ?? s.categoria}</td>
+                      <td><SolicitudBadge estado={s.estado} /></td>
+                      <td>{s.valorFinal ? formatCurrency(s.valorFinal) : <span className={styles.muted}>—</span>}</td>
+                      <td>{new Date(s.fechaSolicitud).toLocaleDateString('es-CO')}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
+        </section>
+
+        <form id="seccion-contacto" className={styles.sectionCard} onSubmit={guardarContacto}>
           <div className={extra.sectionHead}>
             <div>
               <h2 className={styles.sectionTitle}>Representante legal y contacto</h2>
@@ -218,11 +331,11 @@ export function TerceroDetallePage() {
             </>
           ) : (
             <div className={extra.infoGrid}>
-            <div className={extra.infoItem}><span className={extra.infoLabel}>Representante legal</span><span className={extra.infoValue}>{tercero.representanteLegal || '—'}</span></div>
-            <div className={extra.infoItem}><span className={extra.infoLabel}>Cédula</span><span className={extra.infoValue}>{tercero.cedulaRepresentante || '—'}</span></div>
-            <div className={extra.infoItem}><span className={extra.infoLabel}>Correo de firma</span><span className={extra.infoValue}>{tercero.correoFirma || '—'}</span></div>
-            <div className={extra.infoItem}><span className={extra.infoLabel}>Dirección</span><span className={extra.infoValue}>{tercero.direccionRepresentante || '—'}</span></div>
-            <div className={extra.infoItem}><span className={extra.infoLabel}>Teléfono</span><span className={extra.infoValue}>{tercero.telefonoRepresentante || '—'}</span></div>
+            <div className={extra.infoItem}><span className={extra.infoLabel}>Representante legal</span><span className={extra.infoValue}>{tercero.representanteLegal || <span className={extra.faltaDato}>Falta</span>}</span></div>
+            <div className={extra.infoItem}><span className={extra.infoLabel}>Cédula</span><span className={extra.infoValue}>{tercero.cedulaRepresentante || <span className={extra.faltaDato}>Falta</span>}</span></div>
+            <div className={extra.infoItem}><span className={extra.infoLabel}>Correo de firma</span><span className={extra.infoValue}>{tercero.correoFirma || <span className={extra.faltaDato}>Falta</span>}</span></div>
+            <div className={extra.infoItem}><span className={extra.infoLabel}>Dirección</span><span className={extra.infoValue}>{tercero.direccionRepresentante || <span className={extra.faltaDato}>Falta</span>}</span></div>
+            <div className={extra.infoItem}><span className={extra.infoLabel}>Teléfono</span><span className={extra.infoValue}>{tercero.telefonoRepresentante || <span className={extra.faltaDato}>Falta</span>}</span></div>
             <div className={extra.infoItem}><span className={extra.infoLabel}>Contacto</span><span className={extra.infoValue}>{tercero.nombreContacto || '—'}</span></div>
             <div className={extra.infoItem}><span className={extra.infoLabel}>Tel. contacto</span><span className={extra.infoValue}>{tercero.telefonoContacto || '—'}</span></div>
             <div className={extra.infoItem}><span className={extra.infoLabel}>Correo contacto</span><span className={extra.infoValue}>{tercero.correoContacto || '—'}</span></div>
@@ -230,7 +343,7 @@ export function TerceroDetallePage() {
           )}
         </form>
 
-        <section className={styles.sectionCard}>
+        <section id="seccion-dd" className={styles.sectionCard}>
           <div className={extra.sectionHead}>
             <div>
               <h2 className={styles.sectionTitle}>Debida diligencia</h2>

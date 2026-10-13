@@ -3805,5 +3805,14 @@ usando HRMS y Cartera (ya migrada) como referencia. Esto reemplaza lo de la plan
   ninguno tiene los datos de contacto completos ni los 6 checks de debida diligencia marcados (287 figuran aprobados por
   el sync de SharePoint, que no llena los 6 checks), y 4 ya tienen solicitudes: por eso la vista "Datos por completar"
   (con solicitudes) es la accionable.
+- **Ficha del tercero, reforma real (2026-10-13):** `TerceroDetallePage` abre con un panel "Para contratar" (Disponible /
+  No disponible) y la checklist de requisitos con el porqué de cada uno (debida diligencia, confidencialidad, SAGRILAFT
+  vigente/por vencer, datos del documento) y botones que llevan a corregir ("Marcar verificaciones", "Completar datos");
+  luego 3 tarjetas (solicitudes / en curso / valor contratado) y la tabla "Solicitudes con este tercero" con enlace al
+  detalle; los datos requeridos que faltan se marcan "Falta" en la sección de contacto. Backend: `GET /terceros/:id`
+  agrega `solicitudes` (solo las que el usuario puede ver, vía `solicitud.service.list` con el nuevo filtro `terceroId`:
+  la ficha no debe filtrar solicitudes ajenas, así que "valor contratado" aquí es sobre lo visible, a diferencia del
+  Directorio que suma todo). El `require` de `solicitud.service` en `tercero.service.js#solicitudesVisibles` es perezoso
+  para evitar un ciclo.
 - **Pendiente (siguientes pasos):** 6b) detalle de la solicitud y formularios, 7) Actividad y Perfil.
 - **Repositorio:** el proyecto se movió al repositorio nuevo `https://github.com/Gestion-servicios-TI-AED/SolicitudesDeContratacion` (2026-10-09). El historial se reescribió (147 commits, autor y committer `GEliasDev <GEliasDev@users.noreply.github.com>`, sin trailers de Claude), la plantilla ya no es submódulo y las capturas sueltas de la raíz y la carpeta `files/` quedan ignoradas. Commits en español, sin atribución a Claude; el push lo hace el usuario.
