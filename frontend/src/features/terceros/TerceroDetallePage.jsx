@@ -10,10 +10,7 @@ import { useParams, useNavigate, Link } from 'react-router-dom';
 import { CheckCircle2, CircleAlert } from 'lucide-react';
 import { getTercero, updateTercero } from '../../api/terceros.js';
 import { listEspecialidades } from '../../api/especialidades.js';
-import { useAuth } from '../../auth/AuthContext.jsx';
-import { usuarioTienePermiso } from '../../utils/permisos.js';
 import { BackLink } from '../../components/ui/BackLink.jsx';
-import { Checkbox } from '../../components/ui/Checkbox.jsx';
 import { Button } from '../../components/ui/Button.jsx';
 import { Field, TextInput } from '../../components/ui/Field.jsx';
 import { Badge } from '../../components/ui/Badge.jsx';
@@ -25,15 +22,6 @@ import styles from '../configuracion/Usuarios.module.css';
 import extra from './Terceros.module.css';
 
 const TIPO_CONTRATO_LABEL = { OBRA: 'Otros Servicios', DISENO: 'Diseño', SERVICIOS: 'Servicios' };
-
-const DD_CHECKS = [
-  ['dd_identificacionContraparte', 'Identificación de la contraparte'],
-  ['dd_consultaListasRestrictivas', 'Consulta en listas restrictivas'],
-  ['dd_verificacionPep', 'Verificación PEP'],
-  ['dd_conocimientoNegocio', 'Conocimiento del negocio'],
-  ['dd_monitoreoActualizacion', 'Monitoreo y actualización'],
-  ['dd_senalesAlertaReporte', 'Señales de alerta / reporte'],
-];
 
 // Datos que el documento de la solicitud necesita del tercero (los mismos 6 que cuenta el Directorio).
 const DATOS_REQUERIDOS = [
@@ -50,8 +38,6 @@ const CONTACT_FIELDS = ['nit', 'representanteLegal', 'cedulaRepresentante', 'cor
 export function TerceroDetallePage() {
   const { id } = useParams();
   const navigate = useNavigate();
-  const { usuario } = useAuth();
-  const puedeEditar = usuarioTienePermiso(usuario, 'editar_terceros');
 
   const [tercero, setTercero] = useState(null);
   const [catalogo, setCatalogo] = useState([]);
@@ -59,8 +45,6 @@ export function TerceroDetallePage() {
 
   const [editandoContacto, setEditandoContacto] = useState(false);
   const [contactoForm, setContactoForm] = useState({});
-  const [editandoDd, setEditandoDd] = useState(false);
-  const [ddForm, setDdForm] = useState({});
   const [editandoEsp, setEditandoEsp] = useState(false);
   const [espIds, setEspIds] = useState([]);
   const [guardando, setGuardando] = useState(null);
@@ -70,7 +54,6 @@ export function TerceroDetallePage() {
       .then((res) => {
         setTercero(res.data);
         setContactoForm(res.data);
-        setDdForm(res.data);
         setEspIds(res.data.especialidades.map((e) => e.id));
       })
       .catch((err) => {
@@ -101,21 +84,6 @@ export function TerceroDetallePage() {
     }
   }
 
-  async function guardarDd() {
-    setGuardando('dd');
-    setError(null);
-    try {
-      const payload = Object.fromEntries(DD_CHECKS.map(([campo]) => [campo, Boolean(ddForm[campo])]));
-      await updateTercero(id, payload);
-      setEditandoDd(false);
-      cargar();
-    } catch (err) {
-      setError(err.message);
-    } finally {
-      setGuardando(null);
-    }
-  }
-
   async function guardarEspecialidades() {
     setGuardando('esp');
     setError(null);
@@ -133,7 +101,6 @@ export function TerceroDetallePage() {
   if (!tercero) return <div className={styles.loadingState}>Cargando...</div>;
 
   // ---- Requisitos para poder contratarlo (misma regla que el selector de contratista de SolicitudForm.jsx) ----
-  const ddMarcados = DD_CHECKS.filter(([campo]) => tercero[campo]).length;
   const datosFaltantes = DATOS_REQUERIDOS.filter(([campo]) => !tercero[campo] || !String(tercero[campo]).trim());
   const diasVenc = tercero.fechaVencimientoSagrilaft ? Math.ceil((new Date(tercero.fechaVencimientoSagrilaft).getTime() - Date.now()) / 86400000) : null;
   const sagrilaftOk = diasVenc === null || diasVenc > 0;
@@ -141,12 +108,8 @@ export function TerceroDetallePage() {
     {
       ok: tercero.aprobadoDebidaDiligencia,
       titulo: 'Debida diligencia aprobada',
-      detalle: tercero.aprobadoDebidaDiligencia
-        ? ddMarcados === 0
-          ? 'Aprobada desde la sincronización con SharePoint; no hay verificaciones registradas aquí.'
-          : `${ddMarcados} de 6 verificaciones registradas.`
-        : `Faltan verificaciones (${ddMarcados} de 6 marcadas).`,
-      accion: !tercero.aprobadoDebidaDiligencia && puedeEditar ? { label: 'Marcar verificaciones', onClick: () => { setDdForm(tercero); setEditandoDd(true); document.getElementById('seccion-dd')?.scrollIntoView({ behavior: 'smooth', block: 'center' }); } } : null,
+      detalle: tercero.aprobadoDebidaDiligencia ? 'Aprobada: así llegó con los datos del tercero.' : 'Pendiente: llegó sin aprobación en los datos del tercero. Se actualiza con la sincronización de SharePoint.',
+      accion: null,
     },
     { ok: tercero.confidencialidad, titulo: 'Acuerdo de confidencialidad', detalle: tercero.confidencialidad ? 'Firmado.' : 'Sin acuerdo de confidencialidad: no aparece como contratista al crear una solicitud.', accion: null },
     {
@@ -342,53 +305,6 @@ export function TerceroDetallePage() {
             </div>
           )}
         </form>
-
-        <section id="seccion-dd" className={styles.sectionCard}>
-          <div className={extra.sectionHead}>
-            <div>
-              <h2 className={styles.sectionTitle}>Debida diligencia</h2>
-              <p className={styles.sectionHint}>Se aprueba cuando las seis verificaciones están marcadas.</p>
-            </div>
-            <div className={extra.sectionHeadEnd}>
-              {tercero.aprobadoDebidaDiligencia ? (
-                <Badge variant="success" dot>
-                  Aprobado
-                </Badge>
-              ) : (
-                <Badge variant="neutral" dot>
-                  Pendiente
-                </Badge>
-              )}
-              {puedeEditar && !editandoDd && (
-                <Button
-                  type="button"
-                  variant="secondary"
-                  onClick={() => {
-                    setDdForm(tercero);
-                    setEditandoDd(true);
-                  }}
-                >
-                  Editar
-                </Button>
-              )}
-            </div>
-          </div>
-          <div className={extra.infoGrid}>
-            {DD_CHECKS.map(([campo, label]) => (
-              <Checkbox key={campo} label={label} disabled={!editandoDd} checked={Boolean((editandoDd ? ddForm : tercero)[campo])} onChange={(e) => setDdForm({ ...ddForm, [campo]: e.target.checked })} />
-            ))}
-          </div>
-          {editandoDd && (
-            <div className={styles.actions}>
-              <Button type="button" variant="secondary" onClick={() => setEditandoDd(false)}>
-                Cancelar
-              </Button>
-              <Button type="button" variant="primary" onClick={guardarDd} disabled={guardando === 'dd'}>
-                {guardando === 'dd' ? 'Guardando...' : 'Guardar'}
-              </Button>
-            </div>
-          )}
-        </section>
 
         <section className={styles.sectionCard}>
           <div className={extra.sectionHead}>

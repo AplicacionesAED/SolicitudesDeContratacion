@@ -37,8 +37,7 @@ function aCamposDb(body) {
   return values;
 }
 
-// Los 6 checks de debida diligencia y los datos que el documento de la solicitud necesita del tercero.
-const DD_CAMPOS = ['dd_identificacionContraparte', 'dd_consultaListasRestrictivas', 'dd_verificacionPep', 'dd_conocimientoNegocio', 'dd_monitoreoActualizacion', 'dd_senalesAlertaReporte'];
+// Datos que el documento de la solicitud necesita del tercero.
 const DATOS_REQUERIDOS = ['nit', 'representanteLegal', 'cedulaRepresentante', 'correoFirma', 'direccionRepresentante', 'telefonoRepresentante'];
 
 function _enrich(tercero) {
@@ -78,8 +77,7 @@ async function list({ aprobado } = {}) {
     order: [['razon_social', 'ASC']],
     include: [{ model: Especialidad, as: 'especialidades', attributes: ['id', 'nombre'], through: { attributes: [] } }],
   });
-  // Resumen por tercero para el Directorio (rediseno 2026-10-09): cuanto se ha contratado con el, cuantos checks de
-  // debida diligencia lleva y que datos de contacto le faltan. Un solo GROUP BY para todos, no una consulta por fila.
+  // Resumen por tercero para el Directorio (rediseno 2026-10-09): cuanto se ha contratado con el, que datos de contacto le faltan. Un solo GROUP BY para todos, no una consulta por fila.
   const resumen = await sequelize.query(
     `SELECT tercero_id, COUNT(*)::int AS total, COALESCE(SUM(valor_final), 0)::float AS valor, MAX(fecha_solicitud) AS ultima
        FROM solicitudes
@@ -94,7 +92,6 @@ async function list({ aprobado } = {}) {
     e.totalSolicitudes = r?.total ?? 0;
     e.valorContratado = r?.valor ?? 0;
     e.ultimaSolicitud = r?.ultima ?? null;
-    e.ddCompletados = DD_CAMPOS.filter((c) => e[c]).length;
     e.datosFaltantes = DATOS_REQUERIDOS.filter((c) => !e[c] || !String(e[c]).trim());
     return e;
   });
