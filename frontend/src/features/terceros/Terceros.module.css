@@ -210,3 +210,133 @@
   gap: var(--space-md);
   flex-wrap: wrap;
 }
+
+/* Directorio: disponibilidad para contratar, contratacion acumulada y datos por completar. */
+.tabs {
+  display: flex;
+  gap: var(--space-xs);
+  flex-wrap: wrap;
+  padding: 4px;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+}
+
+.tab {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  font: inherit;
+  font-size: var(--text-data-size);
+  font-weight: 500;
+  color: var(--color-ink-secondary);
+  padding: 8px 14px;
+  border-radius: var(--radius-sm);
+}
+
+.tab:hover {
+  background: var(--color-surface-hover);
+  color: var(--color-ink);
+}
+
+.tabActive {
+  background: color-mix(in srgb, var(--color-primary) 12%, var(--color-surface));
+  color: var(--color-primary);
+  font-weight: 600;
+}
+
+.tabCount {
+  min-width: 22px;
+  padding: 1px 7px;
+  border-radius: var(--radius-full);
+  font-size: 12px;
+  font-weight: 600;
+  text-align: center;
+  background: var(--color-surface-sunken);
+  color: var(--color-ink-secondary);
+}
+
+.tabActive .tabCount {
+  background: var(--color-primary);
+  color: #fff;
+}
+
+.kpiClickable {
+  cursor: pointer;
+  text-align: left;
+  font: inherit;
+}
+
+.kpiClickable:hover {
+  border-color: var(--color-primary);
+}
+
+.kpiHint {
+  font-size: 12px;
+  color: var(--color-ink-muted);
+}
+
+.terceroCell {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+
+.sub {
+  font-size: 12px;
+  color: var(--color-ink-muted);
+}
+
+.miniChips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+.miniChip {
+  padding: 1px 8px;
+  border-radius: var(--radius-full);
+  font-size: 11px;
+  background: var(--color-surface-sunken);
+  color: var(--color-ink-secondary);
+}
+
+.motivos {
+  margin: 4px 0 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  font-size: 12px;
+  color: var(--color-ink-muted);
+}
+
+.contratacion {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.faltan {
+  color: var(--color-warning-ink);
+  font-weight: 600;
+  font-size: var(--text-data-size);
+}
+
+.completo {
+  color: var(--color-success-ink);
+  font-size: var(--text-data-size);
+}
+
+.filaAtencion {
+  box-shadow: inset 3px 0 0 var(--color-warning-ink);
+}
+
+.filaCritica {
+  box-shadow: inset 3px 0 0 var(--color-danger-ink);
+}

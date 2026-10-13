@@ -3794,5 +3794,16 @@ usando HRMS y Cartera (ya migrada) como referencia. Esto reemplaza lo de la plan
   posibles duplicadas ("Estructura" / "Estructuras", detectadas sin tildes ni plural) con botón para fusionar, barra de
   uso por fila, lista de terceros en un modal y alta rápida arriba. Dato real al probar: de 66 especialidades solo 3 están
   asignadas a algún tercero. Verificado contra la base de dev (con fixtures `ZTEST_*`, ya borrados) y en navegador.
+- **Directorio de Terceros, reforma real (2026-10-13, corrige al paso 5):** `TercerosPage` ahora responde "quién puede
+  contratarse y por qué". Por tercero muestra DISPONIBLE / NO DISPONIBLE con los motivos (misma regla del selector de
+  contratista de `SolicitudForm.jsx#terceroSeleccionable`: debida diligencia aprobada, confidencialidad y SAGRILAFT no
+  vencido), cuánto se ha contratado (n.º de solicitudes, valor total, última), qué datos de contacto le faltan (NIT,
+  representante, cédula, correo de firma, dirección, teléfono) y las especialidades. Vistas con contador (Todos /
+  Disponibles / No disponibles / SAGRILAFT por renovar / Con solicitudes / Datos por completar) y exportar a CSV.
+  Backend: `GET /terceros` suma `totalSolicitudes`, `valorContratado`, `ultimaSolicitud` (contratos/órdenes sin otrosís,
+  excluye BORRADOR y ANULADA; un solo GROUP BY), `ddCompletados` y `datosFaltantes`. Dato real al probar: de 417 terceros
+  ninguno tiene los datos de contacto completos ni los 6 checks de debida diligencia marcados (287 figuran aprobados por
+  el sync de SharePoint, que no llena los 6 checks), y 4 ya tienen solicitudes: por eso la vista "Datos por completar"
+  (con solicitudes) es la accionable.
 - **Pendiente (siguientes pasos):** 6b) detalle de la solicitud y formularios, 7) Actividad y Perfil.
 - **Repositorio:** el proyecto se movió al repositorio nuevo `https://github.com/Gestion-servicios-TI-AED/SolicitudesDeContratacion` (2026-10-09). El historial se reescribió (147 commits, autor y committer `GEliasDev <GEliasDev@users.noreply.github.com>`, sin trailers de Claude), la plantilla ya no es submódulo y las capturas sueltas de la raíz y la carpeta `files/` quedan ignoradas. Commits en español, sin atribución a Claude; el push lo hace el usuario.
