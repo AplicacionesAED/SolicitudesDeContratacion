@@ -10,7 +10,6 @@ import { ChevronRight, Home, Settings } from 'lucide-react';
 import { useAuth } from '../../auth/AuthContext.jsx';
 import { usuarioTienePermiso } from '../../utils/permisos.js';
 import { NAV_GROUPS } from '../../utils/navModulos.jsx';
-import { usePresence } from '../../hooks/usePresence.js';
 import { UserMenu } from './UserMenu.jsx';
 import { NotificacionesBell } from './NotificacionesBell.jsx';
 import styles from './AppShell.module.css';
@@ -56,7 +55,6 @@ function migaFueraDelMenu(path) {
 export function AppShell() {
   const location = useLocation();
   const { usuario } = useAuth();
-  usePresence();
   const [openGroup, setOpenGroup] = useState(null);
   const navRef = useRef(null);
   const closeTimerRef = useRef(null);

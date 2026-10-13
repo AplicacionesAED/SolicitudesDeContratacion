@@ -26,8 +26,6 @@ const Memoria = require('../modules/solicitud/memoria.model');
 const MemoriaColumna = require('../modules/solicitud/memoriaColumna.model');
 const MemoriaFila = require('../modules/solicitud/memoriaFila.model');
 const Notificacion = require('../modules/notificacion/notificacion.model');
-const ActividadUsuario = require('../modules/actividad/actividadUsuario.model');
-const SesionUsuario = require('../modules/actividad/sesionUsuario.model');
 
 const models = {
   Usuario,
@@ -54,8 +52,6 @@ const models = {
   MemoriaColumna,
   MemoriaFila,
   Notificacion,
-  ActividadUsuario,
-  SesionUsuario,
 };
 
 Object.values(models).forEach((model) => {

@@ -3837,5 +3837,13 @@ usando HRMS y Cartera (ya migrada) como referencia. Esto reemplaza lo de la plan
   resumen (contratista, frentes, valor del cuadro comparativo). En pantallas angostas el panel pasa arriba. `OtrosiForm`
   gana un indicador de 2 pasos y muestra el valor actual del contrato base. Estilos en `Formulario.module.css`.
   Verificado en navegador (orden de servicio Directa) y confirmado por `git diff` que no se eliminó ningún campo.
-- **Pendiente (siguientes pasos):** 7) Actividad y Perfil.
+- **Actividad eliminada (2026-10-13, pedido del usuario: "ya no la ocupamos"):** se borró todo el código: módulos
+  `backend/src/modules/actividad` y `presence` (rutas `/actividad/*` y `/presence/*`, registro de actividad/sesiones y
+  heartbeat), `usePresence.js`, `api/actividad.js`, `features/actividad`, la ruta `/actividad` y el grupo "Actividad" del
+  menú; `Usuario` ya no declara `ultima_actividad`/`presencia_estado`. **Las secciones de más arriba sobre "Módulos
+  `actividad`/`presence` — Fase 6" y "Actividad" quedan OBSOLETAS (historial).** Lo que NO se tocó: las tablas
+  `actividades_usuario` y `sesiones_usuario` y las columnas `usuarios.ultima_actividad`/`presencia_estado` siguen en la base
+  (sin uso) hasta que el usuario confirme borrarlas con una migración, porque eso destruye datos. `ultima_conexion`
+  (último acceso, lo escribe el login) sigue vigente. Las notificaciones en vivo (SSE) no tenían relación y siguen.
+- **Pendiente (siguientes pasos):** Perfil. Después, revisar a ojo con un usuario real todas las pantallas rediseñadas.
 - **Repositorio:** el proyecto se movió al repositorio nuevo `https://github.com/Gestion-servicios-TI-AED/SolicitudesDeContratacion` (2026-10-09). El historial se reescribió (147 commits, autor y committer `GEliasDev <GEliasDev@users.noreply.github.com>`, sin trailers de Claude), la plantilla ya no es submódulo y las capturas sueltas de la raíz y la carpeta `files/` quedan ignoradas. Commits en español, sin atribución a Claude; el push lo hace el usuario.

@@ -15,8 +15,6 @@ router.use('/especialidades', require('../modules/especialidad/especialidad.rout
 router.use('/terceros', require('../modules/tercero/tercero.routes'));
 router.use('/solicitudes', require('../modules/solicitud/solicitud.routes'));
 router.use('/notificaciones', require('../modules/notificacion/notificacion.routes'));
-router.use('/actividad', require('../modules/actividad/actividad.routes'));
-router.use('/presence', require('../modules/presence/presence.routes'));
 router.use('/dashboard', require('../modules/dashboard/dashboard.routes'));
 router.use('/upload', require('../modules/upload/upload.routes'));
 router.use('/files', require('../modules/upload/files.routes'));

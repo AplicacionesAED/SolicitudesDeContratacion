@@ -69,7 +69,7 @@ const FUNCIONALIDADES_DISPONIBLES = {
   // de roles); `ver_roles` permite editar los permisos de CUALQUIER rol,
   // incluido el que la cuenta misma tiene. Dar cualquiera de los dos a un
   // rol equivale, en la practica, a un nivel de confianza cercano a ADMIN --
-  // otorgar con el mismo criterio. Actividad/Workflows/Proyectos/Frentes
+  // otorgar con el mismo criterio. Workflows/Proyectos/Frentes
   // (ver App.jsx) siguen 100% soloAdmin -- no se pidio desglosarlos.
   ver_usuarios: { nombre: 'Usuarios y perfiles', descripcion: 'Ver y administrar cuentas de usuario (crear, editar roles, activar/desactivar)' },
   ver_roles: { nombre: 'Roles y permisos', descripcion: 'Ver y administrar roles: crear, renombrar, editar sus permisos' },

@@ -43,14 +43,6 @@ const Usuario = sequelize.define(
     microsoft_id: { type: DataTypes.STRING(255), allowNull: true, unique: true },
     microsoft_email: { type: DataTypes.STRING(255), allowNull: true },
     ultima_conexion: { type: DataTypes.DATE, allowNull: true },
-    // Presencia en tiempo real (Fase 6) -- `ultima_actividad` se refresca en
-    // cada heartbeat del frontend (usePresence.js); `presencia_estado` guarda
-    // el último valor reportado por el cliente ("activo"|"ausente"|
-    // "desconectado"), pero el estado EFECTIVO mostrado en /actividad siempre
-    // recalcula si ese heartbeat sigue "fresco" (< 75s) -- ver
-    // presence.service.js#fetchPresenceData, mismo umbral que el original.
-    ultima_actividad: { type: DataTypes.DATE, allowNull: true },
-    presencia_estado: { type: DataTypes.STRING(20), allowNull: true },
     activo: { type: DataTypes.BOOLEAN, allowNull: false, defaultValue: true },
     debe_cambiar_password: { type: DataTypes.BOOLEAN, allowNull: false, defaultValue: false },
   },

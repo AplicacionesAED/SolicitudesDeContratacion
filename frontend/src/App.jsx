@@ -31,7 +31,6 @@ import { NuevoOtrosiTiempoCantidadPage } from './features/solicitudes/NuevoOtros
 import { EditarSolicitudPage } from './features/solicitudes/EditarSolicitudPage.jsx';
 import { ImportarHistoricoPage } from './features/solicitudes/ImportarHistoricoPage.jsx';
 import { ImportarOtrosiHistoricoPage } from './features/solicitudes/ImportarOtrosiHistoricoPage.jsx';
-import { ActividadPage } from './features/actividad/ActividadPage.jsx';
 
 export default function App() {
   return (
@@ -125,7 +124,7 @@ export default function App() {
               NO admin acceso a una seccion puntual de Configuracion en vez de
               ser todo o nada (puerto de HRMS, 2026-09-18, pedido explicito
               del usuario aplicado a los 3 proyectos). El resto de
-              Configuracion (Actividad/Workflows/Proyectos/Frentes) no se
+              Configuracion (Workflows/Proyectos/Frentes) no se
               pidio desglosar -- sigue soloAdmin. */}
           <Route element={<ProtectedRoute permiso="ver_usuarios" />}>
             <Route path="configuracion/usuarios" element={<AccesosLayout><UsuariosPage /></AccesosLayout>} />
@@ -137,7 +136,6 @@ export default function App() {
             <Route path="configuracion/roles/:nombre" element={<AccesosLayout><RolDetallePage /></AccesosLayout>} />
           </Route>
           <Route element={<ProtectedRoute soloAdmin />}>
-            <Route path="actividad" element={<ActividadPage />} />
             <Route path="configuracion" element={<Navigate to="/configuracion/usuarios" replace />} />
             <Route path="configuracion/workflows" element={<AccesosLayout><WorkflowsPage /></AccesosLayout>} />
             <Route path="configuracion/workflows/:categoriaSlug" element={<AccesosLayout><WorkflowDiagramaPage /></AccesosLayout>} />

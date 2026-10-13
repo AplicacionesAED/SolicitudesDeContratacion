@@ -14,10 +14,10 @@
 // debe estar protegida con el mismo slug. Un módulo entero (ej.
 // "Solicitudes Directas") se oculta del sidebar si NINGUNO de sus items
 // tiene el permiso concedido -- ver AppShell.jsx. Un item sin `permiso` (ej.
-// "Historial de actividad", gateado por `soloAdmin` en cambio) no aparece
+// uno gateado por `soloAdmin` en cambio) no aparece
 // en el editor de Roles -- no hay nada que configurar por rol, ADMIN
 // siempre lo ve, nadie más lo ve nunca.
-import { FileText, FileSignature, Building2, Activity } from 'lucide-react';
+import { FileText, FileSignature, Building2 } from 'lucide-react';
 
 const ICON_SIZE = 16;
 const ICON_STROKE_WIDTH = 1.75;
@@ -32,10 +32,6 @@ function IconSolicitudesDirectas() {
 
 function IconTerceros() {
   return <Building2 size={ICON_SIZE} strokeWidth={ICON_STROKE_WIDTH} aria-hidden="true" />;
-}
-
-function IconActividad() {
-  return <Activity size={ICON_SIZE} strokeWidth={ICON_STROKE_WIDTH} aria-hidden="true" />;
 }
 
 export const NAV_GROUPS = [
@@ -61,15 +57,6 @@ export const NAV_GROUPS = [
     items: [
       { label: 'Directorio', to: '/terceros', permiso: 'ver_terceros' },
       { label: 'Especialidades', to: '/terceros/especialidades', permiso: 'ver_especialidades' },
-    ],
-  },
-  {
-    title: 'Actividad',
-    icon: IconActividad,
-    items: [
-      // Solo-ADMIN (igual que /configuracion) -- sin `permiso`, no hay nada
-      // que configurar por rol acá (ver ProtectedRoute soloAdmin en App.jsx).
-      { label: 'Historial de actividad', to: '/actividad', soloAdmin: true },
     ],
   },
 ];
