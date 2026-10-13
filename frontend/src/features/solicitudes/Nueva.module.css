@@ -1,0 +1,136 @@
+/* Nueva solicitud (rediseno 2026-10-09). */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: var(--space-md);
+}
+
+.card {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
+  padding: var(--space-lg);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  text-align: left;
+  font: inherit;
+  transition: border-color 120ms ease, box-shadow 120ms ease, transform 120ms ease;
+}
+
+.card:hover:not(:disabled) {
+  border-color: var(--color-primary);
+  box-shadow: 0 4px 14px color-mix(in srgb, var(--color-primary) 12%, transparent);
+  transform: translateY(-1px);
+}
+
+.cardBloqueada {
+  cursor: not-allowed;
+  background: var(--color-surface-sunken);
+}
+
+.icono {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border-radius: var(--radius-md);
+  background: color-mix(in srgb, var(--color-primary) 12%, var(--color-surface));
+  color: var(--color-primary);
+}
+
+.cardBloqueada .icono {
+  background: var(--color-surface);
+  color: var(--color-ink-muted);
+}
+
+.titulo {
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: var(--color-ink);
+}
+
+.desc {
+  font-size: var(--text-data-size);
+  color: var(--color-ink-secondary);
+}
+
+.necesitasTitulo {
+  margin-top: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--color-ink-muted);
+}
+
+.necesitas {
+  margin: 0;
+  padding-left: 18px;
+  font-size: var(--text-data-size);
+  color: var(--color-ink-secondary);
+}
+
+.nota {
+  margin-top: 6px;
+  font-size: var(--text-data-size);
+  color: var(--color-ink-muted);
+}
+
+.borradores {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.borrador {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  gap: var(--space-md);
+  align-items: center;
+  padding: 10px 8px;
+  border-radius: var(--radius-sm);
+  text-decoration: none;
+  color: var(--color-ink);
+}
+
+.borrador:hover {
+  background: var(--color-surface-hover);
+}
+
+.borradorId {
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-weight: 600;
+}
+
+.borradorInfo {
+  color: var(--color-ink-secondary);
+  font-size: var(--text-data-size);
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.borradorValor {
+  font-weight: 600;
+}
+
+.historico {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  align-self: flex-start;
+  font-size: var(--text-data-size);
+  color: var(--color-primary);
+  text-decoration: none;
+}
+
+.historico:hover {
+  text-decoration: underline;
+}

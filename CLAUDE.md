@@ -3845,5 +3845,15 @@ usando HRMS y Cartera (ya migrada) como referencia. Esto reemplaza lo de la plan
   `actividades_usuario` y `sesiones_usuario` y las columnas `usuarios.ultima_actividad`/`presencia_estado` siguen en la base
   (sin uso) hasta que el usuario confirme borrarlas con una migración, porque eso destruye datos. `ultima_conexion`
   (último acceso, lo escribe el login) sigue vigente. Las notificaciones en vivo (SSE) no tenían relación y siguen.
-- **Pendiente (siguientes pasos):** Perfil. Después, revisar a ojo con un usuario real todas las pantallas rediseñadas.
+- **Perfil y "Nueva solicitud" (2026-10-13):** `PerfilPage` ahora tiene banner con la identidad y los roles, "A qué
+  tienes acceso" (las pantallas del menú permitidas a esa persona, calculadas desde `NAV_GROUPS` con sus permisos reales:
+  no se llama a `/roles`, que solo ve un admin), "Mis frentes" (los asignados, desde `GET /frentes`), "Cambiar
+  contraseña" voluntario con requisitos en vivo (usa `POST /auth/cambiar-password`, que no pide la contraseña actual:
+  la sesión ya está autenticada) y la cuenta de Microsoft. `NuevaSolicitudTipoPage` corrige un callejón sin salida real:
+  en **Directas** las tarjetas de otrosí llevaban a un buscador que SIEMPRE salía vacío (`OtrosiForm` descarta las
+  órdenes de servicio y en Directa todo es orden de servicio); ahora aparecen deshabilitadas con la razón. Además cada
+  tipo lista lo que se necesita, se ofrecen los borradores propios para continuarlos y hay acceso a "Importar registro
+  histórico". Estilos en `Nueva.module.css` y `PerfilPage.module.css`. Verificado en navegador con datos simulados.
+- **Pendiente (siguientes pasos):** revisar a ojo con un usuario real todas las pantallas rediseñadas (casi todo se probó
+  con datos simulados) y decidir si se borran las tablas de Actividad de la base.
 - **Repositorio:** el proyecto se movió al repositorio nuevo `https://github.com/Gestion-servicios-TI-AED/SolicitudesDeContratacion` (2026-10-09). El historial se reescribió (147 commits, autor y committer `GEliasDev <GEliasDev@users.noreply.github.com>`, sin trailers de Claude), la plantilla ya no es submódulo y las capturas sueltas de la raíz y la carpeta `files/` quedan ignoradas. Commits en español, sin atribución a Claude; el push lo hace el usuario.
