@@ -1,0 +1,198 @@
+/* Formulario de solicitud (rediseno 2026-10-09): secciones a la izquierda, avance y resumen fijos a la derecha. */
+.layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 300px;
+  gap: var(--space-lg);
+  align-items: start;
+}
+
+.main {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-lg);
+  min-width: 0;
+}
+
+.aside {
+  position: sticky;
+  top: var(--space-md);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+}
+
+.card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+  padding: var(--space-md);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+}
+
+.cardHead {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+}
+
+.cardTitle {
+  margin: 0;
+  font-size: var(--text-body-size);
+  font-weight: 600;
+}
+
+.contador {
+  font-size: var(--text-data-size);
+  font-weight: 600;
+  color: var(--color-ink-secondary);
+}
+
+.barra {
+  height: 6px;
+  border-radius: 3px;
+  background: var(--color-surface-sunken);
+  overflow: hidden;
+}
+
+.barraRelleno {
+  height: 100%;
+  background: var(--color-primary);
+  border-radius: 3px;
+  transition: width 200ms ease;
+}
+
+.ayuda {
+  margin: 0;
+  font-size: 12px;
+  color: var(--color-ink-muted);
+}
+
+.lista {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  padding: 7px 4px;
+  border: none;
+  background: none;
+  cursor: pointer;
+  font: inherit;
+  font-size: var(--text-data-size);
+  text-align: left;
+  color: var(--color-ink);
+  border-radius: var(--radius-sm);
+}
+
+.item:hover {
+  background: var(--color-surface-hover);
+}
+
+.itemOk {
+  color: var(--color-ink-muted);
+}
+
+.ok {
+  flex: none;
+  color: var(--color-success-ink);
+}
+
+.falta {
+  flex: none;
+  color: var(--color-ink-muted);
+}
+
+.detalle {
+  margin-left: auto;
+  font-size: 12px;
+  color: var(--color-warning-ink);
+}
+
+.resumen {
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+}
+
+.resumen dt {
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--color-ink-muted);
+}
+
+.resumen dd {
+  margin: 2px 0 0;
+  font-weight: 600;
+  overflow-wrap: anywhere;
+}
+
+@media (max-width: 1100px) {
+  .layout {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .aside {
+    position: static;
+    order: -1;
+  }
+}
+
+/* Otrosi: indicador de pasos. */
+.pasos {
+  display: flex;
+  gap: var(--space-md);
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  flex-wrap: wrap;
+}
+
+.paso {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 14px 6px 6px;
+  border-radius: var(--radius-full);
+  border: 1px solid var(--color-border);
+  background: var(--color-surface);
+  font-size: var(--text-data-size);
+  color: var(--color-ink-muted);
+}
+
+.pasoNum {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  background: var(--color-surface-sunken);
+}
+
+.pasoActivo {
+  color: var(--color-primary);
+  border-color: var(--color-primary);
+  font-weight: 600;
+}
+
+.pasoActivo .pasoNum {
+  background: var(--color-primary);
+  color: #fff;
+}
+
+.pasoHecho .pasoNum {
+  background: var(--color-success-surface);
+  color: var(--color-success-ink);
+}

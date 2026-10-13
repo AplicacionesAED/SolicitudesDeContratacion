@@ -5,9 +5,10 @@
 // POST /upload -- Fase 8), sin el editor de tercero embebido (ya vive en
 // TerceroDetallePage, Fase 3).
 import { useEffect, useMemo, useState } from 'react';
+import { CheckCircle2, Circle } from 'lucide-react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../../auth/AuthContext.jsx';
-import { numeroALetras, categoriaSlug, tipoContratoLabel } from '../../utils/solicitudes.js';
+import { numeroALetras, categoriaSlug, tipoContratoLabel, formatCurrency } from '../../utils/solicitudes.js';
 import { listFrentes } from '../../api/frentes.js';
 import { listTerceros } from '../../api/terceros.js';
 import { createSolicitud, updateSolicitud, cambiarEstado, guardarCronograma, guardarCuadroComparativo, guardarMemoria, completarHistorico, importarHistorico } from '../../api/solicitudes.js';
@@ -22,6 +23,7 @@ import { Field, TextInput, Textarea } from '../../components/ui/Field.jsx';
 import { FileField } from '../../components/ui/FileField.jsx';
 import { Combobox } from '../../components/ui/Combobox.jsx';
 import styles from './Solicitudes.module.css';
+import f from './Formulario.module.css';
 
 // Fieles a como se veía "Formato de Solicitud" en la app original -- ver
 // CLAUDE.md 2026-09-09 ("Formato de Solicitud restaurado"). Solo son texto
@@ -456,6 +458,25 @@ export function SolicitudForm({ tipoSolicitud, categoria, isEdit = false, initia
     return acc;
   }, [frentes]);
 
+  // ---- Avance del formulario (panel lateral): las MISMAS reglas que validar({ paraEnviar: true }), solo para mostrar
+  // que falta antes de enviar. No bloquea nada ni cambia ninguna validacion. ----
+  const actividadesCronograma = cronograma.tieneFases ? cronograma.fases.flatMap((fa) => fa.actividades) : cronograma.actividades;
+  const requisitosEnvio = [
+    { ok: form.frentesIds.length > 0, label: 'Frente(s) de trabajo', ancla: 'sec-frentes' },
+    { ok: Boolean(form.terceroId), label: 'Contratista', ancla: 'sec-contratista' },
+    ...(tratarComoContrato ? [{ ok: Boolean(form.tipoContrato), label: 'Tipo de contrato', ancla: 'sec-info' }] : []),
+    { ok: form.descripcionActividad.trim().length >= 50, label: 'Objeto', detalle: `${Math.min(form.descripcionActividad.trim().length, 50)}/50 caracteres`, ancla: 'sec-info' },
+    { ok: Boolean(form.plazoEjecucion.trim()), label: 'Plazo de ejecución', ancla: 'sec-info' },
+    { ok: Boolean(form.formaPago.trim()), label: 'Forma de pago', ancla: 'sec-info' },
+    { ok: cuadroComparativo.proveedores.length > 0 && cuadroComparativo.items.length > 0 && Number(form.valorFinal) > 0, label: 'Cuadro comparativo con valor', ancla: 'sec-cuadro' },
+    { ok: Boolean(form.archivoCotizacion.trim()), label: 'Cotización (PDF)', ancla: 'sec-docs' },
+    ...(form.tipoContrato === 'DISENO' ? [{ ok: Boolean(form.archivoPreBEP.trim()), label: 'PreBEP (PDF)', ancla: 'sec-docs' }] : []),
+    { ok: Boolean(form.asunto.trim()), label: 'Asunto', ancla: 'sec-asunto' },
+    ...(categoriaEfectiva === 'INDIRECTA' ? [{ ok: actividadesCronograma.length > 0 && actividadesCronograma.every((a) => a.descripcion.trim().length > 0), label: 'Cronograma', ancla: 'sec-cronograma' }] : []),
+  ];
+  const completados = requisitosEnvio.filter((r) => r.ok).length;
+  const irA = (ancla) => document.getElementById(ancla)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-lg)' }}>
       <BackLink to={`/solicitudes-${categoriaSlug(categoriaEfectiva)}`}>Solicitudes</BackLink>
@@ -472,7 +493,9 @@ export function SolicitudForm({ tipoSolicitud, categoria, isEdit = false, initia
 
       {error && <p className={styles.errorBanner}>{error}</p>}
 
-      <div className={styles.section}>
+      <div className={f.layout}>
+      <div className={f.main}>
+      <div id="sec-frentes" className={styles.section}>
         <h2 className={styles.sectionTitle}>Frente(s) de trabajo</h2>
         {grupos.map((g) => (
           <div key={g.etapa ?? 'sin-etapa'}>
@@ -490,7 +513,7 @@ export function SolicitudForm({ tipoSolicitud, categoria, isEdit = false, initia
         {errores.frentesIds && <p style={{ color: 'var(--color-danger-ink)', fontSize: 'var(--text-data-size)' }}>{errores.frentesIds}</p>}
       </div>
 
-      <div className={styles.section}>
+      <div id="sec-contratista" className={styles.section}>
         <h2 className={styles.sectionTitle}>Contratista</h2>
         <Combobox
           options={terceroOpciones}
@@ -527,7 +550,7 @@ export function SolicitudForm({ tipoSolicitud, categoria, isEdit = false, initia
         )}
       </div>
 
-      <div className={styles.section}>
+      <div id="sec-info" className={styles.section}>
         <h2 className={styles.sectionTitle}>Información del formulario</h2>
         <Field label="Objeto" required error={errores.descripcionActividad} helper="Mínimo 50 caracteres">
           {(p) => <Textarea {...p} rows={2} value={form.descripcionActividad} onChange={(e) => setForm({ ...form, descripcionActividad: e.target.value })} />}
@@ -546,7 +569,7 @@ export function SolicitudForm({ tipoSolicitud, categoria, isEdit = false, initia
         </div>
       </div>
 
-      <div className={styles.section}>
+      <div id="sec-docs" className={styles.section}>
         <h2 className={styles.sectionTitle}>Documentos requeridos</h2>
         <Field label="Cotización" required error={errores.archivoCotizacion}>
           {(p) => <FileField {...p} accept=".pdf" value={form.archivoCotizacion} onChange={(url) => setForm({ ...form, archivoCotizacion: url })} />}
@@ -558,7 +581,7 @@ export function SolicitudForm({ tipoSolicitud, categoria, isEdit = false, initia
         )}
       </div>
 
-      <div className={styles.section}>
+      <div id="sec-cuadro" className={styles.section}>
         <h2 className={styles.sectionTitle}>Cuadro Comparativo</h2>
         {/* "En Directos no se puede agregar más de un proveedor, debe ser
             uno y debe ser el tercero que se seleccione, que se coloque
@@ -591,7 +614,7 @@ export function SolicitudForm({ tipoSolicitud, categoria, isEdit = false, initia
           el detalle de la solicitud (SolicitudDetallePage.jsx) lo sigue
           mostrando exactamente igual que antes, sin cambios ahí. */}
 
-      <div className={styles.section}>
+      <div id="sec-asunto" className={styles.section}>
         <h2 className={styles.sectionTitle}>Asunto</h2>
         <Field label="Asunto" required error={errores.asunto} helper="Se autogenera al cambiar frente/contratista/descripción; puedes editarlo.">
           {(p) => <Textarea {...p} rows={2} value={form.asunto} onChange={(e) => { setAsuntoTocado(true); setForm({ ...form, asunto: e.target.value }); }} />}
@@ -694,7 +717,7 @@ export function SolicitudForm({ tipoSolicitud, categoria, isEdit = false, initia
           cae a `plazo_ejecucion` (texto libre, siempre obligatorio) cuando
           no hay cronograma -- ver ordenServicio.js. */}
       {categoriaEfectiva === 'INDIRECTA' && (
-        <div className={styles.section}>
+        <div id="sec-cronograma" className={styles.section}>
           <h2 className={styles.sectionTitle}>Cronograma</h2>
           <CronogramaBuilder value={cronograma} onChange={(data) => { setCronograma(data); setCronogramaError(''); }} minDays={tipoSolicitud === 'ORDEN_SERVICIO' ? 2 : 13} />
           {cronogramaError && <p style={{ color: 'var(--color-danger-ink)', fontSize: 'var(--text-data-size)' }}>{cronogramaError}</p>}
@@ -746,6 +769,41 @@ export function SolicitudForm({ tipoSolicitud, categoria, isEdit = false, initia
             )}
           </>
         )}
+      </div>
+      </div>
+
+      <aside className={f.aside} aria-label="Avance del formulario">
+        <div className={f.card}>
+          <div className={f.cardHead}>
+            <h2 className={f.cardTitle}>{esHistorico ? 'Para importar' : 'Para enviar'}</h2>
+            <span className={f.contador}>{completados}/{requisitosEnvio.length}</span>
+          </div>
+          <div className={f.barra} aria-hidden="true">
+            <div className={f.barraRelleno} style={{ width: `${Math.round((completados / requisitosEnvio.length) * 100)}%` }} />
+          </div>
+          <p className={f.ayuda}>Para guardar un borrador solo hace falta el frente.</p>
+          <ul className={f.lista}>
+            {requisitosEnvio.map((r) => (
+              <li key={r.label}>
+                <button type="button" className={f.item} onClick={() => irA(r.ancla)}>
+                  {r.ok ? <CheckCircle2 size={16} className={f.ok} aria-hidden="true" /> : <Circle size={16} className={f.falta} aria-hidden="true" />}
+                  <span className={r.ok ? f.itemOk : ''}>{r.label}</span>
+                  {!r.ok && r.detalle && <span className={f.detalle}>{r.detalle}</span>}
+                </button>
+              </li>
+            ))}
+          </ul>
+        </div>
+
+        <div className={f.card}>
+          <h2 className={f.cardTitle}>Resumen</h2>
+          <dl className={f.resumen}>
+            <div><dt>Contratista</dt><dd>{terceroSeleccionado?.razonSocial ?? '—'}</dd></div>
+            <div><dt>Frente(s)</dt><dd>{frentesSeleccionados.map((fr) => fr.nombre).join(', ') || '—'}</dd></div>
+            <div><dt>Valor (IVA incluido)</dt><dd>{costoTotalCuadro > 0 ? formatCurrency(Math.round(costoTotalCuadro)) : '—'}</dd></div>
+          </dl>
+        </div>
+      </aside>
       </div>
     </div>
   );

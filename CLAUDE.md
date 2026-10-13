@@ -3829,5 +3829,13 @@ usando HRMS y Cartera (ya migrada) como referencia. Esto reemplaza lo de la plan
   internos (cuadro, memoria, cronograma, documentos) se movieron tal cual, sin tocar su lógica ni sus fórmulas. Backend:
   `getById` agrega `enPoderDe`, `diasEnPaso` y `requiereMiAccion` (misma lógica que la bandeja). Estilos nuevos en
   `Detalle.module.css`. Verificado en navegador con una solicitud simulada y `getById` contra la base real de dev.
-- **Pendiente (siguientes pasos):** 6c) formularios de solicitud (contrato/orden/otrosí), 7) Actividad y Perfil.
+- **Paso 6c, formularios de solicitud (hecho; SIN quitar ningún campo, pedido explícito):** `SolicitudForm` (contrato /
+  orden de servicio, también el histórico) mantiene exactamente los mismos campos, validaciones y guardado; solo se
+  reorganiza la pantalla: las secciones quedan a la izquierda (con anclas `sec-*`) y a la derecha un panel fijo "Para
+  enviar / Para importar" con el avance (n/N), la checklist con las MISMAS reglas de `validar({ paraEnviar: true })`
+  (clic = salta a la sección; solo informa, no bloquea nada; "para guardar un borrador solo hace falta el frente") y un
+  resumen (contratista, frentes, valor del cuadro comparativo). En pantallas angostas el panel pasa arriba. `OtrosiForm`
+  gana un indicador de 2 pasos y muestra el valor actual del contrato base. Estilos en `Formulario.module.css`.
+  Verificado en navegador (orden de servicio Directa) y confirmado por `git diff` que no se eliminó ningún campo.
+- **Pendiente (siguientes pasos):** 7) Actividad y Perfil.
 - **Repositorio:** el proyecto se movió al repositorio nuevo `https://github.com/Gestion-servicios-TI-AED/SolicitudesDeContratacion` (2026-10-09). El historial se reescribió (147 commits, autor y committer `GEliasDev <GEliasDev@users.noreply.github.com>`, sin trailers de Claude), la plantilla ya no es submódulo y las capturas sueltas de la raíz y la carpeta `files/` quedan ignoradas. Commits en español, sin atribución a Claude; el push lo hace el usuario.

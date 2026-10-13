@@ -13,6 +13,7 @@ import { BackLink } from '../../components/ui/BackLink.jsx';
 import { Button } from '../../components/ui/Button.jsx';
 import { Field, TextInput } from '../../components/ui/Field.jsx';
 import styles from './Solicitudes.module.css';
+import f from './Formulario.module.css';
 
 const CRONOGRAMA_VACIO = { tieneFases: false, fechaInicio: '', fechaFin: '', fases: [], actividades: [{ descripcion: '', fechaInicio: '', fechaFin: '' }] };
 
@@ -135,6 +136,11 @@ export function OtrosiForm({ tipo, categoria }) {
       <BackLink to={`/solicitudes-${categoriaSlug(categoria)}`}>Solicitudes</BackLink>
       <h1 className={styles.title}>{tipo === 'OTROSI_TIEMPO_CANTIDAD' ? 'Otrosí — Tiempo, Cantidad y/o Modificación' : 'Otrosí — Por Tiempo'}</h1>
 
+      <ol className={f.pasos} aria-label="Pasos">
+        <li className={`${f.paso} ${!padre ? f.pasoActivo : f.pasoHecho}`}><span className={f.pasoNum}>1</span> Contrato a modificar</li>
+        <li className={`${f.paso} ${padre ? f.pasoActivo : ''}`}><span className={f.pasoNum}>2</span> Confirmar y crear</li>
+      </ol>
+
       {error && <p className={styles.errorBanner}>{error}</p>}
 
       {!padre ? (
@@ -167,6 +173,7 @@ export function OtrosiForm({ tipo, categoria }) {
           <div className={styles.infoGrid}>
             <div className={styles.infoItem}><span className={styles.infoLabel}>Contrato base</span><span className={styles.infoValue} style={{ fontFamily: 'monospace' }}>{padre.consecutivo}</span></div>
             <div className={styles.infoItem}><span className={styles.infoLabel}>Contratista</span><span className={styles.infoValue}>{padre.tercero?.razonSocial}</span></div>
+            {padre.valorFinal ? <div className={styles.infoItem}><span className={styles.infoLabel}>Valor actual</span><span className={styles.infoValue}>{formatCurrency(padre.valorFinal)}</span></div> : null}
           </div>
           {tipo === 'OTROSI_TIEMPO_CANTIDAD' && (
             <Field label="Nuevo valor final (COP)" helper="Déjalo igual si el otrosí solo modifica tiempo, no valor">
