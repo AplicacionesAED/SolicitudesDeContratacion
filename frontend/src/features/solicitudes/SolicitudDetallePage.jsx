@@ -130,7 +130,6 @@ export function SolicitudDetallePage() {
     { key: 'memoria', label: 'Memoria', visible: solicitud.categoria === 'DIRECTA' && solicitud.memoria?.filas?.length > 0 },
     { key: 'cronograma', label: 'Cronograma', visible: Boolean(solicitud.cronograma) },
     { key: 'documentos', label: 'Documentos', visible: (ARCHIVOS_LABELS.filter(([c]) => solicitud[c]).length + (solicitud.archivosAnexos?.length ?? 0)) > 0, cuenta: ARCHIVOS_LABELS.filter(([c]) => solicitud[c]).length + (solicitud.archivosAnexos?.length ?? 0) },
-    { key: 'seguimiento', label: 'Seguimiento', visible: true, cuenta: solicitud.historial?.length ?? 0 },
   ].filter((x) => x.visible);
   const seccionActual = SECCIONES.some((x) => x.key === seccion) ? seccion : 'resumen';
 
@@ -235,6 +234,8 @@ export function SolicitudDetallePage() {
 
         <SolicitudActions solicitud={solicitud} usuario={usuario} onChange={cargar} />
       </section>
+
+      <EstadoTimeline estadoActual={solicitud.estado} historial={solicitud.historial} importadoHistorico={solicitud.importadoHistorico} numeroOtrosi={solicitud.numeroOtrosi} categoria={solicitud.categoria} />
 
       <div className={d.tabs} role="tablist" aria-label="Secciones de la solicitud">
         {SECCIONES.map((x) => (
@@ -746,12 +747,8 @@ export function SolicitudDetallePage() {
         </>
       )}
 
-      {seccionActual === 'seguimiento' && (
-        <>
-          <EstadoTimeline estadoActual={solicitud.estado} historial={solicitud.historial} importadoHistorico={solicitud.importadoHistorico} numeroOtrosi={solicitud.numeroOtrosi} categoria={solicitud.categoria} />
-          <HistorialSeguimiento historial={solicitud.historial} />
-        </>
-      )}
+
+      <HistorialSeguimiento historial={solicitud.historial} />
     </div>
   );
 }

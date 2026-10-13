@@ -3823,7 +3823,9 @@ usando HRMS y Cartera (ya migrada) como referencia. Esto reemplaza lo de la plan
   "Esperando: {etapa} · en poder de {persona} · N días en este paso" (con "Te toca" y semáforo), la observación de
   devolución/revisión destacada, y las acciones disponibles integradas ahí (`SolicitudActions` sin cambios). Debajo,
   pestañas: Resumen (datos, solicitante, proyecto/frentes, otrosís) / Cuadro comparativo / Memoria / Cronograma /
-  Documentos / Seguimiento (progreso del flujo + historial); solo aparecen las que tienen contenido. Los bloques
+  Documentos; solo aparecen las que tienen contenido. **El "Progreso del flujo" (stepper) y el "Historial de
+  Seguimiento" NO van en pestañas: son siempre visibles** (el stepper entre la tarjeta de situación y las pestañas, el
+  historial al final de la página) -- pedido explícito del usuario, no volver a esconderlos. Los bloques
   internos (cuadro, memoria, cronograma, documentos) se movieron tal cual, sin tocar su lógica ni sus fórmulas. Backend:
   `getById` agrega `enPoderDe`, `diasEnPaso` y `requiereMiAccion` (misma lógica que la bandeja). Estilos nuevos en
   `Detalle.module.css`. Verificado en navegador con una solicitud simulada y `getById` contra la base real de dev.
