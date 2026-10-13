@@ -3865,5 +3865,16 @@ usando HRMS y Cartera (ya migrada) como referencia. Esto reemplaza lo de la plan
   Directorio mezclaba 204 terceros vencidos y por vencer (ahora cuenta vencidos y dice cuántos vencen en 30 días); (8) el
   Perfil de un admin no listaba Configuración. **Regla:** al copiar CSS global de otro proyecto, revisar que no rompa
   librerías con SVG/HTML propio (React Flow, ApexCharts).
-- **Pendiente (siguientes pasos):** decidir si se borran las tablas de Actividad de la base.
+- **Cierre de la revisión (2026-10-13):** (1) el formulario de Directas ya titula "Orden de Servicio" (antes "Solicitud de
+  Contrato" por usar el mismo formato); (2) las tablas de Actividad se borraron de la base con la migración
+  `20261013120000-drop-actividad-presencia.js` (7.549 registros de actividad, 18 sesiones y las columnas
+  `usuarios.ultima_actividad`/`presencia_estado`; irreversible, autorizado por el usuario) -- **la nota de arriba que decía
+  que seguían en la base ya no aplica**; (3) prueba de punta a punta contra la base real, por la interfaz y con una solicitud
+  de prueba que se eliminó: crear borrador, editar y guardar, enviar, las 7 aprobaciones de una orden de servicio Directa
+  hasta COMPLETADA (Director de Obra, Residente Administrativo, Proyección de Controles, Trámite Contratos con "OK",
+  Elaboración de Orden, N° Adpro, Aprobación Final, Gerente de Compras), devolver (rechaza sin motivo), reenviar, anular
+  (rechaza sin motivo), generar el PDF y eliminar; sin errores de página ni HTTP. Limpieza: solicitudes de prueba
+  borradas, sus 4 notificaciones borradas y el contador `DIRECTA-ORDEN_SERVICIO-BK-KABO1` devuelto a 5 (cada creación
+  consume un consecutivo: al probar contra datos reales hay que restaurar el contador a mano).
+- **Pendiente:** nada abierto de este rediseño.
 - **Repositorio:** el proyecto se movió al repositorio nuevo `https://github.com/Gestion-servicios-TI-AED/SolicitudesDeContratacion` (2026-10-09). El historial se reescribió (147 commits, autor y committer `GEliasDev <GEliasDev@users.noreply.github.com>`, sin trailers de Claude), la plantilla ya no es submódulo y las capturas sueltas de la raíz y la carpeta `files/` quedan ignoradas. Commits en español, sin atribución a Claude; el push lo hace el usuario.

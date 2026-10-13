@@ -481,13 +481,13 @@ export function SolicitudForm({ tipoSolicitud, categoria, isEdit = false, initia
     <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-lg)' }}>
       <BackLink to={`/solicitudes-${categoriaSlug(categoriaEfectiva)}`}>Solicitudes</BackLink>
       <h1 className={styles.title}>
-        {esHistorico ? (isEdit ? 'Editar borrador histórico — ' : 'Importar ') : isEdit ? 'Editar ' : ''}{tratarComoContrato ? 'Solicitud de Contrato' : 'Orden de Servicio'}
+        {esHistorico ? (isEdit ? 'Editar borrador histórico — ' : 'Importar ') : isEdit ? 'Editar ' : ''}{tipoSolicitud === 'ORDEN_SERVICIO' ? 'Orden de Servicio' : 'Solicitud de Contrato'}
       </h1>
       {esHistorico && (
         <p style={{ margin: '-8px 0 0', color: 'var(--color-ink-muted)' }}>
           {isEdit
             ? 'Seguí completando este registro histórico. Podés guardar otro borrador o importarlo cuando esté listo.'
-            : `Registra este ${tratarComoContrato ? 'contrato' : 'orden de servicio'} anterior a este sistema con toda su información, como si fuera una solicitud real ya completada. Podés guardarlo como borrador y volver más tarde.`}
+            : `Registra este ${tipoSolicitud === 'ORDEN_SERVICIO' ? 'orden de servicio' : 'contrato'} anterior a este sistema con toda su información, como si fuera una solicitud real ya completada. Podés guardarlo como borrador y volver más tarde.`}
         </p>
       )}
 
