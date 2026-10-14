@@ -43,7 +43,9 @@ Mismas que `backend/.env.example`. Las imprescindibles en producción:
 | `AZURE_TENANT_ID` `AZURE_CLIENT_ID` `AZURE_CLIENT_SECRET` | Login con Microsoft y sincronización de terceros con SharePoint. |
 | `AZURE_REDIRECT_URI` | `https://<tu-dominio>/api/auth/azure/callback`, registrada como *Redirect URI* tipo "Web" en el App Registration de Azure. |
 | `SHAREPOINT_FILE_ID` | Excel de terceros que se sincroniza. |
-| `UPLOADS_DIR` | Carpeta de archivos subidos: apuntar a un **volumen persistente** (si no, se pierden al redeplegar). |
+| `GOOGLE_DRIVE_CREDENTIALS_JSON` | Contenido completo del .json de la cuenta de servicio de Google (los archivos subidos viven en Drive). |
+| `GOOGLE_DRIVE_ROOT_FOLDER_ID` | Carpeta raíz de Drive (la cuenta de servicio debe ser editora). Los archivos van a `Solicitudes/<yyyy-mm>/`. |
+| `UPLOADS_DIR` | Solo para archivos viejos en disco; se puede quitar tras correr `backend/scripts/migrarArchivosADrive.js`. |
 | `MASTER_KEY_HASH` | Opcional (login de emergencia). Se copia tal cual, sin escapar los `$`. |
 
 `PORT` y `NODE_ENV=production` ya quedan definidos en la imagen. **No** configures `LEGACY_DATABASE_URL` en producción (es de un script de migración de un solo uso).

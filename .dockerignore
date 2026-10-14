@@ -11,3 +11,4 @@ files
 .claude
 .impeccable
 .playwright-mcp
+backend/secrets

@@ -1,13 +1,14 @@
-// Puerto de api/upload/route.ts -- multer en memoria (no diskStorage) para
-// poder validar tamaño/extensión y construir el nombre seguro ANTES de
-// escribir a disco, mismo orden de validaciones que el original.
+// Subida de archivos a Google Drive (ver services/googleDrive.js). multer en
+// memoria para validar tamaño/extensión y armar el nombre seguro ANTES de
+// subir, mismo orden de validaciones que el original.
 const path = require('path');
-const { mkdir, writeFile } = require('fs/promises');
+const crypto = require('crypto');
 const multer = require('multer');
 const asyncHandler = require('../../utils/asyncHandler');
 const ApiError = require('../../utils/ApiError');
 const { created } = require('../../utils/ApiResponse');
-const { BLOCKED_EXTENSIONS, MAX_SIZE_BYTES, UPLOADS_DIR } = require('./upload.config');
+const googleDrive = require('../../services/googleDrive');
+const { BLOCKED_EXTENSIONS, MAX_SIZE_BYTES, CONTENT_TYPES } = require('./upload.config');
 
 const upload = multer({ storage: multer.memoryStorage(), limits: { fileSize: MAX_SIZE_BYTES } }).single('file');
 
@@ -35,19 +36,21 @@ const subir = asyncHandler(async (req, res) => {
   const ext = path.extname(file.originalname).toLowerCase();
   if (BLOCKED_EXTENSIONS.has(ext)) throw new ApiError(400, `Tipo de archivo no permitido: ${ext}`);
 
-  const timestamp = Date.now();
-  const safeName = file.originalname
+  // Nombre legible + sufijo corto para que dos archivos con el mismo nombre
+  // en la misma carpeta no se confundan.
+  const base = path
+    .basename(file.originalname, ext)
     .replace(/[^a-zA-Z0-9._-]/g, '_')
     .replace(/__+/g, '_')
-    .slice(0, 120);
-  const filename = `${timestamp}-${safeName}`;
+    .slice(0, 100);
+  const filename = `${base || 'archivo'}-${crypto.randomBytes(3).toString('hex')}${ext}`;
+  const mimeType = file.mimetype && file.mimetype !== 'application/octet-stream' ? file.mimetype : CONTENT_TYPES[ext] ?? 'application/octet-stream';
 
-  await mkdir(UPLOADS_DIR, { recursive: true });
-  await writeFile(path.join(UPLOADS_DIR, filename), file.buffer);
+  const carpetaId = await googleDrive.resolverCarpetaSolicitudes();
+  const subido = await googleDrive.subirArchivo(file.buffer, filename, mimeType, carpetaId);
 
-  // Servido vía GET /files/:filename (autenticado), nunca como estático --
-  // mismo criterio que el original.
-  created(res, { url: `/files/${filename}`, filename, nombre: file.originalname, size: file.size });
+  // Servido vía GET /files/drive/:fileId (autenticado), nunca un link de Drive.
+  created(res, { url: `/files/drive/${subido.id}`, filename, nombre: file.originalname, size: file.size });
 });
 
 module.exports = { subir };

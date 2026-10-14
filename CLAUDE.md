@@ -3889,3 +3889,12 @@ usando HRMS y Cartera (ya migrada) como referencia. Esto reemplaza lo de la plan
 ## Tipografía más compacta (2026-10-13)
 
 Pedido del usuario: las fuentes se veían muy grandes. Se redujo la escala en `frontend/src/tokens.css` (y se documentó en `DESIGN.md`): Display `clamp(1.375rem, 1.1rem + 0.8vw, 1.75rem)`, Headline 1.125rem, Title 1rem, Body 0.9375rem, Data 0.8125rem; Label queda en 0.75rem. Es el mismo cambio en Solicitudes, Cartera y HRMS (comparten el bloque tipográfico). Todo lo que usa los tokens se ajusta solo; los tamaños escritos a mano en px/rem en algunos CSS no cambian.
+
+## Archivos en Google Drive, como el HRMS (2026-10-14)
+
+Pedido del usuario: almacenar los archivos subidos igual que en el HRMS. Antes iban a disco (`UPLOADS_DIR`), que en Docker se pierde en cada redeploy sin volumen persistente.
+
+- **`backend/src/services/googleDrive.js`** (nuevo): cuenta de servicio de Google, mismas variables que el HRMS (`GOOGLE_DRIVE_CREDENTIALS_JSON` en producción, `GOOGLE_DRIVE_KEY_FILE` en dev, `GOOGLE_DRIVE_ROOT_FOLDER_ID`). Los archivos van a `<raíz>/Solicitudes/<yyyy-mm>/` (por mes y no por consecutivo: el archivo se sube ANTES de que exista la solicitud). La cuenta de servicio debe ser editora de la carpeta raíz.
+- **`POST /upload`** sube a Drive y devuelve `url: /files/drive/<fileId>`. **`GET /files/drive/:fileId`** lo sirve autenticado (nunca un link de Drive). El **`GET /files/:filename` viejo se conserva** para no romper los registros que aún apuntan a disco; el frontend no cambió (antepone `API_BASE_URL` a cualquier ruta `/files/...`).
+- **`backend/scripts/migrarArchivosADrive.js`**: pasa los archivos de disco a Drive y reescribe las URLs (columnas `archivo_*` y las imágenes dentro de `memoria_filas.valores`). Simulacro por defecto, `--aplicar` para ejecutar; idempotente. En la base de dev hay 4 archivos reales por migrar (solicitudes 29 y 32).
+- **Pendiente del usuario:** crear/reutilizar la cuenta de servicio y la carpeta raíz de Drive, poner las 2 variables en `.env` y en Coolify, y correr el script con `--aplicar` (no se pudo probar una subida real: no hay credenciales de Drive en esta sesión). Tras migrar, `UPLOADS_DIR` ya no hace falta.
