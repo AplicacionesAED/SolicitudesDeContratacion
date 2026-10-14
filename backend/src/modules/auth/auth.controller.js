@@ -7,7 +7,12 @@ const { ok } = require('../../utils/ApiResponse');
 const service = require('./auth.service');
 const { ACCESS_TOKEN_EXPIRE_HOURS, REFRESH_TOKEN_EXPIRE_DAYS, ACCESS_COOKIE_NAME, REFRESH_COOKIE_NAME } = require('../../utils/security');
 
-const COOKIE_BASE = { httpOnly: true, sameSite: 'lax', secure: process.env.NODE_ENV === 'production' };
+// `secure` solo si la app se sirve por HTTPS (FRONTEND_URL): con una URL http de pruebas el navegador descartaría la cookie.
+const COOKIE_BASE = {
+  httpOnly: true,
+  sameSite: 'lax',
+  secure: process.env.NODE_ENV === 'production' && String(process.env.FRONTEND_URL || '').startsWith('https'),
+};
 
 const login = asyncHandler(async (req, res) => {
   const { accessToken, refreshToken, perfil } = await service.login(req.body.username, req.body.password);

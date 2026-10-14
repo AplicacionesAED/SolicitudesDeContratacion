@@ -12,7 +12,12 @@ const { ACCESS_TOKEN_EXPIRE_HOURS, REFRESH_TOKEN_EXPIRE_DAYS, ACCESS_COOKIE_NAME
 const Usuario = require('../usuario/usuario.model');
 const usuarioService = require('../usuario/usuario.service');
 
-const COOKIE_BASE = { httpOnly: true, sameSite: 'lax', secure: process.env.NODE_ENV === 'production' };
+// `secure` solo si la app se sirve por HTTPS (FRONTEND_URL): con una URL http de pruebas el navegador descartaría la cookie.
+const COOKIE_BASE = {
+  httpOnly: true,
+  sameSite: 'lax',
+  secure: process.env.NODE_ENV === 'production' && String(process.env.FRONTEND_URL || '').startsWith('https'),
+};
 const SCOPES = ['openid', 'profile', 'email', 'User.Read'];
 const FRONTEND_URL = process.env.FRONTEND_URL || 'http://localhost:5193';
 const REDIRECT_URI = process.env.AZURE_REDIRECT_URI || 'http://localhost:3021/api/auth/azure/callback';

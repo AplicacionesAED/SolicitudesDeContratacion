@@ -25,10 +25,10 @@ La imagen se construye desde el `Dockerfile` de la raíz (3 etapas: build del fr
 
 | Build-arg | Default | Para qué |
 |---|---|---|
-| `VITE_API_URL` | `http://localhost:3021/api` | URL de la API. En producción: `https://<tu-dominio>/api`. |
+| `VITE_API_URL` | *(vacío)* | Normalmente no hace falta: en producción el frontend usa la ruta relativa `/api` (mismo origen que el backend). Solo se define si la API vive en otro dominio. |
 
 ```bash
-docker build --build-arg VITE_API_URL=https://<tu-dominio>/api -t solicitudes-contratacion-aed .
+docker build -t solicitudes-contratacion-aed .
 ```
 
 ### Variables de entorno (en tiempo de ejecución)

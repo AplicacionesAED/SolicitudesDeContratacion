@@ -13,7 +13,11 @@
 // navegador en esa página le pegaría al JSON de la API en vez de servir el
 // SPA. Dev y producción usan el mismo prefijo a propósito, para no tener un
 // comportamiento distinto entre los dos.
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3021/api';
+// En el build de producción el backend sirve también el frontend (mismo origen),
+// así que la API vive en la ruta relativa "/api" y no hace falta saber el dominio.
+// En desarrollo (Vite :5193 y backend :3021 son orígenes distintos) apunta al backend local.
+// VITE_API_URL, si se define, tiene prioridad sobre ambos.
+const API_BASE_URL = import.meta.env.VITE_API_URL || (import.meta.env.PROD ? '/api' : 'http://localhost:3021/api');
 
 let sessionExpiredHandler = null;
 export function setSessionExpiredHandler(fn) {

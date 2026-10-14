@@ -18,10 +18,11 @@ COPY frontend/ ./
 # arranque -- a diferencia de PGHOST/JWT_SECRET/etc (backend, leídas recién
 # al arrancar el proceso), esta SÍ hay que pasarla como --build-arg al
 # construir la imagen para el dominio real de cada despliegue:
-#   docker build --build-arg VITE_API_URL=https://indirectos.aed-it.com/api .
-# El backend sirve el frontend bajo el mismo origen (ver app.js), así que en
-# la mayoría de despliegues el valor real es "https://<tu-dominio>/api".
-ARG VITE_API_URL=http://localhost:3021/api
+# Normalmente NO hace falta: vacío, el frontend usa la ruta relativa "/api" (el
+# backend lo sirve bajo el mismo origen, ver app.js), sin importar el dominio.
+# Solo se define si la API vive en otro origen:
+#   docker build --build-arg VITE_API_URL=https://otro-dominio/api .
+ARG VITE_API_URL=
 ENV VITE_API_URL=${VITE_API_URL}
 RUN npm run build
 
