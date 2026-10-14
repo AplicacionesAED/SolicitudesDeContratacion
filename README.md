@@ -37,7 +37,7 @@ Mismas que `backend/.env.example`. Las imprescindibles en producción:
 
 | Variable | Notas |
 |---|---|
-| `PGHOST` `PGPORT` `PGUSER` `PGPASSWORD` `PGDATABASE` | Base PostgreSQL de la aplicación (`PGSSL=true` si el servidor lo exige). |
+| `DATABASE_URL` | Enlace completo a PostgreSQL (`postgres://usuario:clave@host:5432/base`). En dev también sirven las sueltas `PGHOST` `PGPORT` `PGUSER` `PGPASSWORD` `PGDATABASE`. `PGSSL=true` si el servidor lo exige. |
 | `JWT_SECRET` | Obligatorio y **distinto** al de cualquier otro proyecto. |
 | `CORS_ORIGIN` `FRONTEND_URL` | Dominio de la aplicación (un solo origen). |
 | `AZURE_TENANT_ID` `AZURE_CLIENT_ID` `AZURE_CLIENT_SECRET` | Login con Microsoft y sincronización de terceros con SharePoint. |
