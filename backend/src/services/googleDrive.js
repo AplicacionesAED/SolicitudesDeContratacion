@@ -3,7 +3,8 @@
 // interactivo). Reemplaza el disco local (UPLOADS_DIR), que en Docker se
 // pierde en cada redeploy si no hay un volumen persistente.
 //
-// Jerarquia: <raiz>/Solicitudes/<yyyy-mm>/<archivo>. El archivo se sube ANTES
+// Jerarquia: <raiz>/<yyyy-mm>/<archivo>, donde <raiz> es la carpeta
+// "1. SOLICITUDES DE CONTRATACIÓN" de Drive, exclusiva de este proyecto. El archivo se sube ANTES
 // de que exista la solicitud (el consecutivo se genera al crearla), por eso
 // la carpeta es por mes y no por consecutivo.
 //
@@ -74,12 +75,11 @@ async function buscarOCrearCarpeta(nombre, carpetaPadreId) {
   return creada.id;
 }
 
-// <raiz>/Solicitudes/<yyyy-mm>
+// <raiz>/<yyyy-mm>
 async function resolverCarpetaSolicitudes(fecha = new Date()) {
   const raiz = process.env.GOOGLE_DRIVE_ROOT_FOLDER_ID;
-  const carpetaSolicitudes = await buscarOCrearCarpeta('Solicitudes', raiz);
   const mes = `${fecha.getFullYear()}-${String(fecha.getMonth() + 1).padStart(2, '0')}`;
-  return buscarOCrearCarpeta(mes, carpetaSolicitudes);
+  return buscarOCrearCarpeta(mes, raiz);
 }
 
 // Readable.from() porque la API de Drive espera `media.body` como stream.
