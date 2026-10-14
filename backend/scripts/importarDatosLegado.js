@@ -53,7 +53,8 @@ const fs = require('fs');
 const path = require('path');
 const { Client } = require('pg');
 const sequelize = require('../src/config/db');
-const { UPLOADS_DIR } = require('../src/modules/upload/upload.config');
+const googleDrive = require('../src/services/googleDrive');
+const { CONTENT_TYPES } = require('../src/modules/upload/upload.config');
 
 const LEGACY_URL = process.env.LEGACY_DATABASE_URL;
 if (!LEGACY_URL) {
@@ -75,6 +76,10 @@ const ARCHIVOS_REALES = {
     archivoCuadroComparativo: 'RESUMEN_DE_LICITACI_N_-_ekimak (1).xlsx',
     archivoCotizacion: 'COTIZACION_BAIA_KRISTAL_04-08-2026.pdf',
   },
+  'SOL-ODS-BK-VELAVILLAGE-001': {
+    archivoCuadroComparativo: 'Comparativo_Veeduria.xlsx',
+    archivoCotizacion: 'Propuesta_economica_Mario_Villegas.pdf',
+  },
 };
 
 const TABLAS_A_VACIAR = [
@@ -84,19 +89,27 @@ const TABLAS_A_VACIAR = [
   'notificaciones', 'contador_consecutivos', 'actividades_usuario', 'sesiones_usuario',
 ];
 
-function copiarArchivoReal(consecutivo, campo, nombreLocal) {
+// 2026-10-14: los archivos ya no van a disco sino a Google Drive
+// (<raiz>/Indirectas/<consecutivo>/). Si en esa carpeta ya hay un archivo con
+// el mismo nombre (subido antes, con o sin prefijo de timestamp) se reutiliza
+// su fileId en vez de duplicarlo; si no, se sube.
+async function copiarArchivoReal(consecutivo, campo, nombreLocal) {
   const origen = path.join(FILES_DIR, consecutivo, nombreLocal);
   if (!fs.existsSync(origen)) {
     console.warn(`  ⚠ No se encontró ${origen}, se deja sin adjunto`);
     return null;
   }
-  const timestamp = Date.now() + Math.floor(Math.random() * 1000); // evita colisión entre los 2 archivos de la misma solicitud
   const safeName = nombreLocal.replace(/[^a-zA-Z0-9._-]/g, '_').replace(/__+/g, '_').slice(0, 120);
-  const filename = `${timestamp}-${safeName}`;
-  fs.mkdirSync(UPLOADS_DIR, { recursive: true });
-  fs.copyFileSync(origen, path.join(UPLOADS_DIR, filename));
-  console.log(`  ✓ ${campo}: copiado a uploads/${filename}`);
-  return `/files/${filename}`;
+  const carpeta = await googleDrive.resolverCarpetaSolicitud('INDIRECTA', consecutivo);
+  const existente = (await googleDrive.listarArchivos(carpeta)).find((f) => f.name === safeName || f.name.replace(/^\d+-/, '') === safeName);
+  if (existente) {
+    console.log(`  ✓ ${campo}: reutiliza Drive ${existente.id} (${existente.name})`);
+    return `/files/drive/${existente.id}`;
+  }
+  const ext = path.extname(safeName).toLowerCase();
+  const subido = await googleDrive.subirArchivo(fs.readFileSync(origen), safeName, CONTENT_TYPES[ext] ?? 'application/octet-stream', carpeta);
+  console.log(`  ✓ ${campo}: subido a Drive ${subido.id}`);
+  return `/files/drive/${subido.id}`;
 }
 
 async function resetSequence(transaction, table, column = 'id') {
@@ -307,8 +320,8 @@ async function main() {
       const reales = ARCHIVOS_REALES[s.consecutivo];
       if (reales) {
         console.log(` ${s.consecutivo}:`);
-        const nuevaCuadro = copiarArchivoReal(s.consecutivo, 'archivoCuadroComparativo', reales.archivoCuadroComparativo);
-        const nuevaCotizacion = copiarArchivoReal(s.consecutivo, 'archivoCotizacion', reales.archivoCotizacion);
+        const nuevaCuadro = await copiarArchivoReal(s.consecutivo, 'archivoCuadroComparativo', reales.archivoCuadroComparativo);
+        const nuevaCotizacion = await copiarArchivoReal(s.consecutivo, 'archivoCotizacion', reales.archivoCotizacion);
         if (nuevaCuadro) archivoCuadroComparativo = nuevaCuadro;
         if (nuevaCotizacion) archivoCotizacion = nuevaCotizacion;
       }

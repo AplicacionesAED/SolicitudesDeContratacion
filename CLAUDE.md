@@ -3898,3 +3898,15 @@ Pedido del usuario: almacenar los archivos subidos igual que en el HRMS. Antes i
 - **`POST /upload`** sube a Drive y devuelve `url: /files/drive/<fileId>`. **`GET /files/drive/:fileId`** lo sirve autenticado (nunca un link de Drive). El **`GET /files/:filename` viejo se conserva** para no romper los registros que aún apuntan a disco; el frontend no cambió (antepone `API_BASE_URL` a cualquier ruta `/files/...`).
 - **`backend/scripts/migrarArchivosADrive.js`**: pasa los archivos de disco a Drive y reescribe las URLs (columnas `archivo_*` y las imágenes dentro de `memoria_filas.valores`). Simulacro por defecto, `--aplicar` para ejecutar; idempotente. En la base de dev hay 4 archivos reales por migrar (solicitudes 29 y 32).
 - **Pendiente del usuario:** crear/reutilizar la cuenta de servicio y la carpeta raíz de Drive, poner las 2 variables en `.env` y en Coolify, y correr el script con `--aplicar` (no se pudo probar una subida real: no hay credenciales de Drive en esta sesión). Tras migrar, `UPLOADS_DIR` ya no hace falta.
+
+## Base de producción nueva, poblada desde la original (2026-10-14)
+
+`solicitudes_indirectos_v2` (servidor 72.62.100.53) era solo la base de **pruebas**; la original de producción es la de la app vieja (`LEGACY_DATABASE_URL`, Prisma). La base de producción nueva es una instancia propia de Coolify (`DATABASE_URL` interna en `backend/.env.production`, pública solo para operar desde fuera). Se pobló así, en este orden (es el orden histórico, necesario porque el importador escribe en el esquema de la migración `…000503`, y las migraciones siguientes transforman esos datos al modelo actual):
+
+1. `DATABASE_URL=<pública> npx sequelize-cli db:migrate --to 20260831000503-create-sesion-usuario.js`
+2. `DATABASE_URL=<pública> node scripts/importarDatosLegado.js` (vacía el destino: solo correrlo contra una base nueva)
+3. `DATABASE_URL=<pública> npx sequelize-cli db:migrate` (el resto)
+
+Resultado verificado contra el origen: 20 usuarios, 2 proyectos, 20 frentes, 66 especialidades, 417 terceros, 4 solicitudes (incluye `SOL-ODS-BK-VELAVILLAGE-001`, creada en producción después del corte de agosto), 31 historiales, 4 cronogramas, 23 contadores. Roles 12 (9 del origen + los que siembran las migraciones; `Solicitante` quedó como `Residente de Obra`). Las 9 notificaciones omitidas son de las cuentas semilla `@baiak.com`. Las tablas de Actividad ya no existen (migración de borrado).
+
+Cambios al importador: los archivos van a Drive (`<raíz>/Indirectas/<consecutivo>/`) reutilizando el fileId si ya estaba subido (`googleDrive.listarArchivos`), e incluye los de VELAVILLAGE. `KALIZA1` conserva la URL vieja `/api/files/…` (archivos perdidos en el servidor viejo). Las solicitudes de la base de pruebas (directas, usuarios con roles nuevos asignados a mano) NO se copiaron: la nueva base refleja producción real; los roles nuevos (Director de Obra, Residente Administrativo, Gerente de Compras, Residente de Obra) quedan sin usuarios asignados hasta que el admin los asigne.

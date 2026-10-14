@@ -129,4 +129,17 @@ async function obtenerArchivoStream(fileId) {
   return { stream, mimeType: meta.mimeType, nombre: meta.name, size: meta.size };
 }
 
-module.exports = { resolverCarpetaPendientes, resolverCarpetaSolicitud, moverArchivo, subirArchivo, obtenerArchivoStream };
+// Archivos (no carpetas) directos de una carpeta: sirve para reutilizar uno ya subido en vez de duplicarlo.
+async function listarArchivos(carpetaId) {
+  const drive = getDriveClient();
+  const { data } = await drive.files.list({
+    q: `'${carpetaId}' in parents and mimeType != '${FOLDER_MIME}' and trashed = false`,
+    fields: 'files(id, name)',
+    supportsAllDrives: true,
+    includeItemsFromAllDrives: true,
+    spaces: 'drive',
+  });
+  return data.files ?? [];
+}
+
+module.exports = { listarArchivos, resolverCarpetaPendientes, resolverCarpetaSolicitud, moverArchivo, subirArchivo, obtenerArchivoStream };
