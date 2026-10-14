@@ -18,7 +18,6 @@
 // La cuenta de servicio debe ser miembro/editor de GOOGLE_DRIVE_ROOT_FOLDER_ID
 // (idealmente en una Unidad Compartida).
 const { Readable } = require('stream');
-const { google } = require('googleapis');
 const ApiError = require('../utils/ApiError');
 
 const FOLDER_MIME = 'application/vnd.google-apps.folder';
@@ -36,6 +35,8 @@ function getDriveClient() {
     );
   }
   if (!driveClient) {
+    // googleapis es enorme: se carga recién al primer uso real de Drive para no frenar el arranque del servidor.
+    const { google } = require('googleapis');
     const authOptions = { scopes: ['https://www.googleapis.com/auth/drive'] };
     if (GOOGLE_DRIVE_CREDENTIALS_JSON) {
       try {
