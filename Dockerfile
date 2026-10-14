@@ -24,6 +24,11 @@ COPY frontend/ ./
 #   docker build --build-arg VITE_API_URL=https://otro-dominio/api .
 ARG VITE_API_URL=
 ENV VITE_API_URL=${VITE_API_URL}
+# Solo si la app se sirve bajo un prefijo detrás del gateway del portal (ver
+# "0. PLATAFORMA AED"): --build-arg VITE_BASE_PATH=/solicitudes/ . La API pasa a
+# ser "/solicitudes/api" sola (ver frontend/src/api/client.js). Standalone, vacío.
+ARG VITE_BASE_PATH=
+ENV VITE_BASE_PATH=${VITE_BASE_PATH}
 RUN npm run build
 
 # ---------- Stage 2: dependencias del backend (sin devDependencies) ----------
