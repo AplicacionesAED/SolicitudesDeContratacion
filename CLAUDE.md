@@ -4,11 +4,12 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project
 
-Solicitudes Indirectos AED (nueva arquitectura) — gestión de solicitudes de
-contratación indirecta de Baía Kristal, siguiendo `Plantilla-Arquitectura-AED`
-(vinculada como submódulo en `plantilla-arquitectura/`, hermana de esta
-carpeta), sobre una base de datos PostgreSQL propia
-(`solicitudes_indirectos_v2`, servidor remoto).
+Solicitudes de Contratación AED (antes "Solicitudes Indirectos") -- gestión de
+solicitudes de contratación directa e indirecta de Baía Kristal, sobre una base
+de datos PostgreSQL propia (`solicitudes_indirectos_v2`, servidor remoto). Ya no
+se usa la `Plantilla-Arquitectura-AED` ni existe la carpeta `plantilla-arquitectura/`
+(2026-10-14): las referencias a ella en secciones históricas de este archivo son
+obsoletas; las reglas de arquitectura vigentes son las que describe este documento.
 
 **Historia / estado (2026-09-01): la migración ya terminó.** Este repo
 originalmente tenía DOS apps en paralelo: `solicitudes-indirectos/` (Next.js +
@@ -3876,6 +3877,12 @@ usando HRMS y Cartera (ya migrada) como referencia. Esto reemplaza lo de la plan
   (rechaza sin motivo), generar el PDF y eliminar; sin errores de página ni HTTP. Limpieza: solicitudes de prueba
   borradas, sus 4 notificaciones borradas y el contador `DIRECTA-ORDEN_SERVICIO-BK-KABO1` devuelto a 5 (cada creación
   consume un consecutivo: al probar contra datos reales hay que restaurar el contador a mano).
+- **Raíz del proyecto ordenada para el despliegue (2026-10-14):** se borraron las capturas sueltas, `.playwright-mcp/`, la
+  carpeta `plantilla-arquitectura/` (ya sin uso; no tenía nada sin subir) y `AGENTS.md` (solo apuntaba a esa plantilla).
+  La raíz queda como la de Cartera/HRMS: `backend/`, `frontend/`, `Dockerfile`, `entrypoint.sh`, `.dockerignore`,
+  `.gitignore` (misma estructura por secciones), `.gitattributes` (fuerza LF en `*.sh`/`Dockerfile`: un `entrypoint.sh`
+  con CRLF falla en el contenedor), `README.md` (desarrollo local, build-arg, variables de entorno y primer despliegue),
+  `CLAUDE.md`, `DESIGN.md`. `files/` (archivos reales recuperados en la Fase 9) se conserva fuera de git y de la imagen.
 - **Pendiente:** nada abierto de este rediseño.
 - **Repositorio:** el proyecto se movió al repositorio nuevo `https://github.com/Gestion-servicios-TI-AED/SolicitudesDeContratacion` (2026-10-09). El historial se reescribió (147 commits, autor y committer `GEliasDev <GEliasDev@users.noreply.github.com>`, sin trailers de Claude), la plantilla ya no es submódulo y las capturas sueltas de la raíz y la carpeta `files/` quedan ignoradas. Commits en español, sin atribución a Claude; el push lo hace el usuario.
 

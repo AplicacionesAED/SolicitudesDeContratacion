@@ -1,0 +1,17 @@
+# Normaliza finales de linea: el repo guarda LF. Los scripts de shell y el
+# Dockerfile DEBEN quedar con LF aunque se editen/clonen en Windows -- un
+# entrypoint.sh con CRLF falla en el contenedor ("/bin/bash^M: bad interpreter").
+* text=auto
+*.sh text eol=lf
+Dockerfile text eol=lf
+.dockerignore text eol=lf
+
+# Binarios: nunca tocar
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.ico binary
+*.pdf binary
+*.xlsx binary
+*.woff binary
+*.woff2 binary

@@ -1,10 +1,13 @@
 **/node_modules
 **/dist
 .git
+.gitattributes
 .env
 .env.*
 !.env.example
 *.md
 backend/uploads
 files
-plantilla-arquitectura
+.claude
+.impeccable
+.playwright-mcp
