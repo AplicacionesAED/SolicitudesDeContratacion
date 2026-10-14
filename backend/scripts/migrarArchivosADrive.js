@@ -1,5 +1,7 @@
 // Pasa a Google Drive los archivos que hoy viven en disco (UPLOADS_DIR, URLs
 // "/files/<nombre>") y reescribe la URL en la base a "/files/drive/<fileId>".
+// Al final ordena TODOS los archivos de Drive de cada solicitud en
+// <raiz>/<Directas|Indirectas>/<consecutivo>/ (organizarArchivos).
 // Por defecto es SIMULACRO (no sube ni escribe nada): agregar --aplicar.
 // Idempotente: una URL que ya es "/files/drive/..." se ignora; si el archivo
 // local no existe se informa y se deja la URL como estaba.
@@ -12,6 +14,7 @@ const { readFile } = require('fs/promises');
 const { QueryTypes } = require('sequelize');
 const sequelize = require('../src/config/db');
 const googleDrive = require('../src/services/googleDrive');
+const { organizarArchivos } = require('../src/modules/solicitud/solicitud.archivos');
 const { UPLOADS_DIR, CONTENT_TYPES } = require('../src/modules/upload/upload.config');
 
 const APLICAR = process.argv.includes('--aplicar');
@@ -44,7 +47,7 @@ async function subir(urlVieja) {
     cache.set(urlVieja, null);
     return null;
   }
-  const carpeta = await googleDrive.resolverCarpetaSolicitudes();
+  const carpeta = await googleDrive.resolverCarpetaPendientes();
   const subido = await googleDrive.subirArchivo(buffer, filename, CONTENT_TYPES[ext] ?? 'application/octet-stream', carpeta);
   const urlNueva = `/files/drive/${subido.id}`;
   console.log(`  + ${filename} -> ${urlNueva}`);
@@ -81,6 +84,12 @@ async function main() {
       }
     }
     if (cambio) await sequelize.query('UPDATE memoria_filas SET valores = $1::jsonb WHERE id = $2', { bind: [JSON.stringify(valores), f.id] });
+  }
+
+  if (APLICAR) {
+    const ids = await sequelize.query('SELECT id FROM solicitudes ORDER BY id', { type: QueryTypes.SELECT });
+    for (const { id } of ids) await organizarArchivos(id);
+    console.log(`Archivos de ${ids.length} solicitudes ordenados por carpeta.`);
   }
 
   console.log('Listo.');

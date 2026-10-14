@@ -2,6 +2,7 @@
 // columnas snake_case -- mismo patrón que tercero.service.js. Este archivo
 // concentra: el mapeo de campos, la visibilidad de listado/detalle, y las dos
 // ramas de creación (solicitud normal vs. otrosí).
+const { organizarArchivos } = require('./solicitud.archivos');
 const { Op } = require('sequelize');
 const ApiError = require('../../utils/ApiError');
 const sequelize = require('../../config/db');
@@ -711,8 +712,10 @@ async function crearNormal(body, usuario) {
 }
 
 async function create(body, usuario) {
-  if (body.solicitudPadreId) return crearOtrosi(body, usuario);
-  return crearNormal(body, usuario);
+  const creada = body.solicitudPadreId ? await crearOtrosi(body, usuario) : await crearNormal(body, usuario);
+  // Los archivos subidos antes de crear estan en _Pendientes de Drive: ahora que hay consecutivo se ordenan.
+  await organizarArchivos(creada.id);
+  return creada;
 }
 
 // "El histórico también se pueda guardar borrador... que se pueda volver a
@@ -760,6 +763,7 @@ async function update(id, body, usuario) {
   }
 
   await solicitud.update(aCamposDb(body));
+  await organizarArchivos(solicitud.id);
   return getById(id, usuario);
 }
 

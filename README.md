@@ -44,7 +44,7 @@ Mismas que `backend/.env.example`. Las imprescindibles en producción:
 | `AZURE_REDIRECT_URI` | `https://<tu-dominio>/api/auth/azure/callback`, registrada como *Redirect URI* tipo "Web" en el App Registration de Azure. |
 | `SHAREPOINT_FILE_ID` | Excel de terceros que se sincroniza. |
 | `GOOGLE_DRIVE_CREDENTIALS_JSON` | Contenido completo del .json de la cuenta de servicio de Google (los archivos subidos viven en Drive). |
-| `GOOGLE_DRIVE_ROOT_FOLDER_ID` | Carpeta raíz de Drive (la cuenta de servicio debe ser editora). Carpeta `1. SOLICITUDES DE CONTRATACIÓN` (exclusiva de este proyecto); los archivos van a `<yyyy-mm>/`. |
+| `GOOGLE_DRIVE_ROOT_FOLDER_ID` | Carpeta raíz de Drive (la cuenta de servicio debe ser editora). Carpeta `1. SOLICITUDES DE CONTRATACIÓN` (exclusiva de este proyecto); los archivos van a `Directas|Indirectas/<consecutivo>/`. |
 | `UPLOADS_DIR` | Solo para archivos viejos en disco; se puede quitar tras correr `backend/scripts/migrarArchivosADrive.js`. |
 | `MASTER_KEY_HASH` | Opcional (login de emergencia). Se copia tal cual, sin escapar los `$`. |
 

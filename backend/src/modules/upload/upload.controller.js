@@ -46,7 +46,7 @@ const subir = asyncHandler(async (req, res) => {
   const filename = `${base || 'archivo'}-${crypto.randomBytes(3).toString('hex')}${ext}`;
   const mimeType = file.mimetype && file.mimetype !== 'application/octet-stream' ? file.mimetype : CONTENT_TYPES[ext] ?? 'application/octet-stream';
 
-  const carpetaId = await googleDrive.resolverCarpetaSolicitudes();
+  const carpetaId = await googleDrive.resolverCarpetaPendientes();
   const subido = await googleDrive.subirArchivo(file.buffer, filename, mimeType, carpetaId);
 
   // Servido vía GET /files/drive/:fileId (autenticado), nunca un link de Drive.

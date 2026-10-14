@@ -23,6 +23,7 @@ const Memoria = require('./memoria.model');
 const MemoriaColumna = require('./memoriaColumna.model');
 const MemoriaFila = require('./memoriaFila.model');
 const { getRolesPorCodigo } = require('../../utils/permisos');
+const { organizarArchivos } = require('./solicitud.archivos');
 
 const TIPOS_VALIDOS = ['TEXTO', 'ENTERO', 'FLOAT', 'FECHA', 'RANGO_FECHAS', 'IMAGEN', 'CALCULADA'];
 
@@ -107,6 +108,8 @@ const upsertMemoria = asyncHandler(async (req, res) => {
 
     return creada.id;
   });
+
+  await organizarArchivos(numId); // imágenes de la memoria: de _Pendientes a la carpeta de la solicitud
 
   const memoria = await Memoria.findByPk(memoriaId, {
     include: [
