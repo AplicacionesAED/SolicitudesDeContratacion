@@ -25,6 +25,7 @@ La imagen se construye desde el `Dockerfile` de la raíz (3 etapas: build del fr
 
 | Build-arg | Default | Para qué |
 |---|---|---|
+| `VITE_BASE_PATH` | *(vacío)* | Solo si la app vive bajo un prefijo detrás del gateway del portal: `/solicitudes/`. La API pasa a ser `/solicitudes/api` sola. Standalone, vacío. |
 | `VITE_API_URL` | *(vacío)* | Normalmente no hace falta: en producción el frontend usa la ruta relativa `/api` (mismo origen que el backend). Solo se define si la API vive en otro dominio. |
 
 ```bash
