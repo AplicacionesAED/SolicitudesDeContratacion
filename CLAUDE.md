@@ -3923,3 +3923,11 @@ Pedido del usuario: el manejador de errores debe ser **idéntico y profesional**
 - **`notFoundHandler`** (nuevo donde faltaba: Solicitudes, Cartera, Bases): una ruta que no existe responde 404 en JSON con el mismo contrato, no el HTML de Express. Va en `app.js` justo antes de `errorHandler`.
 - **Cambios visibles respecto a antes** (todos inocuos): la validación zod del HRMS pasó de 400 a **422** (igual que los otros tres; ningún frontend miraba el código); los mensajes de Unique/FK/Validation unificados; `details` ausente en vez de `null` en Bases; el 404 de Bases ahora dice `Ruta no encontrada: GET /api/v1/x`.
 - **Verificado:** el manejador aislado con 19 casos (todos los tipos de error, sin fuga en producción, `headersSent`), y en los cuatro proyectos con su `app` real (sin correr `server.js`): ruta inexistente → 404 JSON, JSON mal formado → 400, body vacío → 422 con `fieldErrors`, sin sesión → 401. Solicitudes además con login real correcto/incorrecto y listado con sesión.
+
+## La sesión no se pierde por un fallo de red (2026-10-15)
+
+Regla 13 de `AED-REGLAS.md` (ya la tenían Cartera y el HRMS). Antes, **cualquier** error al leer el perfil (`GET /usuarios/me`) ponía `usuario` en `null` y mandaba al login — también un 503 mientras Coolify reemplaza el contenedor en un deploy (y el refresco del perfil cada 30 s podía desloguear por un parpadeo de red).
+
+- `AuthContext.jsx`: el `usuario` solo se borra con un **401** real (o refresh rechazado, vía `setSessionExpiredHandler`); cualquier otro fallo conserva al usuario y marca `errorConexion`, reintentando solo cada 5 s.
+- `ProtectedRoute.jsx`: con `!usuario && errorConexion` muestra "No se pudo conectar con el servidor — tu sesión sigue abierta" con "Reintentar ahora"; solo sin `errorConexion` redirige a `/login`. El cliente (`api/client.js`) ya lanzaba `ApiRequestError.status`; un `fetch` caído lanza `TypeError` sin `status`, que cuenta como fallo de conexión.
+- **Verificado en navegador** (Playwright con la API simulada, dev server real): 503 y conexión rechazada → se queda en su ruta con el mensaje; 401 → `/login`; 200 → entra normal.

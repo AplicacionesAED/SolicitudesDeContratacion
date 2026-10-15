@@ -18,17 +18,34 @@ const AuthContext = createContext(null);
 // re-renderiza solo con los permisos al día; si la ruta actual dejó de
 // estar permitida, `ProtectedRoute` lo saca de ahí en el mismo tick.
 const PERFIL_POLL_MS = 30_000;
+const REINTENTO_MS = 5000;
 
 export function AuthProvider({ children }) {
   const [usuario, setUsuario] = useState(null);
   const [cargando, setCargando] = useState(true);
+  // true = no se pudo leer el perfil por un fallo de conexion/servidor (no por falta de sesion).
+  const [errorConexion, setErrorConexion] = useState(false);
   const usuarioRef = useRef(null);
 
+  // Sesion: el usuario SOLO se borra cuando el servidor dice de verdad que no hay sesion (401 al leer el
+  // perfil, o refresh rechazado). Cualquier otro fallo (red caida, 502/503, timeout, 500) conserva al
+  // usuario que ya estaba: antes un solo error al pedir el perfil -- p. ej. un 503 mientras Coolify
+  // reemplaza el contenedor en un deploy -- mandaba a todos al login. Ver la regla 13 de AED-REGLAS.md.
   const cargarPerfil = useCallback(() => {
     return authApi
       .getMe()
-      .then((res) => setUsuario(res.data))
-      .catch(() => setUsuario(null));
+      .then((res) => {
+        setUsuario(res.data);
+        setErrorConexion(false);
+      })
+      .catch((err) => {
+        if (err.status === 401) {
+          setUsuario(null);
+          setErrorConexion(false);
+        } else {
+          setErrorConexion(true);
+        }
+      });
   }, []);
 
   useEffect(() => {
@@ -49,6 +66,13 @@ export function AuthProvider({ children }) {
   // El refresh_token vencio de verdad (30 dias) -- client.js ya intento
   // renovar el access_token y fallo. Limpiar la sesion local; ProtectedRoute
   // redirige a /login apenas usuario pasa a null.
+  // Reintenta solo mientras haya un error de conexion.
+  useEffect(() => {
+    if (!errorConexion) return undefined;
+    const id = setInterval(cargarPerfil, REINTENTO_MS);
+    return () => clearInterval(id);
+  }, [errorConexion, cargarPerfil]);
+
   useEffect(() => {
     setSessionExpiredHandler(() => setUsuario(null));
     return () => setSessionExpiredHandler(null);
@@ -66,7 +90,7 @@ export function AuthProvider({ children }) {
   }
 
   return (
-    <AuthContext.Provider value={{ usuario, cargando, login, logout, refrescarPerfil: cargarPerfil }}>{children}</AuthContext.Provider>
+    <AuthContext.Provider value={{ usuario, cargando, errorConexion, login, logout, refrescarPerfil: cargarPerfil }}>{children}</AuthContext.Provider>
   );
 }
 
