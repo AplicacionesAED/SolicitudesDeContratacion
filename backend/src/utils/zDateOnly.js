@@ -1,6 +1,8 @@
-// Nunca z.coerce.date() para una columna DATEONLY -- ver "Fechas" en
-// ARQUITECTURA-BACKEND.md. Valida el string tal cual, sin pasar por un objeto
-// Date de JS ni por conversión de zona horaria.
+// Va en backend/src/utils/zDateOnly.js. SIEMPRE para validar una columna que es
+// conceptualmente "solo fecha" (DataTypes.DATEONLY en el modelo). Nunca
+// z.coerce.date(): un Date de JS se serializa en la zona horaria local del
+// proceso y corre el dia calendario hacia atras. Ver "Fechas" en
+// ARQUITECTURA-BACKEND.md.
 const { z } = require('zod');
 
 function zDateOnly() {

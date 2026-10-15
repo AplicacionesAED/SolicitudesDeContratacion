@@ -1,13 +1,17 @@
+// Va en backend/src/utils/ApiResponse.js. Un solo formato de exito en todo el API:
+// { success: true, data, meta? }. Nunca armes esto a mano en un controller.
+// Las descargas de archivos (buffer/stream) son la unica excepcion: responden el
+// binario directo con res.send()/pipe() y sus propios headers.
 function ok(res, data, meta) {
-  res.status(200).json(meta ? { success: true, data, meta } : { success: true, data });
+  return res.status(200).json(meta ? { success: true, data, meta } : { success: true, data });
 }
 
 function created(res, data) {
-  res.status(201).json({ success: true, data });
+  return res.status(201).json({ success: true, data });
 }
 
 function noContent(res) {
-  res.status(204).end();
+  return res.status(204).end();
 }
 
 module.exports = { ok, created, noContent };

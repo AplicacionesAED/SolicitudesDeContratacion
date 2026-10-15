@@ -1,3 +1,4 @@
+// Va en backend/src/middlewares/validate.js.
 const ApiError = require('../utils/ApiError');
 
 // Valida req[source] (body/params/query) contra un schema zod, y REEMPLAZA
