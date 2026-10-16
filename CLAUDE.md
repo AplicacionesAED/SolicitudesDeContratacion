@@ -3931,3 +3931,8 @@ Regla 13 de `AED-REGLAS.md` (ya la tenían Cartera y el HRMS). Antes, **cualquie
 - `AuthContext.jsx`: el `usuario` solo se borra con un **401** real (o refresh rechazado, vía `setSessionExpiredHandler`); cualquier otro fallo conserva al usuario y marca `errorConexion`, reintentando solo cada 5 s.
 - `ProtectedRoute.jsx`: con `!usuario && errorConexion` muestra "No se pudo conectar con el servidor — tu sesión sigue abierta" con "Reintentar ahora"; solo sin `errorConexion` redirige a `/login`. El cliente (`api/client.js`) ya lanzaba `ApiRequestError.status`; un `fetch` caído lanza `TypeError` sin `status`, que cuenta como fallo de conexión.
 - **Verificado en navegador** (Playwright con la API simulada, dev server real): 503 y conexión rechazada → se queda en su ruta con el mensaje; 401 → `/login`; 200 → entra normal.
+
+
+## Conectada al gateway (2026-10-16)
+
+En Coolify el servicio "Solicitudes de Contratación" (proyecto 1) quedó con el build-arg `VITE_BASE_PATH=/solicitudes/` y `FRONTEND_URL=https://portal.aed-it.com/solicitudes`, `CORS_ORIGIN=https://portal.aed-it.com` y `AZURE_REDIRECT_URI=https://portal.aed-it.com/solicitudes/api/auth/azure/callback`. El gateway tiene el bloque `/solicitudes/` (con `client_max_body_size 20m`) y `SOLICITUDES_UPSTREAM`. **Pendiente del usuario:** registrar ese `AZURE_REDIRECT_URI` en el App Registration de Azure (sin eso el login con Microsoft falla; el de contraseña no). Tras redeployar con el prefijo, el dominio sslip.io directo deja de servir bien la interfaz: se entra por el portal. Los servicios y bases de Coolify de los proyectos 0 a 4 se renombraron para que sean legibles (`Gateway`, `Solicitudes de Contratación`, `Recursos Humanos`, `BD ...`); los UUID y los nombres internos de red no cambian.
