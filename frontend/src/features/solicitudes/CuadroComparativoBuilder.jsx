@@ -76,8 +76,12 @@ export function normalizarCuadroComparativo(cuadroComparativo) {
   return { proveedores, items };
 }
 
+// 2026-10-20: el borde/fondo ya NO van acá -- pasaron a la clase
+// `styles.celdaInput` (Solicitudes.module.css), que sí puede tener
+// `:hover`/`:focus` (un `style` inline no puede). `inputCellStyle()` se
+// queda solo con el resto del box model puntual de cada celda.
 function inputCellStyle(extra) {
-  return { width: '100%', border: 'none', background: 'transparent', font: 'inherit', ...extra };
+  return { width: '100%', font: 'inherit', ...extra };
 }
 
 // Celda de texto largo (Actividad/Alcance/Observaciones) -- pedido explícito
@@ -284,7 +288,7 @@ export function CuadroComparativoBuilder({ value, onChange, proveedorUnico = fal
               desplegable de Unidad terminaba viéndose recortado en la
               práctica. Con layout fijo, cada columna respeta su % y el texto
               largo hace wrap en vez de empujar a las demás. */}
-          <table className={styles.table} style={{ tableLayout: 'fixed' }}>
+          <table className={`${styles.table} ${styles.tableEditable}`} style={{ tableLayout: 'fixed' }}>
             <thead>
               <tr>
                 <th rowSpan={2} style={{ width: '9%' }}>Código ítem</th>
@@ -315,15 +319,16 @@ export function CuadroComparativoBuilder({ value, onChange, proveedorUnico = fal
             <tbody>
               {items.map((it, idx) => (
                 <tr key={idx}>
-                  <td><input type="text" value={it.codigoItem} onChange={(e) => updateItem(idx, 'codigoItem', e.target.value)} style={inputCellStyle()} /></td>
-                  <td><input type="text" value={it.codigoInsumo} onChange={(e) => updateItem(idx, 'codigoInsumo', e.target.value)} style={inputCellStyle()} /></td>
+                  <td><input type="text" className={styles.celdaInput} value={it.codigoItem} onChange={(e) => updateItem(idx, 'codigoItem', e.target.value)} style={inputCellStyle()} /></td>
+                  <td><input type="text" className={styles.celdaInput} value={it.codigoInsumo} onChange={(e) => updateItem(idx, 'codigoInsumo', e.target.value)} style={inputCellStyle()} /></td>
                   <td><CeldaTextoLargo value={it.actividad} onChange={(e) => updateItem(idx, 'actividad', e.target.value)} placeholder="Actividad o insumo" /></td>
                   <td><CeldaTextoLargo value={it.alcance} onChange={(e) => updateItem(idx, 'alcance', e.target.value)} /></td>
                   <td>
                     <select
+                      className={`${styles.celdaInput} ${styles.celdaSelect}`}
                       value={it.unidad}
                       onChange={(e) => updateItem(idx, 'unidad', e.target.value)}
-                      style={inputCellStyle({ minWidth: 0, padding: '2px 4px 2px 0' })}
+                      style={inputCellStyle({ minWidth: 0, padding: '2px 14px 2px 2px' })}
                     >
                       <option value="">Selecciona…</option>
                       {(it.unidad && !UNIDADES_COMUNES.includes(it.unidad) ? [it.unidad, ...UNIDADES_COMUNES] : UNIDADES_COMUNES).map((u) => (
@@ -331,7 +336,7 @@ export function CuadroComparativoBuilder({ value, onChange, proveedorUnico = fal
                       ))}
                     </select>
                   </td>
-                  <td><input type="number" value={it.cantidad} onChange={(e) => updateItem(idx, 'cantidad', e.target.value)} style={inputCellStyle()} /></td>
+                  <td><input type="number" className={styles.celdaInput} value={it.cantidad} onChange={(e) => updateItem(idx, 'cantidad', e.target.value)} style={inputCellStyle()} /></td>
                   <td>
                     {/* Dinero -- nunca type="number" (mismo motivo que
                         "Valor unitario" de la tabla de precios por
@@ -339,6 +344,7 @@ export function CuadroComparativoBuilder({ value, onChange, proveedorUnico = fal
                     <input
                       type="text"
                       inputMode="numeric"
+                      className={styles.celdaInput}
                       value={formatearMiles(it.valorUnitarioPendiente)}
                       onChange={(e) => updateItem(idx, 'valorUnitarioPendiente', soloDigitos(e.target.value))}
                       style={inputCellStyle()}
@@ -347,7 +353,7 @@ export function CuadroComparativoBuilder({ value, onChange, proveedorUnico = fal
                   <td style={{ color: 'var(--color-ink-muted)' }}>{formatCurrency(calcularValorTotalPendiente(it))}</td>
                   <td><CeldaTextoLargo value={it.observaciones} onChange={(e) => updateItem(idx, 'observaciones', e.target.value)} /></td>
                   <td>
-                    <button type="button" onClick={() => quitarItem(idx)} style={{ border: 'none', background: 'none', cursor: 'pointer', color: 'var(--color-ink-muted)' }}>
+                    <button type="button" className={styles.deleteRowButton} onClick={() => quitarItem(idx)} title="Quitar ítem" aria-label="Quitar ítem">
                       <Trash2 size={14} />
                     </button>
                   </td>
@@ -388,7 +394,7 @@ export function CuadroComparativoBuilder({ value, onChange, proveedorUnico = fal
           afecta a la otra. Aplica a las dos categorías. */}
       <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-sm)' }}>
         <div className={styles.card} style={{ overflowX: 'auto', overflowY: 'visible' }}>
-          <table className={styles.table} style={{ tableLayout: 'fixed' }}>
+          <table className={`${styles.table} ${styles.tableEditable}`} style={{ tableLayout: 'fixed' }}>
             <thead>
               <tr>
                 <th rowSpan={2} style={{ width: '10%' }}>Código ítem</th>
@@ -420,11 +426,11 @@ export function CuadroComparativoBuilder({ value, onChange, proveedorUnico = fal
                   <td>{it.actividad}</td>
                   <td>{it.alcance}</td>
                   <td>{it.unidad}</td>
-                  <td><input type="number" value={it.cantidadReal} onChange={(e) => updateItem(idx, 'cantidadReal', e.target.value)} style={inputCellStyle()} /></td>
+                  <td><input type="number" className={styles.celdaInput} value={it.cantidadReal} onChange={(e) => updateItem(idx, 'cantidadReal', e.target.value)} style={inputCellStyle()} /></td>
                   <td style={{ color: 'var(--color-ink-muted)' }}>{formatCurrency(calcularValorTotalSegunPpto(it))}</td>
                   <td>{it.observaciones}</td>
                   <td>
-                    <button type="button" onClick={() => quitarItem(idx)} style={{ border: 'none', background: 'none', cursor: 'pointer', color: 'var(--color-ink-muted)' }}>
+                    <button type="button" className={styles.deleteRowButton} onClick={() => quitarItem(idx)} title="Quitar ítem" aria-label="Quitar ítem">
                       <Trash2 size={14} />
                     </button>
                   </td>
@@ -557,7 +563,7 @@ export function CuadroComparativoBuilder({ value, onChange, proveedorUnico = fal
             </div>
 
             <div className={styles.card} style={{ overflowX: 'auto', overflowY: 'visible' }}>
-              <table className={styles.table} style={{ tableLayout: 'fixed' }}>
+              <table className={`${styles.table} ${styles.tableEditable}`} style={{ tableLayout: 'fixed' }}>
                 <thead>
                   <tr>
                     <th style={{ width: '40%' }}>Ítem</th>
@@ -592,6 +598,7 @@ export function CuadroComparativoBuilder({ value, onChange, proveedorUnico = fal
                         <input
                           type="text"
                           inputMode="numeric"
+                          className={styles.celdaInput}
                           value={formatearMiles(it.precios?.[proveedorActivo.clientId])}
                           onChange={(e) => updatePrecio(idx, proveedorActivo.clientId, soloDigitos(e.target.value))}
                           style={inputCellStyle()}

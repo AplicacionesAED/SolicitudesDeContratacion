@@ -16,7 +16,10 @@ import styles from './Solicitudes.module.css';
 
 const TIPOS_OTROSI = ['OTROSI_TIEMPO', 'OTROSI_TIEMPO_CANTIDAD'];
 
-const inputStyle = { width: '100%', border: 'none', background: 'transparent', font: 'inherit' };
+// 2026-10-20: el borde/fondo ya NO van acá -- pasaron a `styles.celdaInput`
+// (Solicitudes.module.css), que sí puede tener `:hover`/`:focus` (un
+// `style` inline no puede).
+const inputStyle = { width: '100%', font: 'inherit' };
 
 export function emptyOtrosiHistorico() {
   return { numeroOtrosi: '', tipo: 'OTROSI_TIEMPO', fechaInicio: '', fechaFin: '', valorFinal: '' };
@@ -72,7 +75,7 @@ export function OtrosisHistoricosBuilder({ value, onChange }) {
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-sm)' }}>
       <div className={styles.card} style={{ overflowX: 'auto' }}>
-        <table className={styles.table}>
+        <table className={`${styles.table} ${styles.tableEditable}`}>
           <thead>
             <tr>
               <th style={{ width: '10%' }}>N.º</th>
@@ -92,30 +95,30 @@ export function OtrosisHistoricosBuilder({ value, onChange }) {
               value.map((o, idx) => (
                 <tr key={idx}>
                   <td>
-                    <input type="text" inputMode="numeric" value={o.numeroOtrosi} onChange={(e) => updateRow(idx, 'numeroOtrosi', e.target.value.replace(/\D/g, ''))} placeholder="1" style={inputStyle} />
+                    <input type="text" inputMode="numeric" className={styles.celdaInput} value={o.numeroOtrosi} onChange={(e) => updateRow(idx, 'numeroOtrosi', e.target.value.replace(/\D/g, ''))} placeholder="1" style={inputStyle} />
                   </td>
                   <td>
-                    <select value={o.tipo} onChange={(e) => updateRow(idx, 'tipo', e.target.value)} style={inputStyle}>
+                    <select className={styles.celdaInput} value={o.tipo} onChange={(e) => updateRow(idx, 'tipo', e.target.value)} style={inputStyle}>
                       {TIPOS_OTROSI.map((t) => (
                         <option key={t} value={t}>{TIPO_SOLICITUD_LABELS[t] ?? t}</option>
                       ))}
                     </select>
                   </td>
                   <td>
-                    <input type="date" value={o.fechaInicio} onChange={(e) => updateRow(idx, 'fechaInicio', e.target.value)} style={inputStyle} />
+                    <input type="date" className={styles.celdaInput} value={o.fechaInicio} onChange={(e) => updateRow(idx, 'fechaInicio', e.target.value)} style={inputStyle} />
                   </td>
                   <td>
-                    <input type="date" value={o.fechaFin} min={o.fechaInicio || undefined} onChange={(e) => updateRow(idx, 'fechaFin', e.target.value)} style={inputStyle} />
+                    <input type="date" className={styles.celdaInput} value={o.fechaFin} min={o.fechaInicio || undefined} onChange={(e) => updateRow(idx, 'fechaFin', e.target.value)} style={inputStyle} />
                   </td>
                   <td>
                     {o.tipo === 'OTROSI_TIEMPO_CANTIDAD' ? (
-                      <input type="text" inputMode="numeric" value={formatearMiles(o.valorFinal)} onChange={(e) => updateRow(idx, 'valorFinal', soloDigitos(e.target.value))} placeholder="0" style={inputStyle} />
+                      <input type="text" inputMode="numeric" className={styles.celdaInput} value={formatearMiles(o.valorFinal)} onChange={(e) => updateRow(idx, 'valorFinal', soloDigitos(e.target.value))} placeholder="0" style={inputStyle} />
                     ) : (
                       <span style={{ color: 'var(--color-ink-muted)' }}>—</span>
                     )}
                   </td>
                   <td>
-                    <button type="button" onClick={() => removeRow(idx)} style={{ border: 'none', background: 'none', cursor: 'pointer', color: 'var(--color-ink-muted)' }}>
+                    <button type="button" className={styles.deleteRowButton} onClick={() => removeRow(idx)} title="Quitar otrosí" aria-label="Quitar otrosí">
                       <Trash2 size={14} />
                     </button>
                   </td>

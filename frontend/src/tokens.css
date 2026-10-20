@@ -65,6 +65,15 @@
   --color-surface-hover-strong: color-mix(in srgb, var(--color-primary) 17%, white);
   --color-border: color-mix(in srgb, var(--color-primary) 11%, white);
   --color-border-strong: color-mix(in srgb, var(--color-primary) 20%, white);
+  /* Borde propio de un campo de formulario -- mas oscuro que border-strong a
+     proposito (pedido explicito del usuario, 2026-10-20: "la interfaz no
+     dice donde debemos escribir"). border-strong (20%) sigue usandose tal
+     cual en botones/checkboxes/combobox/etc., sin tocar -- este token es
+     solo para el borde de Field.jsx#.control (input/select/textarea), que
+     ademas gana un fondo propio (ver .control en Field.module.css) en vez
+     de blanco liso: las dos cosas juntas son las que hacian que un campo
+     vacio se perdiera contra una tarjeta casi del mismo blanco. */
+  --color-border-input: color-mix(in srgb, var(--color-primary) 35%, white);
   --color-ink: #10151f;
   --color-ink-secondary: color-mix(in srgb, var(--color-brand-deep) 65%, #2b3341);
   --color-ink-muted: color-mix(in srgb, var(--color-brand-deep) 58%, #545e70);

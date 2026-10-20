@@ -16,25 +16,38 @@
   margin-left: 2px;
 }
 
+/* 2026-10-20, pedido explícito del usuario ("la interfaz no dice dónde
+   debemos escribir"): antes un campo vacío era fondo blanco + borde de 20%
+   de mezcla sobre una tarjeta CASI del mismo blanco (--color-surface, 3%) --
+   el contorno era lo único que lo distinguía de texto plano, y se perdía a
+   simple vista. Ahora el campo tiene fondo PROPIO (surface-sunken, el mismo
+   tono ya usado para filas zebra/hover) + un borde más oscuro
+   (--color-border-input, nuevo, ver tokens.css) -- entre las dos cosas se
+   lee como "una caja", no hace falta entrecerrar los ojos para encontrar el
+   contorno. Al enfocar, el fondo pasa a blanco puro (contraste con los
+   campos vecinos todavía sin tocar: cuál es "el que estoy llenando ahora").
+*/
 .control {
   font-family: var(--font-body);
   font-size: var(--text-body-size);
   color: var(--color-ink);
-  background: #fff;
-  border: 1px solid var(--color-border-strong);
+  background: var(--color-surface-sunken);
+  border: 1px solid var(--color-border-input);
   border-radius: var(--radius-md);
   min-height: 44px;
   padding: 0 14px;
-  transition: border-color var(--duration-fast) var(--ease-standard),
+  transition: background var(--duration-fast) var(--ease-standard),
+    border-color var(--duration-fast) var(--ease-standard),
     box-shadow var(--duration-fast) var(--ease-standard);
 }
 
 .control:hover {
-  border-color: var(--color-border-strong);
+  border-color: var(--color-primary);
 }
 
 .control:focus {
   outline: none;
+  background: #fff;
   border-color: var(--color-primary);
   box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-primary) 16%, transparent);
 }
@@ -42,6 +55,8 @@
 .control:disabled {
   color: var(--color-ink-muted);
   cursor: not-allowed;
+  background: var(--color-surface);
+  border-color: var(--color-border);
 }
 
 .invalid {

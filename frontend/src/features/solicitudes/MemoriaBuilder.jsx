@@ -79,8 +79,12 @@ const OPERADORES = [['+', '+'], ['-', '−'], ['*', '×'], ['/', '÷']];
 const TIPOS_CON_TOTAL = ['ENTERO', 'FLOAT', 'CALCULADA'];
 const TIPOS_OPERANDO_FORMULA = ['ENTERO', 'FLOAT'];
 
+// 2026-10-20: el borde/fondo ya NO van acá -- pasaron a `styles.celdaInput`
+// (Solicitudes.module.css), que sí puede tener `:hover`/`:focus` (un `style`
+// inline no puede). Las dos funciones se quedan solo con el resto del box
+// model puntual de cada control.
 function inputCellStyle(extra) {
-  return { width: '100%', border: 'none', background: 'transparent', font: 'inherit', ...extra };
+  return { width: '100%', font: 'inherit', ...extra };
 }
 
 // El encabezado (`<th>`) hereda `text-transform:uppercase`/`letter-spacing`
@@ -89,7 +93,7 @@ function inputCellStyle(extra) {
 // SÍ se sigue mostrando en mayúsculas visualmente, es solo el control de
 // edición el que necesita texto normal para no confundir).
 function headerControlStyle(extra) {
-  return { width: '100%', border: 'none', background: 'transparent', font: 'inherit', textTransform: 'none', letterSpacing: 'normal', fontWeight: 600, ...extra };
+  return { width: '100%', font: 'inherit', textTransform: 'none', letterSpacing: 'normal', fontWeight: 600, ...extra };
 }
 
 // Única fuente de verdad para el valor de una columna CALCULADA y para la
@@ -174,21 +178,21 @@ function CeldaMemoria({ columna, valor, valoresFila, onChange, soloLectura }) {
   }
   switch (columna.tipo) {
     case 'FECHA':
-      return <input type="date" value={valor ?? ''} onChange={(e) => onChange(e.target.value)} style={inputCellStyle()} />;
+      return <input type="date" className={styles.celdaInput} value={valor ?? ''} onChange={(e) => onChange(e.target.value)} style={inputCellStyle()} />;
     case 'RANGO_FECHAS': {
       const rango = valor ?? {};
       return (
         <div style={{ display: 'flex', gap: 4, alignItems: 'center', whiteSpace: 'nowrap' }}>
-          <input type="date" value={rango.inicio ?? ''} onChange={(e) => onChange({ ...rango, inicio: e.target.value })} style={inputCellStyle()} />
+          <input type="date" className={styles.celdaInput} value={rango.inicio ?? ''} onChange={(e) => onChange({ ...rango, inicio: e.target.value })} style={inputCellStyle()} />
           <span>–</span>
-          <input type="date" value={rango.fin ?? ''} onChange={(e) => onChange({ ...rango, fin: e.target.value })} style={inputCellStyle()} />
+          <input type="date" className={styles.celdaInput} value={rango.fin ?? ''} onChange={(e) => onChange({ ...rango, fin: e.target.value })} style={inputCellStyle()} />
         </div>
       );
     }
     case 'ENTERO':
-      return <input type="number" step="1" value={valor ?? ''} onChange={(e) => onChange(e.target.value === '' ? null : Number(e.target.value))} style={inputCellStyle()} />;
+      return <input type="number" step="1" className={styles.celdaInput} value={valor ?? ''} onChange={(e) => onChange(e.target.value === '' ? null : Number(e.target.value))} style={inputCellStyle()} />;
     case 'FLOAT':
-      return <input type="number" step="any" value={valor ?? ''} onChange={(e) => onChange(e.target.value === '' ? null : Number(e.target.value))} style={inputCellStyle()} />;
+      return <input type="number" step="any" className={styles.celdaInput} value={valor ?? ''} onChange={(e) => onChange(e.target.value === '' ? null : Number(e.target.value))} style={inputCellStyle()} />;
     case 'CALCULADA':
       return <span style={{ color: 'var(--color-ink-muted)' }}>{calcularValorCalculada(valoresFila, columna)}</span>;
     case 'TEXTO':
@@ -239,6 +243,7 @@ function EncabezadoColumna({ columna, columnasOperandoFormula, onCambiar, onQuit
         </span>
         <input
           type="text"
+          className={styles.celdaInput}
           value={columna.nombre}
           onChange={(e) => onCambiar('nombre', e.target.value)}
           placeholder="Nombre de la columna"
@@ -252,7 +257,7 @@ function EncabezadoColumna({ columna, columnasOperandoFormula, onCambiar, onQuit
         >
           <Settings size={13} />
         </button>
-        <button type="button" onClick={onQuitar} title="Quitar columna" style={{ border: 'none', background: 'none', cursor: 'pointer', color: 'var(--color-danger-ink)', flexShrink: 0, display: 'flex' }}>
+        <button type="button" className={styles.deleteRowButton} onClick={onQuitar} title="Quitar columna" aria-label="Quitar columna" style={{ color: 'var(--color-danger-ink)', flexShrink: 0 }}>
           <Trash2 size={13} />
         </button>
       </div>
@@ -269,25 +274,25 @@ function EncabezadoColumna({ columna, columnasOperandoFormula, onCambiar, onQuit
             textTransform: 'none', letterSpacing: 'normal', fontWeight: 400,
           }}
         >
-          <select value={columna.tipo} onChange={(e) => onCambiar('tipo', e.target.value)} style={headerControlStyle({ fontWeight: 400 })}>
+          <select className={styles.celdaInput} value={columna.tipo} onChange={(e) => onCambiar('tipo', e.target.value)} style={headerControlStyle({ fontWeight: 400 })}>
             {TIPOS_COLUMNA.map(([v, l]) => (
               <option key={v} value={v}>{l}</option>
             ))}
           </select>
           {columna.tipo === 'CALCULADA' && (
             <div style={{ display: 'flex', flexDirection: 'column', gap: 4, padding: '6px 0', borderTop: '1px solid var(--color-border)' }}>
-              <select value={columna.formulaColumnaAClientId ?? ''} onChange={(e) => onCambiar('formulaColumnaAClientId', e.target.value)} style={headerControlStyle({ fontWeight: 400 })}>
+              <select className={styles.celdaInput} value={columna.formulaColumnaAClientId ?? ''} onChange={(e) => onCambiar('formulaColumnaAClientId', e.target.value)} style={headerControlStyle({ fontWeight: 400 })}>
                 <option value="">Columna A…</option>
                 {columnasOperandoFormula.filter((x) => x.clientId !== columna.clientId).map((x) => (
                   <option key={x.clientId} value={x.clientId}>{x.nombre || '(sin nombre)'}</option>
                 ))}
               </select>
-              <select value={columna.formulaOperador ?? '*'} onChange={(e) => onCambiar('formulaOperador', e.target.value)} style={headerControlStyle({ fontWeight: 400 })}>
+              <select className={styles.celdaInput} value={columna.formulaOperador ?? '*'} onChange={(e) => onCambiar('formulaOperador', e.target.value)} style={headerControlStyle({ fontWeight: 400 })}>
                 {OPERADORES.map(([v, l]) => (
                   <option key={v} value={v}>{l}</option>
                 ))}
               </select>
-              <select value={columna.formulaColumnaBClientId ?? ''} onChange={(e) => onCambiar('formulaColumnaBClientId', e.target.value)} style={headerControlStyle({ fontWeight: 400 })}>
+              <select className={styles.celdaInput} value={columna.formulaColumnaBClientId ?? ''} onChange={(e) => onCambiar('formulaColumnaBClientId', e.target.value)} style={headerControlStyle({ fontWeight: 400 })}>
                 <option value="">Columna B…</option>
                 {columnasOperandoFormula.filter((x) => x.clientId !== columna.clientId).map((x) => (
                   <option key={x.clientId} value={x.clientId}>{x.nombre || '(sin nombre)'}</option>
@@ -400,7 +405,7 @@ export function MemoriaBuilder({ value, onChange }) {
           rediseño tipo pestañas (acá no hay una segunda dimensión natural
           para agrupar, a diferencia de proveedores en Cuadro Comparativo). */}
       <div className={styles.card} style={{ overflowX: 'auto' }}>
-        <table className={styles.table}>
+        <table className={`${styles.table} ${styles.tableEditable}`}>
           <thead>
             <tr>
               {columnas.map((c) =>
@@ -454,7 +459,7 @@ export function MemoriaBuilder({ value, onChange }) {
                     >
                       <GripVertical size={14} />
                     </span>
-                    <button type="button" onClick={() => quitarFila(f.clientId)} style={{ border: 'none', background: 'none', cursor: 'pointer', color: 'var(--color-ink-muted)' }}>
+                    <button type="button" className={styles.deleteRowButton} onClick={() => quitarFila(f.clientId)} title="Quitar fila" aria-label="Quitar fila">
                       <Trash2 size={14} />
                     </button>
                   </div>

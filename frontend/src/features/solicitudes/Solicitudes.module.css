@@ -64,6 +64,127 @@
   background: var(--color-surface-sunken);
 }
 
+/* Tabla tipo "cuadro comparativo" -- grillas densas con celdas editables
+   (CuadroComparativoBuilder/MemoriaBuilder/CronogramaBuilder/
+   OtrosisHistoricosBuilder), no un listado de solo lectura como
+   TercerosPage/SolicitudesPage (esas se quedan con .table a secas, sin
+   tocar). Pedido explícito del usuario (2026-10-20): "en el cuadro
+   comparativo... allá menos se evidencia [dónde escribir]" -- ahí las
+   celdas no tenían NI borde NI fondo (a diferencia de Field.jsx, que al
+   menos tenía un borde tenue). Fiel a que esta tabla nació de una hoja
+   Excel real: líneas de cuadrícula verticales (la horizontal ya la pone
+   `.table th, .table td` de arriba) + resaltado de la celda que se está
+   editando en vez de una caja de input permanente (que en una grilla tan
+   densa se vería como un formulario repetido, no como una hoja de
+   cálculo). */
+.tableEditable th,
+.tableEditable td {
+  border-right: 1px solid var(--color-border);
+}
+
+.tableEditable th:last-child,
+.tableEditable td:last-child {
+  border-right: none;
+}
+
+/* Reemplaza el `style={{border:'none', background:'transparent'}}` que
+   tenían estos <input>/<select> -- un estilo inline no puede tener
+   `:hover`/`:focus`, por eso pasa a esta clase. El borde base es
+   TRANSPARENTE (no `none`) para reservar el mismo 1px desde el principio --
+   si no, al aparecer en :hover/:focus movería 2px el contenido de la celda
+   (todo el proyecto usa `box-sizing: border-box`, así que ese 1px no
+   descuadra el ancho de la columna, solo le resta 1px al texto adentro). */
+.celdaInput {
+  width: 100%;
+  min-width: 0;
+  border: 1px solid transparent;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  font: inherit;
+  transition: background var(--duration-fast) var(--ease-standard),
+    border-color var(--duration-fast) var(--ease-standard);
+}
+
+.celdaInput:hover {
+  background: color-mix(in srgb, var(--color-primary) 6%, white);
+}
+
+.celdaInput:focus {
+  outline: none;
+  background: #fff;
+  border-color: var(--color-primary);
+}
+
+/* <select> dentro de una celda angosta (p. ej. "Unidad" en Cuadro
+   Comparativo, columna de solo 6% del ancho de la tabla). El bug real
+   (reporte del usuario: "el icono del select sale entre la palabra
+   selecciona") NO era la flecha nativa del SO -- `index.css` ya le pone a
+   TODO <select> del proyecto una flecha de marca propia
+   (`select:not([multiple]):not([size])`, 16px de aire a la derecha). El
+   problema era que el `padding-right` angosto de este <select> puntual
+   (pensado para un <input> de texto, no para dejarle aire a esa flecha)
+   pisaba el que la regla global reservaba, así que el texto de la opción
+   quedaba debajo del ícono. Acá se repone una flecha más chica, acorde al
+   tamaño real de la celda -- pero la regla global antes citada tiene MÁS
+   especificidad CSS que una clase sola (selector con 2 `:not()`), así que
+   sin ayuda esta clase nunca llegaba a pintarse (confirmado con
+   `getComputedStyle` en vivo: ganaba siempre la flecha azul a 16px). El
+   `:not([size])` de acá abajo es inerte en la práctica (un <select> de
+   este proyecto nunca trae ese atributo) -- está solo para igualar la
+   especificidad de la regla global y, con un selector más largo
+   (select+2 clases+1 pseudo-clase), superarla. El padding-right real que
+   le deja espacio a esta flecha sigue viniendo del `style` inline de cada
+   <select> (inputCellStyle) -- esta clase solo pone el ícono. Se suma a
+   `.celdaInput`, no lo reemplaza. */
+select.celdaInput.celdaSelect:not([size]) {
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 14 14' fill='none'%3E%3Cpath d='M3.5 5.25L7 8.75L10.5 5.25' stroke='%23767f91' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 2px center;
+  background-size: 10px 10px;
+  cursor: pointer;
+}
+
+/* Botón de icono para quitar una fila/columna de estas tablas (Cuadro
+   Comparativo, Memoria, Cronograma, Otrosís Históricos) -- 2026-10-20:
+   antes era un <button> con `style={{border:'none', background:'none',
+   color:'var(--color-ink-muted)'}}` a secas, sin ningún hover -- el icono
+   quedaba casi invisible dentro de la celda (reporte real del usuario: "no
+   se ve el icono para eliminar"). Mismo lenguaje de
+   components/ui/RowIconButtons.module.css#.iconButton/.iconButtonDanger
+   (hover rojo = acción destructiva), duplicado acá a propósito -- este
+   archivo no importa CSS Modules de otro componente. */
+.deleteRowButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border: none;
+  border-radius: var(--radius-sm);
+  background: none;
+  color: var(--color-ink-muted);
+  cursor: pointer;
+  transition: background-color var(--duration-fast) var(--ease-standard),
+    color var(--duration-fast) var(--ease-standard);
+}
+
+.deleteRowButton:hover {
+  background: var(--color-danger-surface);
+  color: var(--color-danger-ink);
+}
+
+.deleteRowButton:disabled {
+  color: var(--color-border-strong);
+  cursor: not-allowed;
+}
+
+.deleteRowButton:disabled:hover {
+  background: none;
+}
+
 .emptyState {
   padding: var(--space-lg);
   color: var(--color-ink-muted);
@@ -649,6 +770,11 @@
   visibility: hidden;
   grid-area: 1 / 1 / 2 / 2;
   font: inherit;
+  /* Repite el MISMO borde que .growWrap > textarea de abajo (2026-10-20) --
+     si no calzan exacto, el alto medido por este pseudo-elemento queda 2px
+     corto respecto al textarea real (mismo criterio documentado arriba:
+     cualquier diferencia de box model entre los dos rompe la medición). */
+  border: 1px solid transparent;
 }
 
 .growWrap > textarea {
@@ -657,9 +783,26 @@
   overflow: hidden;
   width: 100%;
   word-break: break-word;
-  border: none;
+  border: 1px solid transparent;
+  border-radius: var(--radius-sm);
   background: transparent;
   font: inherit;
   padding: 0;
   margin: 0;
+  transition: background var(--duration-fast) var(--ease-standard),
+    border-color var(--duration-fast) var(--ease-standard);
+}
+
+/* Mismo resaltado que .celdaInput (ver más arriba) -- este textarea vive en
+   la misma clase de celdas densas (CeldaTextoLargo, compartida por
+   CuadroComparativoBuilder y MemoriaBuilder), antes tampoco tenía ni borde
+   ni fondo. */
+.growWrap > textarea:hover {
+  background: color-mix(in srgb, var(--color-primary) 6%, white);
+}
+
+.growWrap > textarea:focus {
+  outline: none;
+  background: #fff;
+  border-color: var(--color-primary);
 }

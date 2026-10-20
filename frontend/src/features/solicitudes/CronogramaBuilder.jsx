@@ -50,7 +50,7 @@ function ActividadesTable({ actividades, onChange, minDate, maxDate }) {
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-sm)' }}>
       <div className={styles.card} style={{ overflowX: 'auto' }}>
-        <table className={styles.table}>
+        <table className={`${styles.table} ${styles.tableEditable}`}>
           <thead>
             <tr>
               <th style={{ width: '50%' }}>Descripción</th>
@@ -65,20 +65,21 @@ function ActividadesTable({ actividades, onChange, minDate, maxDate }) {
                 <td>
                   <input
                     type="text"
+                    className={styles.celdaInput}
                     value={act.descripcion}
                     onChange={(e) => updateRow(idx, 'descripcion', e.target.value)}
                     placeholder="Descripción de la actividad"
-                    style={{ width: '100%', border: 'none', background: 'transparent', font: 'inherit' }}
+                    style={{ width: '100%', font: 'inherit' }}
                   />
                 </td>
                 <td>
-                  <input type="date" value={act.fechaInicio} min={minDate} max={maxDate} onChange={(e) => updateRow(idx, 'fechaInicio', e.target.value)} style={{ border: 'none', background: 'transparent', font: 'inherit' }} />
+                  <input type="date" className={styles.celdaInput} value={act.fechaInicio} min={minDate} max={maxDate} onChange={(e) => updateRow(idx, 'fechaInicio', e.target.value)} style={{ font: 'inherit' }} />
                 </td>
                 <td>
-                  <input type="date" value={act.fechaFin} min={act.fechaInicio || minDate} max={maxDate} onChange={(e) => updateRow(idx, 'fechaFin', e.target.value)} style={{ border: 'none', background: 'transparent', font: 'inherit' }} />
+                  <input type="date" className={styles.celdaInput} value={act.fechaFin} min={act.fechaInicio || minDate} max={maxDate} onChange={(e) => updateRow(idx, 'fechaFin', e.target.value)} style={{ font: 'inherit' }} />
                 </td>
                 <td>
-                  <button type="button" onClick={() => removeRow(idx)} disabled={actividades.length <= 1} style={{ border: 'none', background: 'none', cursor: actividades.length <= 1 ? 'not-allowed' : 'pointer', color: 'var(--color-ink-muted)' }}>
+                  <button type="button" className={styles.deleteRowButton} onClick={() => removeRow(idx)} disabled={actividades.length <= 1} title="Quitar actividad" aria-label="Quitar actividad">
                     <Trash2 size={14} />
                   </button>
                 </td>
