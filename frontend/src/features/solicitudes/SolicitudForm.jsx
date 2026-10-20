@@ -8,7 +8,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { CheckCircle2, Circle } from 'lucide-react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../../auth/AuthContext.jsx';
-import { numeroALetras, categoriaSlug, tipoContratoLabel, formatCurrency } from '../../utils/solicitudes.js';
+import { numeroALetras, categoriaSlug, tipoContratoLabel, formatCurrency, LIMITE_ORDEN_SERVICIO_DIRECTA } from '../../utils/solicitudes.js';
 import { listFrentes } from '../../api/frentes.js';
 import { listTerceros } from '../../api/terceros.js';
 import { createSolicitud, updateSolicitud, cambiarEstado, guardarCronograma, guardarCuadroComparativo, guardarMemoria, completarHistorico, importarHistorico } from '../../api/solicitudes.js';
@@ -213,17 +213,44 @@ export function SolicitudForm({ tipoSolicitud, categoria, isEdit = false, initia
   // solo calcula `form.valorFinal`/`valorEnLetras` para que buildPayload()
   // los mande al guardar. Se redondea al peso porque el resto del backend
   // guarda `valor_final` como un entero, no un decimal.
-  const costoTotalCuadro = useMemo(() => {
+  // Fuente única para los totales del proveedor seleccionado -- antes
+  // `costoTotalCuadro` repetía a mano la misma búsqueda de "proveedor
+  // seleccionado" que ya hace calcularTotalesProveedor(); ahora el "sin IVA"
+  // (2026-10-20, ver más abajo) la reusa tal cual, sin duplicar el criterio.
+  const totalesCuadroSeleccionado = useMemo(() => {
     const proveedor = cuadroComparativo.proveedores.find((p) => p.seleccionado) ?? cuadroComparativo.proveedores[0];
-    if (!proveedor || cuadroComparativo.items.length === 0) return 0;
-    return calcularTotalesProveedor(cuadroComparativo.items, proveedor).costoTotal;
+    if (!proveedor || cuadroComparativo.items.length === 0) return null;
+    return calcularTotalesProveedor(cuadroComparativo.items, proveedor);
   }, [cuadroComparativo]);
+
+  const costoTotalCuadro = totalesCuadroSeleccionado?.costoTotal ?? 0;
+  // "Valor sin IVA" para el resumen (2026-10-20, pedido explícito) -- el
+  // Cuadro Comparativo solo cobra IVA sobre la Utilidad (AIU), nunca sobre el
+  // subtotal completo -- "sin IVA" es el costo total menos esa única
+  // porción, no una resta del 19% sobre todo. Mismas 2 cifras que ya
+  // desglosa la pestaña de cada proveedor en CuadroComparativoBuilder.jsx.
+  const valorSinIvaCuadro = totalesCuadroSeleccionado ? totalesCuadroSeleccionado.costoTotal - totalesCuadroSeleccionado.ivaUtilidad : 0;
 
   useEffect(() => {
     setForm((prev) => ({ ...prev, valorFinal: costoTotalCuadro > 0 ? String(Math.round(costoTotalCuadro)) : '' }));
   }, [costoTotalCuadro]);
 
   const valorEnLetras = form.valorFinal > 0 ? numeroALetras(Number(form.valorFinal)) : '';
+
+  // "Orden de Servicio en Directa solo para valores < $50.000.000" (pedido
+  // explícito del usuario, 2026-10-20) -- por encima del tope, el negocio
+  // exige un proceso de licitación en vez de una Orden de Servicio simple.
+  // Acotado a DIRECTA+ORDEN_SERVICIO, confirmado con el usuario -- Indirecta
+  // no tiene este tope. Se compara contra `costoTotalCuadro` (CON IVA sobre
+  // utilidad, el mismo que ya alimenta form.valorFinal), no contra el
+  // subtotal sin IVA. El backend (solicitud.estado.js) repite esta misma
+  // regla al ENVIAR -- esto acá es para bloquear el botón y avisar antes de
+  // intentarlo, no la única puerta.
+  const aplicaTopeOrdenServicio = tipoSolicitud === 'ORDEN_SERVICIO' && categoriaEfectiva === 'DIRECTA';
+  const superaTopeOrdenServicio = aplicaTopeOrdenServicio && costoTotalCuadro >= LIMITE_ORDEN_SERVICIO_DIRECTA;
+  const mensajeTopeOrdenServicio = superaTopeOrdenServicio
+    ? `Esta Orden de Servicio (${formatCurrency(Math.round(costoTotalCuadro))}) supera el tope de ${formatCurrency(LIMITE_ORDEN_SERVICIO_DIRECTA)} permitido para este tipo de solicitud. Un valor igual o superior amerita un proceso de licitación -- no se puede enviar como Orden de Servicio.`
+    : '';
 
   // Compartido entre el auto-generado del asunto, buildPayload() (para
   // resolver proyectoId), y la sección "Formato de Solicitud" (Área/frente +
@@ -328,6 +355,7 @@ export function SolicitudForm({ tipoSolicitud, categoria, isEdit = false, initia
         // (única visible), no en un campo que ya no existe en pantalla.
         nuevos.cuadroComparativo = 'El Costo Total del Cuadro Comparativo debe ser mayor a $0 -- revisa los precios y cantidades cargados ahí.';
       }
+      if (superaTopeOrdenServicio) nuevos.topeOrdenServicio = mensajeTopeOrdenServicio;
       if (!form.archivoCotizacion.trim()) nuevos.archivoCotizacion = 'La cotización es obligatoria';
       if (form.tipoContrato === 'DISENO' && !form.archivoPreBEP.trim()) nuevos.archivoPreBEP = 'El PreBEP es obligatorio para contratos de diseño';
     }
@@ -472,6 +500,7 @@ export function SolicitudForm({ tipoSolicitud, categoria, isEdit = false, initia
     { ok: Boolean(form.archivoCotizacion.trim()), label: 'Cotización (PDF)', ancla: 'sec-docs' },
     ...(form.tipoContrato === 'DISENO' ? [{ ok: Boolean(form.archivoPreBEP.trim()), label: 'PreBEP (PDF)', ancla: 'sec-docs' }] : []),
     { ok: Boolean(form.asunto.trim()), label: 'Asunto', ancla: 'sec-asunto' },
+    { ok: Boolean(form.alcance.trim()), label: 'Alcance', ancla: 'sec-formato' },
     ...(categoriaEfectiva === 'INDIRECTA' ? [{ ok: actividadesCronograma.length > 0 && actividadesCronograma.every((a) => a.descripcion.trim().length > 0), label: 'Cronograma', ancla: 'sec-cronograma' }] : []),
   ];
   const completados = requisitosEnvio.filter((r) => r.ok).length;
@@ -595,6 +624,12 @@ export function SolicitudForm({ tipoSolicitud, categoria, isEdit = false, initia
           nombreProveedorUnico={terceroSeleccionado?.razonSocial ?? ''}
         />
         {errores.cuadroComparativo && <p style={{ color: 'var(--color-danger-ink)', fontSize: 'var(--text-data-size)' }}>{errores.cuadroComparativo}</p>}
+        {/* "Orden de Servicio en Directa solo para < $50.000.000" --
+            pedido explícito del usuario (2026-10-20). Se muestra EN VIVO
+            (no solo tras intentar enviar, como errores.* arriba) para que
+            la persona se entere apenas el Cuadro Comparativo cruza el tope,
+            mientras sigue editando. */}
+        {superaTopeOrdenServicio && <p className={styles.errorBanner} style={{ marginTop: 8 }}>{mensajeTopeOrdenServicio}</p>}
       </div>
 
       {/* Solo Solicitudes Directas por ahora (pedido explícito del
@@ -632,7 +667,7 @@ export function SolicitudForm({ tipoSolicitud, categoria, isEdit = false, initia
           (CONTRATANTE_NOMBRE/CONTRATANTE_NIT) -- acá solo se hacen
           visibles (de solo lectura), no editables, pedido explícito del
           usuario de no cambiar ese comportamiento. */}
-      <div className={styles.section}>
+      <div id="sec-formato" className={styles.section}>
         <h2 className={styles.sectionTitle} style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
           Formato de Solicitud
           <Badge variant="info">Opcional</Badge>
@@ -800,7 +835,14 @@ export function SolicitudForm({ tipoSolicitud, categoria, isEdit = false, initia
           <dl className={f.resumen}>
             <div><dt>Contratista</dt><dd>{terceroSeleccionado?.razonSocial ?? '—'}</dd></div>
             <div><dt>Frente(s)</dt><dd>{frentesSeleccionados.map((fr) => fr.nombre).join(', ') || '—'}</dd></div>
-            <div><dt>Valor (IVA incluido)</dt><dd>{costoTotalCuadro > 0 ? formatCurrency(Math.round(costoTotalCuadro)) : '—'}</dd></div>
+            {/* "Que salgan los valores con IVA y sin IVA" -- pedido
+                explícito del usuario (2026-10-20). "Sin IVA" = el costo
+                total menos el IVA sobre la Utilidad (ver
+                valorSinIvaCuadro más arriba) -- el Cuadro Comparativo nunca
+                cobra IVA sobre el subtotal completo, solo sobre esa
+                porción. */}
+            <div><dt>Valor sin IVA</dt><dd>{costoTotalCuadro > 0 ? formatCurrency(Math.round(valorSinIvaCuadro)) : '—'}</dd></div>
+            <div><dt>Valor con IVA</dt><dd>{costoTotalCuadro > 0 ? formatCurrency(Math.round(costoTotalCuadro)) : '—'}</dd></div>
           </dl>
         </div>
       </aside>

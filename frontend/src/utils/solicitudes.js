@@ -241,6 +241,13 @@ export function numeroALetras(valor) {
   return resultado + ' PESOS M/CTE';
 }
 
+// "Orden de Servicio en Directa solo para valores < $50.000.000" -- pedido
+// explícito del usuario (2026-10-20). Por encima del tope amerita un proceso
+// de licitación, no una Orden de Servicio simple. El backend
+// (solicitud.estado.js) repite este mismo valor literal -- no puede importar
+// código del frontend.
+export const LIMITE_ORDEN_SERVICIO_DIRECTA = 50000000;
+
 export function formatCurrency(value) {
   if (value === null || value === undefined) return '$0';
   const num = typeof value === 'string' ? parseFloat(value) : Number(value);
