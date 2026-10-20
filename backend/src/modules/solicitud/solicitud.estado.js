@@ -33,6 +33,15 @@ const CuadroComparativoItem = require('./cuadroComparativoItem.model');
 // puramente de frontend) que frontend/src/utils/solicitudes.js#tipoContratoLabel/
 // SolicitudForm.jsx#tiposContratoDisponibles -- el backend no puede importar
 // código del frontend, se repite acá.
+// 2026-10-20 "Orden de Servicio en Directa solo para < $50.000.000, por
+// encima amerita licitación" -- mismo criterio que
+// frontend/src/utils/solicitudes.js#LIMITE_ORDEN_SERVICIO_DIRECTA (el
+// backend no puede importar código del frontend, se repite acá).
+const LIMITE_ORDEN_SERVICIO_DIRECTA = 50000000;
+function formatearPesos(valor) {
+  return new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP', maximumFractionDigits: 0 }).format(valor);
+}
+
 const TIPOS_CONTRATO_VALIDOS_POR_CATEGORIA = {
   // 2026-09-21 "agregar 5 tipos de contrato nuevos para DIRECTA" -- Suministro
   // de Materiales, Mano de Obra, Servicios, Transporte y Alquiler, con los
@@ -139,6 +148,19 @@ const cambiarEstado = asyncHandler(async (req, res) => {
       if (!cuadro || !cuadro.proveedores?.length || !cuadro.items?.length) {
         throw new ApiError(400, 'El cuadro comparativo (al menos un proveedor y un ítem) es obligatorio para enviar');
       }
+    }
+
+    // "Orden de Servicio en Directa solo para valores < $50.000.000" --
+    // pedido explícito del usuario (2026-10-20): por encima del tope, el
+    // negocio exige un proceso de licitación en vez de una Orden de
+    // Servicio simple. Acotado a DIRECTA+ORDEN_SERVICIO (confirmado con el
+    // usuario) -- Indirecta no tiene este tope. Se compara contra
+    // `valor_final` CON IVA (sobre utilidad) -- el mismo valor que ya
+    // calcula el Cuadro Comparativo y que el frontend valida en espejo
+    // (SolicitudForm.jsx), esto es la defensa en profundidad del lado del
+    // servidor por si alguien se salta el formulario.
+    if (solicitud.tipo === 'ORDEN_SERVICIO' && solicitud.categoria === 'DIRECTA' && Number(solicitud.valor_final) >= LIMITE_ORDEN_SERVICIO_DIRECTA) {
+      throw new ApiError(400, `El valor de esta Orden de Servicio supera el tope de ${formatearPesos(LIMITE_ORDEN_SERVICIO_DIRECTA)} permitido para este tipo de solicitud. Un valor igual o superior requiere adelantar un proceso de licitación; no es posible enviarla como Orden de Servicio.`);
     }
   }
 
