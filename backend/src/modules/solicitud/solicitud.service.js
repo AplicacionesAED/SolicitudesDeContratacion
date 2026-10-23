@@ -385,6 +385,7 @@ function _enrichMemoria(m) {
     titulo: m.titulo,
     // Se vuelve a limpiar al salir: el frontend inserta este HTML tal cual en la página.
     contenidoHtml: m.contenido_html ? sanitizarTablaHtml(m.contenido_html) : null,
+    imagenes: m.imagenes ?? [],
     columnas: (m.columnas ?? []).map((c) => ({
       id: c.id,
       nombre: c.nombre,

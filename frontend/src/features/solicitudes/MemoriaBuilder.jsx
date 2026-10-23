@@ -127,7 +127,7 @@ export function calcularTotalColumna(filas, columna) {
 // revoke al desmontar/cambiar para no filtrar memoria. Funciona igual en
 // dev (cross-origin) y en producción (mismo contenedor, incluso si ahí sí
 // hubiera funcionado un <img src> directo).
-export function ImagenAutenticada({ url, alt }) {
+export function ImagenAutenticada({ url, alt, estilo }) {
   const [blobUrl, setBlobUrl] = useState(null);
 
   useEffect(() => {
@@ -156,7 +156,7 @@ export function ImagenAutenticada({ url, alt }) {
 
   if (!url) return null;
   if (!blobUrl) return <span style={{ fontSize: 'var(--text-label-size)', color: 'var(--color-ink-muted)' }}>Cargando imagen…</span>;
-  return <img src={blobUrl} alt={alt ?? ''} style={{ maxWidth: 140, maxHeight: 120, display: 'block', borderRadius: 'var(--radius-sm)', objectFit: 'cover' }} />;
+  return <img src={blobUrl} alt={alt ?? ''} style={{ maxWidth: 140, maxHeight: 120, display: 'block', borderRadius: 'var(--radius-sm)', objectFit: 'cover', ...estilo }} />;
 }
 
 function CeldaMemoria({ columna, valor, valoresFila, onChange, soloLectura }) {

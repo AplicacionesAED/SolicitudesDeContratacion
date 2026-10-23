@@ -31,6 +31,7 @@ async function organizarArchivos(solicitudId) {
     const ids = idsDriveEn(COLUMNAS_ARCHIVO.map((c) => solicitud[c]));
     const memoria = await Memoria.findOne({ where: { solicitud_id: solicitud.id } });
     if (memoria) {
+      ids.push(...idsDriveEn(memoria.imagenes ?? []));
       const filas = await MemoriaFila.findAll({ where: { memoria_id: memoria.id } });
       for (const f of filas) ids.push(...idsDriveEn(Object.values(f.valores ?? {})));
     }

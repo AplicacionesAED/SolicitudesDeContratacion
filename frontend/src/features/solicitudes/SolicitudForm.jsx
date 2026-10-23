@@ -163,7 +163,9 @@ export function SolicitudForm({ tipoSolicitud, categoria, isEdit = false, initia
   // detalle y se reemplaza si se pega una tabla nueva.
   const [memoriaHtml, setMemoriaHtml] = useState(initialData?.memoria?.contenidoHtml ?? '');
   const memoriaHtmlInicial = initialData?.memoria?.contenidoHtml ?? '';
-  const memoriaFormatoAnterior = !memoriaHtmlInicial && (initialData?.memoria?.filas?.length ?? 0) > 0;
+  const imagenesIniciales = initialData?.memoria?.imagenes ?? [];
+  const [memoriaImagenes, setMemoriaImagenes] = useState(imagenesIniciales);
+  const memoriaFormatoAnterior = !memoriaHtmlInicial && imagenesIniciales.length === 0 && (initialData?.memoria?.filas?.length ?? 0) > 0;
   // Otrosís históricos a importar junto con el contrato (2026-09-28, pedido
   // explícito) -- solo CONTRATO (nunca Orden de Servicio, que no admite
   // otrosí, ver el gate más abajo). No hay forma de persistir esto como
@@ -324,9 +326,11 @@ export function SolicitudForm({ tipoSolicitud, categoria, isEdit = false, initia
   async function guardarMemoriaSiAplica(solicitudId) {
     if (categoriaEfectiva !== 'DIRECTA') return true;
     // Sin cambios no se llama: una memoria vieja sin tabla nueva se conserva, y una solicitud sin memoria no crea nada.
-    if (memoriaHtml === memoriaHtmlInicial || (!memoriaHtml && !memoriaHtmlInicial)) return true;
+    const sinCambios = memoriaHtml === memoriaHtmlInicial && JSON.stringify(memoriaImagenes) === JSON.stringify(imagenesIniciales);
+    const sinMemoria = !memoriaHtml && memoriaImagenes.length === 0 && !memoriaHtmlInicial && imagenesIniciales.length === 0;
+    if (sinCambios || sinMemoria) return true;
     try {
-      await guardarMemoria(solicitudId, { contenidoHtml: memoriaHtml });
+      await guardarMemoria(solicitudId, { contenidoHtml: memoriaHtml, imagenes: memoriaImagenes });
       return true;
     } catch (err) {
       setError(err.message ?? 'Error al guardar la memoria');
@@ -644,7 +648,7 @@ export function SolicitudForm({ tipoSolicitud, categoria, isEdit = false, initia
       {categoriaEfectiva === 'DIRECTA' && (
         <div className={styles.section}>
           <h2 className={styles.sectionTitle}>Memoria</h2>
-          <MemoriaTablaEditor value={memoriaHtml} onChange={setMemoriaHtml} avisoFormatoAnterior={memoriaFormatoAnterior} />
+          <MemoriaTablaEditor value={memoriaHtml} onChange={setMemoriaHtml} imagenes={memoriaImagenes} onImagenesChange={setMemoriaImagenes} avisoFormatoAnterior={memoriaFormatoAnterior} />
         </div>
       )}
 

@@ -5,9 +5,15 @@
 // el padre persiste vía guardarMemoria. Las celdas se pueden corregir con un
 // clic. La limpieza vive en utils/memoriaTabla.js (el backend la repite).
 import { useEffect, useMemo, useRef, useState } from 'react';
+import { Trash2 } from 'lucide-react';
 import { Button } from '../../components/ui/Button.jsx';
+import { subirArchivo } from '../../api/upload.js';
+import { ImagenAutenticada } from './MemoriaBuilder.jsx';
 import { sanitizarTabla, tablaDesdePortapapeles, MAX_CELDAS } from '../../utils/memoriaTabla.js';
+import buttonStyles from '../../components/ui/Button.module.css';
 import styles from './Solicitudes.module.css';
+
+export const MAX_IMAGENES_MEMORIA = 3;
 
 function kb(bytes) {
   return `${(bytes / 1024).toFixed(1).replace('.', ',')} KB`;
@@ -25,7 +31,9 @@ function htmlDeHoja(hoja) {
   return c.outerHTML;
 }
 
-export function MemoriaTablaEditor({ value = '', onChange, avisoFormatoAnterior = false }) {
+export function MemoriaTablaEditor({ value = '', onChange, imagenes = [], onImagenesChange, avisoFormatoAnterior = false }) {
+  const [subiendo, setSubiendo] = useState(false);
+  const [errorImagen, setErrorImagen] = useState('');
   const [compact, setCompact] = useState(true);
   const [aviso, setAviso] = useState(null);
   const [grid, setGrid] = useState(false);
@@ -112,6 +120,30 @@ export function MemoriaTablaEditor({ value = '', onChange, avisoFormatoAnterior 
     if (res && !res.tooBig) emitir(res.html);
   }
 
+  async function agregarImagenes(e) {
+    const archivos = Array.from(e.target.files ?? []);
+    e.target.value = ''; // permite volver a elegir el mismo archivo si falla
+    if (archivos.length === 0) return;
+    const cupo = MAX_IMAGENES_MEMORIA - imagenes.length;
+    setErrorImagen(archivos.length > cupo ? `Solo caben ${MAX_IMAGENES_MEMORIA} imágenes en total; se agregaron las primeras ${cupo}.` : '');
+    setSubiendo(true);
+    const nuevas = [];
+    try {
+      for (const f of archivos.slice(0, cupo)) {
+        if (!f.type.startsWith('image/')) {
+          setErrorImagen(`"${f.name}" no es una imagen.`);
+          continue;
+        }
+        nuevas.push((await subirArchivo(f)).url);
+      }
+    } catch (err) {
+      setErrorImagen(err.message ?? 'Error al subir la imagen');
+    } finally {
+      setSubiendo(false);
+      if (nuevas.length > 0) onImagenesChange([...imagenes, ...nuevas]);
+    }
+  }
+
   function quitar() {
     origen.current = null;
     editado.current = false;
@@ -181,15 +213,57 @@ export function MemoriaTablaEditor({ value = '', onChange, avisoFormatoAnterior 
         />
         {!value && <p className={styles.memoriaVacia}>Todavía no hay tabla. Pega un rango de Excel en el recuadro de arriba.</p>}
       </div>
+
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-sm)' }}>
+        <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: 'var(--space-md)' }}>
+          <strong style={{ fontSize: 'var(--text-data-size)' }}>Imágenes ({imagenes.length}/{MAX_IMAGENES_MEMORIA})</strong>
+          <label>
+            <span className={`${buttonStyles.button} ${buttonStyles.secondary}`} style={{ cursor: imagenes.length >= MAX_IMAGENES_MEMORIA || subiendo ? 'not-allowed' : 'pointer', opacity: imagenes.length >= MAX_IMAGENES_MEMORIA || subiendo ? 0.5 : 1 }}>
+              {subiendo ? 'Subiendo…' : 'Agregar imagen'}
+            </span>
+            <input type="file" accept="image/*" multiple hidden onChange={agregarImagenes} disabled={imagenes.length >= MAX_IMAGENES_MEMORIA || subiendo} />
+          </label>
+          <span style={{ color: 'var(--color-ink-muted)', fontSize: 'var(--text-data-size)' }}>Máximo {MAX_IMAGENES_MEMORIA}. Las imágenes de Excel no se pegan con la tabla: súbelas aquí.</span>
+        </div>
+        {errorImagen && <p className={styles.errorBanner}>{errorImagen}</p>}
+        {imagenes.length > 0 && (
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 'var(--space-md)' }}>
+            {imagenes.map((url, i) => (
+              <div key={url} style={{ position: 'relative' }}>
+                <ImagenAutenticada url={url} alt={`Imagen ${i + 1} de la memoria`} estilo={{ maxWidth: 200, maxHeight: 160 }} />
+                <button
+                  type="button"
+                  aria-label={`Quitar imagen ${i + 1}`}
+                  onClick={() => onImagenesChange(imagenes.filter((u) => u !== url))}
+                  style={{ position: 'absolute', top: 4, right: 4, display: 'inline-flex', padding: 4, border: 'none', borderRadius: 'var(--radius-sm)', background: 'var(--color-surface)', color: 'var(--color-danger-ink)', cursor: 'pointer' }}
+                >
+                  <Trash2 size={14} />
+                </button>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
     </div>
   );
 }
 
 // Vista de solo lectura (detalle de la solicitud). El HTML ya viene limpio del backend.
-export function MemoriaTablaVista({ html }) {
+export function MemoriaTablaVista({ html, imagenes = [] }) {
   return (
-    <div className={styles.memoriaHojaBox}>
-      <div className={styles.memoriaHoja} dangerouslySetInnerHTML={{ __html: html }} />
-    </div>
+    <>
+      {html && (
+        <div className={styles.memoriaHojaBox}>
+          <div className={styles.memoriaHoja} dangerouslySetInnerHTML={{ __html: html }} />
+        </div>
+      )}
+      {imagenes.length > 0 && (
+        <div style={{ display: 'flex', flexWrap: 'wrap', gap: 'var(--space-md)' }}>
+          {imagenes.map((url, i) => (
+            <ImagenAutenticada key={url} url={url} alt={`Imagen ${i + 1} de la memoria`} estilo={{ maxWidth: 360, maxHeight: 280, width: 'auto' }} />
+          ))}
+        </div>
+      )}
+    </>
   );
 }

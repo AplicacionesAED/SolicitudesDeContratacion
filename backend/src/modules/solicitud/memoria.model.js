@@ -14,6 +14,8 @@ const Memoria = sequelize.define(
     titulo: { type: DataTypes.STRING(300), allowNull: true },
     // Tabla pegada desde Excel (HTML ya limpio). Las memorias viejas usan columnas/filas y lo dejan en null.
     contenido_html: { type: DataTypes.TEXT, allowNull: true },
+    // Hasta 3 imágenes de apoyo: lista de URLs `/files/drive/<id>`.
+    imagenes: { type: DataTypes.JSONB, allowNull: false, defaultValue: [] },
   },
   { tableName: 'memorias', underscored: true, createdAt: 'creado_en', updatedAt: false }
 );
