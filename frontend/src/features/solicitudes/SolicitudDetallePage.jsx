@@ -31,6 +31,7 @@ import {
   CAMPOS_AIU,
 } from './CuadroComparativoBuilder.jsx';
 import { calcularValorCalculada, calcularTotalColumna, ImagenAutenticada, normalizarMemoria } from './MemoriaBuilder.jsx';
+import { MemoriaTablaVista } from './MemoriaTablaEditor.jsx';
 import { BackLink } from '../../components/ui/BackLink.jsx';
 import { Button } from '../../components/ui/Button.jsx';
 import styles from './Solicitudes.module.css';
@@ -127,7 +128,7 @@ export function SolicitudDetallePage() {
   const SECCIONES = [
     { key: 'resumen', label: 'Resumen', visible: true },
     { key: 'cuadro', label: 'Cuadro comparativo', visible: solicitud.cuadroComparativo?.items?.length > 0 },
-    { key: 'memoria', label: 'Memoria', visible: solicitud.categoria === 'DIRECTA' && solicitud.memoria?.filas?.length > 0 },
+    { key: 'memoria', label: 'Memoria', visible: solicitud.categoria === 'DIRECTA' && (!!solicitud.memoria?.contenidoHtml || solicitud.memoria?.filas?.length > 0) },
     { key: 'cronograma', label: 'Cronograma', visible: Boolean(solicitud.cronograma) },
     { key: 'documentos', label: 'Documentos', visible: (ARCHIVOS_LABELS.filter(([c]) => solicitud[c]).length + (solicitud.archivosAnexos?.length ?? 0)) > 0, cuenta: ARCHIVOS_LABELS.filter(([c]) => solicitud[c]).length + (solicitud.archivosAnexos?.length ?? 0) },
   ].filter((x) => x.visible);
@@ -610,7 +611,16 @@ export function SolicitudDetallePage() {
           calcularValorCalculada/calcularTotalColumna/ImagenAutenticada
           (importados tal cual de MemoriaBuilder.jsx, misma fuente de
           verdad que la vista de edición). */}
-      {solicitud.categoria === 'DIRECTA' && solicitud.memoria?.filas?.length > 0 && (() => {
+      {/* Memoria nueva: tabla pegada desde Excel (HTML ya limpio por el
+          backend). Abajo queda el render de las memorias viejas
+          (columnas/filas), que ya no se pueden crear. */}
+      {solicitud.categoria === 'DIRECTA' && solicitud.memoria?.contenidoHtml && (
+        <div className={styles.section}>
+          <h2 className={styles.sectionTitle}>Memoria</h2>
+          <MemoriaTablaVista html={solicitud.memoria.contenidoHtml} />
+        </div>
+      )}
+      {solicitud.categoria === 'DIRECTA' && !solicitud.memoria?.contenidoHtml && solicitud.memoria?.filas?.length > 0 && (() => {
         const { titulo, columnas, filas } = normalizarMemoria(solicitud.memoria);
         const columnasConTotal = columnas.filter((c) => ['ENTERO', 'FLOAT', 'CALCULADA'].includes(c.tipo) && c.mostrarTotal);
         return (

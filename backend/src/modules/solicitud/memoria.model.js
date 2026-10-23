@@ -12,6 +12,8 @@ const Memoria = sequelize.define(
     id: { type: DataTypes.INTEGER, autoIncrement: true, primaryKey: true },
     solicitud_id: { type: DataTypes.INTEGER, allowNull: false, unique: true },
     titulo: { type: DataTypes.STRING(300), allowNull: true },
+    // Tabla pegada desde Excel (HTML ya limpio). Las memorias viejas usan columnas/filas y lo dejan en null.
+    contenido_html: { type: DataTypes.TEXT, allowNull: true },
   },
   { tableName: 'memorias', underscored: true, createdAt: 'creado_en', updatedAt: false }
 );

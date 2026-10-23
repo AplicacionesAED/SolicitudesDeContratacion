@@ -14,7 +14,7 @@ import { listTerceros } from '../../api/terceros.js';
 import { createSolicitud, updateSolicitud, cambiarEstado, guardarCronograma, guardarCuadroComparativo, guardarMemoria, completarHistorico, importarHistorico } from '../../api/solicitudes.js';
 import { CronogramaBuilder } from './CronogramaBuilder.jsx';
 import { CuadroComparativoBuilder, normalizarCuadroComparativo, calcularTotalesProveedor } from './CuadroComparativoBuilder.jsx';
-import { MemoriaBuilder, normalizarMemoria } from './MemoriaBuilder.jsx';
+import { MemoriaTablaEditor } from './MemoriaTablaEditor.jsx';
 import { OtrosisHistoricosBuilder, validarOtrosisHistoricos } from './OtrosisHistoricosBuilder.jsx';
 import { BackLink } from '../../components/ui/BackLink.jsx';
 import { Badge } from '../../components/ui/Badge.jsx';
@@ -158,7 +158,12 @@ export function SolicitudForm({ tipoSolicitud, categoria, isEdit = false, initia
   // Memoria: solo para Solicitudes Directas por ahora (pedido explícito del
   // usuario), ver la sección "Memoria" más abajo, gateada por
   // categoriaEfectiva.
-  const [memoria, setMemoria] = useState(() => normalizarMemoria(initialData?.memoria));
+  // La Memoria es una tabla pegada desde Excel, guardada como HTML. Una
+  // memoria vieja (columnas/filas, sin HTML) no se edita: se muestra en el
+  // detalle y se reemplaza si se pega una tabla nueva.
+  const [memoriaHtml, setMemoriaHtml] = useState(initialData?.memoria?.contenidoHtml ?? '');
+  const memoriaHtmlInicial = initialData?.memoria?.contenidoHtml ?? '';
+  const memoriaFormatoAnterior = !memoriaHtmlInicial && (initialData?.memoria?.filas?.length ?? 0) > 0;
   // Otrosís históricos a importar junto con el contrato (2026-09-28, pedido
   // explícito) -- solo CONTRATO (nunca Orden de Servicio, que no admite
   // otrosí, ver el gate más abajo). No hay forma de persistir esto como
@@ -317,9 +322,11 @@ export function SolicitudForm({ tipoSolicitud, categoria, isEdit = false, initia
   }
 
   async function guardarMemoriaSiAplica(solicitudId) {
-    if (categoriaEfectiva !== 'DIRECTA' || memoria.filas.length === 0) return true;
+    if (categoriaEfectiva !== 'DIRECTA') return true;
+    // Sin cambios no se llama: una memoria vieja sin tabla nueva se conserva, y una solicitud sin memoria no crea nada.
+    if (memoriaHtml === memoriaHtmlInicial || (!memoriaHtml && !memoriaHtmlInicial)) return true;
     try {
-      await guardarMemoria(solicitudId, memoria);
+      await guardarMemoria(solicitudId, { contenidoHtml: memoriaHtml });
       return true;
     } catch (err) {
       setError(err.message ?? 'Error al guardar la memoria');
@@ -637,7 +644,7 @@ export function SolicitudForm({ tipoSolicitud, categoria, isEdit = false, initia
       {categoriaEfectiva === 'DIRECTA' && (
         <div className={styles.section}>
           <h2 className={styles.sectionTitle}>Memoria</h2>
-          <MemoriaBuilder value={memoria} onChange={setMemoria} />
+          <MemoriaTablaEditor value={memoriaHtml} onChange={setMemoriaHtml} avisoFormatoAnterior={memoriaFormatoAnterior} />
         </div>
       )}
 

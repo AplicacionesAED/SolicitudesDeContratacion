@@ -806,3 +806,71 @@ select.celdaInput.celdaSelect:not([size]) {
   background: #fff;
   border-color: var(--color-primary);
 }
+
+/* Memoria: tabla pegada desde Excel. La hoja es siempre clara (como el papel de
+   Excel) para que los colores de relleno/texto pegados se vean como se armaron. */
+.memoriaPegar {
+  width: 100%;
+  resize: vertical;
+  font-family: var(--font-mono, monospace);
+  font-size: var(--text-data-size);
+  color: var(--color-ink);
+  background: var(--color-surface-sunken);
+  border: 2px dashed var(--color-primary);
+  border-radius: var(--radius-md);
+  padding: var(--space-sm) var(--space-md);
+  cursor: text;
+}
+
+.memoriaPegar:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}
+
+.memoriaHojaBox {
+  overflow: auto;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: #fff;
+  color: #111;
+  color-scheme: light;
+  padding: var(--space-sm);
+}
+
+.memoriaHoja {
+  display: inline-block;
+  min-width: 100%;
+  font-family: var(--font-body);
+  font-size: 13px;
+  line-height: 1.35;
+}
+
+.memoriaHoja table {
+  border-collapse: collapse;
+}
+
+.memoriaHoja td,
+.memoriaHoja th {
+  padding: 2px 6px;
+  vertical-align: bottom;
+  text-align: left;
+}
+
+.memoriaHoja td:focus,
+.memoriaHoja th:focus {
+  outline: 2px solid var(--color-primary);
+  outline-offset: -2px;
+}
+
+.memoriaGrid .memoriaHoja td,
+.memoriaGrid .memoriaHoja th {
+  outline: 1px dotted #c3cbd3;
+  outline-offset: -1px;
+}
+
+.memoriaVacia {
+  margin: 0;
+  padding: var(--space-lg) var(--space-md);
+  text-align: center;
+  color: #586673;
+}

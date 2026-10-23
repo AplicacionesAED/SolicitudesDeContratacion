@@ -21,6 +21,7 @@ const CuadroComparativo = require('./cuadroComparativo.model');
 const CuadroComparativoProveedor = require('./cuadroComparativoProveedor.model');
 const CuadroComparativoItem = require('./cuadroComparativoItem.model');
 const Memoria = require('./memoria.model');
+const { sanitizarTablaHtml } = require('../../utils/sanitizarTablaHtml');
 const MemoriaColumna = require('./memoriaColumna.model');
 const MemoriaFila = require('./memoriaFila.model');
 const { getRolesAlcanceSolicitudes, resolverAlcanceSolicitudes, getRolesFuncionalidades, getRolesPorCodigo } = require('../../utils/permisos');
@@ -382,6 +383,8 @@ function _enrichMemoria(m) {
   return {
     id: m.id,
     titulo: m.titulo,
+    // Se vuelve a limpiar al salir: el frontend inserta este HTML tal cual en la página.
+    contenidoHtml: m.contenido_html ? sanitizarTablaHtml(m.contenido_html) : null,
     columnas: (m.columnas ?? []).map((c) => ({
       id: c.id,
       nombre: c.nombre,
