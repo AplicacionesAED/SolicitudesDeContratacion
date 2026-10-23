@@ -14,6 +14,9 @@ import { Modal } from '../../components/ui/Modal.jsx';
 import { Field, TextInput, Textarea } from '../../components/ui/Field.jsx';
 import styles from './Solicitudes.module.css';
 
+// Espejo de MIN_NOTA_DEVOLVER en backend/src/modules/solicitud/solicitud.estado.js.
+const MIN_NOTA_DEVOLVER = 30;
+
 function detectPlatform(url) {
   if (/sharepoint\.com|1drv\.ms|onedrive\.live\.com/i.test(url)) return 'SharePoint';
   if (/drive\.google\.com|docs\.google\.com/i.test(url)) return 'Google Drive';
@@ -156,7 +159,7 @@ export function SolicitudActions({ solicitud, usuario, onChange }) {
     if (modalType === 'aprobar_tecnico') return ejecutar('APROBAR_DIRECTOR_TECNICO');
     if (modalType === 'aprobar_residente_administrativo') return ejecutar('APROBAR_RESIDENTE_ADMINISTRATIVO');
     if (modalType === 'devolver_tecnico' || modalType === 'devolver' || modalType === 'devolver_proyeccion' || modalType === 'devolver_residente_administrativo') {
-      if (!nota.trim()) return setError('La nota es obligatoria para devolver');
+      if (nota.trim().length < MIN_NOTA_DEVOLVER) return setError(`El motivo de la devolución debe tener al menos ${MIN_NOTA_DEVOLVER} caracteres`);
       return ejecutar('DEVOLVER', { nota });
     }
     if (modalType === 'aprobar') return ejecutar('APROBAR_DIRECTOR');
@@ -299,7 +302,7 @@ export function SolicitudActions({ solicitud, usuario, onChange }) {
         {modalType === 'aprobar_tecnico' && <p>¿Confirmas la aprobación como Director Técnico? Pasará al Director de Proyecto.</p>}
         {modalType === 'aprobar_residente_administrativo' && <p>¿Confirmas la aprobación como Residente Administrativo? Pasará a Controles para su proyección.</p>}
         {(modalType === 'devolver_tecnico' || modalType === 'devolver') && (
-          <Field label="Nota" required>
+          <Field label="Nota" required helper={`Mínimo ${MIN_NOTA_DEVOLVER} caracteres (${nota.trim().length}/${MIN_NOTA_DEVOLVER})`}>
             {(p) => <Textarea {...p} rows={4} value={nota} onChange={(e) => setNota(e.target.value)} placeholder="Escribe el motivo de la devolución..." />}
           </Field>
         )}
@@ -324,7 +327,7 @@ export function SolicitudActions({ solicitud, usuario, onChange }) {
           </>
         )}
         {(modalType === 'devolver_proyeccion' || modalType === 'devolver_residente_administrativo') && (
-          <Field label="Nota" required>
+          <Field label="Nota" required helper={`Mínimo ${MIN_NOTA_DEVOLVER} caracteres (${nota.trim().length}/${MIN_NOTA_DEVOLVER})`}>
             {(p) => <Textarea {...p} rows={4} value={nota} onChange={(e) => setNota(e.target.value)} placeholder="Escribe el motivo de la devolución..." />}
           </Field>
         )}

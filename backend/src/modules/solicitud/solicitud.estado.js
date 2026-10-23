@@ -38,6 +38,8 @@ const CuadroComparativoItem = require('./cuadroComparativoItem.model');
 // frontend/src/utils/solicitudes.js#LIMITE_ORDEN_SERVICIO_DIRECTA (el
 // backend no puede importar código del frontend, se repite acá).
 const LIMITE_ORDEN_SERVICIO_DIRECTA = 50000000;
+// Mínimo de caracteres del motivo al devolver (espejo en frontend: SolicitudActions.jsx).
+const MIN_NOTA_DEVOLVER = 30;
 function formatearPesos(valor) {
   return new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP', maximumFractionDigits: 0 }).format(valor);
 }
@@ -166,6 +168,12 @@ const cambiarEstado = asyncHandler(async (req, res) => {
 
   if (accion === 'DEVOLVER' || accion === 'REVISAR') {
     if (!nota || nota.trim() === '') throw new ApiError(400, 'Se requiere una nota para esta acción');
+  }
+
+  // Devolver (Directa e Indirecta, cualquier estado de origen) exige un motivo
+  // de al menos 30 caracteres para que el solicitante sepa qué corregir.
+  if (accion === 'DEVOLVER' && nota.trim().length < MIN_NOTA_DEVOLVER) {
+    throw new ApiError(400, `El motivo de la devolución debe tener al menos ${MIN_NOTA_DEVOLVER} caracteres`);
   }
 
   // "no quiero eliminarlas directamente" -- ANULAR es un cambio de estado
